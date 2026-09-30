@@ -47,6 +47,7 @@ const jsonLd = {
         <a href="/">Home</a> / <a href="/blog/">Blog</a> /
         <a href={`/categories/${post.data.category}/`}>{categoryName(post.data.category)}</a>
       </p>
+      <p class="kicker">{categoryName(post.data.category)}</p>
       <h1>{post.data.title}</h1>
       <div class="post-meta">
         <span>By {post.data.author}</span>

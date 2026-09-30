@@ -1,0 +1,75 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+import { getPublishedPosts, postUrl, formatDate, categoryName, slugify } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.md$/, "") },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const url = postUrl(post);
+
+// JSON-LD Article schema for rich results
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.data.title,
+  description: post.data.description,
+  author: { "@type": "Organization", name: post.data.author },
+  publisher: { "@type": "Organization", name: SITE.name },
+  datePublished: post.data.date.toISOString(),
+  dateModified: (post.data.updated ?? post.data.date).toISOString(),
+  mainEntityOfPage: new URL(url, SITE.url).toString(),
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  canonicalPath={url}
+  image={post.data.image}
+  type="article"
+  publishedTime={post.data.date.toISOString()}
+  modifiedTime={(post.data.updated ?? post.data.date).toISOString()}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <div class="prose-wrap">
+    <header class="post-header">
+      <p class="breadcrumb">
+        <a href="/">Home</a> / <a href="/blog/">Blog</a> /
+        <a href={`/categories/${post.data.category}/`}>{categoryName(post.data.category)}</a>
+      </p>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <span>By {post.data.author}</span>
+        <time datetime={post.data.date.toISOString()}>Published {formatDate(post.data.date)}</time>
+        {post.data.updated && (
+          <time datetime={post.data.updated.toISOString()}>Updated {formatDate(post.data.updated)}</time>
+        )}
+      </div>
+      <div style="margin-top: 1rem;">
+        {post.data.tags.map((t) => (
+          <a class="tag" href={`/tags/${slugify(t)}/`}>#{t}</a>
+        ))}
+      </div>
+    </header>
+
+    <article class="post">
+      <Content />
+    </article>
+
+    <div class="cta-box">
+      <h3>Want more like this?</h3>
+      <p>Practical tutorials on AI agents, automation, and chatbots — straight to your reader.</p>
+      <a class="btn" href="/rss.xml">Subscribe via RSS</a>
+    </div>
+  </div>
+</BaseLayout>

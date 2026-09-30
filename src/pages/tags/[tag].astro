@@ -27,12 +27,19 @@ const { tag, posts } = Astro.props;
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Tags</p>
       <h1 style="margin: 0 0 2rem;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
-      <div class="card-grid">
+      <div class="post-index">
         {posts.map((post) => (
-          <article class="card">
-            <h3><a href={`/blog/${post.id.replace(/\.md$/, "")}/`}>{post.data.title}</a></h3>
-            <p>{post.data.description}</p>
-          </article>
+          <a class="post-row" href={`/blog/${post.id.replace(/\.md$/, "")}/`}>
+            <span class="row-date">
+              <time datetime={post.data.date.toISOString()}>
+                {post.data.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </time>
+            </span>
+            <span>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+            </span>
+          </a>
         ))}
       </div>
     </div>

@@ -63,6 +63,12 @@ const jsonLd = {
       </div>
     </header>
 
+    {post.data.image && (
+      <figure class="post-hero">
+        <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" />
+      </figure>
+    )}
+
     <article class="post">
       <Content />
     </article>

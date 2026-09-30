@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#0C0C10"/>
   <g transform="translate(12,12)">
-    <path d="M5 11 H35" stroke="#F4F4F1" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M5 20 H25" stroke="#F4F4F1" stroke-width="3.5" stroke-linecap="round"/>
-    <circle cx="32" cy="20" r="5" fill="#FF4D00"/>
-    <path d="M5 29 H35" stroke="#F4F4F1" stroke-width="3.5" stroke-linecap="round"/>
+    <polygon points="33,20 26.5,31.26 13.5,31.26 7,20 13.5,8.74 26.5,8.74" fill="none" stroke="#F4F4F1" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="20" cy="20" r="4.5" fill="#FF4D00"/>
   </g>
 </svg>

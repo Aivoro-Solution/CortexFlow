@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+import { getPublishedPosts, slugify } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+  return tags.map((tag) => ({
+    params: { tag: slugify(tag) },
+    props: {
+      tag,
+      posts: posts.filter((p) => p.data.tags.includes(tag)),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`Posts tagged "${tag}"`}
+  description={`All ${SITE.name} posts tagged ${tag}.`}
+  canonicalPath={`/tags/${tag}/`}
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Tags</p>
+      <h1 style="margin: 0 0 2rem;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
+      <div class="card-grid">
+        {posts.map((post) => (
+          <article class="card">
+            <h3><a href={`/blog/${post.id.replace(/\.md$/, "")}/`}>{post.data.title}</a></h3>
+            <p>{post.data.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

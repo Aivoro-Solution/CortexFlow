@@ -1,0 +1,9 @@
+---
+/*
+  /blog/ redirects to /blog/1/ so pagination has a single canonical source.
+  The [page].astro route renders page 1 at /blog/1/ with canonical /blog/.
+*/
+---
+<meta http-equiv="refresh" content="0; url=/blog/1/" />
+<link rel="canonical" href="/blog/" />
+<p>Redirecting to <a href="/blog/1/">the blog</a>…</p>

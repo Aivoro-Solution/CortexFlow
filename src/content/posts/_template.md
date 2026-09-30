@@ -19,7 +19,7 @@ date: 2026-10-01
 # Optional: set when you significantly update the post.
 # updated: 2026-10-15
 
-# Must be one of: ai-agents | automation | chatbots
+# Must be one of: ai-agents | automation | chatbots | news
 category: automation
 
 # Free-form tags. Keep 3-6 per post.

@@ -9,7 +9,6 @@ draft: false
 featured: false
 ---
 
-# MongoDB Atlas Agent Engine Brings Memory and Governance to Production AI Agents
 
 MongoDB launched Atlas Agent Engine on September 29, 2026 at its Investor Day in New York: a unified execution, memory, and governance layer for putting AI agents into production, available immediately in public preview. The launch matters because it attacks the exact bottleneck every agent builder hits — demos work, production does not — and it does so with managed memory and built-in governance rather than another model. Here is what shipped, what it costs, and what it means if you build agents.
 

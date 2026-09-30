@@ -37,22 +37,21 @@ const description =
   <section class="section">
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / Blog</p>
-      <h1 style="margin: 0 0 .5rem;">All posts</h1>
+      <p class="dwg-no">DWG NO. CF-BLOG-{page === 1 ? "001" : "00" + page} · <b>REV D</b></p>
+      <h1 style="margin: 0 0 .5rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">All posts</h1>
       <p style="color: var(--muted); margin: 0 0 2rem;">
         Tutorials, comparisons, and practical guides on AI agents, automation, and chatbots.
       </p>
 
-      <div class="post-index">
-        {posts.map((post) => (
-          <a class="post-row" href={postUrl(post)}>
-            <span class="row-date">
-              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      <div class="spec-list">
+        {posts.map((post, i) => (
+          <a class="spec" href={postUrl(post)}>
+            <span class="spec-no" aria-hidden="true">{String((page - 1) * 10 + i + 1).padStart(3, "0")}</span>
+            <span class="spec-body">
+              <h3 class="spec-title">{post.data.title}</h3>
+              <p class="spec-desc">{post.data.description}</p>
             </span>
-            <span>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-              <span class="row-cat">{categoryName(post.data.category)}</span>
-            </span>
+            <span class="spec-tag">{categoryName(post.data.category)}</span>
           </a>
         ))}
       </div>

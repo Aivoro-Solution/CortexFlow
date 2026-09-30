@@ -1,8 +1,19 @@
 ---
 import { SITE, CATEGORIES } from "../config";
+import NewsletterForm from "./NewsletterForm.astro";
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
+  <div class="nl-strip">
+    <div class="wrap">
+      <div>
+        <p class="nl-kicker">Doc. CF-NL-001 · Dispatch</p>
+        <h3>Get the next build in your inbox</h3>
+        <p class="nl-sub">Practical tutorials on AI agents, automation, and chatbots — one email per new post.</p>
+      </div>
+      <NewsletterForm source="footer" id="nl-foot" />
+    </div>
+  </div>
   <div class="wrap">
     <div class="foot-grid">
       <div>

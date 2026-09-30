@@ -4,39 +4,43 @@ const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="wrap">
-    <div>
-      <p class="foot-brand">
-        <svg width="26" height="26" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#F4F4F1" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="34" cy="20" r="4.5" fill="#FF4D00"/>
-        </svg>
-        {SITE.name}
-      </p>
-      <p>{SITE.tagline}. Real builds, honest comparisons, zero fluff.</p>
-      <p style="margin-top: 0.9rem;"><a href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a></p>
-    </div>
-    <div>
-      <h4>Topics</h4>
-      <ul>
-        {CATEGORIES.map((c) => (
-          <li><a href={`/categories/${c.slug}/`}>{c.name}</a></li>
-        ))}
-      </ul>
-    </div>
-    <div>
-      <h4>Site</h4>
-      <ul>
-        <li><a href="/blog/">All posts</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/contact/">Contact</a></li>
-        <li><a href="/privacy/">Privacy Policy</a></li>
-        <li><a href="/terms/">Terms</a></li>
-        <li><a href="/rss.xml">RSS feed</a></li>
-      </ul>
+    <div class="foot-grid">
+      <div>
+        <p class="foot-brand">
+          <svg width="26" height="26" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#16181D" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="34" cy="20" r="4.5" fill="#FF4D00"/>
+          </svg>
+          {SITE.name}
+        </p>
+        <p class="desc">{SITE.tagline}. Real builds, honest comparisons, zero fluff.</p>
+        <p><a class="email" href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a></p>
+      </div>
+      <div>
+        <h4>Topics</h4>
+        <ul>
+          {CATEGORIES.map((c) => (
+            <li><a href={`/categories/${c.slug}/`}>{c.name}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <ul>
+          <li><a href="/blog/">All posts</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy Policy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+          <li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© {year} {SITE.name}. All rights reserved.</span>
-    <span>Built with Astro · Hosted on Cloudflare Pages</span>
+    <div class="wrap">
+      <span>© {year} {SITE.name} · SHEET CF-001 / REV D</span>
+      <span>Built with Astro · Hosted on Cloudflare Pages</span>
+    </div>
   </div>
 </footer>

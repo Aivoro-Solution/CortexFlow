@@ -1,0 +1,23 @@
+---
+import { SITE, CATEGORIES } from "../config";
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label={`${SITE.name} home`}>
+      <span class="logo-mark" aria-hidden="true">⚡</span>
+      {SITE.name}
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
+      <a href="/blog/" class={isActive("/blog") ? "active" : ""}>Blog</a>
+      {CATEGORIES.map((c) => (
+        <a href={`/categories/${c.slug}/`} class={isActive(`/categories/${c.slug}`) ? "active" : ""}>
+          {c.name}
+        </a>
+      ))}
+      <a href="/about/" class={isActive("/about") ? "active" : ""}>About</a>
+    </nav>
+  </div>
+</header>

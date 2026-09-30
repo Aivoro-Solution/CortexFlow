@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../components/BaseLayout.astro";
+import CategoryIcon from "../../components/CategoryIcon.astro";
 import { CATEGORIES } from "../../config";
 import { getPublishedPosts, postUrl, formatDate } from "../../lib/posts";
 
@@ -25,20 +26,24 @@ const { category, posts } = Astro.props;
   <section class="section">
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / Categories</p>
-      <h1 style="margin: 0 0 .5rem;"><span aria-hidden="true">{category.icon}</span> {category.name}</h1>
+      <div style="display: flex; align-items: center; gap: 1rem; margin: 0 0 0.75rem;">
+        <CategoryIcon slug={category.slug} />
+        <h1 style="margin: 0;">{category.name}</h1>
+      </div>
       <p style="color: var(--muted); margin: 0 0 2rem;">{category.description}</p>
 
       {posts.length > 0 ? (
-        <div class="card-grid">
+        <div class="post-index">
           {posts.map((post) => (
-            <article class="card">
-              <h3><a href={postUrl(post)}>{post.data.title}</a></h3>
-              <p>{post.data.description}</p>
-              <div class="meta">
+            <a class="post-row" href={postUrl(post)}>
+              <span class="row-date">
                 <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-                <span>·</span><span>{post.data.author}</span>
-              </div>
-            </article>
+              </span>
+              <span>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </span>
+            </a>
           ))}
         </div>
       ) : (

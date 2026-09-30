@@ -363,3 +363,29 @@ figcaption.sheet-cap {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
 }
+
+/* ---------- newsletter ---------- */
+.nl-strip { border-bottom: 2px solid var(--ink); }
+.nl-strip .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; padding-top: 2.8rem; padding-bottom: 2.8rem; }
+.nl-kicker { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin: 0 0 0.6rem; }
+.nl-strip h3, .nl-box h3 { font-family: var(--font-display); font-size: 1.35rem; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+.nl-strip p.nl-sub, .nl-box p.nl-sub { color: var(--muted); font-size: 0.95rem; margin: 0; max-width: 44ch; }
+.nl-form { display: grid; gap: 0.5rem; }
+.nl-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.nl-row { display: grid; grid-template-columns: 1fr auto; gap: 0; }
+.nl-row input[type="email"] { font: inherit; padding: 0.75rem 1rem; border: 2px solid var(--ink); border-right: 0; background: var(--paper); min-width: 0; }
+.nl-row input[type="email"]:focus { outline: 2px solid var(--orange); outline-offset: -2px; }
+.nl-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.nl-btn { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--orange); color: #fff; border: 2px solid var(--ink); padding: 0.75rem 1.4rem; cursor: pointer; }
+.nl-btn:hover { background: var(--ink); }
+.nl-btn:disabled { opacity: 0.6; cursor: wait; }
+.nl-msg { font-family: var(--font-mono); font-size: 0.85rem; margin: 0.2rem 0 0; }
+.nl-msg.nl-ok { color: #0a7a3d; }
+.nl-msg.nl-err { color: #b00020; }
+.nl-fine { font-family: var(--font-mono); font-size: 0.7rem; color: var(--faint); margin: 0; }
+.nl-box { border: 2px solid var(--ink); background: var(--sheet-tint); padding: 2rem; margin-top: 3rem; display: grid; gap: 1rem; }
+.nl-box .nl-row { max-width: 520px; }
+@media (max-width: 760px) {
+  .nl-strip .wrap { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2.2rem; padding-bottom: 2.2rem; }
+  .nl-box { padding: 1.4rem; }
+}

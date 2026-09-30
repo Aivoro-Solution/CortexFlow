@@ -248,6 +248,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; letter-spac
 .breadcrumb { font-size: 0.85rem; color: var(--faint); margin: 0 0 1.5rem; }
 .breadcrumb a { color: var(--muted); }
 article.post { font-size: 1.075rem; line-height: 1.78; }
+.post-hero { margin: 0 0 2.5rem; }
+.post-hero img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; }
 article.post h2 { font-size: 1.6rem; margin: 2.75rem 0 1rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 article.post h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
 article.post h3 { font-size: 1.22rem; margin: 2rem 0 0.75rem; }

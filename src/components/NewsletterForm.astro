@@ -1,0 +1,26 @@
+---
+/* Reusable newsletter signup form. Schematic styling lives in global.css (.nl-*).
+   Props: source (string, recorded with the signup), id (unique prefix per instance). */
+const { source = "site", id = "nl" } = Astro.props;
+const emailId = `${id}-email`;
+---
+<form class="nl-form" data-nl-form action="/api/subscribe" method="post" novalidate>
+  <input type="hidden" name="source" value={source} />
+  <label class="nl-label" for={emailId}>Email address</label>
+  <div class="nl-row">
+    <input
+      id={emailId}
+      type="email"
+      name="email"
+      required
+      placeholder="you@example.com"
+      autocomplete="email"
+      maxlength="254"
+    />
+    {/* honeypot — hidden from humans, bots fill it */}
+    <input type="text" name="website" class="nl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <button type="submit" class="nl-btn">Subscribe</button>
+  </div>
+  <p class="nl-msg" role="status" aria-live="polite" hidden></p>
+  <p class="nl-fine">One email per new post. No spam. Unsubscribe anytime.</p>
+</form>

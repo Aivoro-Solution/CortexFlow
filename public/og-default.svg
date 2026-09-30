@@ -1,19 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#0C0C10"/>
-  <g fill="#FFFFFF" opacity="0.13">
-    <circle cx="60" cy="60" r="2"/><circle cx="120" cy="60" r="2"/><circle cx="180" cy="60" r="2"/><circle cx="240" cy="60" r="2"/><circle cx="300" cy="60" r="2"/><circle cx="360" cy="60" r="2"/><circle cx="420" cy="60" r="2"/><circle cx="480" cy="60" r="2"/><circle cx="540" cy="60" r="2"/><circle cx="600" cy="60" r="2"/><circle cx="660" cy="60" r="2"/><circle cx="720" cy="60" r="2"/><circle cx="780" cy="60" r="2"/><circle cx="840" cy="60" r="2"/><circle cx="900" cy="60" r="2"/><circle cx="960" cy="60" r="2"/><circle cx="1020" cy="60" r="2"/><circle cx="1080" cy="60" r="2"/><circle cx="1140" cy="60" r="2"/>
-    <circle cx="60" cy="130" r="2"/><circle cx="120" cy="130" r="2"/><circle cx="180" cy="130" r="2"/><circle cx="240" cy="130" r="2"/><circle cx="300" cy="130" r="2"/><circle cx="360" cy="130" r="2"/><circle cx="420" cy="130" r="2"/><circle cx="480" cy="130" r="2"/><circle cx="540" cy="130" r="2"/><circle cx="600" cy="130" r="2"/><circle cx="660" cy="130" r="2"/><circle cx="720" cy="130" r="2"/><circle cx="780" cy="130" r="2"/><circle cx="840" cy="130" r="2"/><circle cx="900" cy="130" r="2"/><circle cx="960" cy="130" r="2"/><circle cx="1020" cy="130" r="2"/><circle cx="1080" cy="130" r="2"/><circle cx="1140" cy="130" r="2"/>
-    <circle cx="60" cy="500" r="2"/><circle cx="120" cy="500" r="2"/><circle cx="180" cy="500" r="2"/><circle cx="240" cy="500" r="2"/><circle cx="300" cy="500" r="2"/><circle cx="360" cy="500" r="2"/><circle cx="420" cy="500" r="2"/><circle cx="480" cy="500" r="2"/><circle cx="540" cy="500" r="2"/><circle cx="600" cy="500" r="2"/><circle cx="660" cy="500" r="2"/><circle cx="720" cy="500" r="2"/><circle cx="780" cy="500" r="2"/><circle cx="840" cy="500" r="2"/><circle cx="900" cy="500" r="2"/><circle cx="960" cy="500" r="2"/><circle cx="1020" cy="500" r="2"/><circle cx="1080" cy="500" r="2"/><circle cx="1140" cy="500" r="2"/>
-    <circle cx="60" cy="570" r="2"/><circle cx="120" cy="570" r="2"/><circle cx="180" cy="570" r="2"/><circle cx="240" cy="570" r="2"/><circle cx="300" cy="570" r="2"/><circle cx="360" cy="570" r="2"/><circle cx="420" cy="570" r="2"/><circle cx="480" cy="570" r="2"/><circle cx="540" cy="570" r="2"/><circle cx="600" cy="570" r="2"/><circle cx="660" cy="570" r="2"/><circle cx="720" cy="570" r="2"/><circle cx="780" cy="570" r="2"/><circle cx="840" cy="570" r="2"/><circle cx="900" cy="570" r="2"/><circle cx="960" cy="570" r="2"/><circle cx="1020" cy="570" r="2"/><circle cx="1080" cy="570" r="2"/><circle cx="1140" cy="570" r="2"/>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  <g stroke="#F4F5F7" stroke-width="1">
+    <path d="M0 32.5h1200M0 64.5h1200M0 96.5h1200M0 128.5h1200M0 160.5h1200M0 192.5h1200M0 224.5h1200M0 256.5h1200M0 288.5h1200M0 320.5h1200M0 352.5h1200M0 384.5h1200M0 416.5h1200M0 448.5h1200M0 480.5h1200M0 512.5h1200M0 544.5h1200M0 576.5h1200M0 608.5h1200"/>
+    <path d="M32.5 0v630M64.5 0v630M96.5 0v630M128.5 0v630M160.5 0v630M192.5 0v630M224.5 0v630M256.5 0v630M288.5 0v630M320.5 0v630M352.5 0v630M384.5 0v630M416.5 0v630M448.5 0v630M480.5 0v630M512.5 0v630M544.5 0v630M576.5 0v630M608.5 0v630M640.5 0v630M672.5 0v630M704.5 0v630M736.5 0v630M768.5 0v630M800.5 0v630M832.5 0v630M864.5 0v630M896.5 0v630M928.5 0v630M960.5 0v630M992.5 0v630M1024.5 0v630M1056.5 0v630M1088.5 0v630M1120.5 0v630M1152.5 0v630M1184.5 0v630"/>
   </g>
-  <g transform="translate(110,225)">
-    <rect width="180" height="180" rx="40" fill="#16161C" stroke="#2C2C36" stroke-width="3"/>
-    <g transform="translate(30,30) scale(3)">
-      <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" fill="none" stroke="#F4F4F1" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="34" cy="20" r="4.5" fill="#FF4D00"/>
-    </g>
+  <rect x="24" y="24" width="1152" height="582" fill="none" stroke="#16181D" stroke-width="4"/>
+  <g transform="translate(120, 195)">
+    <path d="M244 99.2 A104 104 0 1 0 244 220.8" stroke="#16181D" stroke-width="32" stroke-linecap="round" fill="none"/>
+    <circle cx="272" cy="160" r="36" fill="#FF4D00"/>
   </g>
-  <text x="340" y="300" font-family="Arial, sans-serif" font-size="104" font-weight="800" fill="#FFFFFF">CortexFlow</text>
-  <text x="344" y="368" font-family="Arial, sans-serif" font-size="42" fill="#B9B9C2">AI agents · Automation · Chatbots</text>
-  <rect x="344" y="400" width="72" height="10" rx="5" fill="#FF4D00"/>
+  <text x="470" y="330" font-family="Archivo, Inter, sans-serif" font-weight="800" font-size="120" letter-spacing="-2" fill="#16181D">CortexFlow</text>
+  <text x="474" y="392" font-family="'IBM Plex Mono', monospace" font-size="34" letter-spacing="6" fill="#5B6470">SHIP AI AGENTS THAT ACTUALLY WORK</text>
+  <rect x="474" y="430" width="120" height="18" fill="#FF4D00"/>
+  <text x="1060" y="582" font-family="'IBM Plex Mono', monospace" font-size="26" letter-spacing="4" fill="#9AA2AE" text-anchor="end">SHEET CF-001 / REV D</text>
 </svg>

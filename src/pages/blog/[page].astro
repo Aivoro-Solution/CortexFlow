@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+import { getPublishedPosts, postUrl, formatDate, categoryName } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const perPage = SITE.postsPerPage;
+  const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
+  return Array.from({ length: totalPages }, (_, i) => {
+    const page = i + 1;
+    return {
+      params: { page: String(page) },
+      props: {
+        page,
+        totalPages,
+        posts: posts.slice((page - 1) * perPage, page * perPage),
+      },
+    };
+  });
+}
+
+const { page, totalPages, posts } = Astro.props;
+const title = page === 1 ? "Blog" : `Blog — Page ${page}`;
+const description =
+  page === 1
+    ? "All tutorials on AI agents, workflow automation, and chatbots — step-by-step guides and honest comparisons."
+    : `All tutorials on AI agents, workflow automation, and chatbots — page ${page} of ${totalPages}.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={page === 1 ? "/blog/" : `/blog/${page}/`}
+  noindex={page > 1}
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> / Blog</p>
+      <h1 style="margin: 0 0 .5rem;">All posts</h1>
+      <p style="color: var(--muted); margin: 0 0 2rem;">
+        Tutorials, comparisons, and practical guides on AI agents, automation, and chatbots.
+      </p>
+
+      <div class="card-grid">
+        {posts.map((post) => (
+          <article class="card">
+            <span class="kicker">{categoryName(post.data.category)}</span>
+            <h3><a href={postUrl(post)}>{post.data.title}</a></h3>
+            <p>{post.data.description}</p>
+            <div class="meta">
+              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <span>·</span><span>{post.data.author}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <nav class="pagination" aria-label="Blog pagination">
+          {page > 1 && <a href={page === 2 ? "/blog/" : `/blog/${page - 1}/`}>← Newer</a>}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) =>
+            p === page ? (
+              <span class="current" aria-current="page">{p}</span>
+            ) : (
+              <a href={p === 1 ? "/blog/" : `/blog/${p}/`}>{p}</a>
+            )
+          )}
+          {page < totalPages && <a href={`/blog/${page + 1}/`}>Older →</a>}
+        </nav>
+      )}
+    </div>
+  </section>
+</BaseLayout>

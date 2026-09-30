@@ -1,6 +1,6 @@
 ---
 /* Line-style category icons — drawn for the brief, not emoji. */
-interface Props { slug: "ai-agents" | "automation" | "chatbots"; }
+interface Props { slug: "ai-agents" | "automation" | "chatbots" | "news"; }
 const { slug } = Astro.props;
 const stroke = "#15151A";
 const accent = "#FF4D00";
@@ -29,5 +29,13 @@ const accent = "#FF4D00";
     <circle cx="14" cy="18" r="1.8" fill={accent}/>
     <circle cx="21" cy="18" r="1.8" fill={accent}/>
     <circle cx="28" cy="18" r="1.8" fill={accent}/>
+  </svg>
+)}
+{slug === "news" && (
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+    <path d="M10 5h17l5 5v25H10V5z" stroke={stroke} stroke-width="2" stroke-linejoin="round"/>
+    <path d="M27 5v5h5" stroke={stroke} stroke-width="2" stroke-linejoin="round"/>
+    <path d="M15 15h10M15 20h10M15 25h6" stroke={stroke} stroke-width="2" stroke-linecap="round"/>
+    <circle cx="28.5" cy="27.5" r="2.4" fill={accent}/>
   </svg>
 )}

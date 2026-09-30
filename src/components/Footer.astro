@@ -5,8 +5,16 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap">
     <div>
-      <h4>{SITE.name}</h4>
-      <p style="color: var(--muted); font-size: .95rem; margin: 0;">{SITE.tagline}.</p>
+      <p class="foot-brand">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M9 16h4.5M18.5 16H23" stroke="#F4F4F1" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="6.5" cy="16" r="3.6" fill="#FF4D00"/>
+          <rect x="13.5" y="11.5" width="9" height="9" rx="2.5" stroke="#F4F4F1" stroke-width="2"/>
+          <circle cx="25.5" cy="16" r="3.6" stroke="#F4F4F1" stroke-width="2"/>
+        </svg>
+        {SITE.name}
+      </p>
+      <p>{SITE.tagline}. Real builds, honest comparisons, zero fluff.</p>
     </div>
     <div>
       <h4>Topics</h4>

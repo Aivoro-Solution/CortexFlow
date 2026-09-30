@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { CATEGORIES } from "../../config";
+import { getPublishedPosts, postUrl, formatDate } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return CATEGORIES.map((c) => ({
+    params: { category: c.slug },
+    props: {
+      category: c,
+      posts: posts.filter((p) => p.data.category === c.slug),
+    },
+  }));
+}
+
+const { category, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={category.name}
+  description={`${category.description} Browse all ${category.name.toLowerCase()} tutorials and guides.`}
+  canonicalPath={`/categories/${category.slug}/`}
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> / Categories</p>
+      <h1 style="margin: 0 0 .5rem;"><span aria-hidden="true">{category.icon}</span> {category.name}</h1>
+      <p style="color: var(--muted); margin: 0 0 2rem;">{category.description}</p>
+
+      {posts.length > 0 ? (
+        <div class="card-grid">
+          {posts.map((post) => (
+            <article class="card">
+              <h3><a href={postUrl(post)}>{post.data.title}</a></h3>
+              <p>{post.data.description}</p>
+              <div class="meta">
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <span>·</span><span>{post.data.author}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p>No posts in this category yet — check back soon.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

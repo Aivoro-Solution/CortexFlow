@@ -4,6 +4,7 @@ description: "OpenAI launched Dots, always-on AI agents with their own cloud com
 date: 2026-09-30
 category: news
 tags: ["OpenAI", "AI agents", "automation", "DevDay"]
+image: "/og/openai-dots-always-on-agents.webp"
 draft: false
 featured: false
 ---

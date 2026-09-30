@@ -1,0 +1,33 @@
+---
+import { SITE, CATEGORIES } from "../config";
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h4>{SITE.name}</h4>
+      <p style="color: var(--muted); font-size: .95rem; margin: 0;">{SITE.tagline}.</p>
+    </div>
+    <div>
+      <h4>Topics</h4>
+      <ul>
+        {CATEGORIES.map((c) => (
+          <li><a href={`/categories/${c.slug}/`}>{c.name}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h4>Site</h4>
+      <ul>
+        <li><a href="/blog/">All posts</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/rss.xml">RSS feed</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© {year} {SITE.name}. All rights reserved.</span>
+    <span>Built with Astro · Hosted on Cloudflare Pages</span>
+  </div>
+</footer>

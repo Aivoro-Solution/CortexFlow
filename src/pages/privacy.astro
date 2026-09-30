@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import { SITE } from "../config";
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Privacy Policy for CortexFlow — what data we collect, how we use it, cookies, advertising, and your rights."
+  canonicalPath="/privacy/"
+>
+  <div class="prose-wrap">
+    <section class="section">
+      <p class="breadcrumb"><a href="/">Home</a> / Privacy Policy</p>
+      <h1>Privacy Policy</h1>
+      <p style="color: var(--muted);">Last updated: September 30, 2026</p>
+
+      <p>
+        CortexFlow ("we", "us", "our") runs the website at
+        <a href="https://cortexflow.tech">cortexflow.tech</a>. This policy explains
+        what information we collect when you visit, and how we use it. The short
+        version: we collect as little as possible, we don't sell your data, and
+        we don't run user accounts or comments.
+      </p>
+
+      <h2>1. Information we collect</h2>
+      <ul>
+        <li>
+          <strong>Information you give us.</strong> If you email us or use the
+          contact form, we receive your name, email address, and message. We use
+          it only to reply. We don't store it in a database or add you to any
+          mailing list — there is no newsletter signup on this site.
+        </li>
+        <li>
+          <strong>Technical information.</strong> Our hosting provider
+          (Cloudflare) may process standard web-server data — such as your IP
+          address, browser type, and pages visited — to keep the site secure,
+          fast, and reliable. We don't use this to identify you personally.
+        </li>
+      </ul>
+
+      <h2>2. Cookies and advertising</h2>
+      <p>
+        We don't currently set any cookies of our own and we don't run
+        analytics trackers. If we enable advertising in the future (for example
+        Google AdSense), ad providers may use cookies — including the Google
+        DoubleClick cookie — to serve ads based on your visits to this and
+        other sites. You can opt out of personalized advertising at
+        <a href="https://www.google.com/settings/ads" rel="noopener">Google's Ads Settings</a>.
+        We'll update this section if and when that changes.
+      </p>
+
+      <h2>3. Affiliate links</h2>
+      <p>
+        Some articles on this site contain affiliate links to third-party tools
+        and services. If you click one and make a purchase, we may earn a
+        commission at no extra cost to you. The merchant — not us — may set a
+        cookie to track the referral. Their privacy policies apply to that data.
+      </p>
+
+      <h2>4. External links</h2>
+      <p>
+        Our tutorials link to third-party documentation, tools, and communities.
+        We aren't responsible for the privacy practices of those sites; please
+        review their policies before sharing personal information with them.
+      </p>
+
+      <h2>5. Children's privacy</h2>
+      <p>
+        This site is aimed at adult builders and isn't directed at children
+        under 13. We don't knowingly collect information from children.
+      </p>
+
+      <h2>6. Changes to this policy</h2>
+      <p>
+        We may update this policy as the site evolves (for example, when we add
+        advertising). The "Last updated" date at the top will always reflect the
+        latest version.
+      </p>
+
+      <h2>7. Contact</h2>
+      <p>
+        Questions about this policy? Email us at
+        <a href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a>.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

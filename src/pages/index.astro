@@ -1,75 +1,46 @@
 ---
 import BaseLayout from "../components/BaseLayout.astro";
-import CategoryIcon from "../components/CategoryIcon.astro";
 import { SITE, CATEGORIES } from "../config";
 import { getPublishedPosts, postUrl, formatDate, categoryName } from "../lib/posts";
 
 const posts = await getPublishedPosts();
 const latest = posts.slice(0, 6);
+const pad = (n: number) => String(n).padStart(3, "0");
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description} canonicalPath="/">
-  <section class="hero">
+  <section class="hero sheet">
     <div class="wrap">
-      <p class="hero-kicker">Hands-on tutorials for builders</p>
-      <h1>Ship AI agents that <span class="accent">actually work.</span></h1>
-      <p class="lead">
-        Step-by-step tutorials on AI agents, n8n automation, and chatbots —
-        real builds, honest tool comparisons, zero fluff. The kind of guide
-        you keep open in a second tab while you build.
-      </p>
-      <div class="cta-row">
-        <a class="btn" href="/blog/">Browse tutorials</a>
-        <a class="btn btn-ghost" href="/about/">What is this site?</a>
-      </div>
-
-      <div class="chain" role="img" aria-label="Example workflow: a webhook triggers an AI agent, which queries a vector store and replies on WhatsApp.">
-        <svg viewBox="0 0 920 118" fill="none" aria-hidden="true">
-          <!-- connectors (draw on load) -->
-          <path class="chain-draw" d="M172 59 H 248" stroke="#FF4D00" stroke-width="2.5" stroke-linecap="round"/>
-          <path class="chain-draw d2" d="M402 59 H 478" stroke="#FF4D00" stroke-width="2.5" stroke-linecap="round"/>
-          <path class="chain-draw d3" d="M632 59 H 708" stroke="#FF4D00" stroke-width="2.5" stroke-linecap="round"/>
-          <circle class="chain-draw" cx="248" cy="59" r="4" fill="#FF4D00" stroke="none"/>
-          <circle class="chain-draw d2" cx="478" cy="59" r="4" fill="#FF4D00" stroke="none"/>
-          <circle class="chain-draw d3" cx="708" cy="59" r="4" fill="#FF4D00" stroke="none"/>
-          <!-- node: trigger -->
-          <g>
-            <rect x="52" y="29" width="120" height="60" rx="10" fill="#16161C" stroke="#2C2C36" stroke-width="1.5"/>
-            <circle cx="72" cy="59" r="5" fill="#FF4D00"/>
-            <text x="86" y="55" fill="#F4F4F1" font-size="13" font-weight="600">Webhook</text>
-            <text x="86" y="72" fill="#8E8E98" font-size="11">trigger</text>
-          </g>
-          <!-- node: agent -->
-          <g>
-            <rect x="282" y="29" width="120" height="60" rx="10" fill="#16161C" stroke="#2C2C36" stroke-width="1.5"/>
-            <circle cx="302" cy="59" r="5" fill="#FF4D00"/>
-            <text x="316" y="55" fill="#F4F4F1" font-size="13" font-weight="600">AI agent</text>
-            <text x="316" y="72" fill="#8E8E98" font-size="11">decides</text>
-          </g>
-          <!-- node: vector store -->
-          <g>
-            <rect x="512" y="29" width="120" height="60" rx="10" fill="#16161C" stroke="#2C2C36" stroke-width="1.5"/>
-            <circle cx="532" cy="59" r="5" fill="#FF4D00"/>
-            <text x="546" y="55" fill="#F4F4F1" font-size="13" font-weight="600">Vector DB</text>
-            <text x="546" y="72" fill="#8E8E98" font-size="11">recalls</text>
-          </g>
-          <!-- node: output -->
-          <g>
-            <rect x="742" y="29" width="120" height="60" rx="10" fill="#16161C" stroke="#2C2C36" stroke-width="1.5"/>
-            <circle cx="762" cy="59" r="5" fill="#FF4D00"/>
-            <text x="776" y="55" fill="#F4F4F1" font-size="13" font-weight="600">WhatsApp</text>
-            <text x="776" y="72" fill="#8E8E98" font-size="11">replies</text>
-          </g>
-        </svg>
-        <ol class="chain-vertical" aria-label="Example workflow steps">
-          <li><span class="cv-dot" aria-hidden="true"></span><span><strong>Webhook</strong><small>trigger</small></span></li>
-          <li><span class="cv-dot" aria-hidden="true"></span><span><strong>AI agent</strong><small>decides</small></span></li>
-          <li><span class="cv-dot" aria-hidden="true"></span><span><strong>Vector DB</strong><small>recalls</small></span></li>
-          <li><span class="cv-dot" aria-hidden="true"></span><span><strong>WhatsApp</strong><small>replies</small></span></li>
-        </ol>
-        <div class="chain-caption">
-          <span>A typical build on this blog — from trigger to reply.</span>
-          <span class="live">Canvas live</span>
+      <span class="tick tl" aria-hidden="true"></span>
+      <span class="tick tr" aria-hidden="true"></span>
+      <span class="tick bl" aria-hidden="true"></span>
+      <span class="tick br" aria-hidden="true"></span>
+      <div class="titleblock">
+        <div class="tb-top">
+          <div class="tb-main">
+            <p class="rev">DWG NO. CF-HOME-001 · <b>REV D</b> · SCALE 1:1</p>
+            <h1>Ship AI agents that <span class="hl">actually work.</span></h1>
+            <p class="lead">
+              Step-by-step tutorials on AI agents, n8n automation, and chatbots —
+              real builds, honest tool comparisons, zero fluff. The kind of guide
+              you keep open in a second tab while you build.
+            </p>
+            <div class="hero-actions">
+              <a class="btn" href="/blog/">Browse tutorials</a>
+              <a class="btn btn-ghost" href="/about/">What is this site?</a>
+            </div>
+          </div>
+          <div class="tb-meta" aria-hidden="true">
+            <div><span class="k">Drawn</span><span class="v">CortexFlow</span></div>
+            <div><span class="k">Checked</span><span class="v hot">Builders</span></div>
+            <div><span class="k">Subject</span><span class="v">AI agents</span></div>
+            <div><span class="k">Status</span><span class="v">● In service</span></div>
+          </div>
+        </div>
+        <div class="tb-foot" aria-hidden="true">
+          <div>TOLERANCE: ZERO FLUFF</div>
+          <div>UNITS: TUTORIALS</div>
+          <div>DO NOT SCALE DRAWING</div>
         </div>
       </div>
     </div>
@@ -77,22 +48,19 @@ const latest = posts.slice(0, 6);
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Latest tutorials</h2>
-        <a href="/blog/">View all</a>
+      <div class="sec-head">
+        <h2><span class="sq" aria-hidden="true"></span>Latest tutorials</h2>
+        <a class="more" href="/blog/">View all</a>
       </div>
-      <p class="section-sub">Newest builds and guides — newest first.</p>
-      <div class="post-index">
-        {latest.map((post) => (
-          <a class="post-row" href={postUrl(post)}>
-            <span class="row-date">
-              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      <div class="spec-list">
+        {latest.map((post, i) => (
+          <a class="spec" href={postUrl(post)}>
+            <span class="spec-no" aria-hidden="true">{pad(i + 1)}</span>
+            <span class="spec-body">
+              <h3 class="spec-title">{post.data.title}</h3>
+              <p class="spec-desc">{post.data.description}</p>
             </span>
-            <span>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-              <span class="row-cat">{categoryName(post.data.category)}</span>
-            </span>
+            <span class="spec-tag">{categoryName(post.data.category)}</span>
           </a>
         ))}
       </div>
@@ -102,29 +70,29 @@ const latest = posts.slice(0, 6);
 
   <section class="section" style="padding-top: 0;">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Pick your track</h2>
+      <div class="sec-head">
+        <h2><span class="sq" aria-hidden="true"></span>Pick your track</h2>
       </div>
-      <p class="section-sub">Three tracks, one goal: things you can actually deploy.</p>
-      <div class="cat-grid">
-        {CATEGORIES.map((c) => (
-          <a class="cat-panel" href={`/categories/${c.slug}/`}>
-            <CategoryIcon slug={c.slug} />
+      <div class="tracks">
+        {CATEGORIES.map((c, i) => (
+          <a class="track" href={`/categories/${c.slug}/`}>
+            <p class="fig">FIG. <b>{pad(i + 1)}</b></p>
             <h3>{c.name}</h3>
             <p>{c.description}</p>
           </a>
         ))}
       </div>
-    </div>
-  </section>
 
-  <section class="lab-strip">
-    <div class="wrap">
-      <div>
-        <h2>Prefer reading offline?</h2>
-        <p>Every tutorial ships with a full RSS feed. No newsletter signup, no spam — just the feed.</p>
+      <div class="rss-strip">
+        <div class="inner">
+          <div>
+            <span class="fmt">DOC. CF-RSS-001 · FORMAT: XML</span>
+            <h2>Prefer reading offline?</h2>
+            <p>Every tutorial ships with a full RSS feed. No newsletter signup, no spam — just the feed.</p>
+          </div>
+          <a class="btn btn-ghost" href="/rss.xml">Subscribe via RSS</a>
+        </div>
       </div>
-      <a class="btn btn-ghost" href="/rss.xml">Subscribe via RSS</a>
     </div>
   </section>
 </BaseLayout>

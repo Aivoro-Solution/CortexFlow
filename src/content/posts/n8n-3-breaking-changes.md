@@ -4,6 +4,7 @@ description: "n8n 3.0 lands October 2026: removed nodes, mandatory Docker, tight
 date: 2026-10-01
 category: automation
 tags: ["n8n", "upgrade", "self-hosting", "Docker", "migration", "AI agents"]
+image: "/og/n8n-3-breaking-changes.webp"
 draft: false
 featured: false
 ---

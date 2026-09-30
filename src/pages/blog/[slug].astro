@@ -47,7 +47,8 @@ const jsonLd = {
         <a href="/">Home</a> / <a href="/blog/">Blog</a> /
         <a href={`/categories/${post.data.category}/`}>{categoryName(post.data.category)}</a>
       </p>
-      <p class="kicker">{categoryName(post.data.category)}</p>
+      <p class="dwg-no">DWG NO. CF-{Astro.params.slug} · <b>REV A</b></p>
+      <p class="post-kicker">{categoryName(post.data.category)}</p>
       <h1>{post.data.title}</h1>
       <div class="post-meta">
         <span>By {post.data.author}</span>
@@ -56,7 +57,7 @@ const jsonLd = {
           <time datetime={post.data.updated.toISOString()}>Updated {formatDate(post.data.updated)}</time>
         )}
       </div>
-      <div style="margin-top: 1rem;">
+      <div class="post-tags">
         {post.data.tags.map((t) => (
           <a class="tag" href={`/tags/${slugify(t)}/`}>#{t}</a>
         ))}
@@ -65,8 +66,9 @@ const jsonLd = {
 
     {post.data.image && (
       <figure class="post-hero" data-lottie-slug={Astro.params.slug}>
-        <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" />
         <div class="lottie-hero" aria-hidden="true"></div>
+        <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" />
+        <figcaption class="sheet-cap"><span>FIG. 01 — {post.data.title}</span><span>SCALE 16:9</span></figcaption>
       </figure>
     )}
 
@@ -75,8 +77,11 @@ const jsonLd = {
     </article>
 
     <div class="cta-box">
-      <h3>Want more like this?</h3>
-      <p>Practical tutorials on AI agents, automation, and chatbots — straight to your reader.</p>
+      <div>
+        <span class="fmt">DOC. CF-RSS-001 · FORMAT: XML</span>
+        <h3>Want more like this?</h3>
+        <p>Practical tutorials on AI agents, automation, and chatbots — straight to your reader.</p>
+      </div>
       <a class="btn" href="/rss.xml">Subscribe via RSS</a>
     </div>
   </div>

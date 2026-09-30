@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import { SITE } from "../config";
+---
+
+<BaseLayout
+  title="About"
+  description={`About ${SITE.name} — who writes these AI agent, automation, and chatbot tutorials and why.`}
+  canonicalPath="/about/"
+>
+  <div class="prose-wrap">
+    <section class="section">
+      <p class="breadcrumb"><a href="/">Home</a> / About</p>
+      <h1>About {SITE.name}</h1>
+      <p>
+        {SITE.name} is a hands-on blog about <strong>AI agents</strong>, <strong>workflow automation</strong>,
+        and <strong>chatbots</strong>. Every post is a practical guide — the kind you'd want open in a
+        second tab while you build.
+      </p>
+      <h2>What you'll find here</h2>
+      <ul>
+        <li><strong>Step-by-step tutorials</strong> — n8n, Make, MCP servers, RAG chatbots, agent frameworks. Screenshots-first, no fluff.</li>
+        <li><strong>Honest comparisons</strong> — real pricing math, real trade-offs. No sponsored rankings.</li>
+        <li><strong>Real builds</strong> — complete workflows and projects you can copy, not toy examples.</li>
+      </ul>
+      <h2>How this site makes money</h2>
+      <p>
+        Transparency matters: some posts contain affiliate links to tools we genuinely use and recommend.
+        If you buy through them, we may earn a commission at no extra cost to you. It keeps the tutorials free.
+      </p>
+      <h2>Get in touch</h2>
+      <p>
+        Questions, corrections, or a topic you'd like covered? Head to the
+        <a href="/contact/">contact page</a>.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

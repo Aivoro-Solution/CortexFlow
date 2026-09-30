@@ -1,0 +1,100 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import { SITE } from "../config";
+---
+
+<BaseLayout
+  title="Terms and Conditions"
+  description="Terms and Conditions for using CortexFlow — content use, affiliate disclosure, warranties, and liability."
+  canonicalPath="/terms/"
+>
+  <div class="prose-wrap">
+    <section class="section">
+      <p class="breadcrumb"><a href="/">Home</a> / Terms and Conditions</p>
+      <h1>Terms and Conditions</h1>
+      <p style="color: var(--muted);">Last updated: September 30, 2026</p>
+
+      <p>
+        By accessing <a href="https://cortexflow.tech">cortexflow.tech</a>
+        ("the Site"), you agree to these terms. If you don't agree, please
+        don't use the Site.
+      </p>
+
+      <h2>1. What this site is</h2>
+      <p>
+        CortexFlow publishes hands-on tutorials, guides, and comparisons about
+        AI agents, workflow automation, and chatbots. Everything here is
+        educational content — not professional, legal, financial, or security
+        advice.
+      </p>
+
+      <h2>2. Use the tutorials responsibly</h2>
+      <p>
+        Our guides include code, configurations, API keys handling, and
+        infrastructure steps. Software changes fast: a tutorial that worked
+        when published may need adjustments later. Always test in a safe
+        environment before using anything in production, keep backups, and never
+        paste secrets or credentials into places you don't control. You follow
+        these guides at your own risk.
+      </p>
+
+      <h2>3. Intellectual property</h2>
+      <p>
+        All articles, diagrams, and original graphics on this Site are the
+        property of CortexFlow unless stated otherwise. You're welcome to:
+      </p>
+      <ul>
+        <li>share links to our articles anywhere;</li>
+        <li>quote short excerpts with clear attribution and a link back.</li>
+      </ul>
+      <p>
+        Please don't republish full articles, scrape the Site's content at
+        scale, or present our work as your own.
+      </p>
+
+      <h2>4. Affiliate disclosure</h2>
+      <p>
+        Some links on this Site are affiliate links. If you buy through them,
+        we may earn a commission at no extra cost to you. This helps keep the
+        tutorials free. It doesn't influence our opinions — when a tool has
+        sharp edges, we say so, affiliate or not.
+      </p>
+
+      <h2>5. External links</h2>
+      <p>
+        We link to third-party tools, docs, and communities for your
+        convenience. We don't control those sites and aren't responsible for
+        their content, accuracy, or practices.
+      </p>
+
+      <h2>6. No warranties</h2>
+      <p>
+        The Site and its content are provided "as is", without warranties of
+        any kind — including accuracy, completeness, or fitness for a
+        particular purpose. We may update, correct, or remove content at any
+        time without notice.
+      </p>
+
+      <h2>7. Limitation of liability</h2>
+      <p>
+        To the maximum extent permitted by law, CortexFlow isn't liable for any
+        damages arising from your use of (or inability to use) the Site or its
+        content — including data loss, downtime, or costs from following a
+        tutorial.
+      </p>
+
+      <h2>8. Changes to these terms</h2>
+      <p>
+        We may revise these terms as the Site grows. Continued use of the Site
+        after changes means you accept the updated terms. The "Last updated"
+        date at the top always shows the current version.
+      </p>
+
+      <h2>9. Contact</h2>
+      <p>
+        Questions about these terms? Email us at
+        <a href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a>.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

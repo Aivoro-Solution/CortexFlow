@@ -42,17 +42,18 @@ const description =
         Tutorials, comparisons, and practical guides on AI agents, automation, and chatbots.
       </p>
 
-      <div class="card-grid">
+      <div class="post-index">
         {posts.map((post) => (
-          <article class="card">
-            <span class="kicker">{categoryName(post.data.category)}</span>
-            <h3><a href={postUrl(post)}>{post.data.title}</a></h3>
-            <p>{post.data.description}</p>
-            <div class="meta">
+          <a class="post-row" href={postUrl(post)}>
+            <span class="row-date">
               <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-              <span>·</span><span>{post.data.author}</span>
-            </div>
-          </article>
+            </span>
+            <span>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+              <span class="row-cat">{categoryName(post.data.category)}</span>
+            </span>
+          </a>
         ))}
       </div>
 

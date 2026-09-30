@@ -4,6 +4,7 @@ description: "Learn how to connect an MCP server to n8n using the MCP Client Too
 date: 2026-09-30
 category: automation
 tags: ["n8n", "MCP", "AI agents", "tutorial", "Model Context Protocol"]
+image: "/og/how-to-connect-mcp-server-n8n.webp"
 featured: true
 ---
 

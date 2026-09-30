@@ -25,21 +25,18 @@ export const CATEGORIES = [
     name: "AI Agents",
     description:
       "Build autonomous AI agents: frameworks, memory, tools, and real projects.",
-    icon: "🤖",
   },
   {
     slug: "automation",
     name: "Automation",
     description:
       "Workflow automation with n8n, Make, and Zapier — from first workflow to production.",
-    icon: "⚙️",
   },
   {
     slug: "chatbots",
     name: "Chatbots",
     description:
       "Chatbots and RAG: WhatsApp bots, website assistants, and conversational AI.",
-    icon: "💬",
   },
 ] as const;
 

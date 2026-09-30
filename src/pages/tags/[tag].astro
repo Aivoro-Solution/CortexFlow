@@ -26,18 +26,20 @@ const { tag, posts } = Astro.props;
   <section class="section">
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Tags</p>
-      <h1 style="margin: 0 0 2rem;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
-      <div class="post-index">
-        {posts.map((post) => (
-          <a class="post-row" href={`/blog/${post.id.replace(/\.md$/, "")}/`}>
-            <span class="row-date">
+      <p class="dwg-no">DWG NO. CF-TAG-{tag} · <b>REV D</b></p>
+      <h1 style="margin: 0 0 2rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
+      <div class="spec-list">
+        {posts.map((post, i) => (
+          <a class="spec" href={`/blog/${post.id.replace(/\.md$/, "")}/`}>
+            <span class="spec-no" aria-hidden="true">{String(i + 1).padStart(3, "0")}</span>
+            <span class="spec-body">
+              <h3 class="spec-title">{post.data.title}</h3>
+              <p class="spec-desc">{post.data.description}</p>
+            </span>
+            <span class="spec-tag">
               <time datetime={post.data.date.toISOString()}>
                 {post.data.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </time>
-            </span>
-            <span>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
             </span>
           </a>
         ))}

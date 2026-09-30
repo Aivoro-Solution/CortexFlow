@@ -3,6 +3,7 @@ import { render } from "astro:content";
 import BaseLayout from "../../components/BaseLayout.astro";
 import { SITE } from "../../config";
 import { getPublishedPosts, postUrl, formatDate, categoryName, slugify } from "../../lib/posts";
+import NewsletterForm from "../../components/NewsletterForm.astro";
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -83,6 +84,15 @@ const jsonLd = {
         <p>Practical tutorials on AI agents, automation, and chatbots — straight to your reader.</p>
       </div>
       <a class="btn" href="/rss.xml">Subscribe via RSS</a>
+    </div>
+
+    <div class="nl-box">
+      <div>
+        <p class="nl-kicker">Doc. CF-NL-001 · Dispatch</p>
+        <h3>Get the next build in your inbox</h3>
+        <p class="nl-sub">One practical email per new post. No spam, unsubscribe anytime.</p>
+      </div>
+      <NewsletterForm source="article" id="nl-post" />
     </div>
   </div>
 

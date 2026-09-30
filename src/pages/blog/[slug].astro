@@ -64,8 +64,9 @@ const jsonLd = {
     </header>
 
     {post.data.image && (
-      <figure class="post-hero">
+      <figure class="post-hero" data-lottie-slug={Astro.params.slug}>
         <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" />
+        <div class="lottie-hero" aria-hidden="true"></div>
       </figure>
     )}
 
@@ -79,4 +80,34 @@ const jsonLd = {
       <a class="btn" href="/rss.xml">Subscribe via RSS</a>
     </div>
   </div>
+
+  <script is:inline src="/js/lottie.min.js"></script>
+  <script is:inline>
+    (function () {
+      // Respect reduced motion: keep the static webp hero.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var figures = document.querySelectorAll("figure.post-hero[data-lottie-slug]");
+      if (!figures.length || typeof lottie === "undefined") return;
+      figures.forEach(function (fig) {
+        var slug = fig.getAttribute("data-lottie-slug");
+        var mount = fig.querySelector(".lottie-hero");
+        if (!slug || !mount) return;
+        fetch("/lottie/" + slug + ".json")
+          .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+          .then(function (data) {
+            var img = fig.querySelector("img");
+            lottie.loadAnimation({
+              container: mount,
+              renderer: "svg",
+              loop: true,
+              autoplay: true,
+              animationData: data,
+            });
+            mount.classList.add("is-playing");
+            if (img) img.style.display = "none";
+          })
+          .catch(function () { /* keep webp fallback */ });
+      });
+    })();
+  </script>
 </BaseLayout>

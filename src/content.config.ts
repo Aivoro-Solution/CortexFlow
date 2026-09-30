@@ -8,7 +8,7 @@ const posts = defineCollection({
     description: z.string().max(160, "Keep meta descriptions under 160 chars"),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    category: z.enum(["ai-agents", "automation", "chatbots"]),
+    category: z.enum(["ai-agents", "automation", "chatbots", "news"]),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     featured: z.boolean().default(false),

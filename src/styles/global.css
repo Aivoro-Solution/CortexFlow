@@ -24,6 +24,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+html, body { overflow-x: clip; }
 body {
   margin: 0;
   font-family: var(--font-body);
@@ -63,6 +64,39 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; letter-spac
 .nav a.active::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -2px;
   height: 2px; background: var(--signal); border-radius: 2px;
+}
+
+/* hamburger (mobile only) */
+.menu-btn {
+  display: none;
+  width: 44px; height: 44px;
+  background: transparent; border: 1px solid var(--line); border-radius: 10px;
+  cursor: pointer; align-items: center; justify-content: center;
+  flex-direction: column; gap: 5px; padding: 0;
+}
+.menu-btn span { display: block; width: 20px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
+.nav-open .menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-open .menu-btn span:nth-child(2) { opacity: 0; }
+.nav-open .menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 860px) {
+  .menu-btn { display: inline-flex; }
+  .site-header .wrap { height: 64px; }
+  .nav {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 20px 34px rgba(12, 12, 16, 0.1);
+    flex-direction: column; align-items: stretch; gap: 0;
+    padding: 0.4rem 1.5rem 0.9rem;
+    z-index: 60;
+  }
+  .nav-open .nav { display: flex; }
+  .nav a { padding: 0.85rem 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .nav a:last-child { border-bottom: none; }
+  .nav a.active::after { display: none; }
+  .nav a.active { color: var(--signal-deep); }
 }
 
 /* ---------- buttons ---------- */
@@ -115,14 +149,37 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; letter-spac
 /* workflow chain diagram */
 .chain { border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; background: rgba(255,255,255,0.025); padding: 1.25rem 1rem 0.75rem; overflow-x: auto; }
 .chain svg { display: block; min-width: 640px; width: 100%; height: auto; }
-.chain-caption { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.35rem 0.2rem; font-size: 0.8rem; color: #8E8E98; }
-.chain-caption .live { display: inline-flex; align-items: center; gap: 0.45rem; }
+.chain-caption { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.6rem 0.35rem 0.2rem; font-size: 0.8rem; color: #8E8E98; }
+.chain-caption .live { display: inline-flex; align-items: center; gap: 0.45rem; white-space: nowrap; flex-shrink: 0; }
 .chain-caption .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 .chain-draw { stroke-dasharray: 520; stroke-dashoffset: 520; animation: draw 1.4s ease forwards; }
 .chain-draw.d2 { animation-delay: 0.45s; }
 .chain-draw.d3 { animation-delay: 0.9s; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* vertical chain for small screens */
+.chain-vertical { display: none; list-style: none; margin: 0; padding: 0.25rem 0; }
+.chain-vertical li { display: flex; gap: 0.9rem; align-items: flex-start; padding: 0.6rem 0.25rem; position: relative; }
+.chain-vertical li::before {
+  content: ""; position: absolute; left: calc(0.25rem + 5px); top: 0; bottom: 0;
+  width: 2px; background: rgba(255, 77, 0, 0.35);
+}
+.chain-vertical li:first-child::before { top: 50%; }
+.chain-vertical li:last-child::before { bottom: 50%; }
+.chain-vertical .cv-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--signal); flex-shrink: 0; margin-top: 5px;
+  position: relative; z-index: 1;
+}
+.chain-vertical strong { display: block; color: #F4F4F1; font-size: 0.95rem; font-weight: 600; }
+.chain-vertical small { color: #8E8E98; font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .chain { overflow: visible; padding: 1rem 1rem 0.6rem; }
+  .chain > svg { display: none; }
+  .chain-vertical { display: block; }
+}
 @media (prefers-reduced-motion: reduce) {
   .chain-draw { animation: none; stroke-dashoffset: 0; }
   .chain-caption .live::before { animation: none; }

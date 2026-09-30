@@ -1,38 +1,46 @@
-# CortexFlow redesign — design notes (2026-09-30)
+# CortexFlow redesign — design notes (2026-09-30, REV D)
 
-## Concept: "The Workflow Canvas"
-Visual language drawn from node-based automation canvases (n8n-style dotted
-grid, connector lines, node glyphs) crossed with a precise lab notebook.
-Readers build workflows daily — the canvas IS their world, so the design
-speaks their vernacular instead of generic SaaS.
+## Concept: "Schematic"
+Visual language drawn from engineering drawings and spec sheets: white
+drawing sheets on a fine grid, 2px ink rules, mono annotations, corner
+registration ticks, title blocks, FIG. references, and one signal-orange
+accent used only where the eye should land. The reader is an engineer —
+the site looks like the documents engineers already trust.
+
+User picked concept C from three prepared options (A Editorial Ink,
+B Midnight Dispatch, C Schematic) on 2026-09-30.
 
 ## Tokens
-- --paper #FAFAF7 (page) / --paper-raised #FFFFFF
-- --ink #15151A (text) / --ink-deep #0C0C10 (dark bands, code)
-- --muted #5C5C66 / --faint #8B8B95 / --line #E8E8E0
-- --signal #FF4D00 (graphic accents only) / --signal-deep #B53A00 (text-safe) / --signal-soft #FFF1E8
+- --paper #FFFFFF / --wash #F4F5F7 (grid + fills) / --sheet-tint #FAFAF7
+- --ink #16181D (text, rules) / --muted #5B6470 / --faint #9AA2AE / --line #DDE1E7
+- --orange #FF4D00 (signal accents: hovers, markers, key lines)
+- --blue #3E5C82 (annotation blue: category/spec tags)
 
 ## Type
-- Display: Space Grotesk (headlines, wordmark, row titles)
-- Body: IBM Plex Sans (prose, UI)
-- Code: system mono stack (code only — never as decorative labels)
+- Display: Archivo 500–800 (headlines, wordmark, spec titles)
+- Body: Inter 400–600
+- Annotations + code: IBM Plex Mono (sheet numbers, meta, tags, captions)
 
-## Layout
-- Left-aligned everywhere; generous whitespace. No centered gradient hero.
-- Homepage: ink hero band with dotted grid + animated node chain
-  (trigger → agent → tools → output); editorial index rows for latest posts;
-  three category panels with custom line SVG icons; quiet RSS strip.
-- Post: refined measure (740px), ink code blocks, signal-ruled blockquotes.
-- Footer: ink band.
+## Signature elements (one bold thing, rest disciplined)
+- Homepage hero = engineering title block: corner ticks, DWG NO. CF-HOME-001,
+  meta column (Drawn / Checked / Subject / Status), footer strip
+  (TOLERANCE: ZERO FLUFF / UNITS: TUTORIALS / DO NOT SCALE DRAWING).
+- Article list = spec-sheet rows with part numbers (001…), dashed
+  category tags, hover = orange-soft wash.
+- Category cards = FIG. 001–004 engineering figures, hover lifts with
+  orange offset shadow (only playful moment on the page).
+- Article pages: DWG NO. line per post, mono byline, post-hero mounted in
+  a 2px "drawing sheet" frame with FIG. caption (Lottie animations and
+  webp fallbacks mount inside the same frame, unchanged behavior).
+- Footer: white, 2px ink top rule, mono annotations.
 
-## Principles
-- One memorable element: the animated node chain. Everything else quiet.
-- No card-kit, no gradient washes, no pill CTAs, no ALL-CAPS eyebrows,
-  no "A · B · C" meta strings, no arrows appended to links.
-- Motion: single load-draw of the chain connectors; prefers-reduced-motion
-  respected. No scroll fade-ups.
+## Motion
+- Minimal: hover states only (spec-row wash, track-card lift).
+- Lottie article heroes unchanged (4s slow loops, reduced-motion → webp).
+- prefers-reduced-motion respected globally.
 
-## Deliberate deviations from the skill's tell-list (all brief-grounded)
-- Monospace used for code only (a code-tutorial blog — authentic, not chrome).
-- Hairline rules used in the post index (an index, not a newspaper pastiche).
-- Dotted grid (direct quote of the n8n canvas, the subject's own medium).
+## Identity (unchanged)
+- Logo: C · Orbit C (open C ring + orange signal dot).
+- Article OG/webp heroes: Workflow Canvas style (paper/ink/orange, no text)
+  — blends with the white schematic sheets; kept as-is.
+- Favicon + og-default.svg regenerated in schematic style.

@@ -38,6 +38,12 @@ export const CATEGORIES = [
     description:
       "Chatbots and RAG: WhatsApp bots, website assistants, and conversational AI.",
   },
+  {
+    slug: "news",
+    name: "News",
+    description:
+      "AI and automation news: launches, shutdowns, and industry moves that matter.",
+  },
 ] as const;
 
 export type CategorySlug = (typeof CATEGORIES)[number]["slug"];

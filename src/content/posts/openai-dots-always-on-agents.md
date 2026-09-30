@@ -9,7 +9,6 @@ draft: false
 featured: false
 ---
 
-# OpenAI Dots: Always-On AI Agents That Keep Working After You Log Off
 
 OpenAI used its DevDay conference on September 29, 2026 to launch Dots: always-on AI agents that each get their own cloud computer and web browser, run on the new GPT-6 Astra model, and keep working toward your goals after you close the laptop. This matters because it moves the industry's default product shape from a chatbot that waits for prompts to a worker you leave running. Below are the confirmed facts, how OpenAI says the safety guardrails work, and what the launch means if you build agents or automations yourself.
 

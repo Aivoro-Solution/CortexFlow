@@ -9,7 +9,6 @@ draft: false
 featured: false
 ---
 
-# n8n 3.0 Breaking Changes: What to Fix Before You Upgrade
 
 n8n 3.0 arrives in October 2026, and it is the most disruptive n8n upgrade in years: legacy nodes get deleted, `npm` installs stop working, and several security defaults get tightened. Upgrade blindly and workflows will fail on first boot. By the end of this guide you will have a complete checklist of every confirmed breaking change and the exact fix for each — so you upgrade on your schedule instead of firefighting on n8n's.
 

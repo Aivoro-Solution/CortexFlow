@@ -4,6 +4,7 @@ description: "MongoDB launched Atlas Agent Engine, a unified memory and governan
 date: 2026-09-30
 category: news
 tags: ["MongoDB", "AI agents", "agent memory", "RAG"]
+image: "/og/mongodb-atlas-agent-engine.webp"
 draft: false
 featured: false
 ---

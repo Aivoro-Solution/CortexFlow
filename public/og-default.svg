@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef0ff"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(120,235)">
+    <rect width="160" height="160" rx="36" fill="#4f46e5"/>
+    <path d="M92 30 L48 92 h27 L68 130 L112 68 H84 Z" fill="#fff"/>
+  </g>
+  <text x="320" y="300" font-family="Arial, sans-serif" font-size="96" font-weight="800" fill="#1a1d23">AgentCraft</text>
+  <text x="320" y="370" font-family="Arial, sans-serif" font-size="40" fill="#5b6472">AI agents · Automation · Chatbots</text>
+</svg>

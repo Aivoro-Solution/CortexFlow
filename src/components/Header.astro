@@ -2,8 +2,14 @@
 import { SITE, CATEGORIES } from "../config";
 const path = Astro.url.pathname;
 const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/blog/", label: "Blog" },
+  ...CATEGORIES.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name })),
+  { href: "/about/", label: "About" },
+];
 ---
-<header class="site-header">
+<header class="site-header" id="siteHeader">
   <div class="wrap">
     <a class="logo" href="/" aria-label={`${SITE.name} home`}>
       <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -14,15 +20,35 @@ const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWit
       </svg>
       {SITE.name}
     </a>
-    <nav class="nav" aria-label="Main navigation">
-      <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
-      <a href="/blog/" class={isActive("/blog") ? "active" : ""}>Blog</a>
-      {CATEGORIES.map((c) => (
-        <a href={`/categories/${c.slug}/`} class={isActive(`/categories/${c.slug}`) ? "active" : ""}>
-          {c.name}
+    <button class="menu-btn" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" id="mobileNav" aria-label="Main navigation">
+      {links.map((l) => (
+        <a href={l.href} class={isActive(l.href) ? "active" : ""} {...(isActive(l.href) ? { "aria-current": "page" } : {})}>
+          {l.label}
         </a>
       ))}
-      <a href="/about/" class={isActive("/about") ? "active" : ""}>About</a>
     </nav>
   </div>
 </header>
+<script>
+  const header = document.getElementById("siteHeader");
+  const btn = header.querySelector(".menu-btn");
+  const nav = document.getElementById("mobileNav");
+  const setOpen = (open) => {
+    header.classList.toggle("nav-open", open);
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  };
+  btn.addEventListener("click", () => setOpen(!header.classList.contains("nav-open")));
+  nav.addEventListener("click", (e) => {
+    if (e.target.closest("a")) setOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && header.classList.contains("nav-open")) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+</script>

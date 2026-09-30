@@ -1,15 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#eef0ff"/>
-      <stop offset="1" stop-color="#ffffff"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <g transform="translate(120,235)">
-    <rect width="160" height="160" rx="36" fill="#4f46e5"/>
-    <path d="M92 30 L48 92 h27 L68 130 L112 68 H84 Z" fill="#fff"/>
+  <rect width="1200" height="630" fill="#0C0C10"/>
+  <g fill="#FFFFFF" opacity="0.13">
+    <circle cx="60" cy="60" r="2"/><circle cx="120" cy="60" r="2"/><circle cx="180" cy="60" r="2"/><circle cx="240" cy="60" r="2"/><circle cx="300" cy="60" r="2"/><circle cx="360" cy="60" r="2"/><circle cx="420" cy="60" r="2"/><circle cx="480" cy="60" r="2"/><circle cx="540" cy="60" r="2"/><circle cx="600" cy="60" r="2"/><circle cx="660" cy="60" r="2"/><circle cx="720" cy="60" r="2"/><circle cx="780" cy="60" r="2"/><circle cx="840" cy="60" r="2"/><circle cx="900" cy="60" r="2"/><circle cx="960" cy="60" r="2"/><circle cx="1020" cy="60" r="2"/><circle cx="1080" cy="60" r="2"/><circle cx="1140" cy="60" r="2"/>
+    <circle cx="60" cy="130" r="2"/><circle cx="120" cy="130" r="2"/><circle cx="180" cy="130" r="2"/><circle cx="240" cy="130" r="2"/><circle cx="300" cy="130" r="2"/><circle cx="360" cy="130" r="2"/><circle cx="420" cy="130" r="2"/><circle cx="480" cy="130" r="2"/><circle cx="540" cy="130" r="2"/><circle cx="600" cy="130" r="2"/><circle cx="660" cy="130" r="2"/><circle cx="720" cy="130" r="2"/><circle cx="780" cy="130" r="2"/><circle cx="840" cy="130" r="2"/><circle cx="900" cy="130" r="2"/><circle cx="960" cy="130" r="2"/><circle cx="1020" cy="130" r="2"/><circle cx="1080" cy="130" r="2"/><circle cx="1140" cy="130" r="2"/>
+    <circle cx="60" cy="500" r="2"/><circle cx="120" cy="500" r="2"/><circle cx="180" cy="500" r="2"/><circle cx="240" cy="500" r="2"/><circle cx="300" cy="500" r="2"/><circle cx="360" cy="500" r="2"/><circle cx="420" cy="500" r="2"/><circle cx="480" cy="500" r="2"/><circle cx="540" cy="500" r="2"/><circle cx="600" cy="500" r="2"/><circle cx="660" cy="500" r="2"/><circle cx="720" cy="500" r="2"/><circle cx="780" cy="500" r="2"/><circle cx="840" cy="500" r="2"/><circle cx="900" cy="500" r="2"/><circle cx="960" cy="500" r="2"/><circle cx="1020" cy="500" r="2"/><circle cx="1080" cy="500" r="2"/><circle cx="1140" cy="500" r="2"/>
+    <circle cx="60" cy="570" r="2"/><circle cx="120" cy="570" r="2"/><circle cx="180" cy="570" r="2"/><circle cx="240" cy="570" r="2"/><circle cx="300" cy="570" r="2"/><circle cx="360" cy="570" r="2"/><circle cx="420" cy="570" r="2"/><circle cx="480" cy="570" r="2"/><circle cx="540" cy="570" r="2"/><circle cx="600" cy="570" r="2"/><circle cx="660" cy="570" r="2"/><circle cx="720" cy="570" r="2"/><circle cx="780" cy="570" r="2"/><circle cx="840" cy="570" r="2"/><circle cx="900" cy="570" r="2"/><circle cx="960" cy="570" r="2"/><circle cx="1020" cy="570" r="2"/><circle cx="1080" cy="570" r="2"/><circle cx="1140" cy="570" r="2"/>
   </g>
-  <text x="320" y="300" font-family="Arial, sans-serif" font-size="96" font-weight="800" fill="#1a1d23">AgentCraft</text>
-  <text x="320" y="370" font-family="Arial, sans-serif" font-size="40" fill="#5b6472">AI agents · Automation · Chatbots</text>
+  <g transform="translate(110,225)">
+    <rect width="180" height="180" rx="40" fill="#16161C" stroke="#2C2C36" stroke-width="3"/>
+    <path d="M52 90h26M102 90h26" stroke="#F4F4F1" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="38" cy="90" r="20" fill="#FF4D00"/>
+    <rect x="76" y="64" width="52" height="52" rx="14" stroke="#F4F4F1" stroke-width="8"/>
+    <circle cx="142" cy="90" r="20" stroke="#F4F4F1" stroke-width="8"/>
+  </g>
+  <text x="340" y="300" font-family="Arial, sans-serif" font-size="104" font-weight="800" fill="#FFFFFF">CortexFlow</text>
+  <text x="344" y="368" font-family="Arial, sans-serif" font-size="42" fill="#B9B9C2">AI agents · Automation · Chatbots</text>
+  <rect x="344" y="400" width="72" height="10" rx="5" fill="#FF4D00"/>
 </svg>

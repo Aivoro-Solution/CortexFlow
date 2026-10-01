@@ -1,46 +1,56 @@
-# CortexFlow redesign — design notes (2026-09-30, REV D)
+# CortexFlow redesign — design notes (2026-10-01, BRUTAL)
 
-## Concept: "Schematic"
-Visual language drawn from engineering drawings and spec sheets: white
-drawing sheets on a fine grid, 2px ink rules, mono annotations, corner
-registration ticks, title blocks, FIG. references, and one signal-orange
-accent used only where the eye should land. The reader is an engineer —
-the site looks like the documents engineers already trust.
+## Concept: "D · Brutal" (neo-brutalism)
+Lalit rejected the Schematic/REV D engineering look on 2026-10-01 ("mujhe
+website ka user interface pasand nahi aa raha") and picked **D · Brutal**
+from six prepared concepts (A Terminal, B Studio, C Bento, D Brutal,
+E Mono, F Ember). Concept reference: `tools/redesign-concepts-v2/concepts.html`
+(`#concept-d`).
 
-User picked concept C from three prepared options (A Editorial Ink,
-B Midnight Dispatch, C Schematic) on 2026-09-30.
+Visual language: loud, raw, confident. Cream paper, everything boxed in
+3px ink borders with hard offset shadows, giant Archivo Black headlines,
+rotated sticker badges, primary accents (orange/yellow/blue) doing the
+heavy lifting. No gradients, no glassmorphism, no soft shadows, radius
+0–2px everywhere.
 
 ## Tokens
-- --paper #FFFFFF / --wash #F4F5F7 (grid + fills) / --sheet-tint #FAFAF7
-- --ink #16181D (text, rules) / --muted #5B6470 / --faint #9AA2AE / --line #DDE1E7
-- --orange #FF4D00 (signal accents: hovers, markers, key lines)
-- --blue #3E5C82 (annotation blue: category/spec tags)
+- --cream #FFFDF5 (page bg) / --paper #FFFFFF (cards) / --wash #F4F1E6
+- --ink #111111 (text, borders, shadows)
+- --orange #FF4D00 (primary CTAs, starburst) / --yellow #FFD02F (highlights, stickers, step 1) / --blue #2F6BFF (stickers, step 3, blog strip)
+- --muted #4A4A44 / --faint #8A8778 (secondary text only)
 
 ## Type
-- Display: Archivo 500–800 (headlines, wordmark, spec titles)
-- Body: Inter 400–600
-- Annotations + code: IBM Plex Mono (sheet numbers, meta, tags, captions)
+- Display: Archivo Black (headlines, wordmark, buttons, stickers) — always
+  uppercase for hero/section titles
+- Body: Archivo (headlines fallback) / Inter 400–600
+- Labels: IBM Plex Mono (kickers, meta, tags, captions, breadcrumbs)
 
-## Signature elements (one bold thing, rest disciplined)
-- Homepage hero = engineering title block: corner ticks, DWG NO. CF-HOME-001,
-  meta column (Drawn / Checked / Subject / Status), footer strip
-  (TOLERANCE: ZERO FLUFF / UNITS: TUTORIALS / DO NOT SCALE DRAWING).
-- Article list = spec-sheet rows with part numbers (001…), dashed
-  category tags, hover = orange-soft wash.
-- Category cards = FIG. 001–004 engineering figures, hover lifts with
-  orange offset shadow (only playful moment on the page).
-- Article pages: DWG NO. line per post, mono byline, post-hero mounted in
-  a 2px "drawing sheet" frame with FIG. caption (Lottie animations and
-  webp fallbacks mount inside the same frame, unchanged behavior).
-- Footer: white, 2px ink top rule, mono annotations.
+## Signature elements
+- Header: sticky, logo as yellow sticker box (Orbit C mark kept), nav
+  links as bordered buttons, active = orange.
+- Homepage hero: giant Archivo Black headline with `.hl-y` (yellow) and
+  `.hl-o` (orange) rotated highlight boxes; rotated stickers "100% FREE!"
+  and "★ New drop" (hidden on mobile); chunky CTA buttons with press-down
+  `:active` (translate 4px, shadow to 0).
+- Template cards: 2-col `.tpl-grid` panels, LIVE starburst (CSS clip-path)
+  on featured template, `tpl-tag` chips (yellow LIVE / blue difficulty /
+  dashed ghost), orange `↓ JSON` download button.
+- How-it-works: 3 `.step` panels — yellow / white / blue.
+- Blog strip: blue `.rss-strip` panel with white text, yellow kicker.
+- Blog home: category `.track` cards cycle yellow/white/blue/orange;
+  post rows = `.spec` panels with yellow number cell.
+- Article pages: kicker chip (yellow sticker), brutalist title, 3px framed
+  post-hero (animated SVG / Lottie / webp logic untouched, selectors
+  unchanged), orange-square h2 markers, yellow blockquotes, 3px table/code
+  frames, black footer.
+- Footer: solid black (`--ink`) with cream text, yellow highlights, yellow
+  newsletter strip on top.
 
 ## Motion
-- Minimal: hover states only (spec-row wash, track-card lift).
-- Lottie article heroes unchanged (4s slow loops, reduced-motion → webp).
-- prefers-reduced-motion respected globally.
+- Minimal: hover lifts (translate -2px, shadow grows), button press
+  effect. prefers-reduced-motion respected globally.
 
-## Identity (unchanged)
-- Logo: C · Orbit C (open C ring + orange signal dot).
-- Article OG/webp heroes: Workflow Canvas style (paper/ink/orange, no text)
-  — blends with the white schematic sheets; kept as-is.
-- Favicon + og-default.svg regenerated in schematic style.
+## Preserved (untouched by redesign)
+- All URLs/slugs/routing, JSON-LD, canonical tags, meta descriptions,
+  sitemap/RSS generation, GA + AdSense snippets, newsletter JS + KV flow,
+  article hero system (animated SVG SMIL / Lottie / webp), hello@cortexflow.tech.

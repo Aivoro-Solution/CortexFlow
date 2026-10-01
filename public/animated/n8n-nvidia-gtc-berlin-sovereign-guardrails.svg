@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: agent nodes inside a guarded perimeter with an approval checkpoint">
+  <defs>
+    <pattern id="ggrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E4E4E4" stroke-width="1"/>
+    </pattern>
+    <pattern id="ggridmajor" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#D2D2D2" stroke-width="1"/>
+    </pattern>
+    <path id="orbitPath" d="M 400 45 A 180 180 0 1 1 399.9 45" fill="none"/>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#ggrid)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#ggridmajor)"/>
+
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M18 52 V18 H52 M748 18 H782 V52 M782 398 V432 H748 M52 432 H18 V398"/>
+  </g>
+
+  <!-- guardrail perimeter: dashed circle with slowly marching dashes -->
+  <circle cx="400" cy="225" r="180" fill="none" stroke="#111111" stroke-width="2.5" stroke-dasharray="16 12">
+    <animate attributeName="stroke-dashoffset" from="0" to="-56" dur="12s" repeatCount="indefinite"/>
+  </circle>
+  <!-- slow rotating dashed arc to suggest a scanning boundary -->
+  <g>
+    <path d="M 400 45 A 180 180 0 0 1 580 225" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 18" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="36s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- agent nodes clustered inside the perimeter -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <circle cx="340" cy="180" r="16"/>
+    <circle cx="390" cy="160" r="16"/>
+    <circle cx="440" cy="185" r="16"/>
+    <circle cx="360" cy="230" r="16"/>
+    <circle cx="415" cy="235" r="16"/>
+    <circle cx="465" cy="225" r="16"/>
+    <circle cx="385" cy="280" r="16"/>
+    <circle cx="440" cy="285" r="16"/>
+  </g>
+
+  <!-- checkpoint gate on the perimeter (east side): channel + pulsing approval ring -->
+  <g>
+    <rect x="560" y="205" width="90" height="40" fill="none" stroke="#FF4D00" stroke-width="2.5"/>
+    <circle cx="650" cy="225" r="26" fill="none" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="r" values="26;34;26" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.4;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- one orange agent node slowly orbiting the perimeter (the watched agent) -->
+  <g fill="#FF4D00">
+    <circle r="10"><animateMotion dur="32s" repeatCount="indefinite" begin="0s"><mpath href="#orbitPath"/></animateMotion></circle>
+  </g>
+
+  <!-- constraint spokes from center to perimeter, static thin ink -->
+  <g stroke="#111111" stroke-width="1" opacity="0.5">
+    <path d="M 400 225 L 400 45"/>
+    <path d="M 400 225 L 527 98"/>
+    <path d="M 400 225 L 580 225"/>
+    <path d="M 400 225 L 527 352"/>
+    <path d="M 400 225 L 400 405"/>
+    <path d="M 400 225 L 273 352"/>
+    <path d="M 400 225 L 220 225"/>
+    <path d="M 400 225 L 273 98"/>
+  </g>
+</svg>

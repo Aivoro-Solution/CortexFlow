@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: jobs flowing from a main instance through a queue into workers">
+  <defs>
+    <pattern id="qgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E4E4E4" stroke-width="1"/>
+    </pattern>
+    <pattern id="qgridmajor" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#D2D2D2" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#qgrid)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#qgridmajor)"/>
+
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M18 52 V18 H52 M748 18 H782 V52 M782 398 V432 H748 M52 432 H18 V398"/>
+  </g>
+
+  <!-- flow paths (invisible, for motion) -->
+  <defs>
+    <path id="flowA" d="M 210 170 L 330 170 L 330 225 L 620 225" fill="none"/>
+    <path id="flowB" d="M 210 225 L 330 225 L 330 225 L 620 225" fill="none"/>
+    <path id="flowC" d="M 210 280 L 330 280 L 330 225 L 620 225" fill="none"/>
+    <path id="lane1" d="M 455 190 L 560 130 L 640 130" fill="none"/>
+    <path id="lane2" d="M 455 225 L 640 225" fill="none"/>
+    <path id="lane3" d="M 455 260 L 560 320 L 640 320" fill="none"/>
+  </defs>
+
+  <!-- dashed connector lines with slow marching dashes -->
+  <g stroke="#111111" stroke-width="2" fill="none">
+    <path d="M 210 170 L 330 170" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="0" to="-36" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 210 280 L 330 280" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="0" to="-36" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 560 190 L 470 225 L 560 260 M 470 225 L 640 225" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="0" to="-36" dur="9s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- main instance block -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <rect x="60" y="150" width="150" height="150"/>
+    <rect x="70" y="160" width="130" height="130"/>
+  </g>
+  <circle cx="135" cy="225" r="7" fill="none" stroke="#111111" stroke-width="2">
+    <animate attributeName="r" values="7;11;7" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- queue buffer: three layered bars -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <rect x="330" y="180" width="140" height="28"/>
+    <rect x="330" y="211" width="140" height="28"/>
+    <rect x="330" y="242" width="140" height="28"/>
+  </g>
+
+  <!-- workers -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <rect x="640" y="90" width="110" height="80"/>
+    <rect x="640" y="185" width="110" height="80"/>
+    <rect x="640" y="280" width="110" height="80"/>
+  </g>
+  <!-- slow orbiting ring around middle worker -->
+  <g>
+    <circle cx="695" cy="225" r="62" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="26 14">
+      <animateTransform attributeName="transform" type="rotate" from="0 695 225" to="360 695 225" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- orange job dots traveling main -> queue -> workers -->
+  <g fill="#FF4D00">
+    <circle r="7"><animateMotion dur="10s" repeatCount="indefinite" begin="0s"><mpath href="#flowA"/></animateMotion></circle>
+    <circle r="7"><animateMotion dur="10s" repeatCount="indefinite" begin="-3.3s"><mpath href="#flowB"/></animateMotion></circle>
+    <circle r="7"><animateMotion dur="10s" repeatCount="indefinite" begin="-6.6s"><mpath href="#flowC"/></animateMotion></circle>
+    <circle r="6"><animateMotion dur="8s" repeatCount="indefinite" begin="-2s"><mpath href="#lane1"/></animateMotion></circle>
+    <circle r="6"><animateMotion dur="8s" repeatCount="indefinite" begin="-5s"><mpath href="#lane2"/></animateMotion></circle>
+    <circle r="6"><animateMotion dur="8s" repeatCount="indefinite" begin="-7s"><mpath href="#lane3"/></animateMotion></circle>
+  </g>
+</svg>

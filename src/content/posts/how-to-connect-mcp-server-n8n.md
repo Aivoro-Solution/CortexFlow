@@ -14,6 +14,11 @@ In this guide, you'll learn exactly how to connect an MCP server to n8n using th
 
 ## What You'll Need
 
+<figure class="shot">
+  <img src="/screenshots/how-to-connect-mcp-server-n8n/dashboard-first-run.webp" alt="n8n home screen on first run showing Build an agent and Build a workflow options" width="1440" height="900" loading="lazy" />
+  <figcaption>n8n's home screen on a fresh install. If you see this, your instance is ready.</figcaption>
+</figure>
+
 Before we start, make sure you have:
 
 - **n8n version 1.60 or later** (the MCP Client Tool node shipped in late 2024 and improved steadily since). Self-hosted or n8n Cloud both work.
@@ -23,6 +28,11 @@ Before we start, make sure you have:
 > **New to MCP?** The Model Context Protocol is an open standard (originally from Anthropic, now stewarded under the Linux Foundation's Agentic AI Foundation) that lets AI applications connect to external tools in a uniform way. Think of it like USB for AI tools: one plug, many devices.
 
 ## Step 1: Add an AI Agent Node to Your Workflow
+
+<figure class="shot">
+  <img src="/screenshots/how-to-connect-mcp-server-n8n/canvas-empty.webp" alt="Empty n8n workflow canvas with the Add first step placeholder" width="1440" height="900" loading="lazy" />
+  <figcaption>A fresh n8n workflow canvas. Click <strong>Add first step</strong> to open the node picker.</figcaption>
+</figure>
 
 The MCP Client Tool is a *tool* node — it doesn't run on its own. It must be connected to an agent that can call it.
 

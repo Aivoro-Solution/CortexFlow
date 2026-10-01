@@ -28,7 +28,11 @@ const year = new Date().getFullYear();
         <p><a class="email" href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a></p>
       </div>
       <div>
-        <h4>Topics</h4>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="/templates/">n8n Templates</a></li>
+        </ul>
+        <h4 style="margin-top: 1.2rem;">Topics</h4>
         <ul>
           {CATEGORIES.map((c) => (
             <li><a href={`/categories/${c.slug}/`}>{c.name}</a></li>

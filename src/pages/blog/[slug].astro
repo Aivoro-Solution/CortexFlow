@@ -4,6 +4,8 @@ import BaseLayout from "../../components/BaseLayout.astro";
 import { SITE } from "../../config";
 import { getPublishedPosts, postUrl, formatDate, categoryName, slugify } from "../../lib/posts";
 import NewsletterForm from "../../components/NewsletterForm.astro";
+import fs from "node:fs";
+import path from "node:path";
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -16,6 +18,16 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const url = postUrl(post);
+const slug = post.id.replace(/\.md$/, "");
+
+// Code-written animated SVG hero (current system): public/animated/<slug>.svg
+// autoplay + loop via SMIL, inlined so reduced-motion can pause it.
+let animatedSvg = null;
+try {
+  animatedSvg = fs.readFileSync(path.join(process.cwd(), "public", "animated", `${slug}.svg`), "utf8");
+} catch {
+  animatedSvg = null;
+}
 
 // JSON-LD Article schema for rich results
 const jsonLd = {
@@ -67,8 +79,12 @@ const jsonLd = {
 
     {post.data.image && (
       <figure class="post-hero" data-lottie-slug={Astro.params.slug}>
-        <div class="lottie-hero" aria-hidden="true"></div>
-        <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" />
+        {animatedSvg ? (
+          <div class="anim-hero" aria-hidden="true" set:html={animatedSvg} />
+        ) : (
+          <div class="lottie-hero" aria-hidden="true"></div>
+        )}
+        <img src={post.data.image} alt={post.data.title} loading="eager" fetchpriority="high" style={animatedSvg ? "display:none" : undefined} />
         <figcaption class="sheet-cap"><span>FIG. 01 — {post.data.title}</span><span>SCALE 16:9</span></figcaption>
       </figure>
     )}
@@ -99,8 +115,18 @@ const jsonLd = {
   <script is:inline src="/js/lottie.min.js"></script>
   <script is:inline>
     (function () {
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // Code-written animated SVG heroes: pause SMIL + fall back to static webp.
+      document.querySelectorAll(".anim-hero").forEach(function (el) {
+        if (!reduceMotion) return;
+        var svg = el.querySelector("svg");
+        if (svg && svg.pauseAnimations) { try { svg.pauseAnimations(); } catch (e) {} }
+        el.style.display = "none";
+        var img = el.closest("figure").querySelector("img");
+        if (img) img.style.display = "";
+      });
       // Respect reduced motion: keep the static webp hero.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (reduceMotion) return;
       var figures = document.querySelectorAll("figure.post-hero[data-lottie-slug]");
       if (!figures.length || typeof lottie === "undefined") return;
       figures.forEach(function (fig) {

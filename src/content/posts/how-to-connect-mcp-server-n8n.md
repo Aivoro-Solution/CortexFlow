@@ -1,5 +1,5 @@
 ---
-title: "How to Connect an MCP Server to n8n (Step-by-Step Guide)"
+title: "Connect MCP Server to n8n: Step-by-Step"
 description: "Learn how to connect an MCP server to n8n using the MCP Client Tool node. Covers SSE vs Streamable HTTP, OAuth troubleshooting, and a working example."
 date: 2026-09-30
 category: automation

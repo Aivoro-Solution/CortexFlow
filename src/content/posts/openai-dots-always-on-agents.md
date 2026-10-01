@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Dots: Always-On AI Agents That Keep Working After You Log Off"
+title: "OpenAI Dots: Always-On AI Agents Explained"
 description: "OpenAI launched Dots, always-on AI agents with their own cloud computer, at DevDay 2026. Key facts, guardrails, and what agent builders should take from it."
 date: 2026-09-30
 category: news

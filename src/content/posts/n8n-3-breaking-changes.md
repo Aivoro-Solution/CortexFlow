@@ -1,5 +1,5 @@
 ---
-title: "n8n 3.0 Breaking Changes: What to Fix Before You Upgrade"
+title: "n8n 3.0 Breaking Changes: What to Fix"
 description: "n8n 3.0 lands October 2026: removed nodes, mandatory Docker, tighter defaults. Complete breaking-changes checklist inside."
 date: 2026-10-01
 category: automation

@@ -1,0 +1,73 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE, CATEGORIES } from "../../config";
+import { categoryName, formatDate } from "../../lib/posts";
+
+const templates = (await getCollection("templates", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const difficultyLabel: Record<string, string> = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+};
+---
+
+<BaseLayout
+  title="n8n Workflow Templates"
+  description="Ready-to-import n8n workflow templates — AI agents, chatbots, and automations you can download and use in minutes."
+  canonicalPath="/templates/"
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> / Templates</p>
+      <p class="dwg-no">DWG NO. CF-TPL-001 · <b>REV D</b></p>
+      <p class="post-kicker">FIG. 001</p>
+      <h1 style="margin: 0 0 .75rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">n8n Workflow Templates</h1>
+      <p style="color: var(--muted); margin: 0 0 2rem; max-width: 70ch;">
+        Production-ready n8n workflows built from real demand — download the JSON, import it in n8n,
+        add your credentials, and you're running. Free forever.
+      </p>
+
+      {templates.length > 0 ? (
+        <div class="spec-list">
+          {templates.map((t, i) => (
+            <a class="spec" href={`/templates/${t.id.replace(/\.md$/, "")}/`}>
+              <span class="spec-no" aria-hidden="true">{String(i + 1).padStart(3, "0")}</span>
+              <span class="spec-body">
+                <h3 class="spec-title">{t.data.title}</h3>
+                <p class="spec-desc">{t.data.description}</p>
+                <p class="spec-meta">
+                  <span class="spec-taglike">{difficultyLabel[t.data.difficulty]}</span>
+                  <span class="spec-taglike">{categoryName(t.data.category)}</span>
+                  {t.data.integrations.map((n) => (
+                    <span class="spec-taglike spec-taglike--ghost">{n}</span>
+                  ))}
+                </p>
+              </span>
+              <span class="spec-tag">Download ↓</span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>No templates yet — check back soon.</p>
+      )}
+
+      <p style="color: var(--muted); margin-top: 2.5rem; font-size: 0.9rem;">
+        Want a template for a specific workflow? <a href="/contact/">Tell us</a> — we build what readers ask for.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .spec-meta { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.7rem 0 0; }
+  .spec-taglike {
+    font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid var(--ink); border-radius: 999px; padding: 0.22rem 0.7rem;
+    color: var(--ink); background: #fff;
+  }
+  .spec-taglike--ghost { border-style: dashed; color: var(--muted); border-color: var(--muted); }
+</style>

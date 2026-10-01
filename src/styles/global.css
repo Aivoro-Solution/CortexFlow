@@ -554,5 +554,8 @@ figure.shot img { display: block; width: 100%; height: auto; border: 3px solid v
 }
 .tpl-download__btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); color: #fff; }
 .tpl-download__btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+/* prose link rules must not override the download button text */
+.prose .tpl-download__btn, .post .tpl-download__btn { color: #fff; text-decoration: none; }
+.prose .tpl-download__btn:hover, .post .tpl-download__btn:hover { color: #fff; }
 .tpl-download__hint { margin: 0; font-size: 0.9rem; font-weight: 600; flex: 1 1 16rem; }
 .tpl-download--bottom { margin: 2.5rem 0 0; }

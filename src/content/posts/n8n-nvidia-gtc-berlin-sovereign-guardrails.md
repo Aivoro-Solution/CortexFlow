@@ -1,5 +1,5 @@
 ---
-title: "n8n at NVIDIA GTC Berlin: Sovereign Guardrails for AI Agents"
+title: "n8n at NVIDIA GTC Berlin: AI Guardrails"
 description: "n8n's Claire Knight speaks at NVIDIA GTC Berlin on Oct 20 about sovereign guardrails for AI agents, plus a hands-on NemoClaw sandbox lab on Oct 22."
 date: 2026-10-01
 category: news

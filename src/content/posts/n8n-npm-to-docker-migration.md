@@ -1,5 +1,5 @@
 ---
-title: "From npm to Docker: Migrating Your Self-Hosted n8n Before 3.0"
+title: "Migrate n8n from npm to Docker Before 3.0"
 description: "n8n 3.0 kills npm installs. Migrate your self-hosted n8n to Docker Compose without losing credentials, workflows, or execution history — step by step."
 date: 2026-10-01
 category: automation

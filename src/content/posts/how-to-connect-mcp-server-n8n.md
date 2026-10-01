@@ -47,6 +47,11 @@ The MCP Client Tool is a *tool* node — it doesn't run on its own. It must be c
 2. Search for **"MCP Client Tool"** and add it.
 3. You'll see a configuration panel with two key settings: **MCP Server URL** and the transport/authentication options.
 
+<figure class="shot">
+  <img src="/screenshots/how-to-connect-mcp-server-n8n/mcp-client-config.webp" alt="n8n MCP Client Tool configuration panel showing Endpoint, Server Transport set to HTTP Streamable, Authentication set to None, and Tools to Include set to All" width="508" height="940" loading="lazy" />
+  <figcaption>The MCP Client Tool panel: <strong>Endpoint</strong> takes your server URL, <strong>Server Transport</strong> picks the protocol (Streamable HTTP is the modern default), and <strong>Authentication</strong> starts at <em>None</em> for local testing.</figcaption>
+</figure>
+
 This is where most people get stuck, so let's slow down and get it right.
 
 <figure class="shot">

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="gridf3" width="6" height="6" patternUnits="userSpaceOnUse">
+      <path d="M6 0H0V6" fill="none" stroke="#111111" stroke-width="0.35" opacity="0.07"/>
+    </pattern>
+    <pattern id="grid3" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#ffffff"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#gridf3)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid3)"/>
+  <!-- drawing sheet frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="2"/>
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M14 44 V14 H44"/><path d="M756 14 H786 V44"/>
+    <path d="M786 406 V436 H756"/><path d="M44 436 H14 V406"/>
+  </g>
+
+  <!-- slow rotating dashed orbit rings -->
+  <circle cx="400" cy="225" r="170" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="12 10" opacity="0.5">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="75s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="225" r="110" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="4 8" opacity="0.45">
+    <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="55s" repeatCount="indefinite"/>
+  </circle>
+  <!-- slow broadcast wave from the keynote node -->
+  <circle cx="400" cy="225" r="40" fill="none" stroke="#FF4D00" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="40;165" dur="14s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.55;0" dur="14s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- orbiting announcement nodes on the outer ring, slow drift -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+    <!-- spokes -->
+    <g stroke="#111111" stroke-width="1.25" opacity="0.7">
+      <line x1="400" y1="225" x2="400" y2="55"/>
+      <line x1="400" y1="225" x2="300" y2="88"/>
+      <line x1="400" y1="225" x2="238" y2="278"/>
+      <line x1="400" y1="225" x2="562" y2="278"/>
+      <line x1="400" y1="225" x2="500" y2="88"/>
+    </g>
+    <!-- nodes: the top one is the signal-orange accent -->
+    <rect x="388" y="43" width="24" height="24" fill="#ffffff" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="opacity" values="1;0.6;1" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="300" cy="88" r="13" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <polygon points="238,265 251,278 238,291 225,278" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="562" cy="278" r="13" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <rect x="488" y="76" width="24" height="24" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+  </g>
+
+  <!-- central keynote node: hexagon chip -->
+  <g>
+    <polygon points="400,155 461,190 461,260 400,295 339,260 339,190" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <polygon points="400,185 435,205 435,245 400,265 365,245 365,205" fill="none" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="opacity" values="1;0.5;1" dur="8s" repeatCount="indefinite"/>
+    </polygon>
+    <circle cx="400" cy="225" r="8" fill="#FF4D00">
+      <animate attributeName="r" values="8;11;8" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- dotted measurement arc -->
+  <path d="M 180 340 A 260 260 0 0 1 620 340" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="2 7" opacity="0.5"/>
+  <!-- baseline track -->
+  <line x1="120" y1="410" x2="680" y2="410" stroke="#111111" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+</svg>

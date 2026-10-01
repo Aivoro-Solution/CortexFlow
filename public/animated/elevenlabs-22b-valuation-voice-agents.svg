@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="elfine" width="6" height="6" patternUnits="userSpaceOnUse">
+      <path d="M6 0H0V6" fill="none" stroke="#111111" stroke-width="0.35" opacity="0.07"/>
+    </pattern>
+    <pattern id="elgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#ffffff"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#elfine)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#elgrid)"/>
+  <!-- drawing sheet frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="2"/>
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M14 44 V14 H44"/><path d="M756 14 H786 V44"/>
+    <path d="M786 406 V436 H756"/><path d="M44 436 H14 V406"/>
+  </g>
+
+  <!-- slow rotating dashed voice-orbit rings -->
+  <circle cx="400" cy="225" r="175" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="14 10" opacity="0.5">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="80s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="225" r="115" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="4 8" opacity="0.45">
+    <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="60s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="225" r="70" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="20 14" opacity="0.4">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="45s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow broadcast wave rings from the voice hub -->
+  <circle cx="400" cy="225" r="30" fill="none" stroke="#FF4D00" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="30;170" dur="16s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0" dur="16s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="225" r="30" fill="none" stroke="#FF4D00" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="30;170" dur="16s" begin="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0" dur="16s" begin="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- orbiting conversation nodes, slow drift -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="70s" repeatCount="indefinite"/>
+    <!-- spokes -->
+    <g stroke="#111111" stroke-width="1.25" opacity="0.7">
+      <line x1="400" y1="225" x2="400" y2="50"/>
+      <line x1="400" y1="225" x2="285" y2="110"/>
+      <line x1="400" y1="225" x2="285" y2="340"/>
+      <line x1="400" y1="225" x2="515" y2="340"/>
+      <line x1="400" y1="225" x2="515" y2="110"/>
+    </g>
+    <!-- nodes: the top one is the signal-orange accent -->
+    <circle cx="400" cy="50" r="14" fill="#ffffff" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="opacity" values="1;0.55;1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="285" cy="110" r="12" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <rect x="273" y="328" width="24" height="24" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <polygon points="515,328 528,340 515,352 502,340" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <rect x="503" y="98" width="24" height="24" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+  </g>
+
+  <!-- central voice hub: layered rings + pulsing core -->
+  <g>
+    <circle cx="400" cy="225" r="46" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="400" cy="225" r="30" fill="none" stroke="#FF4D00" stroke-width="2">
+      <animate attributeName="opacity" values="1;0.45;1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="225" r="7" fill="#FF4D00">
+      <animate attributeName="r" values="7;10;7" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- slow drifting waveform lines across the sheet -->
+  <g stroke="#111111" stroke-width="1.25" fill="none" opacity="0.5">
+    <path d="M120 130 q 20 -28 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -40 0; 0 0" dur="24s" repeatCount="indefinite"/>
+    </path>
+    <path d="M120 330 q 25 -20 50 0 t 50 0 t 50 0 t 50 0 t 50 0 t 50 0 t 50 0 t 50 0 t 50 0" opacity="0.6">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 50 0; 0 0" dur="30s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- dotted measurement arc -->
+  <path d="M 180 340 A 260 260 0 0 1 620 340" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="2 7" opacity="0.5"/>
+  <!-- baseline track -->
+  <line x1="120" y1="410" x2="680" y2="410" stroke="#111111" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+</svg>

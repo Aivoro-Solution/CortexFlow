@@ -49,6 +49,11 @@ The MCP Client Tool is a *tool* node — it doesn't run on its own. It must be c
 
 This is where most people get stuck, so let's slow down and get it right.
 
+<figure class="shot">
+  <img src="/screenshots/how-to-connect-mcp-server-n8n/canvas-agent-mcp-tool.webp" alt="n8n workflow canvas showing a Manual Trigger connected to an AI Agent node with an MCP Client tool attached underneath it" width="1140" height="710" loading="lazy" />
+  <figcaption>The wiring pattern: Manual Trigger → AI Agent, with the <strong>MCP Client Tool</strong> hanging off the agent's <em>Tools</em> input. The tool node never runs standalone — the agent calls it.</figcaption>
+</figure>
+
 ## Step 3: Choose Your Transport — SSE vs Streamable HTTP
 
 MCP servers communicate over HTTP using one of two transports. **You must pick the one your server actually uses**, or the connection will fail silently.

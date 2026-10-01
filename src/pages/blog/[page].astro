@@ -1,12 +1,14 @@
 ---
 import BaseLayout from "../../components/BaseLayout.astro";
-import { SITE } from "../../config";
+import { SITE, CATEGORIES } from "../../config";
 import { getPublishedPosts, postUrl, formatDate, categoryName } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
   const perPage = SITE.postsPerPage;
   const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
+  const counts: Record<string, number> = {};
+  for (const p of posts) counts[p.data.category] = (counts[p.data.category] ?? 0) + 1;
   return Array.from({ length: totalPages }, (_, i) => {
     const page = i + 1;
     return {
@@ -15,12 +17,13 @@ export async function getStaticPaths() {
         page,
         totalPages,
         posts: posts.slice((page - 1) * perPage, page * perPage),
+        counts,
       },
     };
   });
 }
 
-const { page, totalPages, posts } = Astro.props;
+const { page, totalPages, posts, counts } = Astro.props;
 const title = page === 1 ? "Blog" : `Blog — Page ${page}`;
 const description =
   page === 1
@@ -39,9 +42,18 @@ const description =
       <p class="breadcrumb"><a href="/">Home</a> / Blog</p>
       <p class="dwg-no">DWG NO. CF-BLOG-{page === 1 ? "001" : "00" + page} · <b>REV D</b></p>
       <h1 style="margin: 0 0 .5rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">All posts</h1>
-      <p style="color: var(--muted); margin: 0 0 2rem;">
+      <p style="color: var(--muted); margin: 0 0 1.25rem;">
         Tutorials, comparisons, and practical guides on AI agents, automation, and chatbots.
       </p>
+
+      <nav class="cat-chips" aria-label="Browse by category">
+        <span class="cat-chip cat-chip--on" aria-current="page">All posts</span>
+        {CATEGORIES.map((c) => (
+          <a class="cat-chip" href={`/categories/${c.slug}/`}>
+            {c.name} <span class="cat-chip__n">{counts[c.slug] ?? 0}</span>
+          </a>
+        ))}
+      </nav>
 
       <div class="spec-list">
         {posts.map((post, i) => (

@@ -20,6 +20,21 @@ const { Content } = await render(post);
 const url = postUrl(post);
 const slug = post.id.replace(/\.md$/, "");
 
+// Related posts for internal linking: same category first, then shared tags.
+const allPosts = await getPublishedPosts();
+const related = allPosts
+  .filter((p) => p.id !== post.id)
+  .map((p) => {
+    let score = 0;
+    if (p.data.category === post.data.category) score += 2;
+    score += p.data.tags.filter((t) => post.data.tags.includes(t)).length;
+    return { p, score };
+  })
+  .filter((r) => r.score > 0)
+  .sort((a, b) => b.score - a.score || b.p.data.date.getTime() - a.p.data.date.getTime())
+  .slice(0, 3)
+  .map((r) => r.p);
+
 // Code-written animated SVG hero (current system): public/animated/<slug>.svg
 // autoplay + loop via SMIL, inlined so reduced-motion can pause it.
 let animatedSvg = null;
@@ -92,6 +107,27 @@ const jsonLd = {
     <article class="post">
       <Content />
     </article>
+
+    {related.length > 0 && (
+      <section class="related">
+        <div class="sec-head">
+          <h2><span class="sq" aria-hidden="true"></span>Related tutorials</h2>
+          <a class="more" href="/blog/">View all</a>
+        </div>
+        <div class="spec-list">
+          {related.map((r, i) => (
+            <a class="spec" href={postUrl(r)}>
+              <span class="spec-no" aria-hidden="true">{String(i + 1).padStart(3, "0")}</span>
+              <span class="spec-body">
+                <h3 class="spec-title">{r.data.title}</h3>
+                <p class="spec-desc">{r.data.description}</p>
+              </span>
+              <span class="spec-tag">{categoryName(r.data.category)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <div class="cta-box">
       <div>

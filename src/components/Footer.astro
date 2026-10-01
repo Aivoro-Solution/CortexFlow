@@ -19,10 +19,10 @@ const year = new Date().getFullYear();
       <div>
         <p class="foot-brand">
           <svg width="26" height="26" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#16181D" stroke-width="4" stroke-linecap="round"/>
+            <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#FFFDF5" stroke-width="4" stroke-linecap="round"/>
             <circle cx="34" cy="20" r="4.5" fill="#FF4D00"/>
           </svg>
-          {SITE.name}
+          <span>{SITE.name}</span>
         </p>
         <p class="desc">{SITE.tagline}. Real builds, honest comparisons, zero fluff.</p>
         <p><a class="email" href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a></p>
@@ -54,7 +54,7 @@ const year = new Date().getFullYear();
   </div>
   <div class="footer-bottom">
     <div class="wrap">
-      <span>© {year} {SITE.name} · SHEET CF-001 / REV D</span>
+      <span>© {year} {SITE.name} · Free n8n templates, forever</span>
       <span>Built with Astro · Hosted on Cloudflare Pages</span>
     </div>
   </div>

@@ -1,5 +1,5 @@
 ---
-title: "n8n Queue Mode Explained: Redis, Workers & When to Scale"
+title: "n8n Queue Mode: Redis, Workers & Scaling"
 description: "n8n queue mode moves executions off the main instance onto Redis-backed workers. When you actually need it, the exact Docker Compose setup, and the gotchas."
 date: 2026-10-01
 category: automation

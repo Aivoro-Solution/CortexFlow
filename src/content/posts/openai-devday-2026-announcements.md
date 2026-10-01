@@ -1,5 +1,5 @@
 ---
-title: "OpenAI DevDay 2026: GPT-6.1 Sol, Pro 500, and the Decisions API"
+title: "OpenAI DevDay 2026: 5 Key Announcements"
 description: "DevDay 2026's 5 announcements that matter for agent builders: GPT-6.1 Sol pricing, the $500 Pro tier, Decisions API, Codex upgrades, Sign in with ChatGPT."
 date: 2026-10-01
 category: news

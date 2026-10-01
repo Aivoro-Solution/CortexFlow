@@ -1,5 +1,5 @@
 ---
-title: "AI Agent Costs After the Price War: Claude Opus 5.5 vs GPT-6 in n8n"
+title: "AI Agent Run Costs: Claude Opus 5.5 vs GPT-6"
 description: "What does one n8n agent run cost after the Sept 2026 price war? Claude Opus 5.5 vs GPT-6 Astra, Sol, Luna — real per-1,000-run numbers."
 date: 2026-10-01
 category: ai-agents

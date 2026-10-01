@@ -14,6 +14,9 @@ export const SITE = {
   authorEmail: "hello@cortexflow.tech",
   language: "en",
   postsPerPage: 10,
+  // Google Analytics 4 measurement ID (e.g. "G-XXXXXXXXXX").
+  // Empty = analytics disabled.
+  gaMeasurementId: "G-ETZW0XEYGL",
   social: {
     twitter: "@cortexflow",
   },

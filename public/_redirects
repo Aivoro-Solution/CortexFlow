@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects
+# /blog/ serves page 1 content at /blog/1/; redirect properly instead of meta refresh
+/blog/ /blog/1/ 301
+# www -> apex
+https://www.cortexflow.tech/* https://cortexflow.tech/:splat 301
+http://www.cortexflow.tech/* https://cortexflow.tech/:splat 301

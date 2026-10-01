@@ -32,7 +32,14 @@ One honest framing first: **n8n 3.0 is not released yet.** As of September 30, 2
 
 You cannot set a policy on packages you cannot see, so start with an inventory.
 
-In the n8n UI, open **Settings > Community Nodes**. Every package installed through the UI is listed here with its version. For a second opinion on disk, check the data directory:
+In the n8n UI, open **Settings > Community Nodes**. Every package installed through the UI is listed here with its version.
+
+<figure class="shot">
+  <img src="/screenshots/n8n-3-unverified-community-nodes/community-nodes-settings.webp" alt="n8n Settings page open on Community nodes, showing the empty state with an Install a community node button" width="1690" height="560" loading="lazy" />
+  <figcaption><strong>Settings → Community nodes</strong> in a self-hosted n8n instance. Installed packages appear here with their versions — this is your inventory starting point.</figcaption>
+</figure>
+
+For a second opinion on disk, check the data directory:
 
 ```bash
 ls <n8n-data>/nodes

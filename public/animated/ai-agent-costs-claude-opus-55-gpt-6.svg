@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="gridf2" width="6" height="6" patternUnits="userSpaceOnUse">
+      <path d="M6 0H0V6" fill="none" stroke="#111111" stroke-width="0.35" opacity="0.07"/>
+    </pattern>
+    <pattern id="grid2" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0V30" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#ffffff"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#gridf2)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid2)"/>
+  <!-- drawing sheet frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="2"/>
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M14 44 V14 H44"/><path d="M756 14 H786 V44"/>
+    <path d="M786 406 V436 H756"/><path d="M44 436 H14 V406"/>
+  </g>
+
+  <!-- slow rotating dashed dial behind column -->
+  <circle cx="400" cy="250" r="150" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="10 8" opacity="0.55">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 250" to="360 400 250" dur="60s" repeatCount="indefinite"/>
+  </circle>
+  <!-- dotted measurement arcs -->
+  <path d="M 200 120 A 260 260 0 0 1 600 120" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="2 7" opacity="0.5"/>
+
+  <!-- column + base -->
+  <rect x="388" y="150" width="24" height="210" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+  <path d="M 360 360 L 440 360 L 452 396 L 348 396 Z" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+  <circle cx="400" cy="150" r="10" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+
+  <!-- beam assembly: gentle tilt, slow oscillation -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate"
+      values="-3 400 150; 3 400 150; -3 400 150" keyTimes="0; 0.5; 1"
+      dur="12s" repeatCount="indefinite"/>
+    <rect x="230" y="144" width="340" height="12" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <!-- left pan (black ink) -->
+    <g>
+      <line x1="250" y1="156" x2="212" y2="252" stroke="#111111" stroke-width="2"/>
+      <line x1="250" y1="156" x2="288" y2="252" stroke="#111111" stroke-width="2"/>
+      <path d="M 198 252 Q 250 296 302 252" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+      <g fill="#ffffff" stroke="#111111" stroke-width="2">
+        <ellipse cx="250" cy="232" rx="34" ry="10"/>
+        <ellipse cx="250" cy="220" rx="34" ry="10"/>
+        <ellipse cx="250" cy="208" rx="34" ry="10"/>
+      </g>
+    </g>
+    <!-- right pan: the signal-orange accent side -->
+    <g>
+      <line x1="550" y1="156" x2="512" y2="252" stroke="#FF4D00" stroke-width="2"/>
+      <line x1="550" y1="156" x2="588" y2="252" stroke="#FF4D00" stroke-width="2"/>
+      <path d="M 498 252 Q 550 296 602 252" fill="#ffffff" stroke="#FF4D00" stroke-width="2.5"/>
+      <g fill="#ffffff" stroke="#FF4D00" stroke-width="2">
+        <ellipse cx="550" cy="232" rx="34" ry="10"/>
+        <ellipse cx="550" cy="220" rx="34" ry="10"/>
+        <ellipse cx="550" cy="208" rx="34" ry="10">
+          <animate attributeName="opacity" values="1;0.55;1" dur="8s" repeatCount="indefinite"/>
+        </ellipse>
+      </g>
+    </g>
+  </g>
+
+  <!-- tokens drifting down into the pans, slow + staggered -->
+  <g fill="#ffffff" stroke="#111111" stroke-width="1.5">
+    <circle cx="250" cy="60" r="11">
+      <animate attributeName="cy" values="60;218" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.9;1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="60" r="11">
+      <animate attributeName="cy" values="60;218" dur="9s" begin="-4.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.9;1" dur="9s" begin="-4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <g fill="#ffffff" stroke="#FF4D00" stroke-width="1.5">
+    <circle cx="550" cy="60" r="11">
+      <animate attributeName="cy" values="60;218" dur="9s" begin="-2.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.9;1" dur="9s" begin="-2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="550" cy="60" r="11">
+      <animate attributeName="cy" values="60;218" dur="9s" begin="-6.7s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.9;1" dur="9s" begin="-6.7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- baseline track -->
+  <line x1="120" y1="410" x2="680" y2="410" stroke="#111111" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+</svg>

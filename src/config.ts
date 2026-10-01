@@ -6,7 +6,7 @@ export const SITE = {
   name: "CortexFlow",
   tagline: "Practical guides on AI agents, automation, and chatbots",
   description:
-    "CortexFlow is a hands-on blog about AI agents, workflow automation, and chatbots. Step-by-step tutorials, honest tool comparisons, and real-world builds — no fluff.",
+    "Hands-on tutorials on AI agents, workflow automation, and chatbots — step-by-step builds and honest tool comparisons, no fluff.",
   // IMPORTANT: set this to your real domain before deploying.
   // Example: "https://agentcraft.io"
   url: "https://cortexflow.tech",

@@ -1,5 +1,5 @@
 ---
-title: "MCP + n8n Troubleshooting: Headers, OAuth Re-auth, Queue Mode"
+title: "MCP + n8n Troubleshooting: 3 Common Fixes"
 description: "MCP in n8n breaks in three predictable places: stripped headers, OAuth re-auth loops, and queue mode. Diagnosis and fixes for each, from real issues."
 date: 2026-10-01
 category: automation

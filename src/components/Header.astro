@@ -1,12 +1,11 @@
 ---
-import { SITE, CATEGORIES } from "../config";
+import { SITE } from "../config";
 const path = Astro.url.pathname;
 const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
 const links = [
   { href: "/", label: "Home" },
-  { href: "/blog/", label: "Blog" },
   { href: "/templates/", label: "Templates" },
-  ...CATEGORIES.map((c) => ({ href: `/categories/${c.slug}/`, label: c.name })),
+  { href: "/blog/", label: "Blog" },
   { href: "/about/", label: "About" },
 ];
 ---

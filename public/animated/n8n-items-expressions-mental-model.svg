@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: data items flowing through a node with pairing threads">
+  <defs>
+    <pattern id="igrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E4E4E4" stroke-width="1"/>
+    </pattern>
+    <pattern id="igridmajor" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#D2D2D2" stroke-width="1"/>
+    </pattern>
+    <path id="itemPath" d="M 200 225 L 340 225 L 460 225 L 600 225" fill="none"/>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#igrid)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#igridmajor)"/>
+
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M18 52 V18 H52 M748 18 H782 V52 M782 398 V432 H748 M52 432 H18 V398"/>
+  </g>
+
+  <!-- item cards left -->
+  <g fill="none" stroke="#111111" stroke-width="2">
+    <rect x="80" y="70" width="120" height="52"/>
+    <rect x="80" y="140" width="120" height="52"/>
+    <rect x="80" y="280" width="120" height="52"/>
+    <rect x="80" y="350" width="120" height="52"/>
+  </g>
+  <!-- the highlighted current item -->
+  <rect x="80" y="210" width="120" height="52" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="opacity" values="1;0.55;1" dur="8s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- item cards right -->
+  <g fill="none" stroke="#111111" stroke-width="2">
+    <rect x="600" y="70" width="120" height="52"/>
+    <rect x="600" y="140" width="120" height="52"/>
+    <rect x="600" y="210" width="120" height="52"/>
+    <rect x="600" y="280" width="120" height="52"/>
+    <rect x="600" y="350" width="120" height="52"/>
+  </g>
+
+  <!-- pairing threads: dashed lines with slow marching dashes -->
+  <g stroke="#111111" stroke-width="1.6" fill="none">
+    <path d="M 200 96 L 290 96 L 348 190" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 200 166 L 290 166 L 352 205" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 200 236 L 348 225" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 200 306 L 290 306 L 352 245" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 200 376 L 290 376 L 348 260" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 452 190 L 510 96 L 600 96" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 448 205 L 510 166 L 600 166" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 452 225 L 600 236" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 448 245 L 510 306 L 600 306" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 452 260 L 510 376 L 600 376" stroke-dasharray="8 7">
+      <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- the node: circle with crosshair -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <circle cx="400" cy="225" r="52"/>
+    <circle cx="400" cy="225" r="38" stroke-width="1.6"/>
+    <path d="M 400 173 V 277 M 348 225 H 452" stroke-width="1.6"/>
+  </g>
+  <!-- slow pulse ring on the node -->
+  <circle cx="400" cy="225" r="52" fill="none" stroke="#FF4D00" stroke-width="2">
+    <animate attributeName="r" values="52;62;52" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9;0.25;0.9" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- orange item traveling through the node, left to right -->
+  <g fill="#FF4D00">
+    <circle r="8"><animateMotion dur="9s" repeatCount="indefinite" begin="0s"><mpath href="#itemPath"/></animateMotion></circle>
+    <circle r="8"><animateMotion dur="9s" repeatCount="indefinite" begin="-4.5s"><mpath href="#itemPath"/></animateMotion></circle>
+  </g>
+</svg>

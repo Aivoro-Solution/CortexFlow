@@ -28,8 +28,8 @@ const tagSlug = slugify(tag);
   <section class="section">
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Tags</p>
-      <p class="dwg-no">DWG NO. CF-TAG-{tag} · <b>REV D</b></p>
-      <h1 style="margin: 0 0 2rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
+      <p class="kicker">CORTEXFLOW · FREE FOREVER</p>
+      <h1 style="margin: 0 0 2rem; font-size: clamp(2rem, 4.6vw, 3rem); text-transform: uppercase;">Posts tagged <span class="tag" style="font-size: 1.1rem;">#{tag}</span></h1>
       <div class="spec-list">
         {posts.map((post, i) => (
           <a class="spec" href={`/blog/${post.id.replace(/\.md$/, "")}/`}>

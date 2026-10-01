@@ -32,6 +32,11 @@ You only need three expression tools for 90% of workflows. Learn them in this or
 
 **1. `$json` — this item, this node.** Inside any expression, `$json.email` reads the `email` field of the item currently being processed. It is always relative to *where the expression sits*, not where the data came from.
 
+<figure class="shot">
+  <img src="/screenshots/n8n-items-expressions-mental-model/expression-editor.webp" alt="n8n expression editor showing {{ $json.email }} being typed in an Edit Fields node, with a live result preview panel on the right" width="1880" height="900" loading="lazy" />
+  <figcaption>The expression editor in action: <code>{{ $json.email }}</code> on the left, the live <em>Result</em> preview on the right. The preview is the fastest way to learn — type, watch, adjust.</figcaption>
+</figure>
+
 **2. `$('Node Name')` — reach across the canvas.** To read another node's output, name it: `{{ $('Webhook').first().json.email }}` grabs the `email` field from the first item the node named "Webhook" produced. The `.first()` matters — `$('Webhook')` alone is the *list* of items, and a list has no `.email` field. Use `.last()` for the final item, or `.all()` when you genuinely want every item (which returns an array).
 
 **3. `$input` — shorthand for the current node's input.** `$input.first().json` is the first incoming item of the node your expression lives in. Useful inside Code nodes and anywhere you want to be explicit about "what came into *me*".

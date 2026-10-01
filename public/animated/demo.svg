@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Schematic orbit animation">
+  <rect width="800" height="450" fill="#FFFFFF"/>
+  <defs>
+    <pattern id="ag-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#E7E7E1" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#ag-grid)"/>
+  <!-- corner registration ticks -->
+  <g stroke="#16181D" stroke-width="2">
+    <path d="M18 44V18H44"/><path d="M756 18H782V44"/>
+    <path d="M18 406V432H44"/><path d="M756 432H782V406"/>
+  </g>
+  <!-- slow rotating dashed orbit -->
+  <g>
+    <circle cx="400" cy="225" r="120" fill="none" stroke="#16181D" stroke-width="3" stroke-dasharray="12 10" stroke-linecap="round"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="48s" repeatCount="indefinite"/>
+  </g>
+  <circle cx="400" cy="225" r="88" fill="none" stroke="#16181D" stroke-width="1.5" opacity="0.35"/>
+  <!-- signal dot travelling the orbit -->
+  <circle r="11" fill="#FF4D00">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M520 225A120 120 0 1 1 519.9 224.9"/>
+  </circle>
+  <!-- centre node with slow pulse ring -->
+  <circle cx="400" cy="225" r="24" fill="#16181D"/>
+  <circle cx="400" cy="225" r="24" fill="none" stroke="#FF4D00" stroke-width="2">
+    <animate attributeName="r" values="24;44;24" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9;0;0.9" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <!-- blinking survey markers -->
+  <g fill="#16181D">
+    <circle cx="120" cy="90" r="4"><animate attributeName="opacity" values="1;0.15;1" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="680" cy="90" r="4"><animate attributeName="opacity" values="0.15;1;0.15" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="120" cy="360" r="4"><animate attributeName="opacity" values="0.15;1;0.15" dur="6s" repeatCount="indefinite"/></circle>
+    <circle cx="680" cy="360" r="4"><animate attributeName="opacity" values="1;0.15;1" dur="6s" repeatCount="indefinite"/></circle>
+  </g>
+</svg>

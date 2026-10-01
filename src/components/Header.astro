@@ -12,8 +12,8 @@ const links = [
 <header class="site-header" id="siteHeader">
   <div class="wrap">
     <a class="logo" href="/" aria-label={`${SITE.name} home`}>
-      <svg width="30" height="30" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#15151A" stroke-width="4" stroke-linecap="round"/>
+      <svg width="26" height="26" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M30.5 12.4 A13 13 0 1 0 30.5 27.6" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
         <circle cx="34" cy="20" r="4.5" fill="#FF4D00"/>
       </svg>
       {SITE.name}
@@ -21,7 +21,7 @@ const links = [
     <button class="menu-btn" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
-    <span class="sheet-no" aria-hidden="true">SHEET <b>CF-001</b> / REV D</span>
+    <span class="sheet-no" aria-hidden="true">FREE FOREVER · NO SIGNUP</span>
     <nav class="nav" id="mobileNav" aria-label="Main navigation">
       {links.map((l) => (
         <a href={l.href} class={isActive(l.href) ? "active" : ""} {...(isActive(l.href) ? { "aria-current": "page" } : {})}>

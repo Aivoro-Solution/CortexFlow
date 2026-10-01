@@ -8,7 +8,18 @@ const latest = posts.slice(0, 6);
 const pad = (n: number) => String(n).padStart(3, "0");
 ---
 
-<BaseLayout title={SITE.name} description={SITE.description} canonicalPath="/">
+<BaseLayout
+  title="AI Agents, Automation & Chatbots Tutorials"
+  description="Hands-on tutorials on AI agents, workflow automation, and chatbots — step-by-step builds and honest tool comparisons, no fluff."
+  canonicalPath="/"
+>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE.name,
+    url: SITE.url,
+    logo: new URL("/og-default.svg", SITE.url).toString(),
+  })} />
   <section class="hero sheet">
     <div class="wrap">
       <span class="tick tl" aria-hidden="true"></span>

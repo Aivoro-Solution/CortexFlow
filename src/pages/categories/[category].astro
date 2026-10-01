@@ -26,10 +26,10 @@ const { category, figNo, posts } = Astro.props;
   <section class="section">
     <div class="wrap">
       <p class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / {category.name}</p>
-      <p class="dwg-no">DWG NO. CF-CAT-{category.slug} · <b>REV D</b></p>
+      <p class="kicker">CORTEXFLOW · FREE FOREVER</p>
       <p class="post-kicker">FIG. {figNo}</p>
-      <h1 style="margin: 0 0 .75rem; font-size: clamp(2rem, 4.4vw, 2.9rem); font-weight: 800;">{category.name}</h1>
-      <p style="color: var(--muted); margin: 0 0 2rem;">{category.description}</p>
+      <h1 style="margin: 0 0 .75rem; font-size: clamp(2.2rem, 5vw, 3.4rem); text-transform: uppercase;">{category.name}</h1>
+      <p style="margin: 0 0 2.2rem; font-weight: 600; max-width: 62ch;">{category.description}</p>
 
       {posts.length > 0 ? (
         <div class="spec-list">

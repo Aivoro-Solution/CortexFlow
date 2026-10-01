@@ -313,6 +313,7 @@ figcaption.sheet-cap {
 .post pre code, .prose pre code { background: none; border: 0; padding: 0; color: inherit; }
 
 /* CTA box */
+.related { margin: 4rem 0 0; }
 .cta-box {
   border: 2px solid var(--ink); background: var(--paper);
   padding: 2.4rem; margin: 4rem 0 5rem;

@@ -65,6 +65,19 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#FFFFFF" />
 
+    <!-- Google Analytics 4 (only when gaMeasurementId is set) -->
+    {SITE.gaMeasurementId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaMeasurementId}`}></script>
+        <script is:inline define:vars={{ gaId: SITE.gaMeasurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
+
     <!-- Typography: Archivo (display) + Inter (body) + IBM Plex Mono (annotations) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

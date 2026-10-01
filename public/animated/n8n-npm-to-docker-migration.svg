@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Package migrating from a terminal window to a Docker container">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d8d8d4" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="gridMajor" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#c9c9c5" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- drawing sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#ffffff"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#gridMajor)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="2.5"/>
+
+  <!-- corner registration ticks -->
+  <g stroke="#111111" stroke-width="2.5">
+    <path d="M14 44 L14 14 L44 14"/>
+    <path d="M756 14 L786 14 L786 44"/>
+    <path d="M786 406 L786 436 L756 436"/>
+    <path d="M44 436 L14 436 L14 406"/>
+  </g>
+
+  <!-- source: terminal window -->
+  <g>
+    <rect x="90" y="150" width="200" height="140" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <line x1="90" y1="182" x2="290" y2="182" stroke="#111111" stroke-width="2"/>
+    <circle cx="112" cy="166" r="5" fill="none" stroke="#111111" stroke-width="1.8"/>
+    <circle cx="132" cy="166" r="5" fill="none" stroke="#111111" stroke-width="1.8"/>
+    <circle cx="152" cy="166" r="5" fill="none" stroke="#111111" stroke-width="1.8"/>
+    <line x1="112" y1="212" x2="190" y2="212" stroke="#111111" stroke-width="3"/>
+    <line x1="112" y1="230" x2="230" y2="230" stroke="#111111" stroke-width="3"/>
+    <line x1="112" y1="248" x2="168" y2="248" stroke="#FF4D00" stroke-width="3"/>
+    <!-- npm package box inside terminal -->
+    <g>
+      <rect x="220" y="232" width="34" height="34" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+      <line x1="237" y1="232" x2="237" y2="266" stroke="#111111" stroke-width="1.4"/>
+      <line x1="220" y1="249" x2="254" y2="249" stroke="#111111" stroke-width="1.4"/>
+    </g>
+  </g>
+
+  <!-- destination: container cube -->
+  <g>
+    <rect x="540" y="130" width="180" height="180" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <line x1="540" y1="170" x2="720" y2="170" stroke="#111111" stroke-width="1.6"/>
+    <line x1="540" y1="210" x2="720" y2="210" stroke="#111111" stroke-width="1.6"/>
+    <line x1="540" y1="250" x2="720" y2="250" stroke="#111111" stroke-width="1.6"/>
+    <!-- layer handles -->
+    <line x1="560" y1="170" x2="560" y2="310" stroke="#111111" stroke-width="1"/>
+    <line x1="620" y1="170" x2="620" y2="310" stroke="#111111" stroke-width="1"/>
+    <line x1="680" y1="170" x2="680" y2="310" stroke="#111111" stroke-width="1"/>
+  </g>
+
+  <!-- migration path -->
+  <path id="migPath" d="M 300 240 C 380 240, 420 220, 530 220" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="8 6"/>
+
+  <!-- traveling package along the path -->
+  <g>
+    <rect x="-17" y="-17" width="34" height="34" fill="#ffffff" stroke="#111111" stroke-width="2.5"/>
+    <line x1="0" y1="-17" x2="0" y2="17" stroke="#111111" stroke-width="1.4"/>
+    <line x1="-17" y1="0" x2="17" y2="0" stroke="#111111" stroke-width="1.4"/>
+    <rect x="-17" y="-17" width="34" height="34" fill="none" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="opacity" values="1;0.25;1" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <animateMotion dur="14s" repeatCount="indefinite">
+      <mpath href="#migPath"/>
+    </animateMotion>
+  </g>
+
+  <!-- arrival pulse on the container -->
+  <circle cx="630" cy="220" r="8" fill="none" stroke="#FF4D00" stroke-width="2.5">
+    <animate attributeName="r" values="8;46" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9;0" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slowly rotating dashed guide ring around terminal -->
+  <g opacity="0.55">
+    <circle cx="190" cy="220" r="118" fill="none" stroke="#111111" stroke-width="1.4" stroke-dasharray="6 10">
+      <animateTransform attributeName="transform" type="rotate" from="0 190 220" to="360 190 220" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- crosshair marks -->
+  <g stroke="#111111" stroke-width="1.4">
+    <path d="M400 60 L400 84 M388 72 L412 72"/>
+    <path d="M400 366 L400 390 M388 378 L412 378"/>
+  </g>
+</svg>

@@ -1,5 +1,5 @@
 ---
-title: "MongoDB Atlas Agent Engine Brings Memory and Governance to Production AI Agents"
+title: "MongoDB Atlas Agent Engine: AI Agent Memory"
 description: "MongoDB launched Atlas Agent Engine, a unified memory and governance layer for production AI agents. What it costs, what is inside, and why it matters."
 date: 2026-09-30
 category: news

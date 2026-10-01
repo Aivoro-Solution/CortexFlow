@@ -267,6 +267,12 @@ figure.post-hero img { display: block; width: 100%; aspect-ratio: 16/9; object-f
 figure.post-hero .lottie-hero { display: none; width: 100%; aspect-ratio: 16/9; }
 figure.post-hero .lottie-hero.is-playing { display: block; }
 figure.post-hero .lottie-hero.is-playing ~ img { display: none; }
+/* code-written animated SVG hero: autoplay + loop via SMIL */
+figure.post-hero .anim-hero { width: 100%; aspect-ratio: 16/9; }
+figure.post-hero .anim-hero svg { display: block; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  figure.post-hero .anim-hero svg * { animation: none !important; }
+}
 figcaption.sheet-cap {
   font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
   color: var(--faint); padding: 0.7rem 0.2rem 0.1rem; display: flex; justify-content: space-between;

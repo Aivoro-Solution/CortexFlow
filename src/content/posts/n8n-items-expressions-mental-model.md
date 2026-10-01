@@ -1,5 +1,5 @@
 ---
-title: "n8n Items & Expressions: The Mental Model That Fixes 80% of Beginner Errors"
+title: "n8n Items & Expressions: A Mental Model"
 description: "Most n8n expression errors are one mental-model bug: thinking in variables instead of items. The items model, $json, $('Node'), pairing — and 5 fixes."
 date: 2026-10-01
 category: automation

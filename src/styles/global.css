@@ -222,6 +222,25 @@ a.spec:hover .spec-title { color: var(--orange); }
   .spec-tag { border-left: 0; border-top: 1px dashed var(--line); padding: 0.8rem 1.4rem; }
 }
 
+/* ---------- category chips (blog index) ---------- */
+.cat-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0 0 2rem; }
+.cat-chip {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  border: 2px solid var(--ink); border-radius: 999px;
+  padding: 0.42rem 0.95rem; color: var(--ink); background: #fff;
+  text-decoration: none; transition: background 0.15s, color 0.15s;
+}
+a.cat-chip:hover { background: var(--ink); color: #fff; }
+.cat-chip--on { background: var(--ink); color: #fff; cursor: default; }
+.cat-chip__n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.35rem; height: 1.35rem; border-radius: 999px;
+  background: var(--orange); color: #fff; font-size: 0.66rem; padding: 0 0.3rem;
+}
+.cat-chip--on .cat-chip__n { background: #fff; color: var(--ink); }
+
 /* ---------- FIG track cards ---------- */
 .tracks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
 a.track {

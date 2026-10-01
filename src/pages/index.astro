@@ -1,16 +1,23 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../components/BaseLayout.astro";
-import { SITE, CATEGORIES } from "../config";
-import { getPublishedPosts, postUrl, formatDate, categoryName } from "../lib/posts";
+import { SITE } from "../config";
 
-const posts = await getPublishedPosts();
-const latest = posts.slice(0, 6);
+const templates = (await getCollection("templates", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const featured = templates.slice(0, 6);
 const pad = (n: number) => String(n).padStart(3, "0");
+
+const difficultyLabel: Record<string, string> = {
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+};
 ---
 
 <BaseLayout
-  title="AI Agents, Automation & Chatbots Tutorials"
-  description="Hands-on tutorials on AI agents, workflow automation, and chatbots — step-by-step builds and honest tool comparisons, no fluff."
+  title="Free n8n Workflow Templates"
+  description="Free, ready-to-import n8n workflow templates — AI agents, chatbots, and automations. Download the JSON, import in n8n, add your credentials, done."
   canonicalPath="/"
 >
   <script type="application/ld+json" set:html={JSON.stringify({
@@ -20,6 +27,7 @@ const pad = (n: number) => String(n).padStart(3, "0");
     url: SITE.url,
     logo: new URL("/og-default.svg", SITE.url).toString(),
   })} />
+
   <section class="hero sheet">
     <div class="wrap">
       <span class="tick tl" aria-hidden="true"></span>
@@ -30,27 +38,27 @@ const pad = (n: number) => String(n).padStart(3, "0");
         <div class="tb-top">
           <div class="tb-main">
             <p class="rev">DWG NO. CF-HOME-001 · <b>REV D</b> · SCALE 1:1</p>
-            <h1>Ship AI agents that <span class="hl">actually work.</span></h1>
+            <h1>Free n8n workflows, <span class="hl">ready to import.</span></h1>
             <p class="lead">
-              Step-by-step tutorials on AI agents, n8n automation, and chatbots —
-              real builds, honest tool comparisons, zero fluff. The kind of guide
-              you keep open in a second tab while you build.
+              Production-grade n8n workflow templates built from real demand — AI agents,
+              chatbots, and automations. Download the JSON, import it in n8n, add your
+              credentials, and you're running in minutes.
             </p>
             <div class="hero-actions">
-              <a class="btn" href="/blog/">Browse tutorials</a>
-              <a class="btn btn-ghost" href="/about/">What is this site?</a>
+              <a class="btn" href="/templates/">Browse templates</a>
+              <a class="btn btn-ghost" href="/blog/">Read the tutorials</a>
             </div>
           </div>
           <div class="tb-meta" aria-hidden="true">
             <div><span class="k">Drawn</span><span class="v">CortexFlow</span></div>
             <div><span class="k">Checked</span><span class="v hot">Builders</span></div>
-            <div><span class="k">Subject</span><span class="v">AI agents</span></div>
+            <div><span class="k">Subject</span><span class="v">n8n templates</span></div>
             <div><span class="k">Status</span><span class="v">● In service</span></div>
           </div>
         </div>
         <div class="tb-foot" aria-hidden="true">
           <div>TOLERANCE: ZERO FLUFF</div>
-          <div>UNITS: TUTORIALS</div>
+          <div>UNITS: WORKFLOWS</div>
           <div>DO NOT SCALE DRAWING</div>
         </div>
       </div>
@@ -60,48 +68,63 @@ const pad = (n: number) => String(n).padStart(3, "0");
   <section class="section">
     <div class="wrap">
       <div class="sec-head">
-        <h2><span class="sq" aria-hidden="true"></span>Latest tutorials</h2>
-        <a class="more" href="/blog/">View all</a>
+        <h2><span class="sq" aria-hidden="true"></span>Latest templates</h2>
+        <a class="more" href="/templates/">View all</a>
       </div>
-      <div class="spec-list">
-        {latest.map((post, i) => (
-          <a class="spec" href={postUrl(post)}>
-            <span class="spec-no" aria-hidden="true">{pad(i + 1)}</span>
-            <span class="spec-body">
-              <h3 class="spec-title">{post.data.title}</h3>
-              <p class="spec-desc">{post.data.description}</p>
-            </span>
-            <span class="spec-tag">{categoryName(post.data.category)}</span>
-          </a>
-        ))}
-      </div>
-      {posts.length === 0 && <p>No posts published yet. Check back soon.</p>}
+      {featured.length > 0 ? (
+        <div class="spec-list">
+          {featured.map((t, i) => (
+            <a class="spec" href={`/templates/${t.id.replace(/\.md$/, "")}/`}>
+              <span class="spec-no" aria-hidden="true">{pad(i + 1)}</span>
+              <span class="spec-body">
+                <h3 class="spec-title">{t.data.title}</h3>
+                <p class="spec-desc">{t.data.description}</p>
+              </span>
+              <span class="spec-tag">{difficultyLabel[t.data.difficulty]} · ↓ JSON</span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Templates are on the drawing board — check back soon.</p>
+      )}
     </div>
   </section>
 
   <section class="section" style="padding-top: 0;">
     <div class="wrap">
       <div class="sec-head">
-        <h2><span class="sq" aria-hidden="true"></span>Pick your track</h2>
+        <h2><span class="sq" aria-hidden="true"></span>How it works</h2>
       </div>
       <div class="tracks">
-        {CATEGORIES.map((c, i) => (
-          <a class="track" href={`/categories/${c.slug}/`}>
-            <p class="fig">FIG. <b>{pad(i + 1)}</b></p>
-            <h3>{c.name}</h3>
-            <p>{c.description}</p>
-          </a>
-        ))}
+        <div class="track">
+          <p class="fig">FIG. <b>001</b></p>
+          <h3>Download</h3>
+          <p>Pick a template and download the workflow JSON. Free forever, no signup.</p>
+        </div>
+        <div class="track">
+          <p class="fig">FIG. <b>002</b></p>
+          <h3>Import</h3>
+          <p>In n8n: Workflows → ⋯ → Import from file. The full workflow appears on your canvas.</p>
+        </div>
+        <div class="track">
+          <p class="fig">FIG. <b>003</b></p>
+          <h3>Connect &amp; run</h3>
+          <p>Add your own credentials (Telegram, OpenAI, etc.), activate, and it runs.</p>
+        </div>
       </div>
+    </div>
+  </section>
 
+  <section class="section" style="padding-top: 0;">
+    <div class="wrap">
       <div class="rss-strip">
         <div class="inner">
           <div>
-            <span class="fmt">DOC. CF-RSS-001 · FORMAT: XML</span>
-            <h2>Prefer reading offline?</h2>
-            <p>Every tutorial ships with a full RSS feed. No newsletter signup, no spam — just the feed.</p>
+            <span class="fmt">DOC. CF-BLOG-001 · SECTION: TUTORIALS</span>
+            <h2>Want to understand the builds?</h2>
+            <p>Step-by-step tutorials on AI agents, n8n automation, and chatbots live on the blog — organized by topic.</p>
           </div>
-          <a class="btn btn-ghost" href="/rss.xml">Subscribe via RSS</a>
+          <a class="btn btn-ghost" href="/blog/">Visit the blog</a>
         </div>
       </div>
     </div>

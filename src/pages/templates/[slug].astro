@@ -51,8 +51,9 @@ const jsonLd = {
   <div class="prose-wrap">
     <section class="section prose">
       <p class="breadcrumb"><a href="/">Home</a> / <a href="/templates/">Templates</a> / {t.data.title}</p>
-      <p class="dwg-no">DWG NO. CF-TPL-{slug} · <b>REV D</b></p>
-      <h1>{t.data.title}</h1>
+      <p class="kicker">CORTEXFLOW · FREE FOREVER</p>
+      <p class="post-kicker">{categoryName(t.data.category)}</p>
+      <h1 style="text-transform: uppercase;">{t.data.title}</h1>
       <p class="post-meta">
         <time datetime={t.data.date.toISOString()}>{formatDate(t.data.date)}</time>
         {" · "}{difficultyLabel[t.data.difficulty]}{" · "}{categoryName(t.data.category)}
@@ -82,22 +83,3 @@ const jsonLd = {
     </section>
   </div>
 </BaseLayout>
-
-<style>
-  .post-meta { color: var(--muted); font-size: 0.9rem; margin: -0.5rem 0 1.5rem; }
-  .tpl-download {
-    border: 2px solid var(--ink); background: #fff;
-    padding: 1.25rem 1.5rem; margin: 0 0 2rem;
-    display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem;
-  }
-  .tpl-download__btn {
-    display: inline-block; background: var(--orange); color: #fff;
-    font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;
-    padding: 0.8rem 1.6rem; border: 2px solid var(--ink);
-    transition: transform 0.12s;
-  }
-  .tpl-download__btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
-  .tpl-download__hint { margin: 0; font-size: 0.88rem; color: var(--muted); flex: 1 1 16rem; }
-  .tpl-download--bottom { margin: 2.5rem 0 0; }
-</style>

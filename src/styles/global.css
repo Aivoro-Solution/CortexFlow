@@ -278,6 +278,13 @@ figcaption.sheet-cap {
   color: var(--faint); padding: 0.7rem 0.2rem 0.1rem; display: flex; justify-content: space-between;
 }
 
+/* in-article screenshots = drawing sheet frame, natural aspect ratio */
+figure.shot {
+  margin: 2.2rem 0; padding: 10px;
+  border: 2px solid var(--ink); background: var(--sheet-tint);
+}
+figure.shot img { display: block; width: 100%; height: auto; }
+
 /* article body */
 .post { font-size: 1.06rem; }
 .post > *:first-child { margin-top: 0; }

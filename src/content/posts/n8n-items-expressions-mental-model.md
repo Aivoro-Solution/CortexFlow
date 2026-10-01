@@ -23,6 +23,11 @@ An **expression** is anything wrapped in `{{ }}` — n8n's handlebars-flavored J
 
 ## The three references you actually need
 
+<figure class="shot">
+  <img src="/screenshots/n8n-items-expressions-mental-model/canvas-manual-edit-fields.webp" alt="n8n workflow canvas with a Manual Trigger node connected to an Edit Fields node, where expressions are written" width="1280" height="800" loading="lazy" />
+  <figcaption>A minimal n8n canvas: Manual Trigger feeds items into Edit Fields, where expressions like <code>{{ $json.email }}</code> do their work.</figcaption>
+</figure>
+
 You only need three expression tools for 90% of workflows. Learn them in this order:
 
 **1. `$json` — this item, this node.** Inside any expression, `$json.email` reads the `email` field of the item currently being processed. It is always relative to *where the expression sits*, not where the data came from.

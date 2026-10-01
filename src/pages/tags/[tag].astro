@@ -16,12 +16,14 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props;
+const tagSlug = slugify(tag);
 ---
 
 <BaseLayout
   title={`Posts tagged "${tag}"`}
   description={`All ${SITE.name} posts tagged ${tag}.`}
-  canonicalPath={`/tags/${tag}/`}
+  canonicalPath={`/tags/${tagSlug}/`}
+  noindex
 >
   <section class="section">
     <div class="wrap">

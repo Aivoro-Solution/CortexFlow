@@ -1,5 +1,5 @@
 ---
-title: "n8n 3.0 Disabled Unverified Community Nodes: Safe Install Guide"
+title: "n8n 3.0: Install Unverified Community Nodes"
 description: "n8n 3.0 disables unverified community nodes by default. Re-enable installs safely with N8N_UNVERIFIED_PACKAGES_ENABLED and audit your setup."
 date: 2026-10-01
 category: automation

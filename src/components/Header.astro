@@ -21,7 +21,6 @@ const links = [
     <button class="menu-btn" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
-    <span class="sheet-no" aria-hidden="true">FREE FOREVER · NO SIGNUP</span>
     <nav class="nav" id="mobileNav" aria-label="Main navigation">
       {links.map((l) => (
         <a href={l.href} class={isActive(l.href) ? "active" : ""} {...(isActive(l.href) ? { "aria-current": "page" } : {})}>

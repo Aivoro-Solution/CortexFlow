@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated decision tree: a path branching into three choices">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#111111"/>
+    </marker>
+  </defs>
+
+  <!-- paper sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- trunk: input state entering from left -->
+  <line x1="60" y1="225" x2="250" y2="225" stroke="#111111" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- root decision node (ink square with hard offset shadow) -->
+  <rect x="252" y="200" width="56" height="56" fill="#111111" opacity="1"/>
+  <rect x="244" y="192" width="56" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+
+  <!-- three branches to option nodes -->
+  <g stroke="#111111" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path id="branchA" d="M300 210 C 380 210, 420 140, 500 140"/>
+    <path id="branchB" d="M300 228 C 380 228, 420 228, 500 228"/>
+    <path id="branchC" d="M300 246 C 380 246, 420 316, 500 316"/>
+  </g>
+
+  <!-- pulsing probability dots travelling along branches (slow) -->
+  <circle r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M300 210 C 380 210, 420 140, 500 140"/>
+  </circle>
+  <circle r="7" fill="#FFFDF5" stroke="#111111" stroke-width="2">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M300 228 C 380 228, 420 228, 500 228"/>
+  </circle>
+  <circle r="7" fill="#FFFDF5" stroke="#111111" stroke-width="2">
+    <animateMotion dur="15s" repeatCount="indefinite" path="M300 246 C 380 246, 420 316, 500 316"/>
+  </circle>
+
+  <!-- option nodes: square (orange, selected), circle, triangle -->
+  <g>
+    <rect x="508" y="116" width="48" height="48" fill="#111111"/>
+    <rect x="500" y="108" width="48" height="48" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="opacity" values="1;0.75;1" dur="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <g>
+    <circle cx="548" cy="228" r="30" fill="#111111"/>
+    <circle cx="540" cy="220" r="30" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  </g>
+  <g>
+    <polygon points="548,286 512,348 584,348" fill="#111111"/>
+    <polygon points="540,278 504,340 576,340" fill="#FFFDF5" stroke="#111111" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- confidence bars under each option, gently animating (slow) -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <rect x="500" y="180" width="96" height="14" fill="#FFFDF5"/>
+    <rect x="503" y="183" width="90" height="8" fill="#FF4D00">
+      <animate attributeName="width" values="90;64;90" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="492" y="264" width="96" height="14" fill="#FFFDF5"/>
+    <rect x="495" y="267" width="40" height="8" fill="#111111">
+      <animate attributeName="width" values="40;58;40" dur="11s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="492" y="356" width="96" height="14" fill="#FFFDF5"/>
+    <rect x="495" y="359" width="26" height="8" fill="#111111">
+      <animate attributeName="width" values="26;44;26" dur="13s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- rotating dashed orbit around the selected option (very slow) -->
+  <g opacity="0.7">
+    <circle cx="524" cy="132" r="52" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="10 8">
+      <animateTransform attributeName="transform" type="rotate" from="0 524 132" to="360 524 132" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- incoming request blips on the trunk -->
+  <circle r="5" fill="#111111">
+    <animateMotion dur="6s" repeatCount="indefinite" path="M60 225 L250 225"/>
+    <animate attributeName="opacity" values="1;1;0" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -27,6 +27,12 @@ const links = [
           {l.label}
         </a>
       ))}
+      <span class="auth-area" id="authArea">
+        <a class="btn-sm" href="/signin/" data-auth="signed-out">Sign in</a>
+        <a class="btn-sm primary" href="/signup/" data-auth="signed-out">Sign up</a>
+        <span class="auth-user" data-auth="signed-in" hidden></span>
+        <button class="btn-sm" data-auth="signed-in" id="signOutBtn" hidden>Sign out</button>
+      </span>
     </nav>
   </div>
 </header>
@@ -49,4 +55,31 @@ const links = [
       btn.focus();
     }
   });
+
+  // Auth state: show sign in/up buttons or the signed-in user.
+  (async () => {
+    const area = document.getElementById("authArea");
+    if (!area) return;
+    try {
+      const res = await fetch("/api/auth/me");
+      const out = await res.json();
+      const signedIn = res.ok && out.ok;
+      area.querySelectorAll("[data-auth]").forEach((el) => {
+        const want = el.getAttribute("data-auth");
+        el.hidden = (want === "signed-in") !== signedIn;
+      });
+      if (signedIn) {
+        area.querySelector(".auth-user").textContent = "Hi, " + out.name.split(" ")[0];
+      }
+    } catch {
+      /* leave signed-out buttons visible */
+    }
+    const signOut = document.getElementById("signOutBtn");
+    if (signOut) {
+      signOut.addEventListener("click", async () => {
+        await fetch("/api/auth/signout", { method: "POST" });
+        window.location.href = "/";
+      });
+    }
+  })();
 </script>

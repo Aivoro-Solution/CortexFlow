@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: an AI agent core contained inside nested enforcement rings, watched by a hardware watchdog chip">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF4D00" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FF4D00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- faint blueprint corner marks -->
+  <g stroke="#111111" stroke-width="2" opacity="0.55">
+    <path d="M 18 48 L 18 18 L 48 18"/>
+    <path d="M 782 48 L 782 18 L 752 18"/>
+    <path d="M 18 402 L 18 432 L 48 432"/>
+    <path d="M 782 402 L 782 432 L 752 432"/>
+  </g>
+
+  <!-- ===== containment field: nested rings around the agent core ===== -->
+  <g transform="translate(400 225)">
+    <!-- soft glow pulse -->
+    <circle r="70" fill="url(#coreGlow)">
+      <animate attributeName="r" values="60;78;60" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="8s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- ring 1: solid policy boundary -->
+    <circle r="90" fill="none" stroke="#111111" stroke-width="4">
+      <animate attributeName="r" values="90;96;90" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ring 2: dashed enforcement layer, slow rotation -->
+    <g>
+      <circle r="125" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="18 10"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </g>
+    <!-- ring 3: outer hardware boundary -->
+    <circle r="160" fill="none" stroke="#111111" stroke-width="5">
+      <animate attributeName="r" values="160;166;160" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ring 4: faint outer sweep -->
+    <circle r="195" fill="none" stroke="#111111" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="90s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- policy gate ticks on ring 1 -->
+    <g stroke="#FF4D00" stroke-width="5">
+      <line x1="0" y1="-90" x2="0" y2="-76">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+      </line>
+      <line x1="0" y1="-90" x2="0" y2="-76" transform="rotate(90)">
+        <animateTransform attributeName="transform" type="rotate" from="90" to="450" dur="60s" repeatCount="indefinite"/>
+      </line>
+      <line x1="0" y1="-90" x2="0" y2="-76" transform="rotate(180)">
+        <animateTransform attributeName="transform" type="rotate" from="180" to="540" dur="60s" repeatCount="indefinite"/>
+      </line>
+      <line x1="0" y1="-90" x2="0" y2="-76" transform="rotate(270)">
+        <animateTransform attributeName="transform" type="rotate" from="270" to="630" dur="60s" repeatCount="indefinite"/>
+      </line>
+    </g>
+
+    <!-- orbiting watchdog probe on ring 2 -->
+    <g>
+      <circle r="125" fill="none" stroke="none"/>
+      <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+        <animateMotion dur="36s" repeatCount="indefinite" path="M 125 0 A 125 125 0 1 1 -125 0 A 125 125 0 1 1 125 0"/>
+      </circle>
+    </g>
+    <!-- second probe, opposite phase -->
+    <g>
+      <circle r="8" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+        <animateMotion dur="48s" repeatCount="indefinite" path="M -160 0 A 160 160 0 1 0 160 0 A 160 160 0 1 0 -160 0"/>
+      </circle>
+    </g>
+
+    <!-- the agent core -->
+    <circle r="34" fill="#FF4D00" stroke="#111111" stroke-width="5">
+      <animate attributeName="r" values="34;38;34" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="12" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  </g>
+
+  <!-- ===== watchdog chip (Sentry) — bottom right ===== -->
+  <g transform="translate(618 318)">
+    <rect x="-70" y="-46" width="140" height="92" rx="4" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <!-- pins -->
+    <g stroke="#111111" stroke-width="4">
+      <line x1="-50" y1="-46" x2="-50" y2="-62"/>
+      <line x1="-17" y1="-46" x2="-17" y2="-62"/>
+      <line x1="17" y1="-46" x2="17" y2="-62"/>
+      <line x1="50" y1="-46" x2="50" y2="-62"/>
+      <line x1="-50" y1="46" x2="-50" y2="62"/>
+      <line x1="-17" y1="46" x2="-17" y2="62"/>
+      <line x1="17" y1="46" x2="17" y2="62"/>
+      <line x1="50" y1="46" x2="50" y2="62"/>
+    </g>
+    <!-- scan line sweeping across the chip face -->
+    <rect x="-58" y="-34" width="6" height="68" fill="#FF4D00" opacity="0.8">
+      <animate attributeName="x" values="-58;52;-58" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- status lights -->
+    <circle cx="-40" cy="0" r="7" fill="#111111">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="-16" cy="0" r="7" fill="#111111" opacity="0.35"/>
+    <circle cx="8" cy="0" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="opacity" values="0.35;1;0.35" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="32" cy="0" r="7" fill="#111111" opacity="0.35"/>
+  </g>
+
+  <!-- link line: chip observes the containment field -->
+  <g stroke="#111111" stroke-width="3" stroke-dasharray="10 8" opacity="0.7">
+    <path d="M 548 300 L 470 258">
+      <animate attributeName="stroke-dashoffset" values="0;-72" dur="6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="548" cy="300" r="6" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+
+  <!-- ===== OpenShell badge (software layer) — top left ===== -->
+  <g transform="translate(120 120)">
+    <rect x="-86" y="-58" width="172" height="116" rx="4" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <!-- layered sandbox squares -->
+    <g fill="none" stroke="#111111" stroke-width="3.5">
+      <rect x="-34" y="-34" width="68" height="68"/>
+      <rect x="-24" y="-24" width="48" height="48"/>
+      <rect x="-14" y="-14" width="28" height="28" fill="#FF4D00">
+        <animate attributeName="opacity" values="1;0.6;1" dur="8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  <g stroke="#111111" stroke-width="3" stroke-dasharray="10 8" opacity="0.7">
+    <path d="M 206 120 L 262 160">
+      <animate attributeName="stroke-dashoffset" values="0;72" dur="6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="206" cy="120" r="6" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+</svg>

@@ -27,6 +27,19 @@ import { SITE } from "../config";
         <button type="submit" class="btn" id="submitBtn">Sign in</button>
       </form>
 
+      <p style="margin: 0 0 1.1rem; text-align: right; font-weight: 600;">
+        <a href="#" id="forgotLink">Forgot password?</a>
+      </p>
+      <div id="forgotBox" class="auth-form" hidden style="margin-top: 0;">
+        <label>
+          <span>Account email</span>
+          <input type="email" id="forgotEmail" autocomplete="email" placeholder="you@example.com" />
+        </label>
+        <p class="auth-error" id="forgotError" role="alert" hidden></p>
+        <p id="forgotDone" hidden style="margin: 0; font-weight: 700;"></p>
+        <button type="button" class="btn" id="forgotBtn">Send reset link</button>
+      </div>
+
       <div class="auth-divider"><span>OR</span></div>
       <button type="button" class="auth-google" id="googleBtn">
         <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -49,6 +62,7 @@ import { SITE } from "../config";
       signInWithEmailAndPassword,
       GoogleAuthProvider,
       signInWithPopup,
+      sendPasswordResetEmail,
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
     import {
       getFirestore,
@@ -193,6 +207,52 @@ import { SITE } from "../config";
         showError(FIREBASE_ERRORS[ex.code] || "Google sign-in failed. Please try again.");
       }
       gBtn.disabled = false;
+    });
+
+    // Forgot password — sends the reset email (uses the custom action URL
+    // configured in Firebase console -> Authentication -> Templates).
+    const forgotLink = document.getElementById("forgotLink");
+    const forgotBox = document.getElementById("forgotBox");
+    const forgotBtn = document.getElementById("forgotBtn");
+    const forgotError = document.getElementById("forgotError");
+    const forgotDone = document.getElementById("forgotDone");
+    forgotLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      forgotBox.hidden = !forgotBox.hidden;
+      if (!forgotBox.hidden) {
+        const mainEmail = form.querySelector('input[name="email"]');
+        if (mainEmail && mainEmail.value) {
+          document.getElementById("forgotEmail").value = mainEmail.value;
+        }
+      }
+    });
+    forgotBtn.addEventListener("click", async () => {
+      forgotError.hidden = true;
+      forgotDone.hidden = true;
+      if (!auth) {
+        forgotError.textContent = "Sign-in is being set up. Please try again in a little while.";
+        forgotError.hidden = false;
+        return;
+      }
+      const email = document.getElementById("forgotEmail").value.trim();
+      if (!email) {
+        forgotError.textContent = "Please enter your account email.";
+        forgotError.hidden = false;
+        return;
+      }
+      forgotBtn.disabled = true;
+      forgotBtn.textContent = "Sending…";
+      try {
+        await sendPasswordResetEmail(auth, email);
+        forgotDone.textContent = "Reset link sent — check your inbox (and spam folder).";
+        forgotDone.hidden = false;
+      } catch (ex) {
+        forgotError.textContent =
+          FIREBASE_ERRORS[ex.code] || "Could not send the reset email. Please try again.";
+        forgotError.hidden = false;
+      }
+      forgotBtn.disabled = false;
+      forgotBtn.textContent = "Send reset link";
     });
   </script>
 </BaseLayout>

@@ -1,0 +1,136 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+---
+
+<BaseLayout
+  title="Account action"
+  description="Complete your account action."
+  canonicalPath="/auth/action/"
+  noindex={true}
+>
+  <div class="prose-wrap">
+    <section class="section prose auth-page">
+      <p class="breadcrumb"><a href="/">Home</a> / Account action</p>
+      <h1 id="actionTitle">Working…</h1>
+      <div id="actionBox">
+        <p style="color: var(--muted);">Please wait while we verify your link.</p>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import {
+      getAuth,
+      applyActionCode,
+      verifyPasswordResetCode,
+      confirmPasswordReset,
+      checkActionCode,
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgmyFmzeP9nzhlDPd1800b0ycYmg-yDeM",
+      authDomain: "cortexflow-7c274.firebaseapp.com",
+      projectId: "cortexflow-7c274",
+    };
+
+    const title = document.getElementById("actionTitle");
+    const box = document.getElementById("actionBox");
+
+    function show(html) {
+      box.innerHTML = html;
+    }
+    function errorBox(msg) {
+      title.textContent = "Link expired or invalid";
+      show(
+        `<p class="auth-error" role="alert">${msg}</p>` +
+          `<p class="auth-switch"><a href="/signin/">Back to sign in →</a></p>`
+      );
+    }
+
+    let auth = null;
+    try {
+      auth = getAuth(initializeApp(firebaseConfig));
+    } catch {
+      auth = null;
+    }
+
+    async function main() {
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get("mode");
+      const oobCode = params.get("oobCode");
+      if (!auth || !mode || !oobCode) {
+        errorBox("This link is missing information. Please request a new email.");
+        return;
+      }
+      try {
+        if (mode === "resetPassword") {
+          const email = await verifyPasswordResetCode(auth, oobCode);
+          title.textContent = "Reset your password";
+          show(`
+            <form id="resetForm" class="auth-form" novalidate style="margin:0">
+              <p style="margin:0">Set a new password for <strong>${email.replace(/</g, "&lt;")}</strong>.</p>
+              <label>
+                <span>New password <small>(min 8 characters)</small></span>
+                <input type="password" id="newPass" autocomplete="new-password" required minlength="8" placeholder="••••••••" />
+              </label>
+              <p class="auth-error" id="resetError" role="alert" hidden></p>
+              <button type="submit" class="btn" id="resetBtn">Set new password</button>
+            </form>`);
+          const form = document.getElementById("resetForm");
+          const rerr = document.getElementById("resetError");
+          const rbtn = document.getElementById("resetBtn");
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            rerr.hidden = true;
+            const pw = document.getElementById("newPass").value;
+            if (pw.length < 8) {
+              rerr.textContent = "Password must be at least 8 characters.";
+              rerr.hidden = false;
+              return;
+            }
+            rbtn.disabled = true;
+            rbtn.textContent = "Saving…";
+            try {
+              await confirmPasswordReset(auth, oobCode, pw);
+              title.textContent = "Password updated";
+              show(
+                `<p>Your password has been changed. You can now sign in with your new password.</p>` +
+                  `<p class="auth-switch"><a href="/signin/">Sign in →</a></p>`
+              );
+            } catch {
+              rerr.textContent = "Could not reset the password. The link may have expired.";
+              rerr.hidden = false;
+              rbtn.disabled = false;
+              rbtn.textContent = "Set new password";
+            }
+          });
+        } else if (mode === "verifyEmail") {
+          await applyActionCode(auth, oobCode);
+          title.textContent = "Email verified";
+          show(
+            `<p>Your email address has been verified. Welcome aboard!</p>` +
+              `<p class="auth-switch"><a href="/signin/">Sign in →</a></p>`
+          );
+        } else if (mode === "recoverEmail") {
+          const info = await checkActionCode(auth, oobCode);
+          await applyActionCode(auth, oobCode);
+          title.textContent = "Email restored";
+          show(
+            `<p>Your sign-in email has been restored to <strong>${String(
+              (info.data && info.data.email) || ""
+            ).replace(/</g, "&lt;")}</strong>.</p>` +
+              `<p class="auth-switch"><a href="/signin/">Sign in →</a></p>`
+          );
+        } else {
+          errorBox("Unknown action. Please request a new email.");
+        }
+      } catch {
+        errorBox("This link has expired or was already used. Please request a new email.");
+      }
+    }
+
+    main();
+  </script>
+</BaseLayout>

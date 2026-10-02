@@ -582,6 +582,7 @@ figure.shot img { display: block; width: 100%; height: auto; border: 3px solid v
 
 /* ---------- header auth area ---------- */
 .auth-area { display: flex; align-items: center; gap: 0.6rem; margin-left: 0.6rem; }
+.auth-area [hidden] { display: none !important; }
 .auth-area .btn-sm {
   display: inline-block; font-family: var(--font-display); font-size: 0.8rem; text-transform: uppercase;
   padding: 0.55rem 1rem; border: 3px solid var(--ink); background: #fff; color: var(--ink);

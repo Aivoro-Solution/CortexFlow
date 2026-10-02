@@ -1,0 +1,371 @@
+{
+  "name": "AI Stock Analysis — Fundamental Analysis",
+  "nodes": [
+    {
+      "id": "fd780743-ac5b-4926-8735-29fadeffb7e4",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2032,
+        800
+      ],
+      "parameters": {
+        "color": 6,
+        "width": 2224,
+        "height": 592,
+        "content": "## Fundamental Analysis \nThis sub-workflow fetches and summarizes key financial health metrics, including income statements, balance sheets, and company overview data from Alpha Vantage."
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "849bd29b-8fb5-4d13-99e2-14ab5c24621b",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1776,
+        944
+      ],
+      "parameters": {
+        "width": 1312,
+        "height": 320,
+        "content": "### Fetch Financial Statements\nRetrieves Overview, Income, and Balance Sheet data from Alpha Vantage, with built-in waits to respect API rate limits.\n"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "1a61bae0-eb43-41b0-beb7-0275e559f7f2",
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        1024
+      ],
+      "parameters": {
+        "width": 528,
+        "height": 224,
+        "content": "### AI Analyzes data and response is finalized"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "8c85ed72-ced4-44c5-bc08-a6422b31b764",
+      "name": "Sticky Note18",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2000,
+        1232
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 192,
+        "height": 80,
+        "content": "### Add AlphaVantage API Key"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "babd0c87-5e36-469d-8e9f-de3fcb056d16",
+      "name": "Sticky Note24",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        1216
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 150,
+        "height": 80,
+        "content": "### Add OpenRouter Credential"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "c7a923fc-f9ac-4a3c-9c5d-3cfbaf51c1d4",
+      "name": "Set Variables",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1952,
+        1088
+      ],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "ticker",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ticker }}"
+            },
+            {
+              "name": "apikey",
+              "value": "PASTE_YOUR_ALPHA_VANTAGE_KEY_HERE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "5fa98570-ee3a-4e92-8ce9-2079ad9ac8ab",
+      "name": "Get Company Overview",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1728,
+        1088
+      ],
+      "parameters": {
+        "url": "=https://www.alphavantage.co/query?function=OVERVIEW&symbol={{ $json.ticker }}&apikey={{ $json.apikey }}",
+        "options": {}
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "5347f38b-e17a-455d-b9cb-ecabc3c06332",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1504,
+        1008
+      ],
+      "webhookId": "72d54c01-dacb-4f35-9622-e8ba0f499c67",
+      "parameters": {
+        "amount": 2.5
+      },
+      "typeVersion": 1.1
+    },
+    {
+      "id": "ce5623db-0de4-4922-bc60-6057e2259692",
+      "name": "Get Income Statement",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1280,
+        1008
+      ],
+      "parameters": {
+        "url": "=https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={{ $('Set Variables').item.json.ticker }}&apikey={{ $('Set Variables').item.json.apikey }}",
+        "options": {}
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "5d7c5f07-8f0b-4729-a935-46c063d0ef93",
+      "name": "Wait2",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1056,
+        1088
+      ],
+      "webhookId": "2ab3862a-8e34-4761-8a29-e7e448d63c8d",
+      "parameters": {
+        "amount": 2.5
+      },
+      "typeVersion": 1.1
+    },
+    {
+      "id": "e8736a60-5ae6-463d-a3d6-10a0d18765fd",
+      "name": "Get Balance Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -832,
+        1088
+      ],
+      "parameters": {
+        "url": "=https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={{ $('Set Variables').item.json.ticker }}&apikey={{ $('Set Variables').item.json.apikey }}",
+        "options": {}
+      },
+      "typeVersion": 3
+    },
+    {
+      "id": "c9d62130-75e4-4925-aaea-f756a6712259",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -608,
+        1072
+      ],
+      "parameters": {
+        "mode": "combine",
+        "options": {},
+        "combineBy": "combineByPosition",
+        "numberInputs": 3
+      },
+      "typeVersion": 3.2
+    },
+    {
+      "id": "7a588357-3dc2-4147-af1f-78ff3fb63ade",
+      "name": "ChatGPT 4o1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        -384,
+        1088
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "z-ai/glm-4.5-air:free"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a precise AI financial analyst. Your task is to analyze a JSON object containing raw financial data from Alpha Vantage for a single company and convert it into a structured summary.\n\nYou will receive data from the OVERVIEW, INCOME_STATEMENT, and BALANCE_SHEET endpoints.\n\nFollow these instructions exactly:\n1.  From the OVERVIEW data, extract the company `Description`.\n2.  From the OVERVIEW data, extract the following `key_metrics`: `MarketCapitalization`, `PERatio`, `EPS`.\n3.  From the INCOME_STATEMENT data (`annualReports`), find the `totalRevenue` and `netIncome` for the two most recent years.\n4.  From the BALANCE_SHEET data (`annualReports`), find the `totalAssets` and `totalLiabilities` for the most recent year. Calculate the Debt-to-Equity ratio as (totalLiabilities / (totalAssets - totalLiabilities)).\n5.  Write a brief, data-driven `financial_summary` paragraph (3-4 sentences). State whether revenue and income are growing or shrinking, and comment on the company's valuation (using P/E) and financial stability (using the debt ratio). Remain objective and stick to the data provided.\n\nYour final output MUST be a single, clean JSON object with the following structure. Do not include any text outside of this JSON structure.\n\n{\n  \"company_overview\": \"The extracted company description.\",\n  \"key_metrics\": {\n    \"market_cap\": \"...\",\n    \"pe_ratio\": \"...\",\n    \"eps\": \"...\"\n  },\n  \"recent_performance\": {\n    \"latest_revenue\": \"...\",\n    \"previous_revenue\": \"...\",\n    \"latest_net_income\": \"...\",\n    \"previous_net_income\": \"...\"\n  },\n  \"financial_health\": {\n    \"debt_to_equity_ratio\": \"...\"\n  },\n  \"financial_summary\": \"Your generated summary paragraph.\"\n}"
+            },
+            {
+              "content": "=={{ JSON.stringify($input.item.json) }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "typeVersion": 1.8
+    },
+    {
+      "id": "90710a85-69bb-4e0a-aa67-7aedbce7e468",
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -32,
+        1088
+      ],
+      "parameters": {
+        "jsCode": "// Get the raw AI response\nlet aiResponseString = $input.first().json.message.content;\n\n// Remove Markdown code block wrappers if present\naiResponseString = aiResponseString\n  .replace(/^```json\\s*/i, '') // remove opening ```json\n  .replace(/^```\\s*/i, '')     // remove opening ``` if no 'json'\n  .replace(/```$/i, '')        // remove closing ```\n  .trim();\n\n// Try to parse\nlet finalJson;\ntry {\n  finalJson = JSON.parse(aiResponseString);\n} catch (error) {\n  throw new Error(\"Failed to parse JSON. AI output was:\\n\" + aiResponseString);\n}\n\n// Return clean JSON\nreturn finalJson;"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "6afc436e-6fdd-4d46-bd32-b0b604a43522",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -2212,
+        1088
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "typeVersion": 1.1
+    }
+  ],
+  "connections": {
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get Income Statement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Get Balance Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "ChatGPT 4o1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ChatGPT 4o1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Get Company Overview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Balance Sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Get Company Overview": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Income Statement": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

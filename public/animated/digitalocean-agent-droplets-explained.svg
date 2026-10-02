@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of a cloud droplet containing connected AI agent nodes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- central droplet: agent runtime -->
+  <g>
+    <path d="M 400 120 C 400 120 300 250 300 310 A 100 100 0 0 0 500 310 C 500 250 400 120 400 120 Z"
+          fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <animateTransform attributeName="transform" type="translate"
+                      values="0 0; 0 -10; 0 0" dur="8s" repeatCount="indefinite"/>
+    <!-- pulsing orange core -->
+    <circle cx="400" cy="310" r="34" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="r" values="34; 44; 34" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.9; 0.55; 0.9" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="310" r="58" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="8 6" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 310" to="360 400 310" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- orbiting tool nodes -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <circle cx="170" cy="140" r="26">
+      <animate attributeName="cy" values="140; 124; 140" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="630" cy="140" r="26">
+      <animate attributeName="cy" values="140; 156; 140" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="330" r="22">
+      <animate attributeName="cy" values="330; 314; 330" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="330" r="22">
+      <animate attributeName="cy" values="330; 346; 330" dur="10s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- orange accents inside nodes -->
+  <g fill="#FF4D00">
+    <circle cx="170" cy="140" r="9">
+      <animate attributeName="cy" values="140; 124; 140" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="630" cy="140" r="9">
+      <animate attributeName="cy" values="140; 156; 140" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="330" r="7">
+      <animate attributeName="cy" values="330; 314; 330" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="330" r="7">
+      <animate attributeName="cy" values="330; 346; 330" dur="10s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- governed links: droplet to tool nodes -->
+  <g stroke="#111111" stroke-width="3" stroke-dasharray="10 8" opacity="0.65">
+    <line x1="330" y1="220" x2="196" y2="156">
+      <animate attributeName="stroke-dashoffset" values="0; -36" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="470" y1="220" x2="604" y2="156">
+      <animate attributeName="stroke-dashoffset" values="0; -36" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="330" y1="360" x2="172" y2="344">
+      <animate attributeName="stroke-dashoffset" values="0; 36" dur="7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="470" y1="360" x2="628" y2="344">
+      <animate attributeName="stroke-dashoffset" values="0; 36" dur="7s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- memory blocks at base -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="4">
+    <rect x="300" y="392" width="80" height="30" rx="4">
+      <animate attributeName="y" values="392; 386; 392" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="420" y="392" width="80" height="30" rx="4">
+      <animate attributeName="y" values="392; 398; 392" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <rect x="316" y="402" width="48" height="10" fill="#FF4D00">
+    <animate attributeName="y" values="402; 396; 402" dur="8s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="436" y="402" width="48" height="10" fill="#FF4D00">
+    <animate attributeName="y" values="402; 408; 402" dur="9s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- slow drifting spark -->
+  <path d="M 400 40 l 10 22 l 20 4 l -14 16 l 4 22 l -20 -12 l -20 12 l 4 -22 l -14 -16 l 20 -4 Z"
+        fill="none" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1; 0.25; 1" dur="6s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0; -24 0; 0 0" dur="24s" repeatCount="indefinite"/>
+  </path>
+</svg>

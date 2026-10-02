@@ -559,3 +559,40 @@ figure.shot img { display: block; width: 100%; height: auto; border: 3px solid v
 .prose .tpl-download__btn:hover, .post .tpl-download__btn:hover { color: #fff; }
 .tpl-download__hint { margin: 0; font-size: 0.9rem; font-weight: 600; flex: 1 1 16rem; }
 .tpl-download--bottom { margin: 2.5rem 0 0; }
+
+/* ---------- auth pages ---------- */
+.auth-page { max-width: 34rem; }
+.auth-form {
+  border: 3px solid var(--ink); background: #fff;
+  box-shadow: var(--shadow); padding: 1.8rem; margin: 1.8rem 0;
+  display: flex; flex-direction: column; gap: 1.1rem;
+}
+.auth-form label { display: flex; flex-direction: column; gap: 0.4rem; font-weight: 700; }
+.auth-form label small { font-weight: 500; color: var(--muted); }
+.auth-form input {
+  border: 3px solid var(--ink); padding: 0.8rem 1rem;
+  font: inherit; background: var(--cream); color: var(--ink);
+}
+.auth-form input:focus { outline: 3px solid var(--orange); outline-offset: -3px; background: #fff; }
+.auth-error {
+  margin: 0; padding: 0.8rem 1rem; font-weight: 700;
+  border: 3px solid var(--ink); background: #ffe3e3; color: #b00020;
+}
+.auth-switch { font-weight: 600; }
+
+/* ---------- header auth area ---------- */
+.auth-area { display: flex; align-items: center; gap: 0.6rem; margin-left: 0.6rem; }
+.auth-area .btn-sm {
+  display: inline-block; font-family: var(--font-display); font-size: 0.8rem; text-transform: uppercase;
+  padding: 0.55rem 1rem; border: 3px solid var(--ink); background: #fff; color: var(--ink);
+  box-shadow: 4px 4px 0 var(--ink); cursor: pointer; text-decoration: none;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.auth-area .btn-sm:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); color: var(--ink); }
+.auth-area .btn-sm:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
+.auth-area .btn-sm.primary { background: var(--orange); color: #fff; }
+.auth-area .btn-sm.primary:hover { color: #fff; }
+.auth-user { font-weight: 700; font-size: 0.9rem; }
+@media (max-width: 760px) {
+  .auth-area { margin-left: 0; }
+}

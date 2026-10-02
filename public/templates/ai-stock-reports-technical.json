@@ -1,0 +1,979 @@
+{
+  "name": "AI Stock Analysis — Technical Analysis",
+  "nodes": [
+    {
+      "id": "c9c6707d-556e-4c23-90de-c243792c3ac8",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2032,
+        -224
+      ],
+      "parameters": {
+        "color": 6,
+        "width": 3584,
+        "height": 992,
+        "content": "## Technical Analysis \nThis sub-workflow gathers technical indicator data (like MACD and Bollinger Bands) from Twelve Data and generates a stock chart image using Chart-Img."
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "5c2155a4-e812-4bfb-b9a0-0f3267a283f5",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2000,
+        64
+      ],
+      "parameters": {
+        "width": 1504,
+        "height": 592,
+        "content": "### Exchange & Symbol Validation \nThis part checks if the ticker exists on NASDAQ or NYSE before proceeding"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "3739d55f-0c38-4ac2-8cde-463564d39753",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        32
+      ],
+      "parameters": {
+        "width": 464,
+        "height": 624,
+        "content": "### Fetch Technical Indicator Data \nThis part gathers raw TA metrics from the Twelve Data API."
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "361eebcc-89d1-4fed-99be-b268781b0d68",
+      "name": "Sticky Note14",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -208
+      ],
+      "parameters": {
+        "width": 688,
+        "height": 224,
+        "content": "### Visual Chart Analysis\nThis part pulls a chart from the Chart-IMG API and uses a vision-capable AI model to analyze it"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "1073732a-a909-4e57-a341-a239f82a2236",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        -64
+      ],
+      "parameters": {
+        "width": 832,
+        "height": 208,
+        "content": "### Synthesize and Format Report \nMerges all TA data and uses an AI analyst to write the final summary"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "6ec499be-104a-480b-8e1f-f630d5143544",
+      "name": "Sticky Note21",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2016,
+        512
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 192,
+        "height": 80,
+        "content": "### Add TwelveData API Key"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "4161eb94-fa13-459a-9622-07e76ef2115c",
+      "name": "Sticky Note22",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        16
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 150,
+        "height": 80,
+        "content": "### Add OpenRouter Credential"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "cb80f5cc-e0c4-46e0-a2cc-e4042cfce1e5",
+      "name": "Sticky Note23",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        144
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 182,
+        "height": 80,
+        "content": "### Add OpenRouter Credential"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "fd29363f-cf2c-496b-ba54-7e3196211242",
+      "name": "Set Stock Symbol and API Key",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1968,
+        320
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55327ecd-8ada-433f-8a00-a563be802383",
+              "name": "ticker",
+              "type": "string",
+              "value": "={{ $json.ticker }}"
+            },
+            {
+              "id": "56a9a7bb-bcdb-4b77-8262-3e31bc06f13e",
+              "name": "TwelveData_API_Key",
+              "type": "string",
+              "value": "PASTE_YOUR_TWELVEDATA_API_KEY_HERE"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "87e7f7e2-f942-4f6d-a415-4e86de38dc18",
+      "name": "Test NASDAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1744,
+        320
+      ],
+      "parameters": {
+        "url": "=https://api.twelvedata.com/price?symbol={{ $json.ticker }}&exchange=NASDAQ&apikey={{ $json.TwelveData_API_Key }}",
+        "options": {}
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "9fe9c6ed-bf4b-4180-81cc-35804a577cca",
+      "name": "is on nasdaq?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -1520,
+        320
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "d15e3e9e-7589-4044-993a-9649a852413c",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('Test NASDAQ').item.json.price }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      },
+      "typeVersion": 2.2
+    },
+    {
+      "id": "30d88d3f-fbdb-447e-ab18-49443f7f3ed3",
+      "name": "Set exchange to NASDAQ",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -848,
+        112
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f322a9ad-2557-4a8e-9c46-ddffc7942ce9",
+              "name": "exchange",
+              "type": "string",
+              "value": "NASDAQ"
+            },
+            {
+              "id": "da6f7a30-c465-4bf8-b604-7386c91fe2b1",
+              "name": "chart_prefix",
+              "type": "string",
+              "value": "=NASDAQ:"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "18805f53-e4c9-4d28-a8e9-fd6e9bdfe58d",
+      "name": "Test NYSE",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1296,
+        416
+      ],
+      "parameters": {
+        "url": "=https://api.twelvedata.com/price?symbol={{ $('When Executed by Another Workflow').item.json.ticker }}&exchange=NYSE&apikey={{ $('Set Stock Symbol and API Key').item.json.TwelveData_API_Key }}",
+        "options": {}
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ceb32089-f5a5-4e84-8f04-51782fcf6245",
+      "name": "is on NYSE?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -1072,
+        416
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "14480d4e-3257-4689-8743-8f10605bdda0",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('Test NYSE').item.json.price }}",
+              "rightValue": "="
+            }
+          ]
+        }
+      },
+      "typeVersion": 2.2
+    },
+    {
+      "id": "45f7c21d-b9b7-45c2-a75b-958014ecd250",
+      "name": "Set exchange to NYSE",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -848,
+        304
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd4f1318-6c35-46e5-a08c-3a89ac0db3c6",
+              "name": "exchange",
+              "type": "string",
+              "value": "NYSE"
+            },
+            {
+              "id": "b0d09ec1-31e0-4178-bb3c-e5074616c865",
+              "name": "chart_prefix",
+              "type": "string",
+              "value": "=NYSE:"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "f46a5d8f-fef9-4209-9f30-faa7ea291285",
+      "name": "Stop and Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "position": [
+        -848,
+        496
+      ],
+      "parameters": {
+        "errorMessage": "Stock doesn't exist"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "2eb3167a-e530-43cd-8427-f237489ba9c2",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -624,
+        224
+      ],
+      "parameters": {},
+      "typeVersion": 3.2
+    },
+    {
+      "id": "75176c08-093b-4231-b1d8-39d2dd1a2abe",
+      "name": "Get Price History",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -400,
+        112
+      ],
+      "parameters": {
+        "url": "=https://api.twelvedata.com/time_series",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendQuery": true,
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ticker }}"
+            },
+            {
+              "name": "interval",
+              "value": "1day"
+            },
+            {
+              "name": "outputsize",
+              "value": "180"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $('Set Stock Symbol and API Key').item.json.TwelveData_API_Key }}"
+            },
+            {
+              "name": "exchange",
+              "value": "={{ $json.exchange }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.1
+    },
+    {
+      "id": "b0e08c80-b1ef-4586-9a32-76b914e28025",
+      "name": "Get Chart URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -176,
+        -144
+      ],
+      "parameters": {
+        "url": "https://api.chart-img.com/v2/tradingview/advanced-chart",
+        "method": "POST",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        },
+        "jsonBody": "={\n  \"style\": \"candle\",\n  \"theme\": \"light\",\n  \"interval\": \"1W\",\n  \"symbol\": \"{{ $json.chart_prefix }}{{ $('When Executed by Another Workflow').item.json.ticker }}\",\n  \"override\": {\n    \"showStudyLastValue\": false\n  },\n  \"studies\": [\n    {\n      \"name\": \"Volume\",\n      \"forceOverlay\": true\n    },\n    {\n      \"name\": \"Moving Average Exponential\",\n      \"inputs\": {\n        \"length\": 200\n      }\n    },\n    {\n      \"name\": \"Relative Strength Index\"\n    }\n  ]\n}",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Chart-IMG API Key (Header Auth)"
+        }
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "9e82bd30-1b72-40d8-93d7-880868d7d742",
+      "name": "Get Bollinger Bands",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -176,
+        304
+      ],
+      "parameters": {
+        "url": "=https://api.twelvedata.com/bbands",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ticker }}"
+            },
+            {
+              "name": "interval",
+              "value": "1day"
+            },
+            {
+              "name": "outputsize",
+              "value": "1"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $('Set Stock Symbol and API Key').item.json.TwelveData_API_Key }}"
+            },
+            {
+              "name": "exchange",
+              "value": "={{ $json.exchange }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.1
+    },
+    {
+      "id": "a88429d0-09bd-4f1d-8086-5e22b891a11b",
+      "name": "Get MACD",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -176,
+        496
+      ],
+      "parameters": {
+        "url": "=https://api.twelvedata.com/macd",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ticker }}"
+            },
+            {
+              "name": "interval",
+              "value": "1day"
+            },
+            {
+              "name": "outputsize",
+              "value": "1"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $('Set Stock Symbol and API Key').item.json.TwelveData_API_Key }}"
+            },
+            {
+              "name": "exchange",
+              "value": "={{ $json.exchange }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.1
+    },
+    {
+      "id": "b1298512-4099-45b9-93bf-2cfd362adc71",
+      "name": "Calculate Support Resistance",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -176,
+        112
+      ],
+      "parameters": {
+        "jsCode": "// Get historical price data\nconst data = $input.item.json;\n\n// Check if data exists\nif (!data.values || data.values.length === 0) {\n  return { json: { error: \"No price data available\", ticker: data.meta?.symbol } };\n}\n\n// Convert prices to numbers\nconst prices = data.values.map(v => parseFloat(v.close)).reverse();\n\n// Function to calculate Fibonacci levels\nfunction calculateFibonacciLevels() {\n  // Find min and max prices\n  const max = Math.max(...prices);\n  const min = Math.min(...prices);\n  const diff = max - min;\n  \n  return {\n    level_0: min.toFixed(2),\n    level_0_236: (min + diff * 0.236).toFixed(2),\n    level_0_382: (min + diff * 0.382).toFixed(2),\n    level_0_5: (min + diff * 0.5).toFixed(2),\n    level_0_618: (min + diff * 0.618).toFixed(2),\n    level_0_786: (min + diff * 0.786).toFixed(2),\n    level_1: max.toFixed(2)\n  };\n}\n// Function to identify support and resistance levels\nfunction findSupportResistanceLevels() {\n  // We need at least 30 data points\n  if (prices.length < 30) {\n    return { support: [], resistance: [] };\n  }\n  \n  const supportLevels = [];\n  const resistanceLevels = [];\n  \n  // Check each point (except edges) if it's a local minimum or maximum\n  const lookback = 5; // how many points to check in each direction\n  \n  for (let i = lookback; i < prices.length - lookback; i++) {\n    // Check for local minimum (support)\n    let isMinimum = true;\n    for (let j = i - lookback; j < i; j++) {\n      if (prices[j] <= prices[i]) {\n        isMinimum = false;\n        break;\n      }\n    }\n    \n    for (let j = i + 1; j <= i + lookback; j++) {\n      if (prices[j] <= prices[i]) {\n        isMinimum = false;\n        break;\n      }\n    }\n    \n    if (isMinimum) {\n      supportLevels.push(prices[i]);\n    }\n    \n    // Check for local maximum (resistance)\n    let isMaximum = true;\n    for (let j = i - lookback; j < i; j++) {\n      if (prices[j] >= prices[i]) {\n        isMaximum = false;\n        break;\n      }\n    }\n    \n    for (let j = i + 1; j <= i + lookback; j++) {\n      if (prices[j] >= prices[i]) {\n        isMaximum = false;\n        break;\n      }\n    }\n    \n    if (isMaximum) {\n      resistanceLevels.push(prices[i]);\n    }\n  }\n  \n  // Sort and remove duplicates\n  const uniqueSupports = [...new Set(supportLevels)];\n  const uniqueResistances = [...new Set(resistanceLevels)];\n  \n  // Return only significant levels (up to 5 of each)\n  return {\n    support: uniqueSupports.sort((a, b) => b - a).slice(0, 5).map(p => p.toFixed(2)),\n    resistance: uniqueResistances.sort((a, b) => a - b).slice(0, 5).map(p => p.toFixed(2))\n  };\n}\n\n// Calculate levels\nconst fibonacciLevels = calculateFibonacciLevels();\nconst supportResistanceLevels = findSupportResistanceLevels();\n\n// Return information with additional stock data\nreturn {\n  json: {\n    ticker: data.meta.symbol,\n    currentPrice: parseFloat(data.values[0].close).toFixed(2),\n    fibonacci: fibonacciLevels,\n    supportResistance: supportResistanceLevels,\n    dataPoints: prices.length\n  }\n};"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "bccae87d-aeb2-4f76-a35a-5f81483fc6ba",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        48,
+        208
+      ],
+      "parameters": {
+        "numberInputs": 3
+      },
+      "typeVersion": 3.1
+    },
+    {
+      "id": "8ce97004-accd-400d-a8aa-e0fb3ec4a430",
+      "name": "Organizing Data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        272,
+        224
+      ],
+      "parameters": {
+        "jsCode": "// Getting data from different sources\n// Checking existence of objects before trying to access them\nconst items = $input.all();\nconst fibData = $input.first().json;\n// Trying to locate bband and MACD data if they exist\nlet bbandsData = null;\nlet macdData = null;\n// Trying to check if there is data in additional items\nif (items.length > 1 && items[1] && items[1].json) {\n  bbandsData = items[1].json;\n}\nif (items.length > 2 && items[2] && items[2].json) {\n  macdData = items[2].json;\n}\n// Creating data structure for the response - ensure all fields exist\nconst result = {\n  ticker: fibData.ticker || \"Unknown\",\n  currentPrice: fibData.currentPrice || \"0\",\n  timestamp: new Date().toISOString(),\n  technicalAnalysis: {\n    fibonacci: fibData.fibonacci || {},\n    supportResistance: fibData.supportResistance || { support: [], resistance: [] },\n    bollingerBands: {},\n    macd: {}\n  }\n};\n// Adding Bollinger Bands data - only if they exist\nif (bbandsData && bbandsData.values && bbandsData.values.length > 0) {\n  const bbands = bbandsData.values[0];\n  result.technicalAnalysis.bollingerBands = {\n    upperBand: parseFloat(bbands.upper_band).toFixed(2),\n    middleBand: parseFloat(bbands.middle_band).toFixed(2),\n    lowerBand: parseFloat(bbands.lower_band).toFixed(2)\n  };\n} else if (bbandsData && bbandsData.status === \"ok\") {\n  // If returning another data format\n  result.technicalAnalysis.bollingerBands = {\n    upperBand: bbandsData.upperBand || bbandsData.upper_band || \"0\",\n    middleBand: bbandsData.middleBand || bbandsData.middle_band || \"0\",\n    lowerBand: bbandsData.lowerBand || bbandsData.lower_band || \"0\"\n  };\n}\n// Adding MACD data - only if they exist\nif (macdData && macdData.values && macdData.values.length > 0) {\n  const macd = macdData.values[0];\n  result.technicalAnalysis.macd = {\n    macd: parseFloat(macd.macd).toFixed(2),\n    signal: parseFloat(macd.signal).toFixed(2),\n    histogram: parseFloat(macd.hist).toFixed(2)\n  };\n} else if (macdData && macdData.status === \"ok\") {\n  // If returning another data format\n  result.technicalAnalysis.macd = {\n    macd: macdData.macd || \"0\",\n    signal: macdData.signal || \"0\",\n    histogram: macdData.histogram || macdData.hist || \"0\"\n  };\n}\n// Creating summary and recommendation\nlet bullishFactors = [];\nlet bearishFactors = [];\n// Analyzing Bollinger Bands - only if data exists\nconst bbands = result.technicalAnalysis.bollingerBands;\nif (bbands.upperBand && bbands.lowerBand) {\n  const currentPrice = parseFloat(result.currentPrice);\n  const upperBand = parseFloat(bbands.upperBand);\n  const lowerBand = parseFloat(bbands.lowerBand);\n  if (!isNaN(currentPrice) && !isNaN(upperBand) && !isNaN(lowerBand)) {\n    if (currentPrice > upperBand) {\n      bearishFactors.push(\"Price above upper Bollinger Band - possible overbought opportunity\");\n    } else if (currentPrice < lowerBand) {\n      bullishFactors.push(\"Price below lower Bollinger Band - possible oversold opportunity\");\n    }\n  }\n}\n// Analyzing MACD - only if data exists\nconst macdInfo = result.technicalAnalysis.macd;\nif (macdInfo.macd && macdInfo.signal) {\n  const macd = parseFloat(macdInfo.macd);\n  const signal = parseFloat(macdInfo.signal);\n  if (!isNaN(macd) && !isNaN(signal)) {\n    if (macd > signal) {\n      bullishFactors.push(\"MACD above signal line - positive indication\");\n    } else {\n      bearishFactors.push(\"MACD below signal line - negative indication\");\n    }\n  }\n}\n// Analyzing support and resistance levels - only if data exists\nconst supportResistance = result.technicalAnalysis.supportResistance;\nif (supportResistance.support && supportResistance.resistance) {\n  const currentPrice = parseFloat(result.currentPrice);\n  if (!isNaN(currentPrice)) {\n    const supports = supportResistance.support.map(s => parseFloat(s)).filter(s => !isNaN(s));\n    const resistances = supportResistance.resistance.map(r => parseFloat(r)).filter(r => !isNaN(r));\n    \n    // Finding the closest support level\n    let closestSupport = null;\n    let minSupportDist = Infinity;\n    for (const support of supports) {\n      if (support < currentPrice) {\n        const dist = currentPrice - support;\n        if (dist < minSupportDist) {\n          minSupportDist = dist;\n          closestSupport = support;\n        }\n      }\n    }\n    \n    // Finding the closest resistance level\n    let closestResistance = null;\n    let minResistanceDist = Infinity;\n    for (const resistance of resistances) {\n      if (resistance > currentPrice) {\n        const dist = resistance - currentPrice;\n        if (dist < minResistanceDist) {\n          minResistanceDist = dist;\n          closestResistance = resistance;\n        }\n      }\n    }\n    \n    // Adding support/resistance analysis\n    if (closestSupport !== null) {\n      const supportPercentage = ((currentPrice - closestSupport) / currentPrice * 100).toFixed(2);\n      if (supportPercentage < 5) {\n        bullishFactors.push(`Price is close to support level (${supportPercentage}%) - possible upward reversal opportunity`);\n      }\n    }\n    \n    if (closestResistance !== null) {\n      const resistancePercentage = ((closestResistance - currentPrice) / currentPrice * 100).toFixed(2);\n      if (resistancePercentage < 5) {\n        bearishFactors.push(`Price is close to resistance level (${resistancePercentage}%) - possible downward reversal opportunity`);\n      }\n    }\n  }\n}\n// Analyzing Fibonacci - only if data exists\nconst fibonacci = result.technicalAnalysis.fibonacci;\nif (fibonacci && Object.keys(fibonacci).length > 0) {\n  const currentPrice = parseFloat(result.currentPrice);\n  if (!isNaN(currentPrice)) {\n    const fibLevels = Object.values(fibonacci).map(level => parseFloat(level)).filter(level => !isNaN(level));\n    fibLevels.sort((a, b) => a - b);\n    \n    // Checking which Fibonacci level the price is at\n    for (let i = 0; i < fibLevels.length - 1; i++) {\n      if (currentPrice >= fibLevels[i] && currentPrice <= fibLevels[i+1]) {\n        // If the price is close to a Fibonacci resistance level\n        if (Math.abs(currentPrice - fibLevels[i+1]) / currentPrice * 100 < 2) {\n          bearishFactors.push(`Price is close to Fibonacci level ${[0, 23.6, 38.2, 50, 61.8, 78.6, 100][Math.min(i+1, 6)]}% - possible resistance`);\n        }\n        // If the price is close to a Fibonacci support level\n        if (Math.abs(currentPrice - fibLevels[i]) / currentPrice * 100 < 2) {\n          bullishFactors.push(`Price is close to Fibonacci level ${[0, 23.6, 38.2, 50, 61.8, 78.6, 100][Math.min(i, 6)]}% - possible support`);\n        }\n        break;\n      }\n    }\n  }\n}\n// Adding general recommendation based on factors\nlet recommendation = \"\";\nif (bullishFactors.length > bearishFactors.length) {\n  recommendation = \"Positive\";\n} else if (bearishFactors.length > bullishFactors.length) {\n  recommendation = \"Negative\";\n} else {\n  recommendation = \"Neutral\";\n}\n// Adding summary to the result\nresult.summary = {\n  recommendation: recommendation,\n  bullishFactors: bullishFactors,\n  bearishFactors: bearishFactors\n};\nreturn { json: result };"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "29d345ef-3a88-48d5-98f4-e0089fe69b0c",
+      "name": "Merge-2",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        496,
+        16
+      ],
+      "parameters": {
+        "mode": "combine",
+        "options": {},
+        "combineBy": "combineByPosition"
+      },
+      "typeVersion": 3.2
+    },
+    {
+      "id": "d845f42a-f9f7-477f-a69d-f521a948c220",
+      "name": "First Technical Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        48,
+        -144
+      ],
+      "parameters": {
+        "text": "=# Role\nYou are a visual chart analyst.  \nYour only input is a weekly candlestick chart image that shows:\n- Price candles and volume bars  \n- One short-term EMA line  \n- An RSI panel with its live value  \n\n# Task\nInspect the image and produce a **structured JSON** object with the following keys:\n\n{\n  \"rsiNumeric\": number,          // exact RSI value from the chart\n  \"rsiState\": \"overbought\" | \"oversold\" | \"neutral\",\n  \"rsiDivergence\": \"bullish\" | \"bearish\" | \"none\",\n  \"trendDirection\": \"up\" | \"down\" | \"sideways\",\n  \"candlestickPatterns\": [ \"pattern1\", \"pattern2\", ... ],   // max 3\n  \"emaRelation\": \"aboveEMA\" | \"belowEMA\" | \"testingEMA\",\n  \"volumeNotes\": \"string\",        // brief comment on recent volume behavior\n  \"priceZones\": {                 // visually inferred areas\n      \"potentialSupport\": [number, ...],  // up to 2 levels taken from visible lows\n      \"potentialResistance\": [number, ...]// up to 2 levels taken from visible highs\n  }\n}\n\n# Style Rules\n- Derive every value only from what is visible in the chart\n- Do not mention any external data or speculation\n- Return the JSON object only, nothing else\n",
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "mistralai/mistral-small-3.2-24b-instruct:free"
+        },
+        "options": {
+          "detail": "auto"
+        },
+        "resource": "image",
+        "simplify": false,
+        "inputType": "base64",
+        "operation": "analyze"
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "typeVersion": 1.8
+    },
+    {
+      "id": "e4af7bac-64cc-446c-8cc2-f73987663172",
+      "name": "Set Variable",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        272,
+        -144
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "804393f2-8128-4dda-a20e-de2fdbe74d96",
+              "name": "ai_agent_visual_analysis",
+              "type": "string",
+              "value": "={{ $('First Technical Analysis').item.json.choices[0].message.content }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "dcc6c4e7-1a80-4919-af7e-6e3946a450ea",
+      "name": "Warp as JSON for GPT",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        720,
+        16
+      ],
+      "parameters": {
+        "jsCode": "/**\n * INPUT: items[0].json (Original JSON)\n * OUTPUT: { textPayload: \"```json\\n{ ... }\\n```\" }\n */\n\nconst pretty = JSON.stringify(items[0].json, null, 2);\nconst wrapped = `\\`\\`\\`json\\n${pretty}\\n\\`\\`\\``;\n\nreturn [\n  {\n    json: {\n      textPayload: wrapped\n    }\n  }\n];\n"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "b0c2d59e-0f93-49d5-be22-db605d598e41",
+      "name": "ChatGPT 4o",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        944,
+        16
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "anthropic/claude-sonnet-4"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "# Role\nYou are a senior technical analyst who merges visual insights with quantitative indicators.\n\n# Inputs\n1. Visual JSON from Agent 1:\n   {\n     \"ai_agent_visual_analysis\": \"...\"\n   }\n2. Technical-indicator JSON in the format:\n   {\n     \"ticker\": \"...\",\n     \"currentPrice\": \"...\",\n     \"timestamp\": \"...\",\n     \"technicalAnalysis\": {\n       \"fibonacci\": { ... },\n       \"supportResistance\": { ... },\n       \"bollingerBands\": { ... },\n       \"macd\": { ... }\n     },\n     \"summary\": { ... }\n   }\n\n# Expected Sections\nWrite five titled sections exactly in this order:\n\n1. Quick Stats  \n   - Ticker, current price, timestamp  \n   - Overall recommendation from technical JSON, if present\n\n2. Candles and EMA  \n   - Use Agent 1 data: trendDirection, candlestickPatterns, emaRelation, volumeNotes\n\n3. RSI  \n   - Report rsiNumeric and rsiState from Agent 1  \n   - Mention rsiDivergence and its implication\n\n4. Indicator Synthesis  \n   - Fibonacci – cite closest level above and below price  \n   - Bollinger Bands – quote upper, middle, lower and note price position  \n   - MACD – quote macd, signal, histogram, note cross or momentum if numbers are valid  \n   - Support-Resistance – use technicalAnalysis plus priceZones from Agent 1 to highlight the nearest levels\n\n5. Actionable Takeaway  \n   - One sentence bias (bullish, bearish, neutral)  \n   - Clear next step such as watch for break above X or pullback to Y\n\n# Style Rules\n- Be concise and strictly data driven  \n- Every statement must reference either a value from the inputs or a specific visual observation from Agent 1  \n- No speculation beyond supplied data  \n- End after the Takeaway section – output nothing else"
+            },
+            {
+              "content": "={{ $json.textPayload }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "typeVersion": 1.8
+    },
+    {
+      "id": "3c615ea3-2599-4354-94f4-62c7b8eda451",
+      "name": "Set Final Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1296,
+        16
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64466cfa-a914-4752-b58d-7eccd126fbf6",
+              "name": "response",
+              "type": "string",
+              "value": "={{ $json.message.content }}"
+            },
+            {
+              "id": "12711efa-8821-42d8-8d3e-33f55d4f1433",
+              "name": "image",
+              "type": "string",
+              "value": "={{ $('Get Chart URL').item.binary.data.toBase64() }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "3a1830b0-4803-487f-a370-abc81f28d238",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -2228,
+        320
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "typeVersion": 1.1
+    }
+  ],
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Organizing Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Get Price History",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Chart URL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Bollinger Bands",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get MACD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge-2": {
+      "main": [
+        [
+          {
+            "node": "Warp as JSON for GPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get MACD": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Test NYSE": {
+      "main": [
+        [
+          {
+            "node": "is on NYSE?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ChatGPT 4o": {
+      "main": [
+        [
+          {
+            "node": "Set Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test NASDAQ": {
+      "main": [
+        [
+          {
+            "node": "is on nasdaq?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is on NYSE?": {
+      "main": [
+        [
+          {
+            "node": "Set exchange to NYSE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable": {
+      "main": [
+        [
+          {
+            "node": "Merge-2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chart URL": {
+      "main": [
+        [
+          {
+            "node": "First Technical Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is on nasdaq?": {
+      "main": [
+        [
+          {
+            "node": "Set exchange to NASDAQ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Test NYSE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizing Data": {
+      "main": [
+        [
+          {
+            "node": "Merge-2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Price History": {
+      "main": [
+        [
+          {
+            "node": "Calculate Support Resistance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bollinger Bands": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set exchange to NYSE": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Warp as JSON for GPT": {
+      "main": [
+        [
+          {
+            "node": "ChatGPT 4o",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set exchange to NASDAQ": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "First Technical Analysis": {
+      "main": [
+        [
+          {
+            "node": "Set Variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Support Resistance": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Stock Symbol and API Key": {
+      "main": [
+        [
+          {
+            "node": "Test NASDAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Set Stock Symbol and API Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

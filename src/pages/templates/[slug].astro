@@ -60,19 +60,19 @@ const jsonLd = {
       </p>
 
       <div class="tpl-download">
-        <a class="tpl-download__btn" href={t.data.workflow} download={fileName}>
+        <a class="tpl-download__btn" href={t.data.workflow} data-dl-url={t.data.workflow} data-dl-name={fileName}>
           ↓ Download workflow JSON
         </a>
         <p class="tpl-download__hint">
           Import in n8n: <b>Workflows → ⋯ → Import from file</b>, then add your credentials.
-          Free to use — no signup needed.
+          Free download with a free account.
         </p>
       </div>
 
       <Content />
 
       <div class="tpl-download tpl-download--bottom">
-        <a class="tpl-download__btn" href={t.data.workflow} download={fileName}>
+        <a class="tpl-download__btn" href={t.data.workflow} data-dl-url={t.data.workflow} data-dl-name={fileName}>
           ↓ Download {fileName}
         </a>
       </div>
@@ -82,4 +82,106 @@ const jsonLd = {
       </p>
     </section>
   </div>
+
+  <div class="dl-modal-overlay" id="dlModal" hidden>
+    <div class="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dlModalTitle">
+      <button class="dl-modal__close" id="dlModalClose" aria-label="Close">✕</button>
+      <p class="kicker">Free download</p>
+      <h2 id="dlModalTitle">Sign up to download</h2>
+      <p>Create your free account (or log in) to download this workflow JSON. It takes 10 seconds.</p>
+      <div class="dl-modal__actions">
+        <a class="btn" id="dlModalSignup" href="/signup/">Sign up — it's free</a>
+        <a class="btn dl-modal__login" id="dlModalLogin" href="/signin/">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var modal = document.getElementById("dlModal");
+      var PENDING_KEY = "cf_pending_dl";
+
+      function pagePath() {
+        var p = window.location.pathname;
+        return p.charAt(0) === "/" ? p : "/";
+      }
+
+      function triggerDownload(url, name) {
+        var a = document.createElement("a");
+        a.href = url;
+        if (name) a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      async function isLoggedIn() {
+        try {
+          var r = await fetch("/api/auth/me", { credentials: "same-origin" });
+          return r.ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function openModal(url, name) {
+        try {
+          sessionStorage.setItem(PENDING_KEY, JSON.stringify({ url: url, name: name }));
+        } catch (e) {}
+        var next = encodeURIComponent(pagePath());
+        document.getElementById("dlModalSignup").href = "/signup/?next=" + next;
+        document.getElementById("dlModalLogin").href = "/signin/?next=" + next;
+        modal.hidden = false;
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.hidden = true;
+        document.body.style.overflow = "";
+      }
+
+      document.getElementById("dlModalClose").addEventListener("click", closeModal);
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !modal.hidden) closeModal();
+      });
+
+      document.querySelectorAll("[data-dl-url]").forEach(function (el) {
+        el.addEventListener("click", async function (e) {
+          e.preventDefault();
+          var url = el.getAttribute("data-dl-url");
+          var name = el.getAttribute("data-dl-name") || "";
+          el.style.pointerEvents = "none";
+          var ok = await isLoggedIn();
+          el.style.pointerEvents = "";
+          if (ok) {
+            try {
+              sessionStorage.removeItem(PENDING_KEY);
+            } catch (err) {}
+            triggerDownload(url, name);
+          } else {
+            openModal(url, name);
+          }
+        });
+      });
+
+      // If the user just came back from signup/login, auto-start the pending download.
+      (async function () {
+        var raw = null;
+        try {
+          raw = sessionStorage.getItem(PENDING_KEY);
+        } catch (e) {}
+        if (!raw) return;
+        if (await isLoggedIn()) {
+          try {
+            var d = JSON.parse(raw);
+            sessionStorage.removeItem(PENDING_KEY);
+            if (d && d.url) triggerDownload(d.url, d.name);
+          } catch (e) {}
+        }
+      })();
+    })();
+  </script>
 </BaseLayout>

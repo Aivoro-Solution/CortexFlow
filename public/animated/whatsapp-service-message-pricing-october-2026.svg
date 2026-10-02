@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated illustration of a speech bubble pouring coins into a meter">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-width="1" opacity="0.08">
+    <path d="M0 50 H800 M0 100 H800 M0 150 H800 M0 200 H800 M0 250 H800 M0 300 H800 M0 350 H800 M0 400 H800"/>
+    <path d="M50 0 V450 M100 0 V450 M150 0 V450 M200 0 V450 M250 0 V450 M300 0 V450 M350 0 V450 M400 0 V450 M450 0 V450 M500 0 V450 M550 0 V450 M600 0 V450 M650 0 V450 M700 0 V450 M750 0 V450"/>
+  </g>
+  <!-- speech bubble outline -->
+  <g stroke="#111111" stroke-width="6" fill="none">
+    <rect x="60" y="60" width="300" height="180" rx="40"/>
+    <path d="M160 240 L120 300 L200 240 Z" fill="#FFFDF5"/>
+  </g>
+  <!-- falling coins, slow drip -->
+  <g stroke="#111111" stroke-width="5" fill="#FFFDF5">
+    <ellipse cx="300" cy="250" rx="34" ry="16">
+      <animate attributeName="cy" values="250;340;250" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="9s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="330" cy="250" rx="34" ry="16">
+      <animate attributeName="cy" values="250;340;250" dur="9s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="9s" begin="3s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="270" cy="250" rx="34" ry="16">
+      <animate attributeName="cy" values="250;340;250" dur="9s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="9s" begin="6s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <!-- meter bar, slowly filling -->
+  <g>
+    <rect x="480" y="120" width="90" height="260" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <rect x="489" y="371" width="72" height="0" fill="#FF4D00">
+      <animate attributeName="height" values="0;242;0" dur="18s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="371;129;371" dur="18s" repeatCount="indefinite"/>
+    </rect>
+    <g stroke="#111111" stroke-width="4">
+      <line x1="480" y1="180" x2="512" y2="180"/>
+      <line x1="480" y1="250" x2="512" y2="250"/>
+      <line x1="480" y1="320" x2="512" y2="320"/>
+    </g>
+  </g>
+  <!-- slowly drifting bubble tail accent -->
+  <g stroke="#111111" stroke-width="6" fill="#FF4D00">
+    <circle cx="120" cy="380" r="14">
+      <animate attributeName="cy" values="380;340;380" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="680" cy="80" r="20" fill="#FFFDF5">
+      <animate attributeName="r" values="20;28;20" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- slow rotating star -->
+  <g transform="translate(660,340)">
+    <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    <path d="M0 -34 L9 -9 L34 -9 L14 6 L21 31 L0 15 L-21 31 L-14 6 L-34 -9 L-9 -9 Z" fill="#FFD02F" stroke="#111111" stroke-width="5"/>
+  </g>
+</svg>

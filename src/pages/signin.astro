@@ -102,6 +102,20 @@ import { SITE } from "../config";
       err.hidden = false;
     }
 
+    // After auth, return to the page the user came from (?next=/path), if safe.
+    function goNext() {
+      try {
+        const n = new URLSearchParams(window.location.search).get("next");
+        if (n && n.charAt(0) === "/" && n.charAt(1) !== "/") {
+          window.location.href = n;
+          return;
+        }
+      } catch {
+        /* fall through */
+      }
+      window.location.href = "/";
+    }
+
     let auth = null;
     let db = null;
     try {
@@ -153,7 +167,7 @@ import { SITE } from "../config";
               /* Firestore not set up yet — skip */
             }
           }
-          window.location.href = "/";
+          goNext();
         } else {
           showError(out.error || "Something went wrong.");
         }
@@ -199,7 +213,7 @@ import { SITE } from "../config";
               /* Firestore not set up yet — skip */
             }
           }
-          window.location.href = "/";
+          goNext();
         } else {
           showError(out.error || "Something went wrong.");
         }

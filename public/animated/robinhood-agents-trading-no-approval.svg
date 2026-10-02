@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- rising candlestick chart: black blocks, slow drift upward -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="120" y="300" width="34" height="50">
+      <animate attributeName="y" values="300;288;300" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="50;62;50" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="172" y="270" width="34" height="66">
+      <animate attributeName="y" values="270;258;270" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="66;78;66" dur="11s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="224" y="286" width="34" height="44" fill="#111111"/>
+    <rect x="276" y="240" width="34" height="72">
+      <animate attributeName="y" values="240;228;240" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="72;84;72" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="328" y="252" width="34" height="52" fill="#111111"/>
+    <rect x="380" y="210" width="34" height="76">
+      <animate attributeName="y" values="210;198;210" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="76;88;76" dur="10s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- trend line rising, gently pulsing -->
+  <path d="M 120 300 L 206 265 L 260 285 L 342 230 L 414 215"
+        fill="none" stroke="#111111" stroke-width="4" stroke-linejoin="round"
+        opacity="0.9">
+    <animate attributeName="d" values="M 120 300 L 206 265 L 260 285 L 342 230 L 414 215;
+                                     M 120 296 L 206 261 L 260 281 L 342 226 L 414 211;
+                                     M 120 300 L 206 265 L 260 285 L 342 230 L 414 215"
+             dur="12s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- signal-orange approval gate: the lever the agent must pass -->
+  <g>
+    <rect x="470" y="150" width="120" height="150" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <rect x="478" y="158" width="120" height="150" fill="none" stroke="#111111" stroke-width="2" opacity="0.25"/>
+    <!-- toggle switch sliding up/down slowly -->
+    <rect x="520" y="180" width="20" height="90" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="530" cy="205" r="12" fill="#111111">
+      <animate attributeName="cy" values="205;265;205" dur="14s" repeatCount="indefinite"/>
+    </circle>
+    <animateTransform attributeName="transform" type="rotate"
+                      values="0 530 225; 2 530 225; 0 530 225" dur="14s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- autonomous trade pips flowing past the gate: orange dots -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <circle cx="650" cy="200" r="9">
+      <animate attributeName="cy" values="200;160;200" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="690" cy="260" r="7">
+      <animate attributeName="cy" values="260;220;260" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="730" cy="180" r="8">
+      <animate attributeName="cy" values="180;230;180" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- frame -->
+  <rect x="4" y="4" width="792" height="442" fill="none" stroke="#111111" stroke-width="4"/>
+</svg>

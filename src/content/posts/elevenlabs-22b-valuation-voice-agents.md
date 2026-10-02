@@ -13,6 +13,8 @@ ElevenLabs closed a **$300 million employee tender offer** on September 30 that 
 
 One note on sourcing: the facts below come from Reuters' September 30 reporting on the tender. Company figures (conversation counts, language coverage) are company-reported and I have not tested ElevenLabs' voice agents hands-on.
 
+**Free template:** [AI Voice Agent for Lead Calling & Appointment Booking](/templates/ai-voice-agent-lead-calling/) — download the n8n workflow JSON, import it, add your credentials, and start calling leads in minutes.
+
 ## The deal: a tender, not a fundraise
 
 First, the structure matters. A **tender offer** (existing shareholders selling stock to investors, providing them liquidity) is not the same as a conventional fundraising round — it does not necessarily put new capital on the company's balance sheet. Read the headline as "investors paid $22B-level prices to buy in," not "ElevenLabs raised $300M to spend."

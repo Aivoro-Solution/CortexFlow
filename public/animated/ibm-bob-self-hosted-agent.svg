@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Sealed server compound with a glowing core">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.14"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- border -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="4"/>
+
+  <!-- fortress wall base -->
+  <g stroke="#111111" stroke-width="4" fill="none">
+    <rect x="150" y="270" width="500" height="110"/>
+    <rect x="150" y="270" width="500" height="26"/>
+  </g>
+  <!-- wall crenellations -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="4">
+    <rect x="165" y="238" width="60" height="34"/>
+    <rect x="260" y="238" width="60" height="34"/>
+    <rect x="480" y="238" width="60" height="34"/>
+    <rect x="575" y="238" width="60" height="34"/>
+  </g>
+
+  <!-- server racks behind wall -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="4">
+    <rect x="220" y="120" width="90" height="150"/>
+    <rect x="330" y="100" width="90" height="170"/>
+    <rect x="490" y="120" width="90" height="150"/>
+  </g>
+  <!-- rack slot lines -->
+  <g stroke="#111111" stroke-width="2.5" opacity="0.8">
+    <line x1="228" y1="150" x2="302" y2="150"/>
+    <line x1="228" y1="180" x2="302" y2="180"/>
+    <line x1="228" y1="210" x2="302" y2="210"/>
+    <line x1="228" y1="240" x2="302" y2="240"/>
+    <line x1="338" y1="130" x2="412" y2="130"/>
+    <line x1="338" y1="162" x2="412" y2="162"/>
+    <line x1="338" y1="194" x2="412" y2="194"/>
+    <line x1="338" y1="226" x2="412" y2="226"/>
+    <line x1="498" y1="150" x2="572" y2="150"/>
+    <line x1="498" y1="180" x2="572" y2="180"/>
+    <line x1="498" y1="210" x2="572" y2="210"/>
+    <line x1="498" y1="240" x2="572" y2="240"/>
+  </g>
+
+  <!-- glowing orange core -->
+  <g>
+    <rect x="420" y="280" width="60" height="60" fill="#FF4D00" stroke="#111111" stroke-width="4" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.45;0.9" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="450" cy="310" r="86" fill="none" stroke="#FF4D00" stroke-width="3" opacity="0.5">
+      <animate attributeName="r" values="70;110;70" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0.12;0.5" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- slowly rotating seal ring around compound -->
+  <g transform="translate(400,265)">
+    <g fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="18 14" opacity="0.55">
+      <circle r="170">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <g fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="4 22" opacity="0.8">
+      <circle r="170">
+        <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="45s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+
+  <!-- drifting scan line -->
+  <line x1="150" y1="290" x2="650" y2="290" stroke="#FF4D00" stroke-width="2" opacity="0.35">
+    <animate attributeName="y1" values="280;370;280" dur="14s" repeatCount="indefinite"/>
+    <animate attributeName="y2" values="280;370;280" dur="14s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- slow blinking status dots on racks -->
+  <g fill="#FF4D00">
+    <circle cx="375" cy="162" r="5">
+      <animate attributeName="opacity" values="1;0.2;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="545" cy="180" r="5">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="265" cy="210" r="5">
+      <animate attributeName="opacity" values="1;0.2;1" dur="11s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

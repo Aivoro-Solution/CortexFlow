@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated pointer head: a local decision machine sweeping an orange pointer across three option slots and scoring confidence">
+  <defs>
+    <pattern id="grid-sd2b" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+    <marker id="arrow-sd2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#111111"/>
+    </marker>
+  </defs>
+
+  <!-- paper sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid-sd2b)"/>
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- slow rotating dashed orbit ring (45s) -->
+  <g opacity="0.35">
+    <circle cx="400" cy="225" r="170" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="14 10">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- local compute box (hard offset shadow) -->
+  <rect x="86" y="190" width="120" height="120" fill="#111111"/>
+  <rect x="78" y="182" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <!-- spinning fan inside (40s, slow) -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <circle cx="138" cy="242" r="26"/>
+    <g>
+      <line x1="138" y1="242" x2="138" y2="222"/>
+      <line x1="138" y1="242" x2="155" y2="252"/>
+      <line x1="138" y1="242" x2="121" y2="252"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 138 242" to="360 138 242" dur="40s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <rect x="150" y="196" width="34" height="10" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+
+  <!-- state cable to the decision hub -->
+  <line x1="198" y1="242" x2="330" y2="242" stroke="#111111" stroke-width="4" marker-end="url(#arrow-sd2b)"/>
+  <circle r="6" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M198 242 L330 242"/>
+  </circle>
+
+  <!-- decision hub -->
+  <rect x="352" y="190" width="96" height="104" fill="#111111"/>
+  <rect x="344" y="182" width="96" height="104" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <!-- sweeping pointer needle (slow, 24s full sweep cycle) -->
+  <g>
+    <polygon points="392,234 388,190 396,190" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <circle cx="392" cy="234" r="9" fill="#111111"/>
+    <animateTransform attributeName="transform" type="rotate" values="-40 392 234; 40 392 234; -40 392 234" keyTimes="0; 0.5; 1" dur="24s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- three option slots -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="520" y="120" width="130" height="46"/>
+    <rect x="520" y="202" width="130" height="46"/>
+    <rect x="520" y="284" width="130" height="46"/>
+  </g>
+  <!-- orange selection overlays cycling one at a time (each 8s slot of a 24s cycle) -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <rect x="520" y="120" width="130" height="46" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;0;0;0" keyTimes="0;0.04;0.29;0.34;0.66;1" dur="24s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="520" y="202" width="130" height="46" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.33;0.37;0.62;0.66;0.96;1" dur="24s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="520" y="284" width="130" height="46" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0" keyTimes="0;0.62;0.66;0.7;0.96;1" dur="24s" repeatCount="indefinite" calcMode="discrete"/>
+    </rect>
+  </g>
+  <!-- connector lines hub -> slots -->
+  <g stroke="#111111" stroke-width="3" fill="none" marker-end="url(#arrow-sd2b)">
+    <path d="M440 205 C 480 205, 490 155, 518 143"/>
+    <path d="M440 234 L 518 225"/>
+    <path d="M440 263 C 480 263, 490 295, 518 307"/>
+  </g>
+
+  <!-- confidence bar filling slowly (12s) -->
+  <g>
+    <rect x="78" y="350" width="240" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="82" y="354" width="0" height="18" fill="#FF4D00" stroke="none">
+      <animate attributeName="width" values="0;232;232;0" keyTimes="0;0.45;0.55;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- drifting particles (10s) -->
+  <g fill="#111111" opacity="0.5">
+    <circle cx="250" cy="120" r="4">
+      <animate attributeName="cy" values="120;90;120" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="360" r="5">
+      <animate attributeName="cy" values="360;330;360" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="90" r="3">
+      <animate attributeName="cx" values="620;650;620" dur="13s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

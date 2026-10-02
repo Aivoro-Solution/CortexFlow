@@ -50,7 +50,7 @@ const difficultyLabel: Record<string, string> = {
     <div class="wrap">
       <div class="sec-head">
         <h2>The stash</h2>
-        <span class="tag">{featured.length} templates · {templates.length > 0 ? "1 live" : "more soon"}</span>
+        <span class="tag">{featured.length} templates · {featured.length} live</span>
         <a class="more" href="/templates/">View all →</a>
       </div>
       {featured.length > 0 ? (
@@ -61,9 +61,9 @@ const difficultyLabel: Record<string, string> = {
               <h3>{t.data.title}</h3>
               <p class="flow">{t.data.description}</p>
               <div class="meta">
-                <span class="tpl-tag tpl-tag--live">{i === 0 ? "Live" : "Soon"}</span>
+                <span class="tpl-tag tpl-tag--live">Live</span>
                 <span class="tpl-tag tpl-tag--diff">{difficultyLabel[t.data.difficulty]}</span>
-                {i === 0 && <span class="tpl-dl">↓ JSON</span>}
+                <span class="tpl-dl">↓ JSON</span>
               </div>
             </a>
           ))}

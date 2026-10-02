@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- central agent core -->
+  <g>
+    <circle cx="400" cy="225" r="58" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="400" cy="225" r="20" fill="#FF4D00">
+      <animate attributeName="r" values="20;26;20" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.75;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <!-- slow rotating orbit ring -->
+    <g>
+      <ellipse cx="400" cy="225" rx="150" ry="70" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="14 10" transform="rotate(-12 400 225)">
+        <animateTransform attributeName="transform" type="rotate" from="-12 400 225" to="348 400 225" dur="60s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+  </g>
+
+  <!-- orbiting satellite nodes, slow drift -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 14 -10; 0 0" dur="10s" repeatCount="indefinite"/>
+      <rect x="150" y="90" width="64" height="64" fill="#FFD02F"/>
+      <circle cx="182" cy="122" r="9" fill="#111111"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; -12 12; 0 0" dur="12s" repeatCount="indefinite"/>
+      <rect x="590" y="300" width="64" height="64"/>
+      <circle cx="622" cy="332" r="9" fill="#FF4D00"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 10 14; 0 0" dur="14s" repeatCount="indefinite"/>
+      <rect x="590" y="80" width="56" height="56" fill="#2F6BFF"/>
+      <circle cx="618" cy="108" r="8" fill="#FFFDF5"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; -14 -8; 0 0" dur="11s" repeatCount="indefinite"/>
+      <rect x="150" y="300" width="56" height="56" fill="#FFFDF5"/>
+      <circle cx="178" cy="328" r="8" fill="#111111"/>
+    </g>
+  </g>
+
+  <!-- connection lines pulsing from core to nodes -->
+  <g stroke="#FF4D00" stroke-width="3" stroke-dasharray="8 8">
+    <line x1="400" y1="225" x2="182" y2="122">
+      <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="400" y1="225" x2="622" y2="332">
+      <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="400" y1="225" x2="618" y2="108">
+      <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="400" y1="225" x2="178" y2="328">
+      <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="6s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- thick border frame -->
+  <rect x="6" y="6" width="788" height="438" fill="none" stroke="#111111" stroke-width="6"/>
+</svg>

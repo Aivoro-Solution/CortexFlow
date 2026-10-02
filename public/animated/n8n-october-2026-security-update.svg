@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract shield-and-patch animation">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#E8E2D4" stroke-width="1">
+    <path d="M0 45h800M0 90h800M0 135h800M0 180h800M0 225h800M0 270h800M0 315h800M0 360h800M0 405h800"/>
+    <path d="M45 0v450M90 0v450M135 0v450M180 0v450M225 0v450M270 0v450M315 0v450M360 0v450M405 0v450M450 0v450M495 0v450M540 0v450M585 0v450M630 0v450M675 0v450M720 0v450M765 0v450"/>
+  </g>
+
+  <!-- drifting node field behind -->
+  <g fill="#111111" opacity="0.25">
+    <circle cx="120" cy="90" r="6"/>
+    <circle cx="680" cy="120" r="5"/>
+    <circle cx="90" cy="350" r="5"/>
+    <circle cx="700" cy="340" r="6"/>
+    <circle cx="250" cy="390" r="4"/>
+    <circle cx="560" cy="60" r="4"/>
+  </g>
+  <g stroke="#111111" stroke-width="2" opacity="0.35">
+    <line x1="120" y1="90" x2="250" y2="225">
+      <animate attributeName="opacity" values="0.35;0.1;0.35" dur="8s" repeatCount="indefinite"/>
+    </line>
+    <line x1="680" y1="120" x2="560" y2="225">
+      <animate attributeName="opacity" values="0.35;0.1;0.35" dur="9s" repeatCount="indefinite"/>
+    </line>
+    <line x1="90" y1="350" x2="250" y2="225">
+      <animate attributeName="opacity" values="0.35;0.1;0.35" dur="7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="700" y1="340" x2="560" y2="225">
+      <animate attributeName="opacity" values="0.35;0.1;0.35" dur="10s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- slow scanning ring around the shield -->
+  <g fill="none" stroke="#111111" stroke-width="3" opacity="0.8">
+    <circle cx="400" cy="225" r="150">
+      <animate attributeName="stroke-dasharray" values="0 942;235 707;0 942" dur="12s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="48s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <g fill="none" stroke="#FF4D00" stroke-width="5" opacity="0.9">
+    <circle cx="400" cy="225" r="150">
+      <animate attributeName="stroke-dasharray" values="60 882;120 822;60 882" dur="12s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="48s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- central shield -->
+  <g stroke="#111111" stroke-width="6" fill="#FFFDF5">
+    <path d="M400 105 L520 150 V250 C520 330 470 380 400 400 C330 380 280 330 280 250 V150 Z"/>
+  </g>
+  <!-- shield lock: shackle draws itself slowly -->
+  <g stroke="#FF4D00" stroke-width="7" fill="none">
+    <path d="M370 250 V215 A30 30 0 0 1 430 215 V250" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="160;0;160" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="160" dur="0.1s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g stroke="#111111" stroke-width="6" fill="#FFFDF5">
+    <rect x="360" y="245" width="80" height="60" rx="4"/>
+    <circle cx="400" cy="268" r="9" fill="#111111"/>
+    <rect x="396" y="268" width="8" height="18" fill="#111111"/>
+  </g>
+
+  <!-- pulse ripples from the shield -->
+  <g fill="none" stroke="#FF4D00" stroke-width="3">
+    <circle cx="400" cy="250" r="90" opacity="0">
+      <animate attributeName="r" values="90;190" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="250" r="90" opacity="0">
+      <animate attributeName="r" values="90;190" dur="9s" begin="4.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0" dur="9s" begin="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- patch checkmarks drifting in slowly -->
+  <g stroke="#111111" stroke-width="4" fill="none" opacity="0">
+    <path d="M250 120 l14 14 l26 -30"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="12s" begin="2s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -20;0 -20;0 -40" dur="12s" begin="2s" repeatCount="indefinite"/>
+  </g>
+  <g stroke="#FF4D00" stroke-width="4" fill="none" opacity="0">
+    <path d="M540 330 l14 14 l26 -30"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="14s" begin="6s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -20;0 -20;0 -40" dur="14s" begin="6s" repeatCount="indefinite"/>
+  </g>
+</svg>

@@ -13,6 +13,8 @@ MCP (Model Context Protocol, Anthropic's open standard for exposing tools and da
 
 **How to use this guide:** start with the symptom table, then jump to the matching section. Every section gives the failure, the root cause, and the fix.
 
+**Free template:** [Uptime Monitor with Incident Escalation](/templates/uptime-monitor-incident-escalation/) — download the n8n workflow JSON and get alerted the moment a workflow fails, before your users notice.
+
 ## Symptom → section map
 
 | Symptom | Go to |

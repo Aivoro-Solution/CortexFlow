@@ -13,22 +13,22 @@ import { SITE } from "../config";
       <p class="breadcrumb"><a href="/">Home</a> / Privacy Policy</p>
       <p class="kicker">CORTEXFLOW · FREE FOREVER</p>
       <h1>Privacy Policy</h1>
-      <p style="color: var(--muted);">Last updated: September 30, 2026</p>
+      <p style="color: var(--muted);">Last updated: October 2, 2026</p>
 
       <p>
         CortexFlow ("we", "us", "our") runs the website at
         <a href="https://cortexflow.tech">cortexflow.tech</a>. This policy explains
         what information we collect when you visit, and how we use it. The short
         version: we collect as little as possible, we don't sell your data, and
-        we don't run user accounts or comments.
+        accounts are optional and free — they're only needed to download
+        workflow templates. Reading articles needs no account.
       </p>
 
       <h2>1. Information we collect</h2>
       <ul>
         <li>
-          <strong>Information you give us.</strong> If you email us or use the
-          contact form, we receive your name, email address, and message. We use
-          it only to reply.
+          <strong>Information you give us.</strong> If you email us, we receive
+          your name, email address, and message. We use it only to reply.
         </li>
         <li>
           <strong>Newsletter.</strong> If you subscribe to the newsletter, we
@@ -39,13 +39,21 @@ import { SITE } from "../config";
           sell or share your email.
         </li>
         <li>
-          <strong>Account.</strong> If you create an account, sign-in is handled
-          by Firebase Authentication (Google) — your password is managed by
-          Google and never touches our servers. We store only your name and
-          email address in Firebase Firestore (Google's database) to keep your
-          profile. You can delete your account anytime by emailing
-          hello@cortexflow.tech — deletion removes your name, email, and all
-          sessions permanently. We never sell or share your account data.
+          <strong>Account.</strong> If you create a free account (needed to
+          download workflow templates), sign-in is handled by Firebase
+          Authentication (Google). If you sign up with an email address, your
+          password is stored by Firebase and never touches our servers; if you
+          sign in with Google, Google handles the login. We store only your
+          profile — name, email address, sign-in provider, account creation
+          date, and last login — in Firebase Firestore (Google's database),
+          under your own user record. When you sign in, we set a secure
+          session cookie (HttpOnly, Secure, SameSite=Lax, 30-day expiry) so the
+          site remembers you're logged in; signing out deletes it. Password
+          resets and verification emails are sent to your email address by
+          Firebase. You can delete your account anytime by emailing
+          hello@cortexflow.tech — deletion removes your profile, sessions, and
+          all account data permanently. We never sell or share your account
+          data.
         </li>
         <li>
           <strong>Technical information.</strong> Our hosting provider
@@ -57,17 +65,26 @@ import { SITE } from "../config";
 
       <h2>2. Cookies and analytics</h2>
       <p>
-        We use Google Analytics 4 to understand how visitors use the site
-        (pages visited, approximate location, device type). Google Analytics
-        sets cookies to collect this data on Google's behalf; we don't use it
-        to identify you personally. You can opt out with Google's
+        <strong>Essential.</strong> If you sign in, we set one session cookie to
+        keep you logged in. It holds only a session token, expires after 30
+        days, and is removed when you sign out.
+      </p>
+      <p>
+        <strong>Analytics.</strong> We use Google Analytics 4 to understand how
+        visitors use the site (pages visited, approximate location, device
+        type). Google Analytics sets cookies to collect this data on Google's
+        behalf; we don't use it to identify you personally. You can opt out
+        with Google's
         <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">opt-out browser add-on</a>.
-        If we enable advertising in the future (for example Google AdSense),
-        ad providers may use cookies — including the Google DoubleClick cookie
-        — to serve ads based on your visits to this and other sites. You can
-        opt out of personalized advertising at
+      </p>
+      <p>
+        <strong>Advertising.</strong> We run Google AdSense (Auto ads).
+        Google and its partners may use cookies — including the Google
+        DoubleClick cookie — to serve ads based on your visits to this and
+        other sites. You can opt out of personalized advertising at
         <a href="https://www.google.com/settings/ads" rel="noopener">Google's Ads Settings</a>.
-        We'll update this section if and when that changes.
+        Our <a href="/ads.txt">ads.txt</a> lists the sellers authorized to sell
+        our ad inventory.
       </p>
 
       <h2>3. Affiliate links</h2>
@@ -93,9 +110,8 @@ import { SITE } from "../config";
 
       <h2>6. Changes to this policy</h2>
       <p>
-        We may update this policy as the site evolves (for example, when we add
-        advertising). The "Last updated" date at the top will always reflect the
-        latest version.
+        We may update this policy as the site evolves. The "Last updated" date
+        at the top will always reflect the latest version.
       </p>
 
       <h2>7. Contact</h2>

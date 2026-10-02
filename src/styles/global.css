@@ -579,6 +579,23 @@ figure.shot img { display: block; width: 100%; height: auto; border: 3px solid v
   border: 3px solid var(--ink); background: #ffe3e3; color: #b00020;
 }
 .auth-switch { font-weight: 600; }
+.auth-divider {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin: 0 0 1.1rem; font-weight: 700; color: var(--muted);
+}
+.auth-divider::before, .auth-divider::after {
+  content: ""; flex: 1; border-top: 3px solid var(--ink);
+}
+.auth-google {
+  display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+  width: 100%; font: inherit; font-weight: 800;
+  background: #fff; color: var(--ink);
+  border: 3px solid var(--ink); box-shadow: var(--shadow);
+  padding: 0.85rem 1rem; cursor: pointer; margin-bottom: 1.8rem;
+}
+.auth-google:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+.auth-google:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.auth-google:disabled { opacity: 0.6; cursor: wait; transform: none; }
 
 /* ---------- header auth area ---------- */
 .auth-area { display: flex; align-items: center; gap: 0.6rem; margin-left: 0.6rem; }

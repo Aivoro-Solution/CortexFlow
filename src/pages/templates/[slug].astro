@@ -2,7 +2,7 @@
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../components/BaseLayout.astro";
 import { SITE } from "../../config";
-import { categoryName, formatDate } from "../../lib/posts";
+import { categoryName, formatDate, getPublishedPosts, postUrl } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const templates = await getCollection("templates", ({ data }) => !data.draft);
@@ -23,6 +23,33 @@ const difficultyLabel: Record<string, string> = {
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
+
+// Daisy-chain internal linking (Sturm/Quaid playbook): template money pages link
+// out to the most topically relevant tutorials, so authority flows both ways.
+const STOP_WORDS = new Set([
+  "the","and","for","with","your","you","our","this","that","from","into",
+  "using","use","how","what","when","are","was","have","has","will","can",
+  "its","free","n8n","workflow","workflows","template","templates","ready",
+  "import","json","guide","setup","step","api","ai","new","best","top",
+  "get","make","all","out",
+]);
+function tplKeywords(text: string): Set<string> {
+  const words = text.toLowerCase().match(/[a-z]{4,}/g) ?? [];
+  return new Set(words.filter((w) => !STOP_WORDS.has(w)));
+}
+const tplKw = tplKeywords(`${t.data.title} ${t.data.description}`);
+const allPosts = await getPublishedPosts();
+const relatedArticles = allPosts
+  .map((p) => {
+    const pKw = tplKeywords(`${p.data.title} ${p.data.description}`);
+    let score = 0;
+    for (const w of pKw) if (tplKw.has(w)) score++;
+    return { p, score };
+  })
+  .filter((r) => r.score >= 3)
+  .sort((a, b) => b.score - a.score || b.p.data.date.getTime() - a.p.data.date.getTime())
+  .slice(0, 3)
+  .map((r) => r.p);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -76,6 +103,27 @@ const jsonLd = {
           ↓ Download {fileName}
         </a>
       </div>
+
+      {relatedArticles.length > 0 && (
+        <section class="related">
+          <div class="sec-head">
+            <h2><span class="sq" aria-hidden="true"></span>Related tutorials</h2>
+            <a class="more" href="/blog/">View all</a>
+          </div>
+          <div class="spec-list">
+            {relatedArticles.map((r, i) => (
+              <a class="spec" href={postUrl(r)}>
+                <span class="spec-no" aria-hidden="true">{String(i + 1).padStart(3, "0")}</span>
+                <span class="spec-body">
+                  <h3 class="spec-title">{r.data.title}</h3>
+                  <p class="spec-desc">{r.data.description}</p>
+                </span>
+                <span class="spec-tag">{categoryName(r.data.category)}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       <p style="margin-top: 2rem;">
         <a href="/templates/">← All templates</a>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of a shared household AI agent connecting six member nodes to a central hub">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="6" y="6" width="788" height="438" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- central hub -->
+  <g>
+    <circle cx="400" cy="225" r="46" fill="#FFD02F" stroke="#111111" stroke-width="4"/>
+    <circle cx="400" cy="225" r="16" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="16;20;16" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <g stroke="#111111" stroke-width="3" fill="none">
+      <circle cx="400" cy="225" r="64" opacity="0.5" stroke-dasharray="10 8">
+        <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="40s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+
+  <!-- six member nodes + spokes, slowly rotating -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+    <line x1="400" y1="225" x2="400" y2="85" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="225" x2="521" y2="155" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="225" x2="521" y2="295" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="225" x2="400" y2="365" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="225" x2="279" y2="295" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="225" x2="279" y2="155" stroke="#111111" stroke-width="3"/>
+    <g fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <rect x="376" y="61" width="48" height="48" rx="6"/>
+      <rect x="497" y="131" width="48" height="48" rx="6"/>
+      <rect x="497" y="271" width="48" height="48" rx="6"/>
+      <rect x="376" y="341" width="48" height="48" rx="6"/>
+      <rect x="255" y="271" width="48" height="48" rx="6"/>
+      <rect x="255" y="131" width="48" height="48" rx="6"/>
+    </g>
+  </g>
+
+  <!-- travelling data packets along spokes -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <circle r="8" cx="0" cy="0">
+      <animateMotion dur="12s" repeatCount="indefinite" path="M 400 85 L 400 225"/>
+    </circle>
+    <circle r="8" cx="0" cy="0">
+      <animateMotion dur="15s" repeatCount="indefinite" path="M 521 295 L 400 225"/>
+    </circle>
+    <circle r="8" cx="0" cy="0">
+      <animateMotion dur="18s" repeatCount="indefinite" path="M 279 155 L 400 225"/>
+    </circle>
+  </g>
+
+  <!-- drifting envelope motifs -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5" opacity="0.85">
+    <g>
+      <rect x="90" y="330" width="72" height="44" rx="4"/>
+      <path d="M 90 334 L 126 362 L 162 334" fill="none"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="640" y="90" width="72" height="44" rx="4"/>
+      <path d="M 640 94 L 676 122 L 712 94" fill="none"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 16; 0 0" dur="11s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- slow calendar card sweep -->
+  <g opacity="0.9">
+    <rect x="150" y="120" width="90" height="64" fill="#FFD02F" stroke="#111111" stroke-width="3" rx="4">
+      <animate attributeName="x" values="150;170;150" dur="14s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="560" y="290" width="90" height="64" fill="#FFD02F" stroke="#111111" stroke-width="3" rx="4">
+      <animate attributeName="x" values="560;542;560" dur="16s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

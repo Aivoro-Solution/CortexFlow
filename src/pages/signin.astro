@@ -31,32 +31,81 @@ import { SITE } from "../config";
     </section>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    // Filled in from the Firebase console (Project settings -> Your apps).
+    // These values are public by design (Firebase docs) — not secrets.
+    const firebaseConfig = {
+      apiKey: "__FIREBASE_API_KEY__",
+      authDomain: "__FIREBASE_AUTH_DOMAIN__",
+      projectId: "__FIREBASE_PROJECT_ID__",
+    };
+
     const form = document.getElementById("signinForm");
     const err = document.getElementById("authError");
     const btn = document.getElementById("submitBtn");
+
+    const FIREBASE_ERRORS = {
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/user-not-found": "Incorrect email or password.",
+      "auth/wrong-password": "Incorrect email or password.",
+      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/too-many-requests": "Too many attempts. Please try again later.",
+      "auth/network-request-failed": "Network error. Please try again.",
+      "auth/operation-not-allowed": "Sign-in is not enabled right now. Please try again later.",
+    };
+
+    function showError(msg) {
+      err.textContent = msg;
+      err.hidden = false;
+    }
+
+    let auth = null;
+    try {
+      if (!firebaseConfig.apiKey.startsWith("__")) {
+        auth = getAuth(initializeApp(firebaseConfig));
+      }
+    } catch {
+      auth = null;
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       err.hidden = true;
+      if (!auth) {
+        showError("Sign-in is being set up. Please try again in a little while.");
+        return;
+      }
+      const data = Object.fromEntries(new FormData(form).entries());
+      const email = String(data.email || "").trim();
+      const password = String(data.password || "");
+      if (!email || !password) {
+        showError("Please enter your email and password.");
+        return;
+      }
       btn.disabled = true;
       btn.textContent = "Signing in…";
-      const data = Object.fromEntries(new FormData(form).entries());
       try {
-        const res = await fetch("/api/auth/signin", {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const idToken = await cred.user.getIdToken();
+        const res = await fetch("/api/auth/firebase-session", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ idToken }),
         });
         const out = await res.json();
         if (out.ok) {
           window.location.href = "/";
         } else {
-          err.textContent = out.error || "Something went wrong.";
-          err.hidden = false;
+          showError(out.error || "Something went wrong.");
         }
-      } catch {
-        err.textContent = "Network error. Please try again.";
-        err.hidden = false;
+      } catch (ex) {
+        showError(FIREBASE_ERRORS[ex.code] || "Something went wrong. Please try again.");
       }
       btn.disabled = false;
       btn.textContent = "Sign in";

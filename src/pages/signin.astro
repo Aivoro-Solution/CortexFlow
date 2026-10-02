@@ -37,6 +37,12 @@ import { SITE } from "../config";
       getAuth,
       signInWithEmailAndPassword,
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
     // Filled in from the Firebase console (Project settings -> Your apps).
     // These values are public by design (Firebase docs) — not secrets.
@@ -66,12 +72,16 @@ import { SITE } from "../config";
     }
 
     let auth = null;
+    let db = null;
     try {
       if (!firebaseConfig.apiKey.startsWith("__")) {
-        auth = getAuth(initializeApp(firebaseConfig));
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
       }
     } catch {
       auth = null;
+      db = null;
     }
 
     form.addEventListener("submit", async (e) => {
@@ -100,6 +110,18 @@ import { SITE } from "../config";
         });
         const out = await res.json();
         if (out.ok) {
+          // Touch lastLoginAt in Firestore (best-effort).
+          if (db) {
+            try {
+              await setDoc(
+                doc(db, "users", cred.user.uid),
+                { lastLoginAt: serverTimestamp() },
+                { merge: true }
+              );
+            } catch {
+              /* Firestore not set up yet — skip */
+            }
+          }
           window.location.href = "/";
         } else {
           showError(out.error || "Something went wrong.");

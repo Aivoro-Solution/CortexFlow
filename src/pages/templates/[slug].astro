@@ -33,20 +33,31 @@ const STOP_WORDS = new Set([
   "import","json","guide","setup","step","api","ai","new","best","top",
   "get","make","all","out",
 ]);
+function stemWord(w: string): string {
+  if (w.length > 6 && w.endsWith("ing")) return w.slice(0, -3);
+  if (w.length > 5 && w.endsWith("ed")) return w.slice(0, -2);
+  if (w.length > 5 && w.endsWith("es")) return w.slice(0, -2);
+  if (w.length > 4 && w.endsWith("s")) return w.slice(0, -1);
+  return w;
+}
 function tplKeywords(text: string): Set<string> {
   const words = text.toLowerCase().match(/[a-z]{4,}/g) ?? [];
-  return new Set(words.filter((w) => !STOP_WORDS.has(w)));
+  return new Set(
+    words.filter((w) => !STOP_WORDS.has(w)).map(stemWord)
+  );
 }
 const tplKw = tplKeywords(`${t.data.title} ${t.data.description}`);
 const allPosts = await getPublishedPosts();
 const relatedArticles = allPosts
   .map((p) => {
-    const pKw = tplKeywords(`${p.data.title} ${p.data.description}`);
+    // Title/description count double; body (first 3000 chars) adds topical depth.
+    const head = `${p.data.title} ${p.data.description} `;
+    const pKw = tplKeywords(head + head + (p.body ?? "").slice(0, 3000));
     let score = 0;
     for (const w of pKw) if (tplKw.has(w)) score++;
     return { p, score };
   })
-  .filter((r) => r.score >= 3)
+  .filter((r) => r.score >= 4)
   .sort((a, b) => b.score - a.score || b.p.data.date.getTime() - a.p.data.date.getTime())
   .slice(0, 3)
   .map((r) => r.p);

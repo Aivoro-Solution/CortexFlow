@@ -36,7 +36,18 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5068297145941114" crossorigin="anonymous"></script>
+    <!-- Google AdSense (Auto ads) — loaded after page render so ads never compete with content for bandwidth -->
+    <script>
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5068297145941114';
+          s.crossOrigin = 'anonymous';
+          document.head.appendChild(s);
+        }, 1200);
+      });
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

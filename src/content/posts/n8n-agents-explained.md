@@ -44,6 +44,8 @@ Until recently, "agent" in n8n meant one thing: the AI Agent node, a box you wir
 
 By the end of this article you'll know exactly what an n8n Agent is, how its parts (instructions, tools, skills, memory, channels, sessions) fit together, when to reach for it instead of a workflow, and what the Preview status means for production use.
 
+**Free template:** [Telegram Personal AI Assistant](/templates/telegram-ai-assistant/) — download the n8n workflow JSON, import it, and chat with your own AI assistant on Telegram today.
+
 ## The two kinds of "agent" in n8n, and why the distinction matters
 
 Confusion is the biggest real-world cost of this feature. Both things are called agents, and both use a model plus tools, but they live in different places and answer different needs.

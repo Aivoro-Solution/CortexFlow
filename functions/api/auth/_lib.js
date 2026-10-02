@@ -12,7 +12,7 @@
  * !!! Fill in FIREBASE_PROJECT_ID below (Firebase console -> Project settings).
  */
 
-export const FIREBASE_PROJECT_ID = "__FIREBASE_PROJECT_ID__";
+export const FIREBASE_PROJECT_ID = "cortexflow-7c274";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const SESSION_TTL = 30 * 24 * 3600; // 30 days

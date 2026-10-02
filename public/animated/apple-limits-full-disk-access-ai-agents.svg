@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animation of a locked vault resisting reaching agent tendrils">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0 H0 V40" fill="none" stroke="#111111" stroke-width="1" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- outer brutalist frame -->
+  <rect x="16" y="16" width="768" height="418" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- hard offset shadow under vault -->
+  <rect x="352" y="300" width="200" height="28" fill="#111111" opacity="0.15">
+    <animate attributeName="rx" values="0;6;0" dur="9s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- the vault: thick-bordered rounded box with lock -->
+  <g>
+    <rect x="330" y="130" width="180" height="170" rx="18" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <rect x="345" y="145" width="150" height="140" rx="10" fill="none" stroke="#111111" stroke-width="2" opacity="0.25"/>
+    <!-- lock body -->
+    <rect x="372" y="205" width="56" height="48" rx="8" fill="#FF4D00" stroke="#111111" stroke-width="5"/>
+    <!-- shackle -->
+    <path d="M382 205 v-18 a18 18 0 0 1 36 0 v18" fill="none" stroke="#111111" stroke-width="5">
+      <animate attributeName="d" values="M382 205 v-18 a18 18 0 0 1 36 0 v18;M382 205 v-22 a18 18 0 0 1 36 0 v22;M382 205 v-18 a18 18 0 0 1 36 0 v18" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <!-- keyhole -->
+    <circle cx="400" cy="222" r="6" fill="#111111"/>
+    <rect x="397" y="226" width="6" height="14" fill="#111111"/>
+    <!-- vault slowly pulses to show it holds -->
+    <animateTransform attributeName="transform" type="scale" values="1;1.012;1" additive="sum" dur="8s" repeatCount="indefinite" transform-origin="420 215"/>
+  </g>
+
+  <!-- agent tendrils reaching in from the edges, black ink -->
+  <g fill="none" stroke="#111111" stroke-width="5" stroke-linecap="round" opacity="0.85">
+    <path d="M40 90 C 140 110, 200 150, 300 180">
+      <animate attributeName="d" values="M40 90 C 140 110, 200 150, 300 180;M40 90 C 150 100, 220 150, 300 175;M40 90 C 140 110, 200 150, 300 180" dur="11s" repeatCount="indefinite"/>
+    </path>
+    <path d="M40 360 C 150 340, 220 300, 310 270">
+      <animate attributeName="d" values="M40 360 C 150 340, 220 300, 310 270;M40 360 C 140 350, 210 310, 310 265;M40 360 C 150 340, 220 300, 310 270" dur="13s" repeatCount="indefinite"/>
+    </path>
+    <path d="M760 90 C 660 110, 600 150, 510 175">
+      <animate attributeName="d" values="M760 90 C 660 110, 600 150, 510 175;M760 90 C 650 100, 590 150, 510 180;M760 90 C 660 110, 600 150, 510 175" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M760 360 C 650 340, 580 300, 500 268">
+      <animate attributeName="d" values="M760 360 C 650 340, 580 300, 500 268;M760 360 C 660 350, 590 310, 500 262;M760 360 C 650 340, 580 300, 500 268" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- orange alert dots drifting slowly along tendrils -->
+  <g>
+    <circle cx="0" cy="0" r="9" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animateMotion dur="14s" repeatCount="indefinite" path="M40 90 C 140 110, 200 150, 300 180"/>
+    </circle>
+    <circle cx="0" cy="0" r="9" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animateMotion dur="17s" repeatCount="indefinite" path="M760 360 C 650 340, 580 300, 500 268"/>
+    </circle>
+    <circle cx="0" cy="0" r="7" fill="#FFD02F" stroke="#111111" stroke-width="3">
+      <animateMotion dur="19s" repeatCount="indefinite" path="M40 360 C 150 340, 220 300, 310 270"/>
+    </circle>
+  </g>
+
+  <!-- slow rotation: dashed scan ring around vault -->
+  <g transform="translate(420 215)">
+    <circle cx="0" cy="0" r="120" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="14 12" opacity="0.35">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

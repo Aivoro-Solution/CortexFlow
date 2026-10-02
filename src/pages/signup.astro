@@ -1,0 +1,69 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import { SITE } from "../config";
+---
+
+<BaseLayout
+  title="Sign up"
+  description={`Create your ${SITE.name} account — save templates and get member updates.`}
+  canonicalPath="/signup/"
+>
+  <div class="prose-wrap">
+    <section class="section prose auth-page">
+      <p class="breadcrumb"><a href="/">Home</a> / Sign up</p>
+      <h1>Create your account</h1>
+      <p style="color: var(--muted);">Free forever. One account for templates, tutorials and updates.</p>
+
+      <form id="signupForm" class="auth-form" novalidate>
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" autocomplete="name" required maxlength="64" placeholder="Your name" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+        </label>
+        <label>
+          <span>Password <small>(min 8 characters)</small></span>
+          <input type="password" name="password" autocomplete="new-password" required minlength="8" placeholder="••••••••" />
+        </label>
+        <p class="auth-error" id="authError" role="alert" hidden></p>
+        <button type="submit" class="btn" id="submitBtn">Create account</button>
+      </form>
+
+      <p class="auth-switch">Already have an account? <a href="/signin/">Sign in →</a></p>
+    </section>
+  </div>
+
+  <script>
+    const form = document.getElementById("signupForm");
+    const err = document.getElementById("authError");
+    const btn = document.getElementById("submitBtn");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.hidden = true;
+      btn.disabled = true;
+      btn.textContent = "Creating…";
+      const data = Object.fromEntries(new FormData(form).entries());
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const out = await res.json();
+        if (out.ok) {
+          window.location.href = "/";
+        } else {
+          err.textContent = out.error || "Something went wrong.";
+          err.hidden = false;
+        }
+      } catch {
+        err.textContent = "Network error. Please try again.";
+        err.hidden = false;
+      }
+      btn.disabled = false;
+      btn.textContent = "Create account";
+    });
+  </script>
+</BaseLayout>

@@ -5,7 +5,7 @@ date: 2026-10-01
 category: news
 tags: ["ElevenLabs", "voice agents", "AI agents", "funding"]
 image: "/og/elevenlabs-22b-valuation-voice-agents.webp"
-draft: true
+draft: false
 featured: false
 ---
 

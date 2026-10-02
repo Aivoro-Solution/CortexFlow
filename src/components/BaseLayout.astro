@@ -79,12 +79,26 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
     )}
 
     <!-- Typography: Archivo Black (display) + Archivo/Inter (body) + IBM Plex Mono (labels) -->
+    <!-- Non-blocking font CSS: renders text immediately in fallback fonts, swaps when loaded -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
   </head>
   <body>
     <a href="#main" class="skip-link" style="position:absolute;left:-9999px;">Skip to content</a>
@@ -93,6 +107,6 @@ const fullTitle = title === SITE.name ? title : `${title} | ${SITE.name}`;
       <slot />
     </main>
     <Footer />
-    <script is:inline src="/js/newsletter.js"></script>
+    <script is:inline src="/js/newsletter.js" defer></script>
   </body>
 </html>

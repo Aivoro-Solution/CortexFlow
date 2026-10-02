@@ -1,0 +1,1647 @@
+{
+  "name": "🎬 AI Devotional Reels Factory — Telegram → NanoBanana → VEO3 → Blotato",
+  "nodes": [
+    {
+      "id": "5efdf25c-47db-437c-aa40-a986aadd07be",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -280,
+        -880
+      ],
+      "parameters": {
+        "width": 1720,
+        "height": 360,
+        "content": "# 📑 STEP 1 — Collect Idea & Photo"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "e58381d3-7043-4738-adc7-6781b7b9169d",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        -560
+      ],
+      "parameters": {
+        "width": 960,
+        "height": 620,
+        "content": "# 📑 STEP 2 — Create Image with NanoBanana\n"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "0c93973d-781a-43bf-a77c-3a88014fe168",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1340,
+        -60
+      ],
+      "parameters": {
+        "width": 1060,
+        "height": 400,
+        "content": "# 📑 STEP 3 — Generate Reel Script"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "64fa2dd4-8350-4763-94bb-2aafb9c604ec",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1820,
+        340
+      ],
+      "parameters": {
+        "width": 1180,
+        "height": 340,
+        "content": "# 📑 STEP 4 — Generate Video with VEO3"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "de91df9d-bdec-46bd-9f2f-7c10843a6941",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2480,
+        660
+      ],
+      "parameters": {
+        "width": 1200,
+        "height": 640,
+        "content": "# 📑 STEP 5 — Auto-Post to All Platforms\n"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "1e8cdf46-52bf-4b28-8246-cabdfed5a36d",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1000,
+        -880
+      ],
+      "parameters": {
+        "color": 6,
+        "width": 680,
+        "height": 2180,
+        "content": "# 🎬 AI Devotional Reels Factory\nTelegram → NanoBanana → VEO3 → Blotato\n\nSend a deity/scene photo + caption idea to your Telegram bot. The workflow builds a cinematic devotional reel (9:16) and posts it to Instagram, YouTube Shorts, TikTok, Facebook and X automatically.\n\n---\n\n# ⚙️ Requirements\n\n1. Telegram bot token (via @BotFather)\n2. OpenAI API key (vision + script + caption)\n3. kie.ai API key (VEO3 video generation)\n4. fal.ai API key (NanoBanana image edit)\n5. Blotato account + API key, social accounts connected\n6. Google account (Drive + Sheets) — duplicate the tracker sheet\n7. n8n: enable Verified Community Nodes, install the Blotato node\n"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "b76bc953-6e2c-43e3-b163-8d77f2114bf2",
+      "name": "Telegram Trigger: Receive Reel Idea",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        -200,
+        -700
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "typeVersion": 1.2,
+      "webhookId": "9ff2dedd-552e-4e82-9730-e59a084456fa",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "id": "56691c1f-9670-45cc-b5d3-08779dbb9326",
+      "name": "Telegram: Get Photo File",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        20,
+        -700
+      ],
+      "parameters": {
+        "fileId": "={{ $json.message.photo[2].file_id }}",
+        "resource": "file",
+        "additionalFields": {}
+      },
+      "typeVersion": 1.2,
+      "webhookId": "6baf0aca-108e-4e92-a2d0-464f0e5558ac",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "id": "78adfd7d-0558-4fc2-84b2-fce5d92e55fb",
+      "name": "Google Drive: Upload Photo",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        240,
+        -700
+      ],
+      "parameters": {
+        "name": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_unique_id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "id",
+          "value": ""
+        },
+        "options": {},
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": ""
+        }
+      },
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "id": "03d91a46-0bae-42e9-ad97-cfaccb29326d",
+      "name": "Google Sheets: Log Idea",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        460,
+        -700
+      ],
+      "parameters": {
+        "columns": {
+          "value": {
+            "STATUS": "RECEIVED",
+            "IMAGE NAME": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_unique_id }}",
+            "CAPTION": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.caption }}",
+            "IMAGE URL": "={{ $json.webContentLink }}"
+          },
+          "schema": [
+            {
+              "id": "IMAGE NAME",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE NAME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE URL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE URL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "IMAGE NAME"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "appendOrUpdate",
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "id": "051ace29-eb95-4aa1-80af-7bd2ce1afb8b",
+      "name": "Set: Bot Token",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        680,
+        -700
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "464ea766-aee7-4962-86d2-033ae13f35be",
+              "name": "YOUR_BOT_TOKEN",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "50a008a5-c104-4ef7-8224-5f8bd96b0f97",
+      "name": "Telegram API: Get File URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        900,
+        -700
+      ],
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $json.YOUR_BOT_TOKEN }}/getFile?file_id={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_id }}",
+        "options": {}
+      },
+      "typeVersion": 4.2
+    },
+    {
+      "id": "3addf7e0-b8c6-438c-8a8b-53ad80d3321d",
+      "name": "OpenAI Vision: Analyze Photo",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1120,
+        -700
+      ],
+      "parameters": {
+        "text": "=You are an image analysis assistant for devotional content.\n\nAnalyze the image and output results **only in YAML format**. No explanations.\n\nReturn:\nsubject: (deity / temple / ritual object / scene — name if visible)\ncolors: (3-5 prominent colors with plain names)\nsetting: (temple interior / ghat / home altar / nature / festival...)\nmood: (serene / majestic / intimate / celebratory...)\nvisual_description: (2-3 sentences: what is seen, key details, lighting)\n\nOnly output valid YAML.",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o",
+          "cachedResultName": "GPT-4O"
+        },
+        "options": {},
+        "resource": "image",
+        "imageUrls": "=https://api.telegram.org/file/bot{{ $('Set: Bot Token').item.json.YOUR_BOT_TOKEN }}/{{ $json.result.file_path }}",
+        "operation": "analyze"
+      },
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "id": "4d94d573-f9cc-4b20-9e85-5c9e95cbe631",
+      "name": "Google Sheets: Save Photo Description",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1340,
+        -700
+      ],
+      "parameters": {
+        "columns": {
+          "value": {
+            "IMAGE NAME": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_unique_id }}",
+            "IMAGE DESCRIPTION": "={{ $json.content }}"
+          },
+          "schema": [
+            {
+              "id": "IMAGE NAME",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE NAME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE DESCRIPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE DESCRIPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "IMAGE NAME"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "appendOrUpdate",
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 4.7,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "id": "51e1187a-97d9-483f-a629-deb5ba7ae89e",
+      "name": "LLM: OpenAI Chat",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1000,
+        -450
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "id": "5a4a324a-55a9-48a5-8428-17b58d09a817",
+      "name": "LLM: Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        1250,
+        -450
+      ],
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"image_prompt\": \"string\"\n}"
+      },
+      "typeVersion": 1.3
+    },
+    {
+      "id": "a85e709d-05bd-4d2c-b61b-8cad36bdd5c8",
+      "name": "Generate Image Prompt",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1150,
+        -300
+      ],
+      "parameters": {
+        "text": "=Create a devotional reel keyframe image prompt from the inputs below.\n\nUser idea:\n{{ $json.CAPTION }}\n\nReference photo analysis (stay faithful to what is visible):\n{{ $json['IMAGE DESCRIPTION'] }}\n",
+        "options": {
+          "systemMessage": "=ROLE: Devotional Keyframe Prompt Builder\n\nGOAL: One concise, cinematic-yet-authentic image prompt (max 120 words) for a devotional short reel keyframe.\n\nRULES:\n- Output ONE JSON object only with key `image_prompt`. No commentary.\n- Style: divine cinematic realism — warm diya glow, marigold tones, soft haze, gentle bloom on light sources.\n- Camera cues: include 2-3 (e.g. shallow depth of field, slow dolly feel, centered divine composition, 85mm portrait look, volumetric light).\n- Keep deity iconography respectful and accurate; never invent sacred symbols or distort faces.\n- Setting: temple, ghat, home altar or festival — real-world, lived-in.\n\nOUTPUT CONTRACT: JSON only, max 120 words, cover subject, mood, setting, lighting, camera and colors."
+        },
+        "promptType": "define",
+        "hasOutputParser": true
+      },
+      "typeVersion": 2.2
+    },
+    {
+      "id": "403c25f8-d596-47f2-ab58-dbd36dab0be7",
+      "name": "NanoBanana: Create Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1420,
+        -300
+      ],
+      "parameters": {
+        "url": "https://queue.fal.run/fal-ai/nano-banana/edit",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n\t\"prompt\": \"{{ $json.output.image_prompt }}\",\n\t\"image_urls\": [\"{{ $('Google Drive: Upload Photo').item.json.webContentLink }}\"]\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "fal.ai API Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "id": "4e9dda92-1242-4237-808b-c0242236d4fd",
+      "name": "Wait for Image Edit",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1640,
+        -300
+      ],
+      "parameters": {
+        "amount": 45
+      },
+      "typeVersion": 1.1,
+      "webhookId": "285cf758-47c6-4e1f-8b0f-1ae078c19514"
+    },
+    {
+      "id": "895f86b2-864f-4781-aa16-1a53628392f6",
+      "name": "Download Edited Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1640,
+        -80
+      ],
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "fal.ai API Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "id": "efac6a19-7120-4fe0-8b6b-3cf6a1c67314",
+      "name": "Google Sheets: Read Reel Config",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1420,
+        150
+      ],
+      "parameters": {
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "id": "f77b9728-b39d-4ac2-b0da-831bae8115af",
+      "name": "Set: Master Prompt",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1640,
+        150
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "11d0ff6f-6a59-4b9f-b19e-c1753df03dff",
+              "name": "json_master",
+              "type": "string",
+              "value": "{\n  \"description\": \"Cinematic devotional reel: a divine moment unfolds with reverent pacing.\",\n  \"style\": \"cinematic devotional | photorealistic divine\",\n  \"camera\": {\n    \"type\": \"slow dolly | gentle orbit\",\n    \"movement\": \"slow push-in toward the deity, reverent and steady\",\n    \"lens\": \"85mm portrait, shallow depth of field\"\n  },\n  \"lighting\": {\n    \"type\": \"warm divine glow\",\n    \"sources\": \"diyas, temple lamps, soft sunrise through sanctum doorway\",\n    \"FX\": \"volumetric light rays, gentle bloom, floating dust in light\"\n  },\n  \"environment\": {\n    \"location\": \"temple sanctum / ghat at dawn / home altar\",\n    \"set_pieces\": [\n      \"marigold garlands\",\n      \"brass diyas\",\n      \"incense smoke\",\n      \"flower petals\"\n    ],\n    \"mood\": \"serene, majestic, deeply peaceful\"\n  },\n  \"deity\": {\n    \"subject\": \"deity or sacred scene from the reference image\",\n    \"presentation\": \"respectful, iconographically accurate, never distorted\",\n    \"action\": \"subtle divine motion \\u2014 lamp flames flicker, petals drift, glow breathes\"\n  },\n  \"motion\": {\n    \"type\": \"slow divine reveal\",\n    \"details\": \"camera drifts closer as light blooms; petals fall in slow motion\"\n  },\n  \"VFX\": {\n    \"transformation\": \"soft golden particle drift\",\n    \"impact\": \"gentle glow pulse at the climax\",\n    \"particles\": \"dust motes, petals, ember sparks from diyas\",\n    \"environment\": \"incense smoke curling through light shafts\"\n  },\n  \"audio\": {\n    \"music\": \"soft ambient mantra drone, tanpura + distant temple bells\",\n    \"sfx\": [\n      \"diya crackle\",\n      \"soft bell\",\n      \"petal rustle\"\n    ],\n    \"ambience\": \"distant temple bells, faint chanting crowd\",\n    \"voiceover\": {\n      \"delivery\": \"none by default\",\n      \"line\": \"\"\n    }\n  },\n  \"ending\": \"Final frame: deity bathed in warm glow, slow fade to mantra text overlay\",\n  \"text\": \"none | mantra overlay at end only\",\n  \"format\": \"9:16 vertical\",\n  \"keywords\": [\n    \"deity\",\n    \"divine glow\",\n    \"slow dolly\",\n    \"devotional\",\n    \"diya light\",\n    \"marigold\",\n    \"serene\"\n  ]\n}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "78d5cee6-b4ce-4fbd-8e86-133963ba2afb",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1750,
+        0
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "id": "9d032333-f8aa-4717-9682-95ca3700c91e",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "position": [
+        1900,
+        0
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "8f74f709-fbca-4746-9b42-c94af8436b1a",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        2050,
+        0
+      ],
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"string\",\n  \"final_prompt\": \"string\"\n}"
+      },
+      "typeVersion": 1.3
+    },
+    {
+      "id": "fc918dc3-85f2-4b6b-82ea-bb991713bd3d",
+      "name": "AI Agent: Generate Reel Script",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1900,
+        150
+      ],
+      "parameters": {
+        "text": "=Create a devotional reel video prompt from the reference keyframe image and the user idea.\n\nUser idea:\n{{ $('Telegram Trigger: Receive Reel Idea').item.json.message.caption }}\n\nKeyframe image:\n{{ $('Download Edited Image').item.json.images[0].url }}\n\nRules:\n- Reverent, serene pacing. Vertical 9:16 composition.\n- Default model: veo3_fast.\n- Output only one JSON object with keys `title` and `final_prompt`.\n",
+        "options": {
+          "systemMessage": "=SYSTEM PROMPT: Devotional Reel Prompt Generator\nGenerate a structured video prompt strictly from the master schema in {{ $json.json_master }}.\nReturn a JSON object with exactly two keys: `title` (max 12 words, devotional and evocative) and `final_prompt` (a single-line JSON string following the master schema with ALL fields preserved).\nNo explanations, no markdown — only the JSON object."
+        },
+        "promptType": "define",
+        "hasOutputParser": true
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "56dd62bb-0387-48e5-b1b3-662834e3dc57",
+      "name": "Format Prompt",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2160,
+        150
+      ],
+      "parameters": {
+        "jsCode": "const structuredPrompt = $input.first().json.output.final_prompt;\nreturn {\n  json: {\n    prompt: JSON.stringify(structuredPrompt),\n    model: \"veo3_fast\",\n    aspectRatio: \"9:16\"\n  }\n};\n"
+      },
+      "typeVersion": 2
+    },
+    {
+      "id": "3dfc2afc-6fbd-4bd4-b73a-8ea4be2b2fbf",
+      "name": "Generate Video with VEO3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1900,
+        500
+      ],
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/veo/generate",
+        "body": "={\n  \"prompt\": {{ $json.prompt }},\n  \"model\": \"{{ $json.model }}\",\n  \"aspectRatio\": \"{{ $json.aspectRatio }}\",\n  \"imageUrls\": [\n    \"{{ $('Download Edited Image').item.json.images[0].url }}\"\n  ]}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "contentType": "raw",
+        "authentication": "genericCredentialType",
+        "rawContentType": "application/json",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "kie.ai API Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "id": "b2fd548e-c3e5-456c-ad5c-b42604c219da",
+      "name": "Wait for VEO3 Rendering",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        2120,
+        500
+      ],
+      "parameters": {
+        "amount": 120
+      },
+      "typeVersion": 1.1,
+      "webhookId": "84302fee-8368-4628-8aac-618c86dd9834"
+    },
+    {
+      "id": "25eb93ac-733c-4ded-be50-14e627278925",
+      "name": "Download Video from VEO3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2340,
+        500
+      ],
+      "parameters": {
+        "url": "https://api.kie.ai/api/v1/veo/record-info",
+        "options": {},
+        "sendQuery": true,
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $('Generate Video with VEO3').item.json.data.taskId }}"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "kie.ai API Key (Header Auth)"
+        }
+      }
+    },
+    {
+      "id": "2c51eeab-d2d9-4c91-9dc7-208d80ae90ac",
+      "name": "Rewrite Caption with GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        2560,
+        500
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o",
+          "cachedResultName": "GPT-4O"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "content": "=You are writing a Hindi devotional caption for a short bhakti reel.\nVideo idea: {{ $('Telegram Trigger: Receive Reel Idea').item.json.message.caption }}\nVideo title: {{ $('AI Agent: Generate Reel Script').item.json.output.title }}\n\nRules:\n- Write in Hindi (Devanagari), warm and reverent.\n- MUST be under 150 characters including hashtags — absolute MUST.\n- End with 3-4 hashtags from: #jaishreeram #jaimatadi #bhakti #sanatan #harharmahadev #radheradhe #devotional\n\nFINAL OUTPUT: only the caption text. No explanations, no markdown."
+            }
+          ]
+        }
+      },
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "id": "5c5b3d2f-9738-42af-b686-b007215d506a",
+      "name": "Save Reel to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2780,
+        500
+      ],
+      "parameters": {
+        "columns": {
+          "value": {
+            "STATUS": "READY",
+            "IMAGE NAME": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_unique_id }}",
+            "TITRE VIDEO": "={{ $('AI Agent: Generate Reel Script').item.json.output.title }}",
+            "CAPTION VIDEO": "={{ $json.message.content }}",
+            "URL VIDEO FINAL": "={{ $('Download Video from VEO3').item.json.data.response.resultUrls[0] }}"
+          },
+          "schema": [
+            {
+              "id": "IMAGE NAME",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE NAME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE URL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE URL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE DESCRIPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE DESCRIPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TITRE VIDEO",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "TITRE VIDEO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION VIDEO",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION VIDEO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL VIDEO FINAL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "URL VIDEO FINAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "IMAGE NAME"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "appendOrUpdate",
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "id": "42275d69-b7fc-46eb-b074-cf8033f257fc",
+      "name": "Send Final Reel Preview",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3000,
+        500
+      ],
+      "parameters": {
+        "file": "={{ $('Save Reel to Google Sheets').item.json['URL VIDEO FINAL'] }}",
+        "chatId": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.chat.id }}",
+        "operation": "sendVideo",
+        "additionalFields": {}
+      },
+      "typeVersion": 1.2,
+      "webhookId": "e0042cf6-fd71-498f-8f93-bbd47442fb2a",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "id": "9953f77a-a317-46f5-89c6-5711cf8169a1",
+      "name": "Upload Video to BLOTATO",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        3000,
+        720
+      ],
+      "parameters": {
+        "mediaUrl": "={{ $('Download Video from VEO3').item.json.data.response.resultUrls[0] }}",
+        "resource": "media"
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "228564fa-db1d-4ac4-be02-282acc30251d",
+      "name": "Instagram",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        2560,
+        920
+      ],
+      "parameters": {
+        "options": {},
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "postContentText": "={{ $('Save Reel to Google Sheets').item.json['CAPTION VIDEO'] }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "platform": "instagram"
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "c143aab7-2c17-4815-abd3-0103c94ad69b",
+      "name": "YouTube",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        2780,
+        920
+      ],
+      "parameters": {
+        "options": {},
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "postContentText": "={{ $('Save Reel to Google Sheets').item.json['CAPTION VIDEO'] }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "platform": "youtube",
+        "postCreateYoutubeOptionTitle": "={{ $('Save Reel to Google Sheets').item.json['TITRE VIDEO'] }}",
+        "postCreateYoutubeOptionPrivacyStatus": "public",
+        "postCreateYoutubeOptionShouldNotifySubscribers": false
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "387046bd-9317-4d03-a085-6122c848cfbe",
+      "name": "TikTok",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        3000,
+        920
+      ],
+      "parameters": {
+        "options": {},
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "postContentText": "={{ $('Save Reel to Google Sheets').item.json['CAPTION VIDEO'] }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "platform": "tiktok"
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "21c50936-a585-4c01-81f6-4660f5758bdc",
+      "name": "Facebook",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        3220,
+        920
+      ],
+      "parameters": {
+        "options": {},
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "postContentText": "={{ $('Save Reel to Google Sheets').item.json['CAPTION VIDEO'] }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "platform": "facebook"
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "f829015d-db0f-4391-9941-67095ea3b80d",
+      "name": "Twitter (X)",
+      "type": "@blotato/n8n-nodes-blotato.blotato",
+      "position": [
+        3440,
+        920
+      ],
+      "parameters": {
+        "options": {},
+        "accountId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "postContentText": "={{ $('Save Reel to Google Sheets').item.json['CAPTION VIDEO'] }}",
+        "postContentMediaUrls": "={{ $json.url }}",
+        "platform": "twitter"
+      },
+      "typeVersion": 2,
+      "credentials": {
+        "blotatoApi": {
+          "id": "",
+          "name": "Blotato API"
+        }
+      }
+    },
+    {
+      "id": "f2577ba4-de73-4407-b9ff-b2176b535065",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        3000,
+        1100
+      ],
+      "parameters": {
+        "mode": "chooseBranch",
+        "numberInputs": 5
+      },
+      "typeVersion": 3.2
+    },
+    {
+      "id": "ac52d9d4-80f6-44e3-b935-df9693dfa206",
+      "name": "Update Status to Published",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        3220,
+        1100
+      ],
+      "parameters": {
+        "columns": {
+          "value": {
+            "STATUS": "Published",
+            "IMAGE NAME": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.photo[2].file_unique_id }}"
+          },
+          "schema": [
+            {
+              "id": "IMAGE NAME",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE NAME",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE URL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE URL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IMAGE DESCRIPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "IMAGE DESCRIPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TITRE VIDEO",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "TITRE VIDEO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CAPTION VIDEO",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "CAPTION VIDEO",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL VIDEO FINAL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "URL VIDEO FINAL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "STATUS",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "STATUS",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "IMAGE NAME"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "appendOrUpdate",
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "id": "edd31ea7-00f1-4554-a97c-529604903dfa",
+      "name": "Telegram: Send Published Notification",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3440,
+        1100
+      ],
+      "parameters": {
+        "text": "=✅ Reel published on all platforms!\n{{ $('Save Reel to Google Sheets').item.json['TITRE VIDEO'] }}",
+        "chatId": "={{ $('Telegram Trigger: Receive Reel Idea').item.json.message.chat.id }}",
+        "additionalFields": {}
+      },
+      "typeVersion": 1.2,
+      "webhookId": "6d511472-d0a5-40d2-bba2-e7b0ff700b59",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger: Receive Reel Idea": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Get Photo File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Get Photo File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive: Upload Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive: Upload Photo": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Log Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Log Idea": {
+      "main": [
+        [
+          {
+            "node": "Set: Bot Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Bot Token": {
+      "main": [
+        [
+          {
+            "node": "Telegram API: Get File URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram API: Get File URL": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Vision: Analyze Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Vision: Analyze Photo": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Save Photo Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Save Photo Description": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "NanoBanana: Create Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NanoBanana: Create Image": {
+      "main": [
+        [
+          {
+            "node": "Wait for Image Edit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Image Edit": {
+      "main": [
+        [
+          {
+            "node": "Download Edited Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Edited Image": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Read Reel Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Read Reel Config": {
+      "main": [
+        [
+          {
+            "node": "Set: Master Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Master Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent: Generate Reel Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent: Generate Reel Script": {
+      "main": [
+        [
+          {
+            "node": "Format Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Video with VEO3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video with VEO3": {
+      "main": [
+        [
+          {
+            "node": "Wait for VEO3 Rendering",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for VEO3 Rendering": {
+      "main": [
+        [
+          {
+            "node": "Download Video from VEO3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video from VEO3": {
+      "main": [
+        [
+          {
+            "node": "Rewrite Caption with GPT-4o",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rewrite Caption with GPT-4o": {
+      "main": [
+        [
+          {
+            "node": "Save Reel to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Reel to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Final Reel Preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Final Reel Preview": {
+      "main": [
+        [
+          {
+            "node": "Upload Video to BLOTATO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video to BLOTATO": {
+      "main": [
+        [
+          {
+            "node": "Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TikTok",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Twitter (X)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TikTok": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Facebook": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Twitter (X)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Update Status to Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status to Published": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Send Published Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: OpenAI Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM: Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent: Generate Reel Script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent: Generate Reel Script",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent: Generate Reel Script",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

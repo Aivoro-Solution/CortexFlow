@@ -1,6 +1,6 @@
 ---
 title: "AI Devotional Reels Factory"
-description: "Turn a Telegram photo + idea into a cinematic devotional reel — NanoBanana keyframe, VEO3 video, auto-posted to 5 platforms via Blotato. Import-ready n8n workflow."
+description: "Telegram photo → cinematic devotional reel: NanoBanana keyframe, VEO3 video, auto-posted to 5 platforms via Blotato. Import-ready n8n workflow."
 date: 2026-10-02
 category: "automation"
 difficulty: "advanced"

@@ -16,7 +16,7 @@ export const SITE = {
   postsPerPage: 10,
   // Google Analytics 4 measurement ID (e.g. "G-XXXXXXXXXX").
   // Empty = analytics disabled.
-  gaMeasurementId: "G-ETZW0XEYGL",
+  gaMeasurementId: "G-1G1441RQKF",
   social: {
     twitter: "@cortexflow",
   },

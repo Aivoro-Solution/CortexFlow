@@ -6,7 +6,8 @@
  *     Google and mints our own HttpOnly session cookie.
  * Storage:
  *   - Sessions: KV binding AUTH_KV — sess:<token> -> {uid,name,email,created} (30-day TTL)
- *   - Profiles: R2 binding USER_DATA — users/<firebase-uid>.json
+ *   - Profiles: Firebase Firestore — users/<firebase-uid> (written from the
+ *     browser after sign-in; security rules restrict each user to their own doc)
  *   - Cookie: cf_auth (HttpOnly, Secure, SameSite=Lax, Path=/)
  *
  * !!! Fill in FIREBASE_PROJECT_ID below (Firebase console -> Project settings).
@@ -104,39 +105,6 @@ export async function getSessionUser(kv, request) {
   } catch {
     return null;
   }
-}
-
-/* Save/update the user profile in R2 (users/<firebase-uid>.json).
- * No-op when the USER_DATA binding is missing. */
-export async function saveProfileToR2(r2, firebaseUid, profile) {
-  if (!r2 || !firebaseUid) return false;
-  const key = "users/" + firebaseUid + ".json";
-  const now = new Date().toISOString();
-  let doc = null;
-  try {
-    const existing = await r2.get(key);
-    if (existing) doc = await existing.json();
-  } catch {
-    doc = null;
-  }
-  if (!doc) {
-    doc = {
-      uid: firebaseUid,
-      name: profile.name || "Member",
-      email: profile.email || "",
-      provider: "firebase",
-      created: now,
-      updated: now,
-    };
-  } else {
-    if (profile.name && profile.name !== doc.name) doc.name = profile.name;
-    if (profile.email && profile.email !== doc.email) doc.email = profile.email;
-    doc.updated = now;
-  }
-  await r2.put(key, JSON.stringify(doc), {
-    httpMetadata: { contentType: "application/json; charset=utf-8" },
-  });
-  return true;
 }
 
 /* Simple per-IP rate limit. Returns true when over the limit. */

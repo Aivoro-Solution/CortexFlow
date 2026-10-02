@@ -35,32 +35,89 @@ import { SITE } from "../config";
     </section>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      updateProfile,
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    // Filled in from the Firebase console (Project settings -> Your apps).
+    // These values are public by design (Firebase docs) — not secrets.
+    const firebaseConfig = {
+      apiKey: "__FIREBASE_API_KEY__",
+      authDomain: "__FIREBASE_AUTH_DOMAIN__",
+      projectId: "__FIREBASE_PROJECT_ID__",
+    };
+
     const form = document.getElementById("signupForm");
     const err = document.getElementById("authError");
     const btn = document.getElementById("submitBtn");
+
+    const FIREBASE_ERRORS = {
+      "auth/email-already-in-use": "This email is already registered. Try signing in instead.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/weak-password": "Password must be at least 8 characters.",
+      "auth/too-many-requests": "Too many attempts. Please try again later.",
+      "auth/network-request-failed": "Network error. Please try again.",
+      "auth/operation-not-allowed": "Sign-up is not enabled right now. Please try again later.",
+    };
+
+    function showError(msg) {
+      err.textContent = msg;
+      err.hidden = false;
+    }
+
+    let auth = null;
+    try {
+      if (!firebaseConfig.apiKey.startsWith("__")) {
+        auth = getAuth(initializeApp(firebaseConfig));
+      }
+    } catch {
+      auth = null;
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       err.hidden = true;
+      if (!auth) {
+        showError("Sign-up is being set up. Please try again in a little while.");
+        return;
+      }
+      const data = Object.fromEntries(new FormData(form).entries());
+      const name = String(data.name || "").trim().slice(0, 64);
+      const email = String(data.email || "").trim();
+      const password = String(data.password || "");
+      if (!name || !email || password.length < 8) {
+        showError("Please fill in your name, a valid email, and a password of 8+ characters.");
+        return;
+      }
       btn.disabled = true;
       btn.textContent = "Creating…";
-      const data = Object.fromEntries(new FormData(form).entries());
       try {
-        const res = await fetch("/api/auth/signup", {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        if (name) {
+          try {
+            await updateProfile(cred.user, { displayName: name });
+          } catch {
+            /* non-fatal */
+          }
+        }
+        const idToken = await cred.user.getIdToken();
+        const res = await fetch("/api/auth/firebase-session", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ idToken }),
         });
         const out = await res.json();
         if (out.ok) {
           window.location.href = "/";
         } else {
-          err.textContent = out.error || "Something went wrong.";
-          err.hidden = false;
+          showError(out.error || "Something went wrong.");
         }
-      } catch {
-        err.textContent = "Network error. Please try again.";
-        err.hidden = false;
+      } catch (ex) {
+        showError(FIREBASE_ERRORS[ex.code] || "Something went wrong. Please try again.");
       }
       btn.disabled = false;
       btn.textContent = "Create account";

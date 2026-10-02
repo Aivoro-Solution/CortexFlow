@@ -5,7 +5,7 @@ import { SITE } from "../config";
 
 <BaseLayout
   title="Terms and Conditions"
-  description="Terms and Conditions for using CortexFlow — content use, affiliate disclosure, warranties, and liability."
+  description="Terms and Conditions for using CortexFlow — content use, accounts, template license, affiliate disclosure, warranties, and liability."
   canonicalPath="/terms/"
 >
   <div class="prose-wrap">
@@ -13,7 +13,7 @@ import { SITE } from "../config";
       <p class="breadcrumb"><a href="/">Home</a> / Terms and Conditions</p>
       <p class="kicker">CORTEXFLOW · FREE FOREVER</p>
       <h1>Terms and Conditions</h1>
-      <p style="color: var(--muted);">Last updated: September 30, 2026</p>
+      <p style="color: var(--muted);">Last updated: October 2, 2026</p>
 
       <p>
         By accessing <a href="https://cortexflow.tech">cortexflow.tech</a>
@@ -24,22 +24,39 @@ import { SITE } from "../config";
       <h2>1. What this site is</h2>
       <p>
         CortexFlow publishes hands-on tutorials, guides, and comparisons about
-        AI agents, workflow automation, and chatbots. Everything here is
-        educational content — not professional, legal, financial, or security
-        advice.
+        AI agents, workflow automation, and chatbots — plus a library of free,
+        import-ready n8n workflow templates, each with a setup guide.
+        Everything here is educational content — not professional, legal,
+        financial, or security advice.
       </p>
 
       <h2>2. Use the tutorials responsibly</h2>
       <p>
-        Our guides include code, configurations, API keys handling, and
+        Our guides include code, configurations, API key handling, and
         infrastructure steps. Software changes fast: a tutorial that worked
         when published may need adjustments later. Always test in a safe
         environment before using anything in production, keep backups, and never
-        paste secrets or credentials into places you don't control. You follow
-        these guides at your own risk.
+        paste secrets or credentials into places you don't control. Some
+        templates deal with markets and trading (for example, stock-analysis
+        workflows) — nothing here is investment advice, and automated trading
+        involves real risk, so test with paper or demo accounts first. You
+        follow these guides at your own risk.
       </p>
 
-      <h2>3. Intellectual property</h2>
+      <h2>3. Accounts</h2>
+      <p>
+        Reading articles needs no account. Downloading workflow templates
+        requires a free account. You must provide a valid email address, keep
+        your sign-in credentials safe, and you're responsible for activity
+        under your account. One account per person. We may suspend or delete
+        accounts that abuse the service — for example, scraping at scale,
+        spam, or reselling the templates. You can delete your account anytime
+        by emailing <a href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a>;
+        deletion removes your profile, sessions, and all account data
+        permanently.
+      </p>
+
+      <h2>4. Intellectual property and template license</h2>
       <p>
         All articles, diagrams, and original graphics on this Site are the
         property of CortexFlow unless stated otherwise. You're welcome to:
@@ -52,8 +69,15 @@ import { SITE } from "../config";
         Please don't republish full articles, scrape the Site's content at
         scale, or present our work as your own.
       </p>
+      <p>
+        <strong>Workflow templates.</strong> Template files (JSON) and their
+        setup guides are free to download with an account. You may use, modify,
+        and deploy them in your own personal and commercial projects. You may
+        not resell or redistribute the templates themselves — as-is or lightly
+        modified — as a competing template product.
+      </p>
 
-      <h2>4. Affiliate disclosure</h2>
+      <h2>5. Affiliate disclosure</h2>
       <p>
         Some links on this Site are affiliate links. If you buy through them,
         we may earn a commission at no extra cost to you. This helps keep the
@@ -61,14 +85,14 @@ import { SITE } from "../config";
         sharp edges, we say so, affiliate or not.
       </p>
 
-      <h2>5. External links</h2>
+      <h2>6. External links</h2>
       <p>
         We link to third-party tools, docs, and communities for your
         convenience. We don't control those sites and aren't responsible for
         their content, accuracy, or practices.
       </p>
 
-      <h2>6. No warranties</h2>
+      <h2>7. No warranties</h2>
       <p>
         The Site and its content are provided "as is", without warranties of
         any kind — including accuracy, completeness, or fitness for a
@@ -76,7 +100,7 @@ import { SITE } from "../config";
         time without notice.
       </p>
 
-      <h2>7. Limitation of liability</h2>
+      <h2>8. Limitation of liability</h2>
       <p>
         To the maximum extent permitted by law, CortexFlow isn't liable for any
         damages arising from your use of (or inability to use) the Site or its
@@ -84,14 +108,14 @@ import { SITE } from "../config";
         tutorial.
       </p>
 
-      <h2>8. Changes to these terms</h2>
+      <h2>9. Changes to these terms</h2>
       <p>
         We may revise these terms as the Site grows. Continued use of the Site
         after changes means you accept the updated terms. The "Last updated"
         date at the top always shows the current version.
       </p>
 
-      <h2>9. Contact</h2>
+      <h2>10. Contact</h2>
       <p>
         Questions about these terms? Email us at
         <a href={`mailto:${SITE.authorEmail}`}>{SITE.authorEmail}</a>.

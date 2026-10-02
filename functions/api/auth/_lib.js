@@ -1,14 +1,26 @@
 /* Shared auth helpers for CortexFlow (Cloudflare Pages Functions).
- * KV binding: AUTH_KV
- * - Users:   user:email:<sha256(email)> -> {id,name,email,pass,created}
- *            user:id:<id>               -> same record
- * - Sessions: sess:<token> -> {uid, created}  (30-day TTL)
- * - Cookie: cf_auth (HttpOnly, Secure, SameSite=Lax, Path=/)
+ *
+ * Auth: Firebase Authentication (Google) — email/password.
+ *   - Browser signs in/up with the Firebase JS SDK, gets an ID token.
+ *   - POST /api/auth/firebase-session {idToken} verifies the token with
+ *     Google and mints our own HttpOnly session cookie.
+ * Storage:
+ *   - Sessions: KV binding AUTH_KV — sess:<token> -> {uid,name,email,created} (30-day TTL)
+ *   - Profiles: R2 binding USER_DATA — users/<firebase-uid>.json
+ *   - Cookie: cf_auth (HttpOnly, Secure, SameSite=Lax, Path=/)
+ *
+ * !!! Fill in FIREBASE_PROJECT_ID below (Firebase console -> Project settings).
  */
+
+export const FIREBASE_PROJECT_ID = "__FIREBASE_PROJECT_ID__";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const SESSION_TTL = 30 * 24 * 3600; // 30 days
 export const COOKIE_NAME = "cf_auth";
+
+export function firebaseConfigured() {
+  return !FIREBASE_PROJECT_ID.startsWith("__");
+}
 
 export function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -23,59 +35,28 @@ export function randomHex(n) {
   return [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 
-export function b64encode(bytes) {
-  let s = "";
-  for (const b of bytes) s += String.fromCharCode(b);
-  return btoa(s);
-}
-
-export function b64decode(s) {
-  const bin = atob(s);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
-}
-
-async function sha256hex(str) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-/* PBKDF2-SHA256, 100k iterations. Stored as pbkdf2$100000$<salt_b64>$<hash_b64> */
-export async function hashPassword(password) {
-  const salt = new Uint8Array(16);
-  crypto.getRandomValues(salt);
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
-    key,
-    256
-  );
-  return `pbkdf2$100000$${b64encode(salt)}$${b64encode(new Uint8Array(bits))}`;
-}
-
-export async function verifyPassword(password, stored) {
-  try {
-    const [, iterStr, saltB64, hashB64] = stored.split("$");
-    const iterations = parseInt(iterStr, 10);
-    if (!iterations || !saltB64 || !hashB64) return false;
-    const salt = b64decode(saltB64);
-    const expected = b64decode(hashB64);
-    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-    const bits = new Uint8Array(
-      await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations, hash: "SHA-256" }, key, expected.length * 8)
-    );
-    if (bits.length !== expected.length) return false;
-    let diff = 0;
-    for (let i = 0; i < bits.length; i++) diff |= bits[i] ^ expected[i];
-    return diff === 0;
-  } catch {
-    return false;
+/* Verify a Firebase ID token with Google and return its claims.
+ * Throws on any failure. Checks: valid Google signature, aud == our
+ * project, iss == securetoken issuer, not expired. */
+export async function verifyFirebaseIdToken(idToken) {
+  if (!firebaseConfigured()) throw new Error("Firebase not configured");
+  if (typeof idToken !== "string" || idToken.split(".").length !== 3) {
+    throw new Error("Malformed token");
   }
-}
-
-export function emailKey(email) {
-  return sha256hex("cortexflow-user:" + email).then((h) => "user:email:" + h);
+  const res = await fetch(
+    "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(idToken),
+    { headers: { accept: "application/json" } }
+  );
+  if (!res.ok) throw new Error("Token rejected by Google");
+  const claims = await res.json();
+  if (claims.aud !== FIREBASE_PROJECT_ID) throw new Error("Wrong audience");
+  if (claims.iss !== "https://securetoken.google.com/" + FIREBASE_PROJECT_ID) {
+    throw new Error("Wrong issuer");
+  }
+  if (!claims.sub) throw new Error("No subject");
+  const now = Math.floor(Date.now() / 1000);
+  if (claims.exp && Number(claims.exp) < now - 30) throw new Error("Token expired");
+  return claims; // {sub, email, email_verified, name?, ...}
 }
 
 export function getSessionToken(request) {
@@ -92,9 +73,15 @@ export function clearCookie() {
   return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
 }
 
-export async function createSession(kv, uid) {
+export async function createSession(kv, uid, profile) {
   const token = randomHex(32);
-  await kv.put("sess:" + token, JSON.stringify({ uid, created: Date.now() }), { expirationTtl: SESSION_TTL });
+  const sess = {
+    uid,
+    name: (profile && profile.name) || "Member",
+    email: (profile && profile.email) || "",
+    created: Date.now(),
+  };
+  await kv.put("sess:" + token, JSON.stringify(sess), { expirationTtl: SESSION_TTL });
   return token;
 }
 
@@ -103,20 +90,46 @@ export async function getSessionUser(kv, request) {
   if (!token || !/^[0-9a-f]{64}$/.test(token)) return null;
   const raw = await kv.get("sess:" + token);
   if (!raw) return null;
-  let sess;
   try {
-    sess = JSON.parse(raw);
+    const s = JSON.parse(raw);
+    if (!s.uid) return null;
+    return { id: s.uid, name: s.name || "Member", email: s.email || "", _token: token };
   } catch {
     return null;
   }
-  const urec = await kv.get("user:id:" + sess.uid);
-  if (!urec) return null;
+}
+
+/* Save/update the user profile in R2 (users/<firebase-uid>.json).
+ * No-op when the USER_DATA binding is missing. */
+export async function saveProfileToR2(r2, firebaseUid, profile) {
+  if (!r2 || !firebaseUid) return false;
+  const key = "users/" + firebaseUid + ".json";
+  const now = new Date().toISOString();
+  let doc = null;
   try {
-    const u = JSON.parse(urec);
-    return { id: u.id, name: u.name, email: u.email, _token: token };
+    const existing = await r2.get(key);
+    if (existing) doc = await existing.json();
   } catch {
-    return null;
+    doc = null;
   }
+  if (!doc) {
+    doc = {
+      uid: firebaseUid,
+      name: profile.name || "Member",
+      email: profile.email || "",
+      provider: "firebase",
+      created: now,
+      updated: now,
+    };
+  } else {
+    if (profile.name && profile.name !== doc.name) doc.name = profile.name;
+    if (profile.email && profile.email !== doc.email) doc.email = profile.email;
+    doc.updated = now;
+  }
+  await r2.put(key, JSON.stringify(doc), {
+    httpMetadata: { contentType: "application/json; charset=utf-8" },
+  });
+  return true;
 }
 
 /* Simple per-IP rate limit. Returns true when over the limit. */

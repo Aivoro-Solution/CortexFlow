@@ -13,6 +13,8 @@
  */
 
 export const FIREBASE_PROJECT_ID = "cortexflow-7c274";
+// Web API key — public by design (Firebase docs), also embedded in the site's pages.
+export const FIREBASE_API_KEY = "AIzaSyBgmyFmzeP9nzhlDPd1800b0ycYmg-yDeM";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const SESSION_TTL = 30 * 24 * 3600; // 30 days
@@ -35,28 +37,33 @@ export function randomHex(n) {
   return [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 
-/* Verify a Firebase ID token with Google and return its claims.
- * Throws on any failure. Checks: valid Google signature, aud == our
- * project, iss == securetoken issuer, not expired. */
+/* Verify a Firebase ID token with the Firebase Auth backend and return
+ * normalized claims {sub, email, name, email_verified}.
+ * Throws on any failure. accounts:lookup validates the signature, expiry
+ * and project binding server-side — stronger than a local check. */
 export async function verifyFirebaseIdToken(idToken) {
   if (!firebaseConfigured()) throw new Error("Firebase not configured");
   if (typeof idToken !== "string" || idToken.split(".").length !== 3) {
     throw new Error("Malformed token");
   }
   const res = await fetch(
-    "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(idToken),
-    { headers: { accept: "application/json" } }
+    "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + FIREBASE_API_KEY,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    }
   );
-  if (!res.ok) throw new Error("Token rejected by Google");
-  const claims = await res.json();
-  if (claims.aud !== FIREBASE_PROJECT_ID) throw new Error("Wrong audience");
-  if (claims.iss !== "https://securetoken.google.com/" + FIREBASE_PROJECT_ID) {
-    throw new Error("Wrong issuer");
-  }
-  if (!claims.sub) throw new Error("No subject");
-  const now = Math.floor(Date.now() / 1000);
-  if (claims.exp && Number(claims.exp) < now - 30) throw new Error("Token expired");
-  return claims; // {sub, email, email_verified, name?, ...}
+  if (!res.ok) throw new Error("Token rejected by Firebase");
+  const data = await res.json().catch(() => ({}));
+  const user = data && data.users && data.users[0];
+  if (!user || !user.localId) throw new Error("No user for token");
+  return {
+    sub: user.localId,
+    email: user.email || "",
+    name: user.displayName || "",
+    email_verified: !!user.emailVerified,
+  };
 }
 
 export function getSessionToken(request) {

@@ -620,7 +620,8 @@ figure.shot img { display: block; width: 100%; height: auto; border: 3px solid v
 .dl-modal__close:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
 .dl-modal__actions { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.2rem; }
 .dl-modal__actions .btn { text-align: center; text-decoration: none; }
-.dl-modal__login { background: #fff !important; }
+.dl-modal__login { background: #fff !important; color: var(--ink) !important; }
+.dl-modal__login:hover { background: var(--yellow) !important; color: var(--ink) !important; }
 
 /* ---------- header auth area ---------- */
 .auth-area { display: flex; align-items: center; gap: 0.6rem; margin-left: 0.6rem; }

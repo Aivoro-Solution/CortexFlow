@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of many small databases connecting to one orange database">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111" stroke-width="0.5" opacity="0.12">
+    <path d="M0 45 H800 M0 90 H800 M0 135 H800 M0 180 H800 M0 225 H800 M0 270 H800 M0 315 H800 M0 360 H800 M0 405 H800"/>
+    <path d="M80 0 V450 M160 0 V450 M240 0 V450 M320 0 V450 M400 0 V450 M480 0 V450 M560 0 V450 M640 0 V450 M720 0 V450"/>
+  </g>
+
+  <!-- connection lines (slow draw) -->
+  <g stroke="#111" stroke-width="2.5" fill="none">
+    <path d="M120 120 C 300 120, 380 200, 500 210">
+      <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="14s" repeatCount="indefinite"/>
+    </path>
+    <path d="M120 230 C 300 230, 380 235, 500 225">
+      <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="18s" repeatCount="indefinite"/>
+    </path>
+    <path d="M120 340 C 300 340, 380 270, 500 240">
+      <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="16s" repeatCount="indefinite"/>
+    </path>
+    <path d="M250 80 C 380 80, 430 150, 500 200">
+      <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="20s" repeatCount="indefinite"/>
+    </path>
+    <path d="M250 400 C 380 400, 430 320, 500 250">
+      <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="22s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g stroke="#111" stroke-width="2.5" fill="none" stroke-dasharray="10 10">
+    <path d="M120 120 C 300 120, 380 200, 500 210"/>
+    <path d="M120 230 C 300 230, 380 235, 500 225"/>
+    <path d="M120 340 C 300 340, 380 270, 500 240"/>
+    <path d="M250 80 C 380 80, 430 150, 500 200"/>
+    <path d="M250 400 C 380 400, 430 320, 500 250"/>
+  </g>
+
+  <!-- small databases (gentle bob, slow) -->
+  <g id="smalldbs">
+    <g>
+      <rect x="90" y="100" width="60" height="46" rx="4" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <ellipse cx="120" cy="100" rx="30" ry="10" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -10; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="90" y="210" width="60" height="46" rx="4" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <ellipse cx="120" cy="210" rx="30" ry="10" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="90" y="320" width="60" height="46" rx="4" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <ellipse cx="120" cy="320" rx="30" ry="10" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="10s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="220" y="60" width="60" height="46" rx="4" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <ellipse cx="250" cy="60" rx="30" ry="10" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="12s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="220" y="380" width="60" height="46" rx="4" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <ellipse cx="250" cy="380" rx="30" ry="10" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -12; 0 0" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- big orange database (slow pulse + slow rotation of inner ring) -->
+  <g>
+    <rect x="520" y="150" width="170" height="150" rx="6" fill="#FF4D00" stroke="#111" stroke-width="4.5">
+      <animate attributeName="opacity" values="1; 0.88; 1" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <ellipse cx="605" cy="150" rx="85" ry="26" fill="#FF4D00" stroke="#111" stroke-width="4.5">
+      <animate attributeName="opacity" values="1; 0.88; 1" dur="7s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="605" cy="225" rx="48" ry="14" fill="none" stroke="#111" stroke-width="3.5">
+      <animateTransform attributeName="transform" type="rotate" from="0 605 225" to="360 605 225" dur="34s" repeatCount="indefinite"/>
+    </ellipse>
+    <circle cx="605" cy="225" r="7" fill="#111"/>
+  </g>
+
+  <!-- slow drifting spark squares along paths -->
+  <g fill="#FF4D00" stroke="#111" stroke-width="2">
+    <rect x="290" y="110" width="12" height="12">
+      <animate attributeName="x" values="120; 500" dur="13s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="120; 210" dur="13s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="290" y="225" width="12" height="12">
+      <animate attributeName="x" values="500; 120" dur="17s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="225; 225" dur="17s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="330" y="330" width="12" height="12">
+      <animate attributeName="x" values="120; 500" dur="15s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="340; 240" dur="15s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- black border frame -->
+  <rect x="6" y="6" width="788" height="438" fill="none" stroke="#111" stroke-width="6"/>
+</svg>

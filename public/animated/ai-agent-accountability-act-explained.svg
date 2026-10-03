@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111111" stroke-width="1" opacity="0.25">
+    <line x1="0" y1="90" x2="800" y2="90"/>
+    <line x1="0" y1="180" x2="800" y2="180"/>
+    <line x1="0" y1="270" x2="800" y2="270"/>
+    <line x1="0" y1="360" x2="800" y2="360"/>
+    <line x1="160" y1="0" x2="160" y2="450"/>
+    <line x1="320" y1="0" x2="320" y2="450"/>
+    <line x1="480" y1="0" x2="480" y2="450"/>
+    <line x1="640" y1="0" x2="640" y2="450"/>
+  </g>
+  <!-- balance beam tipping slowly -->
+  <g transform="translate(400,120)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-6;6;-6" dur="9s" repeatCount="indefinite"/>
+      <line x1="-190" y1="0" x2="190" y2="0" stroke="#111111" stroke-width="8"/>
+      <line x1="-150" y1="0" x2="-150" y2="120" stroke="#111111" stroke-width="4"/>
+      <line x1="150" y1="0" x2="150" y2="120" stroke="#111111" stroke-width="4"/>
+      <path d="M-190 120 A40 40 0 0 0 -110 120 Z" fill="none" stroke="#111111" stroke-width="5"/>
+      <path d="M110 120 A40 40 0 0 0 190 120 Z" fill="none" stroke="#111111" stroke-width="5"/>
+    </g>
+    <line x1="0" y1="-40" x2="0" y2="0" stroke="#111111" stroke-width="8"/>
+    <rect x="-8" y="-62" width="16" height="22" fill="#111111"/>
+  </g>
+  <!-- pedestal -->
+  <rect x="330" y="300" width="140" height="20" fill="#111111"/>
+  <rect x="390" y="170" width="20" height="130" fill="#111111"/>
+  <rect x="352" y="320" width="96" height="16" fill="#FF4D00"/>
+  <rect x="352" y="320" width="96" height="16" fill="none" stroke="#111111" stroke-width="3"/>
+  <!-- orbiting agent node -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 260" to="360 400 260" dur="40s" repeatCount="indefinite"/>
+    <circle cx="400" cy="150" r="14" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <circle cx="400" cy="150" r="5" fill="#111111"/>
+  </g>
+  <!-- dashed orbit path -->
+  <circle cx="400" cy="260" r="110" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="10 8" opacity="0.6"/>
+  <!-- drifting sparks -->
+  <circle cx="120" cy="330" r="6" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="cy" values="330;270;330" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="680" cy="140" r="8" fill="#111111">
+    <animate attributeName="cy" values="140;200;140" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="240" cy="380" r="5" fill="#111111">
+    <animate attributeName="cx" values="240;290;240" dur="11s" repeatCount="indefinite"/>
+  </circle>
+  <!-- frame -->
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="6"/>
+</svg>

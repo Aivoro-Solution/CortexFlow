@@ -3,6 +3,7 @@
 Topics already pitched in #blog-topics or published — never pitch these again.
 
 ## Published
+- 2026-10-03 (14:24 IST, hourly run): "Supabase Acquires Turso to Give Every AI Agent Its Own Database" (`supabase-acquires-turso-agent-databases.md`) — live [news]
 - 2026-10-03 (11:24 IST, hourly run): "AWS Launched an AI Agent That Audits Your Cloud: The Well-Architected Agent, Explained" (`aws-well-architected-agent.md`) — live [news]
 - 2026-10-03 (08:24 IST, hourly run): "SAP Doubled n8n's Valuation to $5.2B and Embedded It in Joule Studio — What It Means for Builders" (`sap-n8n-5-2b-joule-studio.md`) — live [news]
 - 2026-10-03 (05:24 IST, hourly run): "Apple Is Reining In Full Disk Access Because of AI Agents: What Mac Builders Need to Know" (`apple-limits-full-disk-access-ai-agents.md`) — live [news]

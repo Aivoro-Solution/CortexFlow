@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: enterprise building connected to workflow nodes">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- Enterprise tower (left) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="60" y="120" width="140" height="240" fill="#FFFDF5"/>
+    <g stroke-width="2">
+      <line x1="80" y1="150" x2="180" y2="150"/>
+      <line x1="80" y1="175" x2="180" y2="175"/>
+      <line x1="80" y1="200" x2="180" y2="200"/>
+      <line x1="80" y1="225" x2="180" y2="225"/>
+      <line x1="80" y1="250" x2="180" y2="250"/>
+      <line x1="80" y1="275" x2="180" y2="275"/>
+    </g>
+    <rect x="118" y="330" width="24" height="30" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="fill-opacity" values="1;0.55;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- Workflow node cluster (right) -->
+  <g stroke="#111111" stroke-width="3">
+    <circle cx="520" cy="140" r="34" fill="#FFFDF5">
+      <animate attributeName="r" values="34;38;34" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="660" cy="220" r="26" fill="#FF4D00">
+      <animate attributeName="fill-opacity" values="1;0.6;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="560" y="300" width="120" height="70" fill="#FFFDF5"/>
+    <circle cx="460" cy="330" r="20" fill="#FFFDF5"/>
+  </g>
+
+  <!-- Connection pipelines -->
+  <g fill="none" stroke="#111111" stroke-width="3">
+    <path d="M200 200 C 300 200, 320 140, 486 140">
+      <animate attributeName="stroke-dashoffset" from="0" to="-48" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="24 24;24 24" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M200 260 C 340 260, 420 220, 634 220">
+      <animate attributeName="stroke-dashoffset" from="0" to="48" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="24 24;24 24" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M480 330 C 500 335, 520 335, 560 335"/>
+  </g>
+
+  <!-- Slow rotating gear accent -->
+  <g transform="translate(700,120)" stroke="#111111" stroke-width="3" fill="none">
+    <g>
+      <circle r="26"/>
+      <circle r="10" fill="#FF4D00">
+        <animate attributeName="fill-opacity" values="1;0.6;1" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <g>
+        <line x1="-26" y1="0" x2="-38" y2="0"/>
+        <line x1="26" y1="0" x2="38" y2="0"/>
+        <line x1="0" y1="-26" x2="0" y2="-38"/>
+        <line x1="0" y1="26" x2="0" y2="38"/>
+        <line x1="-18" y1="-18" x2="-27" y2="-27"/>
+        <line x1="18" y1="18" x2="27" y2="27"/>
+        <line x1="-18" y1="18" x2="-27" y2="27"/>
+        <line x1="18" y1="-18" x2="27" y2="-27"/>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Data packets drifting along pipes -->
+  <circle cx="200" cy="200" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M200 200 C 300 200, 320 140, 486 140"/>
+  </circle>
+  <circle cx="200" cy="260" r="6" fill="#111111">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M200 260 C 340 260, 420 220, 634 220"/>
+  </circle>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animated sound waves in neo-brutalist style">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.75" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- central microphone: bold circle + arcs -->
+  <g>
+    <circle cx="400" cy="190" r="64" fill="none" stroke="#111111" stroke-width="8"/>
+    <circle cx="400" cy="190" r="64" fill="none" stroke="#FF4D00" stroke-width="8" stroke-dasharray="100 302" opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 190" to="360 400 190" dur="40s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="386" y="152" width="28" height="76" rx="14" fill="#111111"/>
+    <path d="M 372 216 a 28 28 0 0 0 56 0" fill="none" stroke="#111111" stroke-width="8"/>
+    <line x1="400" y1="246" x2="400" y2="272" stroke="#111111" stroke-width="8"/>
+    <line x1="376" y1="272" x2="424" y2="272" stroke="#111111" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- radiating sound-wave bars, left side (growing outward, slow pulse) -->
+  <g fill="#111111">
+    <rect x="180" y="150" width="12" height="80" rx="6">
+      <animate attributeName="height" values="80;110;80" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="150;135;150" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="212" y="130" width="12" height="120" rx="6">
+      <animate attributeName="height" values="120;150;120" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="130;115;130" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="244" y="165" width="12" height="50" rx="6">
+      <animate attributeName="height" values="50;80;50" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="165;150;165" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- radiating sound-wave bars, right side (orange accent bar) -->
+  <g>
+    <rect x="544" y="165" width="12" height="50" rx="6" fill="#111111">
+      <animate attributeName="height" values="50;80;50" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="165;150;165" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="576" y="130" width="12" height="120" rx="6" fill="#FF4D00">
+      <animate attributeName="height" values="120;150;120" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="130;115;130" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="608" y="150" width="12" height="80" rx="6" fill="#111111">
+      <animate attributeName="height" values="80;110;80" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="150;135;150" dur="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- streaming pulse rings drifting right, slow -->
+  <g fill="none" stroke="#111111" stroke-width="4" opacity="0.55">
+    <circle cx="620" cy="330" r="10">
+      <animate attributeName="r" values="10;46" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="330" r="10">
+      <animate attributeName="r" values="10;46" dur="10s" begin="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="10s" begin="5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- streaming pulse rings, left side (orange) -->
+  <g fill="none" stroke="#FF4D00" stroke-width="4" opacity="0.55">
+    <circle cx="180" cy="330" r="10">
+      <animate attributeName="r" values="10;46" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="330" r="10">
+      <animate attributeName="r" values="10;46" dur="12s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="12s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- hard shadow blocks -->
+  <rect x="700" y="36" width="52" height="20" fill="#111111">
+    <animate attributeName="x" values="700;712;700" dur="11s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="48" y="394" width="72" height="20" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="x" values="48;60;48" dur="13s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- timeline dots: latency ticks -->
+  <g>
+    <circle cx="120" cy="392" r="7" fill="#111111"/>
+    <circle cx="160" cy="392" r="7" fill="#111111"/>
+    <circle cx="200" cy="392" r="7" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="240" cy="392" r="7" fill="#111111"/>
+  </g>
+</svg>

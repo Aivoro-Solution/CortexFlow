@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of an AI agent sending stablecoin payments across a blockchain network">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="1" opacity="0.08"/>
+    </pattern>
+    <path id="chainPath" d="M 200 225 C 300 225, 340 225, 420 225 S 560 225, 620 225" fill="none"/>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- ledger chain line -->
+  <path d="M 200 225 C 300 225, 340 225, 420 225 S 560 225, 620 225" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="14 10"/>
+  <circle cx="200" cy="225" r="6" fill="#FF4D00"/>
+  <circle cx="620" cy="225" r="6" fill="#FF4D00"/>
+
+  <!-- block nodes along the chain -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <rect x="272" y="203" width="56" height="44"/>
+    <rect x="372" y="203" width="56" height="44"/>
+    <rect x="472" y="203" width="56" height="44"/>
+    <rect x="562" y="203" width="56" height="44"/>
+  </g>
+  <g fill="#FF4D00" opacity="0.85">
+    <circle cx="300" cy="225" r="7">
+      <animate attributeName="r" values="7;10;7" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="225" r="7">
+      <animate attributeName="r" values="7;10;7" dur="8s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="500" cy="225" r="7">
+      <animate attributeName="r" values="7;10;7" dur="8s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- agent node: pulsing hexagon on the left -->
+  <g transform="translate(110 225)">
+    <g>
+      <polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+        <animate attributeName="stroke-width" values="3;5;3" dur="9s" repeatCount="indefinite"/>
+      </polygon>
+      <circle r="18" fill="#FF4D00">
+        <animate attributeName="opacity" values="1;0.55;1" dur="9s" repeatCount="indefinite"/>
+      </circle>
+      <g stroke="#111111" stroke-width="3" fill="none" opacity="0.35">
+        <circle r="44" stroke-dasharray="8 10">
+          <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </g>
+  </g>
+
+  <!-- wallet / treasury node on the right -->
+  <g transform="translate(700 225)">
+    <rect x="-34" y="-24" width="68" height="48" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <path d="M -34 -24 L 34 -24 L 34 -6 L -34 -6 Z" fill="#111111"/>
+    <rect x="18" y="8" width="12" height="8" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.4;1" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <g stroke="#111111" stroke-width="3" fill="none" opacity="0.35">
+      <circle r="46" stroke-dasharray="8 10">
+        <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="75s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+
+  <!-- coin traveling along the chain (agent -> wallet), slow -->
+  <g>
+    <circle r="12" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animateMotion dur="12s" repeatCount="indefinite" rotate="0">
+        <mpath href="#chainPath"/>
+      </animateMotion>
+      <animate attributeName="r" values="12;15;12" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- second coin offset in time -->
+  <g>
+    <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animateMotion dur="12s" begin="6s" repeatCount="indefinite" rotate="0">
+        <mpath href="#chainPath"/>
+      </animateMotion>
+    </circle>
+  </g>
+
+  <!-- guardrail brackets above and below the chain (permission layer), slow drift -->
+  <g stroke="#111111" stroke-width="3" fill="none" opacity="0.55">
+    <path d="M 240 150 L 240 120 L 560 120 L 560 150">
+      <animate attributeName="d" values="M 240 150 L 240 120 L 560 120 L 560 150;M 240 158 L 240 128 L 560 128 L 560 158;M 240 150 L 240 120 L 560 120 L 560 150" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 240 300 L 240 330 L 560 330 L 560 300">
+      <animate attributeName="d" values="M 240 300 L 240 330 L 560 330 L 560 300;M 240 292 L 240 322 L 560 322 L 560 292;M 240 300 L 240 330 L 560 330 L 560 300" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

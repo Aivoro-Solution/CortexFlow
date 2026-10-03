@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animation of an auditor's lens scanning a cluster of cloud services">
+  <defs>
+    <pattern id="agrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0 H0 V40" fill="none" stroke="#111111" stroke-width="1" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#agrid)"/>
+
+  <!-- outer brutalist frame -->
+  <rect x="16" y="16" width="768" height="418" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- cloud-service cluster: thick-bordered nodes wired together -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="5">
+    <rect x="120" y="120" width="110" height="80" rx="12"/>
+    <rect x="300" y="80" width="110" height="80" rx="12"/>
+    <rect x="480" y="130" width="110" height="80" rx="12"/>
+    <rect x="200" y="270" width="110" height="80" rx="12"/>
+    <rect x="390" y="270" width="110" height="80" rx="12"/>
+    <rect x="570" y="280" width="110" height="80" rx="12"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="4" opacity="0.7">
+    <path d="M230 160 L300 120"/>
+    <path d="M410 120 L480 170"/>
+    <path d="M175 200 L255 270"/>
+    <path d="M355 160 L445 270"/>
+    <path d="M500 270 L570 320"/>
+    <path d="M310 350 L390 350"/>
+  </g>
+  <!-- inner detail marks on nodes -->
+  <g stroke="#111111" stroke-width="4" stroke-linecap="round" opacity="0.55">
+    <path d="M150 150 h50 M150 170 h34"/>
+    <path d="M330 110 h50 M330 130 h34"/>
+    <path d="M510 160 h50 M510 180 h34"/>
+    <path d="M230 300 h50 M230 320 h34"/>
+    <path d="M420 300 h50 M420 320 h34"/>
+    <path d="M600 310 h50 M600 330 h34"/>
+  </g>
+
+  <!-- audit pass indicators: orange rings that blink slowly in sequence -->
+  <g fill="none" stroke="#FF4D00" stroke-width="6">
+    <circle cx="175" cy="160" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="355" cy="120" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="535" cy="170" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="255" cy="310" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="445" cy="310" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="625" cy="320" r="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="18s" begin="15s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- auditor's magnifying lens drifting slowly across the cluster -->
+  <g>
+    <circle cx="0" cy="0" r="52" fill="#FFFDF5" fill-opacity="0.25" stroke="#FF4D00" stroke-width="8">
+      <animateMotion dur="26s" repeatCount="indefinite" path="M120 250 C 260 130, 420 130, 540 220 C 620 280, 640 300, 660 330"/>
+    </circle>
+    <line x1="0" y1="0" x2="46" y2="46" stroke="#111111" stroke-width="10" stroke-linecap="round">
+      <animateMotion dur="26s" repeatCount="indefinite" path="M120 250 C 260 130, 420 130, 540 220 C 620 280, 640 300, 660 330"/>
+    </line>
+    <circle cx="0" cy="0" r="10" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animateMotion dur="26s" repeatCount="indefinite" path="M120 250 C 260 130, 420 130, 540 220 C 620 280, 640 300, 660 330"/>
+    </circle>
+  </g>
+
+  <!-- slow rotating dashed audit ring around the whole cluster -->
+  <g transform="translate(400 225)">
+    <circle cx="0" cy="0" r="190" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="14 12" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

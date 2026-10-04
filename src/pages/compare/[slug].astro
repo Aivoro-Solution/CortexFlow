@@ -1,0 +1,155 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+
+export async function getStaticPaths() {
+  const items = await getCollection("comparisons", ({ data }) => !data.draft);
+  return items.map((c) => ({
+    params: { slug: c.id.replace(/\.md$/, "") },
+    props: { c },
+  }));
+}
+
+const { c } = Astro.props;
+const { Content } = await render(c);
+const slug = c.id.replace(/\.md$/, "");
+const url = `/compare/${slug}/`;
+const updated = c.data.updated ?? c.data.date;
+const fmt = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+// Other comparisons for the "keep comparing" box
+const others = (await getCollection("comparisons", ({ data }) => !data.draft))
+  .filter((x) => x.id !== c.id)
+  .slice(0, 3);
+
+const articleJson = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: c.data.title,
+  description: c.data.description,
+  datePublished: c.data.date.toISOString(),
+  dateModified: updated.toISOString(),
+  author: { "@type": "Organization", name: "CortexFlow", url: SITE.url },
+};
+---
+<BaseLayout
+  title={c.data.title}
+  description={c.data.description}
+  canonical={`${SITE.url}${url}`}
+>
+  <main class="wrap compare-page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span> <a href="/compare/">Compare</a> <span>/</span>
+      <span>{c.data.tool_a} vs {c.data.tool_b}</span>
+    </nav>
+
+    <p class="kicker">Head-to-head · Updated {fmt.format(updated)}</p>
+    <h1>{c.data.title}</h1>
+    <p class="lede">{c.data.description}</p>
+
+    <aside class="verdict">
+      <p class="verdict-label">★ The verdict</p>
+      <p>{c.data.verdict}</p>
+    </aside>
+
+    <article class="compare-body">
+      <Content />
+    </article>
+
+    <aside class="cta-box">
+      <p class="cta-title">Skip the debate — start automating free</p>
+      <p>
+        26 production-ready n8n workflow templates. Download the JSON, import
+        it into n8n, add your credentials — done.
+      </p>
+      <a class="btn" href="/templates/">Browse free templates</a>
+    </aside>
+
+    {others.length > 0 && (
+      <section class="more">
+        <h2>Keep comparing</h2>
+        <ul>
+          {others.map((o) => (
+            <li>
+              <a href={`/compare/${o.id.replace(/\.md$/, "")}/`}>{o.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(articleJson)} />
+
+  <style>
+    .compare-page { padding: 2.5rem 0 4rem; max-width: 780px; }
+    .crumbs { font-size: 0.85rem; margin-bottom: 1rem; }
+    .crumbs a { text-decoration: underline; }
+    .crumbs span { margin: 0 0.25rem; }
+    .kicker {
+      display: inline-block; background: #111; color: #FFFDF5;
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.3rem 0.7rem; margin-bottom: 1rem;
+    }
+    .compare-page h1 {
+      font-family: "Archivo Black", sans-serif; text-transform: uppercase;
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem); line-height: 1.05; margin: 0 0 1rem;
+    }
+    .lede { font-size: 1.15rem; margin-bottom: 2rem; }
+    .verdict {
+      border: 3px solid #111; box-shadow: 6px 6px 0 #FF4D00;
+      background: #FFD02F; padding: 1.25rem 1.5rem; margin-bottom: 2.5rem;
+    }
+    .verdict-label {
+      font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em;
+      margin: 0 0 0.5rem; font-size: 0.85rem;
+    }
+    .verdict p:last-child { margin: 0; font-size: 1.05rem; }
+    .compare-body :global(h2) {
+      font-family: "Archivo Black", sans-serif; text-transform: uppercase;
+      font-size: 1.4rem; margin: 2.5rem 0 1rem;
+      border-bottom: 3px solid #111; padding-bottom: 0.4rem;
+    }
+    .compare-body :global(h3) { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
+    .compare-body :global(p), .compare-body :global(li) { line-height: 1.7; }
+    .compare-body :global(table) {
+      width: 100%; border-collapse: collapse; margin: 1.5rem 0;
+      border: 3px solid #111; box-shadow: 5px 5px 0 #111; font-size: 0.92rem;
+      display: block; overflow-x: auto;
+    }
+    .compare-body :global(th), .compare-body :global(td) {
+      border: 2px solid #111; padding: 0.6rem 0.8rem; text-align: left;
+      vertical-align: top;
+    }
+    .compare-body :global(th) { background: #111; color: #FFFDF5; }
+    .compare-body :global(tr:nth-child(even) td) { background: #fff8e7; }
+    .compare-body :global(blockquote) {
+      border-left: 5px solid #FF4D00; margin: 1.5rem 0; padding: 0.5rem 1rem;
+      background: #fff8e7; font-style: italic;
+    }
+    .cta-box {
+      border: 3px solid #111; box-shadow: 6px 6px 0 #111;
+      background: #fff; padding: 1.5rem; margin: 3rem 0 2rem; text-align: center;
+    }
+    .cta-title {
+      font-family: "Archivo Black", sans-serif; text-transform: uppercase;
+      font-size: 1.25rem; margin: 0 0 0.5rem;
+    }
+    .btn {
+      display: inline-block; margin-top: 1rem; background: #FF4D00; color: #fff;
+      border: 3px solid #111; box-shadow: 4px 4px 0 #111;
+      padding: 0.7rem 1.5rem; font-weight: 800; text-transform: uppercase;
+      text-decoration: none;
+    }
+    .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #111; }
+    .more { margin-top: 2rem; }
+    .more h2 {
+      font-family: "Archivo Black", sans-serif; text-transform: uppercase;
+      font-size: 1.2rem;
+    }
+    .more ul { list-style: none; padding: 0; }
+    .more li { margin: 0.5rem 0; }
+    .more a { font-weight: 700; text-decoration: underline; }
+  </style>
+</BaseLayout>

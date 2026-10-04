@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: an orange signal traveling through a chain of vulnerability nodes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- thick ink frame -->
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- ====== exploit chain: 4 nodes, left to right ====== -->
+  <g stroke="#111111" stroke-width="5" fill="#FFFDF5">
+    <!-- node 1: unauthenticated entry -->
+    <circle cx="150" cy="225" r="52"/>
+    <circle cx="150" cy="225" r="30" fill="none"/>
+    <!-- node 2: session hijack -->
+    <rect x="298" y="173" width="104" height="104" rx="10"/>
+    <rect x="326" y="201" width="48" height="48" fill="none"/>
+    <!-- node 3: remote code execution -->
+    <circle cx="540" cy="225" r="52"/>
+    <path d="M 515 205 L 540 225 L 565 205 M 515 245 L 540 225 L 565 245" fill="none"/>
+    <!-- node 4: root -->
+    <rect x="638" y="155" width="120" height="140" rx="10"/>
+    <path d="M 668 260 L 698 205 L 728 260 Z" fill="none"/>
+    <path d="M 686 290 L 698 205 L 710 290 Z" fill="none"/>
+  </g>
+
+  <!-- chain links between nodes -->
+  <g stroke="#111111" stroke-width="5" fill="none">
+    <line x1="202" y1="225" x2="298" y2="225"/>
+    <line x1="402" y1="225" x2="488" y2="225"/>
+    <line x1="592" y1="225" x2="638" y2="225"/>
+  </g>
+
+  <!-- traveling orange pulse: entry -> root, slow loop -->
+  <circle r="14" fill="#FF4D00" opacity="0.95">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 150 225 L 350 225 L 540 225 L 698 225"/>
+  </circle>
+  <circle r="14" fill="#FF4D00" opacity="0.35">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 150 225 L 350 225 L 540 225 L 698 225"/>
+    <animate attributeName="r" values="14;26;14" dur="12s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- node 4 impact: slow orange ring expanding on root node -->
+  <circle cx="698" cy="225" r="55" fill="none" stroke="#FF4D00" stroke-width="5" opacity="0.8">
+    <animate attributeName="r" values="55;110;55" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.8;0;0.8" dur="12s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- scanning line sweeping the grid, slow -->
+  <rect x="20" y="20" width="760" height="8" fill="#FF4D00" opacity="0.35">
+    <animate attributeName="y" values="20;410;20" dur="18s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- slow rotating dashed halo around node 3 (RCE) -->
+  <g opacity="0.6">
+    <circle cx="540" cy="225" r="80" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="14 10">
+      <animateTransform attributeName="transform" type="rotate" from="0 540 225" to="360 540 225" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

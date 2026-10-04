@@ -1,0 +1,816 @@
+{
+  "name": "Client Onboarding Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 CLIENT ONBOARDING ORCHESTRATOR\n**What it does:** New client webhook → creates a Notion project page, a Google Drive folder, and a Slack channel → posts a welcome message → sends the client a welcome email → schedules a kickoff call → logs every stage to Google Sheets → sends you a Telegram summary. Any failed step alerts the owner in Slack and marks the row `FAILED`.\n\n**You'll need:**\n- Notion integration + a client projects database (notion.so → My integrations)\n- Google Drive + Google Calendar + Gmail + Google Sheets OAuth2 credentials\n- Slack app with `channels:write` + `chat:write` scopes\n- Google Sheet with a `Clients` tab\n- Telegram bot token + your chat ID\n\n**Status flow in Sheets:** `RECEIVED` → `PROVISIONED` → `WELCOMED` (or `FAILED`)",
+        "height": 220,
+        "width": 3860,
+        "color": 5
+      },
+      "id": "b25e7e47-8b20-40f0-82b1-5728d7655ae2",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Webhook intake + log RECEIVED\nPOST /new-client webhook (JSON: name, email, company) → CONFIG — Business → slugify the company name → append a row to the `Clients` tab with status `RECEIVED`.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "74d7f2c8-28be-4e1f-a2d0-a966dc857917",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Provision the client workspace\nNotion project page in your database → Google Drive folder under your parent folder → Slack channel (`client-<slug>`) → welcome post in the channel tagging the owner. Each provisioning node continues on error: any failure jumps to the STEP 4 alert chain.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "dc911fff-4566-409a-85f7-b6bbdea2c32b",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Welcome email + kickoff → WELCOMED\nSheet flips to `PROVISIONED` → Gmail welcome email to the client → compute the kickoff date (N days out, 10:00, 45 min) → Google Calendar event with the client invited → sheet flips to `WELCOMED`.",
+        "height": 420,
+        "width": 1180,
+        "color": 4
+      },
+      "id": "5cb3b699-f28c-4e15-8759-e3d59082bd3b",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Failure alerts + Telegram summary\nAny failed step (Notion / Drive / Slack channel / Gmail / Calendar) posts an alert in Slack with the client + error → sheet flips to `FAILED`. On the happy path, Telegram sends the 🎉 client-onboarded summary with all the links.",
+        "height": 320,
+        "width": 2560,
+        "color": 4
+      },
+      "id": "7600250d-2700-47b0-b244-260042919497",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        900,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-client",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "93c61406-2c8b-4e7f-ad50-eecc7cfbdd54",
+      "name": "Webhook — New Client",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7a7663b-c4f4-4f9f-9b80-3bb9c5c80f54",
+              "name": "notion_database_id",
+              "type": "string",
+              "value": "PASTE_YOUR_NOTION_DATABASE_ID"
+            },
+            {
+              "id": "f670bb5c-f692-48b1-9f91-d4c6e27973c2",
+              "name": "drive_parent_folder_id",
+              "type": "string",
+              "value": "PASTE_YOUR_DRIVE_FOLDER_ID"
+            },
+            {
+              "id": "6bb62097-db2a-4b5f-aa9a-eddd53b6d527",
+              "name": "slack_channel_prefix",
+              "type": "string",
+              "value": "client-"
+            },
+            {
+              "id": "ecdb1c3d-6351-4a79-9a4e-1affe8321402",
+              "name": "owner_email",
+              "type": "string",
+              "value": "PASTE_YOUR_OWNER_EMAIL"
+            },
+            {
+              "id": "f1ae65f8-627f-4aa9-a598-9c19ee6c4a22",
+              "name": "kickoff_days_ahead",
+              "type": "string",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "07f87ab4-ac07-4e42-8719-ff837220f319",
+      "name": "CONFIG — Business",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a Slack-safe channel slug + today's date; keep client fields flowing\nconst item = $input.first().json;\nconst raw = (item.company || 'client').toString();\nconst slug = raw\n  .toLowerCase()\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n  .replace(/[^a-z0-9]+/g, '-')\n  .replace(/^-+|-+$/g, '')\n  .slice(0, 60) || 'client';\nreturn [{ json: {\n  ...item,\n  company_slug: slug,\n  date: new Date().toISOString().slice(0, 10),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "dcb5755d-8de4-409c-9efb-1c204201a6ec",
+      "name": "Code — Slugify Company",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Clients"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $('Code — Slugify Company').first().json.date }}",
+            "Name": "={{ $('Webhook — New Client').first().json.name }}",
+            "Email": "={{ $('Webhook — New Client').first().json.email }}",
+            "Company": "={{ $('Webhook — New Client').first().json.company }}",
+            "Status": "RECEIVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8f3e7134-b894-4333-8696-dcec64b96fb1",
+      "name": "Sheets — Log Client — RECEIVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.notion_database_id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "title|Name",
+              "textContent": "=Onboarding — {{ $('Webhook — New Client').first().json.company }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "notionApi": {
+          "id": "",
+          "name": "Notion API"
+        }
+      },
+      "id": "57c0f3c2-6d3c-4477-b9d7-0399dabf1671",
+      "name": "Notion — Create Project Page",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "create",
+        "name": "={{ $('Webhook — New Client').first().json.company }}",
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.drive_parent_folder_id }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive API"
+        }
+      },
+      "id": "e2dc0969-ec64-4aac-abe1-5a78f75075fc",
+      "name": "Drive — Create Client Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "conversation",
+        "operation": "create",
+        "channel": "={{ $('CONFIG — Business').first().json.slack_channel_prefix + $('Code — Slugify Company').first().json.company_slug }}",
+        "options": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "af17b6f7-273b-491a-b78c-cc2812c7d95f",
+      "name": "Slack — Create Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ '#' + $('CONFIG — Business').first().json.slack_channel_prefix + $('Code — Slugify Company').first().json.company_slug }}"
+        },
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "text": "=🎉 New client onboarded!\n\n*Name:* {{ $('Webhook — New Client').first().json.name }}\n*Company:* {{ $('Webhook — New Client').first().json.company }}\n*Email:* {{ $('Webhook — New Client').first().json.email }}\n\n*Notion project:* {{ $('Notion — Create Project Page').first().json.url }}\n*Drive folder:* https://drive.google.com/drive/folders/{{ $('Drive — Create Client Folder').first().json.id }}\n\ncc {{ $('CONFIG — Business').first().json.owner_email }} — kickoff call being scheduled.",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "1dbf41db-b700-4b22-91cd-a53bb3c23284",
+      "name": "Slack — Post Welcome in Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Clients"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $('Webhook — New Client').first().json.email }}",
+            "Notion Page": "={{ $('Notion — Create Project Page').first().json.url }}",
+            "Drive Folder": "=https://drive.google.com/drive/folders/{{ $('Drive — Create Client Folder').first().json.id }}",
+            "Slack Channel": "={{ '#' + $('CONFIG — Business').first().json.slack_channel_prefix + $('Code — Slugify Company').first().json.company_slug }}",
+            "Status": "PROVISIONED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a2d372b2-cfa7-406d-a1c3-463f2b44dcc2",
+      "name": "Sheets — Update — PROVISIONED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "emailType": "html",
+        "sendTo": "={{ $('Webhook — New Client').first().json.email }}",
+        "subject": "=Welcome aboard, {{ $('Webhook — New Client').first().json.name }}! 🎉",
+        "message": "=Hi {{ $('Webhook — New Client').first().json.name }},<br><br>Welcome! Here's what happens next:<br><br>1. We've set up your project workspace — a Notion project page, a shared Drive folder, and a dedicated Slack channel.<br>2. Your kickoff call is scheduled — you'll receive a calendar invite shortly.<br>3. Reply to this email any time with questions.<br><br>Looking forward to working with you!<br><br>— The team",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "c01bd490-ee0b-4835-935b-8bb508afedcf",
+      "name": "Gmail — Send Welcome Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2160,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Kickoff call: N days out at 10:00, 45 minutes long\nconst daysAhead = parseInt($('CONFIG — Business').first().json.kickoff_days_ahead || '3', 10);\nconst start = new Date();\nstart.setDate(start.getDate() + daysAhead);\nstart.setHours(10, 0, 0, 0);\nconst end = new Date(start.getTime() + 45 * 60000);\nreturn [{ json: {\n  ...$input.first().json,\n  kickoff_start: start.toISOString(),\n  kickoff_end: end.toISOString(),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "f876e072-a52e-4d60-a5f9-beddd9c2f00a",
+      "name": "Code — Compute Kickoff Date",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "primary"
+        },
+        "resource": "calendarEvent",
+        "operation": "create",
+        "start": {
+          "dateTime": "={{ $json.kickoff_start }}"
+        },
+        "end": {
+          "dateTime": "={{ $json.kickoff_end }}"
+        },
+        "additionalFields": {
+          "summary": "=Kickoff call — {{ $('Webhook — New Client').first().json.company }}",
+          "description": "=Onboarding kickoff with {{ $('Webhook — New Client').first().json.name }} ({{ $('Webhook — New Client').first().json.email }}).",
+          "attendees": "={{ $('Webhook — New Client').first().json.email }}"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "43d7a614-318b-4900-83fe-829e705d132c",
+      "name": "Calendar — Create Kickoff Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Clients"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $('Webhook — New Client').first().json.email }}",
+            "Status": "WELCOMED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "963a1d39-61dc-40ad-84d4-e7f82562bca9",
+      "name": "Sheets — Update — WELCOMED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "#general"
+        },
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "text": "=⚠️ *Client onboarding FAILED*\n\n*Client:* {{ $('Webhook — New Client').first().json.name }} ({{ $('Webhook — New Client').first().json.email }})\n*Company:* {{ $('Webhook — New Client').first().json.company }}\n*Error:* {{ $json.error.message }}\n\nOpen the failed execution in n8n to see which step failed.",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "85ace45d-9f8a-4725-8567-10dc508d576f",
+      "name": "Slack — Alert Owner (Step Failed)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Clients"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $('Webhook — New Client').first().json.email }}",
+            "Status": "FAILED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a237a220-37f0-4b29-95a7-95bc20c25119",
+      "name": "Sheets — Update — FAILED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "68ce09f1-4647-43a8-ae62-4938c4bb6773",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "463a6dbf-f1be-4119-897c-6c1c9f184fb6",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2880,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "=🎉 *Client onboarded!*\n\n*Name:* {{ $('Webhook — New Client').first().json.name }}\n*Company:* {{ $('Webhook — New Client').first().json.company }}\n*Email:* {{ $('Webhook — New Client').first().json.email }}\n\n*Notion:* {{ $('Notion — Create Project Page').first().json.url }}\n*Drive:* https://drive.google.com/drive/folders/{{ $('Drive — Create Client Folder').first().json.id }}\n*Slack:* {{ '#' + $('CONFIG — Business').first().json.slack_channel_prefix + $('Code — Slugify Company').first().json.company_slug }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "cd22b71a-51c4-4590-b42a-707f1a41add6",
+      "name": "Telegram — Client Onboarded 🎉",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        700
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — New Client": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Business": {
+      "main": [
+        [
+          {
+            "node": "Code — Slugify Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Slugify Company": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log Client — RECEIVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log Client — RECEIVED": {
+      "main": [
+        [
+          {
+            "node": "Notion — Create Project Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion — Create Project Page": {
+      "main": [
+        [
+          {
+            "node": "Drive — Create Client Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Owner (Step Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive — Create Client Folder": {
+      "main": [
+        [
+          {
+            "node": "Slack — Create Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Owner (Step Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack — Create Channel": {
+      "main": [
+        [
+          {
+            "node": "Slack — Post Welcome in Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Owner (Step Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack — Post Welcome in Channel": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Update — PROVISIONED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Update — PROVISIONED": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Code — Compute Kickoff Date",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Owner (Step Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Compute Kickoff Date": {
+      "main": [
+        [
+          {
+            "node": "Calendar — Create Kickoff Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar — Create Kickoff Event": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Update — WELCOMED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Owner (Step Failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Update — WELCOMED": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Client Onboarded 🎉",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack — Alert Owner (Step Failed)": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Update — FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

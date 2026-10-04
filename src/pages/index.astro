@@ -13,6 +13,10 @@ const difficultyLabel: Record<string, string> = {
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
+
+const comparisons = (await getCollection("comparisons", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 4);
 ---
 
 <BaseLayout
@@ -97,6 +101,32 @@ const difficultyLabel: Record<string, string> = {
           <p>Add your own credentials (Telegram, OpenAI, etc.), activate, and it runs.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Head-to-head</h2>
+        <span class="tag">{comparisons.length} comparisons</span>
+        <a class="more" href="/compare/">View all →</a>
+      </div>
+      {comparisons.length > 0 ? (
+        <div class="tpl-grid">
+          {comparisons.map((c) => (
+            <a class="tpl-card" href={`/compare/${c.id.replace(/\.md$/, "")}/`}>
+              <h3>{c.data.tool_a} vs {c.data.tool_b}</h3>
+              <p class="flow">{c.data.verdict}</p>
+              <div class="meta">
+                <span class="tpl-tag tpl-tag--live">Comparison</span>
+                <span class="tpl-dl">Read →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Comparisons are on the drawing board — check back soon.</p>
+      )}
     </div>
   </section>
 

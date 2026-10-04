@@ -1,0 +1,1029 @@
+{
+  "name": "Shopify AI Support Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🛒 SHOPIFY AI SUPPORT AGENT\n**What it does:** Every new support email is triaged by AI → order number extracted → Shopify order looked up → routine questions answered instantly, refund/order-change requests saved as human drafts, everything else escalated to Slack → a Telegram digest summarizes the run.\n\n**You'll need:**\n- Gmail OAuth2 credential (the support inbox)\n- Shopify Admin API access token with `read_orders` scope (custom app in your store admin)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential + a tab named `Support Inbox`\n- Slack bot token + channel, Telegram bot token + chat ID\n\n**Status flow in Sheets:** `RECEIVED` → `TRIAGED` → `AUTO_RESOLVED` / `DRAFT_CREATED` / `ESCALATED`",
+        "height": 220,
+        "width": 5320,
+        "color": 5
+      },
+      "id": "58485513-ee6a-4a49-83b8-258896395901",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — New email → extract order number\nGmail trigger fires every minute → order number is pulled from the subject/body with a regex (`#1234` or `order 1234`). Emails without one still continue — the order lookup just comes back empty.",
+        "height": 420,
+        "width": 1000,
+        "color": 4
+      },
+      "id": "a4db0be8-aa98-46b3-8990-84a814ec5611",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Log to Sheets + Shopify lookup\nEvery email is appended to the `Support Inbox` tab with status `RECEIVED` → the order number is looked up in Shopify (lookup errors are swallowed so triage never blocks).",
+        "height": 420,
+        "width": 720,
+        "color": 4
+      },
+      "id": "8c3d3a6a-23fe-4278-9470-e17197458a07",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI triage with structured output\nAI Agent reads the email + order JSON and returns intent (`order_status` / `policy_question` / `refund_request` / `order_change` / `other`), confidence 0–100, a ready-to-send draft reply, and `needs_human` → sheet flips to `TRIAGED`.",
+        "height": 560,
+        "width": 940,
+        "color": 4
+      },
+      "id": "c33689de-3d7d-4e0b-9ab0-5e4c73da01d2",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Route: auto-reply / human draft / Slack\n`auto_resolvable` = routine intent AND confidence ≥ threshold AND no human flag → Gmail sends the reply → `AUTO_RESOLVED`. Money/order-change or flagged emails → a Gmail draft for a human → `DRAFT_CREATED`. Everything else → Slack alert → `ESCALATED`.",
+        "height": 880,
+        "width": 1720,
+        "color": 4
+      },
+      "id": "45626a87-123b-4f6e-8361-d2f1f8079f6d",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Digest notification\nAll three branches merge → one summary is built (triaged count + auto-resolved / drafts / escalated) → sent to Telegram.",
+        "height": 420,
+        "width": 680,
+        "color": 4
+      },
+      "id": "4bf5e223-1cbf-4fbd-b7fa-c7aea34c50e2",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4140,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "9a733fac-843e-4994-8e7d-5e58ea0bbfed",
+      "name": "New Support Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a36d36ae-0c77-48d4-aa89-6a4a35d73c69",
+              "name": "shop_domain",
+              "type": "string",
+              "value": "PASTE_YOUR_SHOP_DOMAIN (e.g. your-shop.myshopify.com)"
+            },
+            {
+              "id": "d6f2e6c7-5411-49c5-8e75-4d13b26218ab",
+              "name": "support_email",
+              "type": "string",
+              "value": "PASTE_YOUR_SUPPORT_EMAIL"
+            },
+            {
+              "id": "1534baa0-4c5a-4a99-b2ce-4d5f5fd6f0a6",
+              "name": "confidence_threshold",
+              "type": "string",
+              "value": "80"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9f734122-2691-4c5b-a2c1-41849c6c1916",
+      "name": "CONFIG — Shop",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract order number (#1234 or \"order 1234\") from subject + body\nconst j = $input.item.json;\nconst subject = j.subject || j.snippet || '';\nlet body = j.body || j.text || '';\nif (!body && j.payload && Array.isArray(j.payload.parts)) {\n  try {\n    for (const p of j.payload.parts) {\n      if (p.mimeType && p.mimeType.indexOf('text/plain') === 0 && p.body && p.body.data) {\n        body += Buffer.from(p.body.data, 'base64').toString('utf8') + '\\n';\n      }\n    }\n  } catch (e) {}\n}\nif (!body) body = j.snippet || '';\nconst text = subject + ' ' + body;\nconst m = text.match(/#(\\d{3,})|\\border\\s*(?:number|no\\.?|#)?\\s*(\\d{3,})/i);\nconst order_number = m ? (m[1] || m[2] || '') : '';\nlet from = '';\ntry {\n  const f = j.from || j.payload;\n  if (typeof f === 'string') from = f;\n  else if (f && f.value) from = f.value;\n  else if (f && f.address) from = f.address;\n  else if (j.payload && Array.isArray(j.payload.headers)) {\n    const h = j.payload.headers.find(x => x.name && x.name.toLowerCase() === 'from');\n    if (h) from = h.value;\n  }\n} catch (e) {}\nreturn [{ json: {\n  message_id: j.id || '',\n  thread_id: j.threadId || '',\n  from: String(from),\n  subject: String(subject),\n  body_snippet: String(body).slice(0, 1500),\n  order_number: order_number,\n}}];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "18038795-af4e-49df-8b8d-5ee0c2822c6b",
+      "name": "Extract Order Number",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Support Inbox"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $now.format('yyyy-MM-dd HH:mm') }}",
+            "From": "={{ $json.from }}",
+            "Subject": "={{ $json.subject }}",
+            "Order Number": "={{ $json.order_number }}",
+            "Status": "RECEIVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d9474b70-b465-4188-91ca-fa3581882631",
+      "name": "Log Email — RECEIVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "order",
+        "operation": "get",
+        "orderId": "={{ $json.order_number }}",
+        "options": {}
+      },
+      "credentials": {
+        "shopifyApi": {
+          "id": "",
+          "name": "Shopify API"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "id": "538f36e8-c275-47fe-bdef-ddb0b65bace0",
+      "name": "Shopify — Get Order",
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine extracted email fields with the Shopify lookup.\n// The lookup may have failed (no order number / not found) — in that case\n// $input carries the passthrough item, which is NOT a real order JSON.\nconst email = $('Extract Order Number').item.json;\nconst oj = $input.first().json || {};\nconst isOrder = !!(oj && (oj.financial_status !== undefined || oj.line_items !== undefined));\nreturn [{ json: {\n  ...email,\n  order_found: isOrder,\n  order: isOrder ? oj : {},\n}}];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "7c6aa842-6f8b-4039-9c11-d6453a0df344",
+      "name": "Merge Order Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "168a0f0d-8723-47e3-b229-4ba429aa21d3",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "41eb1c54-6cbd-45b2-9431-209bcc325da0",
+      "name": "CONFIG — AI",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert customer-support triager for the Shopify store {{ $('CONFIG \\u2014 Shop').first().json.shop_domain }}. Support inbox: {{ $('CONFIG \\u2014 Shop').first().json.support_email }}.\n\nClassify EVERY email into exactly one intent:\n- order_status: \"where is my order\", tracking, delivery timing → use ORDER JSON (fulfillment status, tracking numbers) to answer factually\n- policy_question: shipping, returns, sizing, discounts, product questions → answer briefly from general knowledge, keep it store-neutral\n- refund_request: any ask for money back, chargeback threat\n- order_change: address change, cancel, modify items, add/remove products\n- other: anything else\n\nRules:\n- If ORDER JSON is empty {}: the order number was missing or not found — say so in order_summary and triage on the email text alone. NEVER invent order details.\n- refund_request and order_change ALWAYS set needs_human=true. Never promise a refund, cancellation, or change in draft_reply — write the draft as a polite holding reply asking the human team to review.\n- draft_reply must be a complete, ready-to-send email in the customer's language (no placeholders, no [brackets]).\n- confidence: your 0-100 certainty that the intent is correct.\n\nOutput ONLY via the structured output parser."
+        },
+        "text": "=Customer email:\nFrom: {{ $json.from }}\nSubject: {{ $json.subject }}\nBody:\n{{ $json.body_snippet }}\n\nORDER JSON (empty {} means no order found):\n{{ JSON.stringify($json.order) }}"
+      },
+      "id": "dbc8b9b7-7f4d-43df-ac90-f84cd085f6ef",
+      "name": "AI Agent — Triage Support Email",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "000211d5-7cc7-4a19-a1f3-8efde3325644",
+      "name": "OpenAI Chat Model — Triage",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent\": \"order_status / policy_question / refund_request / order_change / other\",\n  \"confidence\": 0,\n  \"draft_reply\": \"full reply text\",\n  \"needs_human\": false,\n  \"order_summary\": \"one line\"\n}"
+      },
+      "id": "b4d664cb-244b-4be2-8ba1-92fe880fdfed",
+      "name": "Structured Output Parser — Triage",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decide the resolution path for each triaged email\nconst j = $input.item.json;\nconst o = j.output || {};\nconst threshold = Number($('CONFIG \\u2014 Shop').first().json.confidence_threshold || 80);\nconst intent = String(o.intent || 'other');\nconst confidence = Number(o.confidence || 0);\nconst needs_human = !!o.needs_human;\nconst auto_resolvable = (intent === 'order_status' || intent === 'policy_question')\n  && confidence >= threshold && !needs_human;\nconst money_involved = (intent === 'refund_request' || intent === 'order_change') || needs_human;\nreturn [{ json: {\n  ...j,\n  intent: intent,\n  confidence: confidence,\n  threshold: threshold,\n  auto_resolvable: auto_resolvable,\n  money_involved: money_involved,\n}}];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "698fbdf0-ac94-451e-ab59-88b71c593237",
+      "name": "Compute Routing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Support Inbox"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Subject"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Subject": "={{ $json.subject }}",
+            "Intent": "={{ $json.intent }}",
+            "Confidence": "={{ $json.confidence }}",
+            "Status": "TRIAGED",
+            "Resolution Note": "=Intent={{ $json.intent }}, confidence={{ $json.confidence }}/{{ $json.threshold }}, order_found={{ $json.order_found }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8dacdeb2-5b84-4c98-b647-d085e331b15a",
+      "name": "Update Sheet — TRIAGED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ea4968d-7745-46e5-8caf-911d8800aec7",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "42332d2e-7ea4-4b2f-b706-869bb4460855",
+              "name": "slack_channel",
+              "type": "string",
+              "value": "PASTE_YOUR_SLACK_CHANNEL (e.g. support-alerts)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "569d81b1-e576-418c-9e21-57db11339746",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "6074c5f8-93e3-4788-b02a-0d72f2358214",
+              "leftValue": "={{ $json.auto_resolvable }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "37f64328-a89c-4939-a336-85626f08934d",
+      "name": "IF — Auto-Resolvable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "subject": "=Re: {{ $('Extract Order Number').item.json.subject }}",
+        "email": "={{ $('Extract Order Number').item.json.from }}",
+        "message": "={{ $json.output.draft_reply }}",
+        "options": {
+          "threadId": "={{ $('Extract Order Number').item.json.thread_id }}"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "6411dce5-172b-4000-84f3-9a8702a442e9",
+      "name": "Gmail — Send Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Support Inbox"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Subject"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Subject": "={{ $('Extract Order Number').item.json.subject }}",
+            "Status": "AUTO_RESOLVED",
+            "Resolution Note": "=Auto-replied (intent={{ $('Compute Routing').item.json.intent }}, confidence={{ $('Compute Routing').item.json.confidence }})"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "026d3cc4-f5de-47dd-a7f9-de887363ce8f",
+      "name": "Update Sheet — AUTO_RESOLVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b9a0c2de-cc6d-4269-8892-8463efe5124a",
+              "leftValue": "={{ $json.money_involved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "5e20ff60-60f5-4ece-b7a5-64cde87bd368",
+      "name": "IF — Money Involved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "emailType": "text",
+        "message": "={{ $('Compute Routing').item.json.output.draft_reply }}",
+        "operation": "create",
+        "options": {},
+        "resource": "draft",
+        "subject": "=[REVIEW NEEDED] {{ $('Extract Order Number').item.json.subject }}"
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "9d6db343-21a9-4ee7-96e4-e6a4cf1f13d2",
+      "name": "Gmail — Create Draft for Human",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3120,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Support Inbox"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Subject"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Subject": "={{ $('Extract Order Number').item.json.subject }}",
+            "Status": "DRAFT_CREATED",
+            "Resolution Note": "=Human draft created — review before sending (intent={{ $('Compute Routing').item.json.intent }})"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "39b1da8c-7373-4bcb-9149-81a96484bed7",
+      "name": "Update Sheet — DRAFT_CREATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3360,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Notifications').first().json.slack_channel }}"
+        },
+        "operation": "send",
+        "otherOptions": {},
+        "resource": "message",
+        "select": "channel",
+        "text": "=🆘 *Support escalation — needs a human*\n\nFrom: {{ $('Extract Order Number').item.json.from }}\nSubject: {{ $('Extract Order Number').item.json.subject }}\nIntent: {{ $('Compute Routing').item.json.intent }} (confidence {{ $('Compute Routing').item.json.confidence }})\nOrder found: {{ $('Compute Routing').item.json.order_found }} | {{ $('Compute Routing').item.json.output.order_summary }}\n\nSnippet: {{ $('Extract Order Number').item.json.body_snippet }}"
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "c4d7702b-2e70-4829-89ed-40e21a90649b",
+      "name": "Slack — Alert Support Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        3120,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Support Inbox"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Subject"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Subject": "={{ $('Extract Order Number').item.json.subject }}",
+            "Status": "ESCALATED",
+            "Resolution Note": "=Escalated to Slack (intent={{ $('Compute Routing').item.json.intent }})"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "7a82d370-eac0-4f42-869c-eb5b86db70ac",
+      "name": "Update Sheet — ESCALATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3360,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "9429c082-adfd-4840-95b0-f9f3d3e6def9",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Telegram digest from every email routed in this run.\n// Counts are derived from the routing decision (same items end in each terminal branch).\nconst items = $('Compute Routing').all().map(i => i.json);\nconst autoResolved = items.filter(j => j.auto_resolvable);\nconst drafts = items.filter(j => !j.auto_resolvable && j.money_involved);\nconst escalated = items.filter(j => !j.auto_resolvable && !j.money_involved);\nconst lines = [\n  '\\U0001F6D2 *Shopify Support Summary \\u2014 ' + new Date().toISOString().slice(0, 10) + '*',\n  '',\n  '\\U0001F4E8 ' + items.length + ' email(s) triaged',\n  '\\u2705 ' + autoResolved.length + ' auto-resolved',\n  '\\u270F\\uFE0F ' + drafts.length + ' drafts created for human review',\n  '\\U0001F198 ' + escalated.length + ' escalated to Slack',\n];\nreturn [{ json: { summary: lines.join('\\n'), total: items.length } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "3030402b-1ba2-4206-ba7c-ebafe01f4024",
+      "name": "Build Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "ee98680f-b557-41dd-99b3-d6cb8e9fde75",
+      "name": "Telegram — Send Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "New Support Email": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Shop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Shop": {
+      "main": [
+        [
+          {
+            "node": "Extract Order Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Order Number": {
+      "main": [
+        [
+          {
+            "node": "Log Email — RECEIVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Email — RECEIVED": {
+      "main": [
+        [
+          {
+            "node": "Shopify — Get Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shopify — Get Order": {
+      "main": [
+        [
+          {
+            "node": "Merge Order Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Order Context": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Triage Support Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Triage Support Email": {
+      "main": [
+        [
+          {
+            "node": "Compute Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Routing": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — TRIAGED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — TRIAGED": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "IF — Auto-Resolvable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Auto-Resolvable?": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF — Money Involved?",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — AUTO_RESOLVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — AUTO_RESOLVED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Money Involved?": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Create Draft for Human",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack — Alert Support Channel",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Gmail — Create Draft for Human": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — DRAFT_CREATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — DRAFT_CREATED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack — Alert Support Channel": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — ESCALATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — ESCALATED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Summary": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Triage": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Triage Support Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Triage": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Triage Support Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract decision branches animation">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.18"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- source node -->
+  <circle cx="150" cy="225" r="52" fill="#111111" stroke="#111111" stroke-width="4"/>
+  <circle cx="150" cy="225" r="30" fill="none" stroke="#FFFDF5" stroke-width="4" stroke-dasharray="10 8">
+    <animateTransform attributeName="transform" type="rotate" from="0 150 225" to="360 150 225" dur="40s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- branch pipes -->
+  <g fill="none" stroke="#111111" stroke-width="10" stroke-linecap="round">
+    <path d="M 202 225 C 300 225, 330 120, 430 110" opacity="0.9"/>
+    <path d="M 202 225 C 300 225, 330 225, 430 225" opacity="0.9"/>
+    <path d="M 202 225 C 300 225, 330 330, 430 340" opacity="0.9"/>
+  </g>
+
+  <!-- decision packets traveling the branches -->
+  <g>
+    <rect x="-14" y="-14" width="28" height="28" fill="#FFFDF5" stroke="#111111" stroke-width="5">
+      <animateMotion dur="8s" repeatCount="indefinite" path="M 202 225 C 300 225, 330 120, 430 110"/>
+    </rect>
+    <rect x="-14" y="-14" width="28" height="28" fill="#FF4D00" stroke="#111111" stroke-width="5">
+      <animateMotion dur="9s" begin="1.2s" repeatCount="indefinite" path="M 202 225 C 300 225, 330 225, 430 225"/>
+    </rect>
+    <rect x="-14" y="-14" width="28" height="28" fill="#FFFDF5" stroke="#111111" stroke-width="5">
+      <animateMotion dur="10s" begin="2.4s" repeatCount="indefinite" path="M 202 225 C 300 225, 330 330, 430 340"/>
+    </rect>
+  </g>
+
+  <!-- outcome cards -->
+  <g stroke="#111111" stroke-width="5">
+    <rect x="430" y="60" width="120" height="100" fill="#FFFDF5"/>
+    <rect x="430" y="60" width="120" height="100" fill="#111111" opacity="0.08"/>
+    <rect x="430" y="60" width="120" height="22" fill="#FF4D00" stroke="#111111" stroke-width="5"/>
+    <rect x="430" y="175" width="120" height="100" fill="#FFFDF5"/>
+    <rect x="430" y="175" width="120" height="100" fill="#111111" opacity="0.08"/>
+    <rect x="430" y="175" width="120" height="22" fill="#111111"/>
+    <rect x="430" y="290" width="120" height="100" fill="#FFFDF5"/>
+    <rect x="430" y="290" width="120" height="100" fill="#111111" opacity="0.08"/>
+    <rect x="430" y="290" width="120" height="22" fill="#FFFDF5"/>
+  </g>
+
+  <!-- probability bars filling slowly inside the cards -->
+  <g>
+    <rect x="446" y="104" width="0" height="14" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="width" values="0;72;72;0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="446" y="220" width="0" height="14" fill="#111111">
+      <animate attributeName="width" values="0;48;48;0" dur="14s" begin="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="446" y="336" width="0" height="14" fill="#111111" opacity="0.55">
+      <animate attributeName="width" values="0;26;26;0" dur="16s" begin="2s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- orbiting signal accent -->
+  <circle cx="650" cy="225" r="70" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="6 10" opacity="0.6">
+    <animateTransform attributeName="transform" type="rotate" from="360 650 225" to="0 650 225" dur="30s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="650" cy="155" r="16" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animate attributeName="r" values="16;20;16" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>

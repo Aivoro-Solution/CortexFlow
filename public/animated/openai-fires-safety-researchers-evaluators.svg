@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Cracked shield — safety trust splitting apart">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-width="0.5" opacity="0.12">
+    <path d="M0 50 H800 M0 100 H800 M0 150 H800 M0 200 H800 M0 250 H800 M0 300 H800 M0 350 H800 M0 400 H800"/>
+    <path d="M50 0 V450 M100 0 V450 M150 0 V450 M200 0 V450 M250 0 V450 M300 0 V450 M350 0 V450 M400 0 V450 M450 0 V450 M500 0 V450 M550 0 V450 M600 0 V450 M650 0 V450 M700 0 V450 M750 0 V450"/>
+  </g>
+
+  <!-- drifting background nodes -->
+  <g fill="#111111" opacity="0.25">
+    <circle cx="120" cy="90" r="6">
+      <animate attributeName="cy" values="90;140;90" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="690" cy="350" r="8">
+      <animate attributeName="cy" values="350;300;350" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="640" cy="80" r="5">
+      <animate attributeName="cx" values="640;600;640" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="370" r="7">
+      <animate attributeName="cx" values="140;180;140" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- orange bracket frames -->
+  <g stroke="#FF4D00" stroke-width="6" fill="none">
+    <path d="M90 300 L90 380 L170 380">
+      <animate attributeName="opacity" values="1;0.45;1" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M710 150 L710 70 L630 70">
+      <animate attributeName="opacity" values="0.45;1;0.45" dur="8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- shield, left half: slides left slowly -->
+  <g stroke="#111111" stroke-width="5" fill="#FFFDF5">
+    <path d="M400 70 L400 130 C400 210 350 260 300 290 C260 312 232 322 218 326 C258 360 330 380 400 380 Z">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -26 0; 0 0" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <!-- shield, right half: slides right slowly -->
+    <path d="M400 70 L400 130 C400 210 450 260 500 290 C540 312 568 322 582 326 C542 360 470 380 400 380 Z">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 26 0; 0 0" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- crack: orange bolt through the middle, pulsing -->
+  <polygon points="400,80 428,170 406,170 432,260 404,260 420,360 372,240 398,240 378,150 402,150" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animate attributeName="opacity" values="1;0.6;1" dur="6s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="6s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- orbit ring around the shield -->
+  <g fill="none" stroke="#111111" stroke-width="3" opacity="0.7">
+    <ellipse cx="400" cy="225" rx="260" ry="150">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="45s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  <g fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <circle cx="660" cy="225" r="10">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="45s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="225" r="7">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="-360 400 225" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- corner ticks -->
+  <g stroke="#111111" stroke-width="4">
+    <path d="M20 45 L20 20 L45 20"/>
+    <path d="M755 20 L780 20 L780 45"/>
+    <path d="M20 405 L20 430 L45 430"/>
+    <path d="M755 430 L780 430 L780 405"/>
+  </g>
+</svg>

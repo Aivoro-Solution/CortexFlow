@@ -34,4 +34,19 @@ const templates = defineCollection({
   }),
 });
 
-export const collections = { posts, templates };
+const comparisons = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/comparisons" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(160, "Keep meta descriptions under 160 chars"),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    tool_a: z.string(),
+    tool_b: z.string(),
+    // One-paragraph verdict shown in the callout box
+    verdict: z.string(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { posts, templates, comparisons };

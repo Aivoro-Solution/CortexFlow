@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: CRM data layer feeding long-horizon agents">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- CRM data layer: customer nodes on the left -->
+  <g stroke="#111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="120" cy="110" r="26"/>
+    <circle cx="90" cy="225" r="26"/>
+    <circle cx="130" cy="340" r="26"/>
+  </g>
+  <!-- pulsing rings on nodes: slow 8s -->
+  <g fill="none" stroke="#111" stroke-width="2" opacity="0.5">
+    <circle cx="120" cy="110" r="26">
+      <animate attributeName="r" values="26;40;26" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0;0.5" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="90" cy="225" r="26">
+      <animate attributeName="r" values="26;40;26" dur="8s" begin="2.6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0;0.5" dur="8s" begin="2.6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="130" cy="340" r="26">
+      <animate attributeName="r" values="26;40;26" dur="8s" begin="5.3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0;0.5" dur="8s" begin="5.3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- data conduits flowing right into the agent layer -->
+  <g stroke="#111" stroke-width="3" fill="none">
+    <path d="M146 110 C 280 110, 380 150, 470 170"/>
+    <path d="M116 225 C 280 225, 380 235, 470 230"/>
+    <path d="M156 340 C 280 340, 380 300, 470 290"/>
+  </g>
+  <!-- orange pulse dots travelling along the conduits: slow 10s -->
+  <g fill="#FF4D00" stroke="none">
+    <circle cx="0" cy="0" r="10">
+      <animateMotion dur="10s" repeatCount="indefinite" path="M146 110 C 280 110, 380 150, 470 170"/>
+    </circle>
+    <circle cx="0" cy="0" r="10">
+      <animateMotion dur="10s" begin="3.3s" repeatCount="indefinite" path="M116 225 C 280 225, 380 235, 470 230"/>
+    </circle>
+    <circle cx="0" cy="0" r="10">
+      <animateMotion dur="10s" begin="6.6s" repeatCount="indefinite" path="M156 340 C 280 340, 380 300, 470 290"/>
+    </circle>
+  </g>
+
+  <!-- agent layer: three orbiting agent cores on the right -->
+  <g>
+    <circle cx="600" cy="130" r="40" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <circle cx="600" cy="130" r="14" fill="#FF4D00"/>
+    <ellipse cx="600" cy="130" rx="62" ry="26" fill="none" stroke="#111" stroke-width="2.5">
+      <animateTransform attributeName="transform" type="rotate" from="0 600 130" to="360 600 130" dur="32s" repeatCount="indefinite"/>
+    </ellipse>
+    <circle cx="600" cy="300" r="40" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <circle cx="600" cy="300" r="14" fill="#111"/>
+    <ellipse cx="600" cy="300" rx="62" ry="26" fill="none" stroke="#111" stroke-width="2.5">
+      <animateTransform attributeName="transform" type="rotate" from="360 600 300" to="0 600 300" dur="40s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- long-horizon timeline ribbon: slow dashed march, 12s -->
+  <g>
+    <path d="M200 420 H 700" fill="none" stroke="#FF4D00" stroke-width="6" stroke-dasharray="24 18">
+      <animate attributeName="stroke-dashoffset" values="0;-168" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="200" cy="420" r="12" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <circle cx="700" cy="420" r="12" fill="#FF4D00" stroke="#111" stroke-width="4"/>
+  </g>
+
+  <!-- governance shield above: slow drift 9s -->
+  <g>
+    <path d="M330 40 L380 58 V90 C380 118 356 136 330 146 C304 136 280 118 280 90 V58 Z"
+          fill="#FFFDF5" stroke="#111" stroke-width="4">
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 8;0 0" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M312 92 L326 106 L352 76" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 8;0 0" dur="9s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

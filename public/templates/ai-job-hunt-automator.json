@@ -1,0 +1,947 @@
+{
+  "name": "AI Job Hunt Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 AI JOB HUNT AUTOMATOR\n**What it does:** Searches jobs every morning → logs them to Google Sheets → AI scores each job against your resume (0–100) → writes tailored cover letters for top matches → sends you a Telegram digest.\n\n**You'll need:**\n- RapidAPI key with JSearch API enabled (rapidapi.com → JSearch → subscribe)\n- OpenAI API key (platform.openai.com)\n- Google Sheets + Google Docs OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `SCORED` → `COVER_LETTER_READY`",
+        "height": 220,
+        "width": 4940,
+        "color": 5
+      },
+      "id": "57c2f795-58fa-4350-8e9f-54299026923e",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Fetch new job listings\nDaily schedule trigger → JSearch API (RapidAPI, aggregates Google Jobs) → normalize title/company/location/URL/description.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "34b7b0fd-cde2-4125-b232-992d3de4c015",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Dedupe + log to Google Sheets\nRead already-seen job URLs → keep only new postings → append rows with status `NEW`.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "4b85743c-8208-43cb-a322-8d7ae52b3d3f",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI resume match scoring\nAI Agent compares each job against your resume with a Structured Output Parser (score 0–100, verdict, gaps) → sheet flips to `SCORED`.",
+        "height": 420,
+        "width": 760,
+        "color": 4
+      },
+      "id": "bc673f8a-fda2-431d-be76-aedd5e56fd87",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Cover letters for top matches\nScore ≥ threshold → AI writes a tailored cover letter → saved to Google Docs → sheet flips to `COVER_LETTER_READY`. Below-threshold jobs skip this step.",
+        "height": 560,
+        "width": 1220,
+        "color": 4
+      },
+      "id": "80648cba-857f-4752-8408-4d5120d451e9",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Daily digest notification\nBoth branches merge → one digest message built (new jobs count + top matches with links) → Telegram.",
+        "height": 420,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "e7dead09-48f0-40dd-bdfc-5b729bb31d4f",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3660,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "4ecd37ce-8c0e-4603-be96-1ff56e783014",
+      "name": "Daily 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b649cb47-1c29-4ef9-b0d2-fb8e41ba53eb",
+              "name": "keywords",
+              "type": "string",
+              "value": "AI engineer"
+            },
+            {
+              "id": "776a31f9-37f3-4820-8fbf-87b3d18fce45",
+              "name": "location",
+              "type": "string",
+              "value": "Remote"
+            },
+            {
+              "id": "d3ab45f8-04ec-45e3-b4c3-b45e75ca273b",
+              "name": "max_results",
+              "type": "string",
+              "value": "20"
+            },
+            {
+              "id": "97499f9e-e154-4372-866e-d6cd8e46e02b",
+              "name": "rapidapi_host",
+              "type": "string",
+              "value": "jsearch.p.rapidapi.com"
+            },
+            {
+              "id": "5b8a3297-751e-4514-939f-b5f2f450c3c8",
+              "name": "rapidapi_key",
+              "type": "string",
+              "value": "PASTE_YOUR_RAPIDAPI_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5715f359-89d5-41de-bf29-c4fb14a3e58a",
+      "name": "CONFIG — Job Search",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://jsearch.p.rapidapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.keywords }}"
+            },
+            {
+              "name": "page",
+              "value": "1"
+            },
+            {
+              "name": "num_pages",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-RapidAPI-Key",
+              "value": "={{ $json.rapidapi_key }}"
+            },
+            {
+              "name": "X-RapidAPI-Host",
+              "value": "={{ $json.rapidapi_host }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "37bc8603-fc5b-43c6-97d4-c5541ddbf0a9",
+      "name": "Search Jobs — JSearch API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize JSearch results into a clean job list\nconst cfg = $('CONFIG \\u2014 Job Search').first().json;\nconst maxResults = parseInt(cfg.max_results || '20', 10);\nconst raw = $input.first().json.data || [];\nconst jobs = (Array.isArray(raw) ? raw : []).slice(0, maxResults);\nreturn jobs.map(j => ({ json: {\n  job_title: j.job_title || '',\n  company: j.employer_name || '',\n  location: [j.job_city, j.job_country].filter(Boolean).join(', '),\n  job_url: j.job_apply_link || j.job_google_link || '',\n  description: (j.job_description || '').slice(0, 3000),\n  date_posted: j.job_posted_at_datetime_utc || '',\n  date_found: new Date().toISOString().slice(0, 10),\n  status: 'NEW',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "90047c00-24f6-4bf3-8c80-7618035a920a",
+      "name": "Normalize Job Listings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24857677-411f-423b-8084-073f148b4a9f",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "546ba12c-306c-457b-9074-54f6853f2237",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Jobs"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e5c1057-e3fe-4b8c-ab6e-03e512f6cd0b",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Jobs"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "61077c69-6b04-466a-947d-a8ec0a0bb3ee",
+      "name": "Read Seen Job URLs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop jobs whose URL is already in the sheet\nconst seen = new Set(\n  $('Read Seen Job URLs').all().map(i => (i.json['Job URL'] || i.json.job_url || '').trim()).filter(Boolean)\n);\nconst fresh = $('Normalize Job Listings').all()\n  .map(i => i.json)\n  .filter(j => j.job_url && !seen.has(j.job_url.trim()));\nreturn fresh.map(j => ({ json: j }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "0820347d-51d7-4c53-8db2-ac3c6c614e17",
+      "name": "Filter New Jobs Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Jobs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date Found": "={{ $json.date_found }}",
+            "Job Title": "={{ $json.job_title }}",
+            "Company": "={{ $json.company }}",
+            "Location": "={{ $json.location }}",
+            "Job URL": "={{ $json.job_url }}",
+            "Status": "={{ $json.status }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "23f168f4-7da2-4b64-bb2b-cfc71278bc7b",
+      "name": "Log New Jobs — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b090a458-ad67-42bb-b4b6-15012018d91e",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "41482b03-b0c5-4272-a734-562202fad68a",
+              "name": "match_threshold",
+              "type": "string",
+              "value": "70"
+            },
+            {
+              "id": "cc78552c-2f19-48fd-a722-b4b238e2c601",
+              "name": "resume_text",
+              "type": "string",
+              "value": "PASTE_YOUR_RESUME_TEXT_HERE (or store resume in Drive and reference it)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25168eda-0918-4edc-805c-55ba723906c8",
+      "name": "CONFIG — AI Scoring",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert technical recruiter. Score how well the candidate's resume matches the job posting.\n\nCANDIDATE RESUME:\n{{ $('CONFIG \\u2014 AI Scoring').first().json.resume_text }}\n\nBe honest and strict: a generic resume against a senior specialized role should score low. Output ONLY via the structured output parser."
+        },
+        "text": "=Job Title: {{ $json.job_title }}\nCompany: {{ $json.company }}\nLocation: {{ $json.location }}\n\nJob Description:\n{{ $json.description }}"
+      },
+      "id": "f907b6b2-5ef2-41c7-b0ce-4b2d4936eca3",
+      "name": "AI Agent — Score Resume Match",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "f8e359fd-b769-48fd-ae4b-89b14d464f87",
+      "name": "OpenAI Chat Model — Scoring",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"match_score\": 0,\n  \"verdict\": \"STRONG_MATCH / GOOD_MATCH / WEAK_MATCH / NO_MATCH\",\n  \"top_strengths\": \"comma-separated list of the 3 strongest resume alignments\",\n  \"key_gaps\": \"comma-separated list of the 3 biggest missing requirements\",\n  \"one_line_pitch\": \"single sentence on why the candidate fits (or does not)\"\n}"
+      },
+      "id": "dfeb987a-77e3-4aa5-bd8b-595f1a039dbf",
+      "name": "Structured Output Parser — Match Score",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Jobs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Job URL"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Job URL": "={{ $json.job_url }}",
+            "Match Score": "={{ $json.output.match_score }}",
+            "Verdict": "={{ $json.output.verdict }}",
+            "Key Gaps": "={{ $json.output.key_gaps }}",
+            "Status": "SCORED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "95fc42d6-f334-4140-b170-0183c08b41fb",
+      "name": "Update Sheet — Status SCORED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-score",
+              "leftValue": "={{ $json.output.match_score }}",
+              "rightValue": "={{ $('CONFIG \\u2014 AI Scoring').first().json.match_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "5574921e-f089-4af1-9781-d1ac3164a997",
+      "name": "IF — Score ≥ Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert cover-letter writer. Write a concise, tailored cover letter (max 250 words) for the candidate below, targeting the specific job. Reference 2-3 concrete resume achievements that map to the job requirements. No placeholders, no [brackets], no generic fluff.\n\nCANDIDATE RESUME:\n{{ $('CONFIG \\u2014 AI Scoring').first().json.resume_text }}\n\nMatch verdict: {{ $json.output.verdict }} (score {{ $json.output.match_score }}/100). Strengths to emphasize: {{ $json.output.top_strengths }}."
+        },
+        "text": "=Write a cover letter for this job:\n\nJob Title: {{ $json.job_title }}\nCompany: {{ $json.company }}\n\nJob Description:\n{{ $json.description }}"
+      },
+      "id": "d406f506-7e77-421f-82e0-c913411e6866",
+      "name": "AI Agent — Write Cover Letter",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2900,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "0bc7b5d7-e690-470a-8e04-a3fdc969356a",
+      "name": "OpenAI Chat Model — Cover Letter",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2900,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "title": "=Cover Letter — {{ $json.company }} — {{ $json.job_title }}",
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "",
+          "name": "Google Docs API"
+        }
+      },
+      "id": "fbdd9b69-ea15-4e9f-b5fc-bd693ea5b8aa",
+      "name": "Google Docs — Save Cover Letter",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        3160,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Jobs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Job URL"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Job URL": "={{ $json.job_url }}",
+            "Status": "COVER_LETTER_READY"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "566bfb81-2d56-40eb-afc6-6bd01f4d640a",
+      "name": "Update Sheet — COVER_LETTER_READY",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3420,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "07d489d0-6a7a-4e83-af1f-95fb0829b112",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram digest from all processed jobs\nconst items = $input.all().map(i => i.json);\nconst total = items.length;\nconst hits = items.filter(j => {\n  const s = j.output ? j.output.match_score : j['Match Score'];\n  return Number(s) >= 70;\n});\nlet lines = [`\\U0001F3AF *Job Hunt Digest \\u2014 ${new Date().toISOString().slice(0,10)}*`, ``, `\\U0001F4CB ${total} new jobs scanned`];\nif (hits.length) {\n  lines.push(`\\u2B50 ${hits.length} strong matches (score \\u2265 70):`, ``);\n  for (const h of hits.slice(0, 10)) {\n    const score = h.output ? h.output.match_score : h['Match Score'];\n    lines.push(`\\u2022 *${score}* \\u2014 ${h.job_title} @ ${h.company} ([apply](${h.job_url}))`);\n  }\n} else {\n  lines.push(`No strong matches today. Keep building. \\U0001F4AA`);\n}\nreturn [{ json: { digest: lines.join('\\n'), total, hits: hits.length } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "0904448d-2ae6-41d2-b0f6-3742e0a65625",
+      "name": "Build Daily Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ee9c1d08-628e-4f8a-b473-74497af26698",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8df65ed2-797b-404b-b69f-cdc735107406",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "b8981966-2e57-40e8-bf97-86c0683c92f3",
+      "name": "Telegram — Send Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4460,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 9AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Job Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Job Search": {
+      "main": [
+        [
+          {
+            "node": "Search Jobs — JSearch API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Jobs — JSearch API": {
+      "main": [
+        [
+          {
+            "node": "Normalize Job Listings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Job Listings": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Seen Job URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Seen Job URLs": {
+      "main": [
+        [
+          {
+            "node": "Filter New Jobs Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Jobs Only": {
+      "main": [
+        [
+          {
+            "node": "Log New Jobs — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log New Jobs — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI Scoring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI Scoring": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Score Resume Match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Score Resume Match": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SCORED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status SCORED": {
+      "main": [
+        [
+          {
+            "node": "IF — Score ≥ Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Score ≥ Threshold": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Write Cover Letter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent — Write Cover Letter": {
+      "main": [
+        [
+          {
+            "node": "Google Docs — Save Cover Letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs — Save Cover Letter": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — COVER_LETTER_READY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — COVER_LETTER_READY": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Daily Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Daily Digest": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Scoring": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Score Resume Match",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Match Score": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Score Resume Match",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Cover Letter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Write Cover Letter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

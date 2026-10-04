@@ -1,0 +1,920 @@
+{
+  "name": "Invoice AR Chaser",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🧾 INVOICE AR CHASER\n**What it does:** Every morning it lists your open Stripe invoices → computes days overdue → syncs an AR ledger in Google Sheets → sends day 1/7/14 payment reminders via Gmail → escalates 14+ day overdue invoices to Slack → sends you a Telegram summary.\n\n**You'll need:**\n- Stripe account (stripe.com → Developers → API keys)\n- Gmail OAuth2 credential\n- Slack OAuth2 credential\n- Google Sheets OAuth2 credential\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `UNPAID` → `REMINDER_SENT_DAY_1` / `REMINDER_SENT_DAY_7` / `REMINDER_SENT_DAY_14` → `ESCALATED`",
+        "height": 220,
+        "width": 4940,
+        "color": 5
+      },
+      "id": "bd41e497-93b4-4338-9b13-540229a7bdb1",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Daily trigger + list open invoices\nDaily 8 AM schedule trigger fires → Stripe lists all open invoices (not yet paid).",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "id": "18e82de7-9552-4837-892c-06caa6a23062",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Days overdue + sync AR ledger\nCompute days overdue per invoice (skip not-yet-due) → read the AR sheet → append brand-new invoices as `UNPAID` → refresh days-overdue on existing rows.",
+        "height": 420,
+        "width": 1500,
+        "color": 4
+      },
+      "id": "c933ee30-9c09-499a-a83a-ea63e2b168c9",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Day 1/7/14 reminders\nInvoices exactly 1, 7 or 14 days overdue get a branded email: friendly reminder (day 1) → firm nudge (day 7) → final notice (day 14). Sheet flips to `REMINDER_SENT_DAY_X`.",
+        "height": 700,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "16e66a7b-25ab-4d73-89b1-422ca153290b",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Escalation + summary\nInvoices 14+ days overdue (no reminder today) are escalated to your Slack channel → sheet flips to `ESCALATED` → branches merge → one Telegram AR summary (outstanding total, reminders sent, escalations).",
+        "height": 420,
+        "width": 1360,
+        "color": 4
+      },
+      "id": "6bd60f90-bf1d-45fb-9e27-b7cd7adc7bfd",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "6cee98d6-efba-4b35-bf99-2c97ac051007",
+      "name": "Daily 8AM AR Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "834a82af-46e9-4be7-8734-3bd39967d603",
+              "name": "business_name",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_NAME"
+            },
+            {
+              "id": "7047c20b-1a77-4508-a95a-41dc887cbbf9",
+              "name": "sender_name",
+              "type": "string",
+              "value": "PASTE_YOUR_SENDER_NAME"
+            },
+            {
+              "id": "6ff53c94-6506-4eba-8b1d-5afdfc4e556f",
+              "name": "reminder_days",
+              "type": "string",
+              "value": "1,7,14"
+            },
+            {
+              "id": "1f766933-9011-4035-9d29-7ed71a9fcf4c",
+              "name": "escalation_day",
+              "type": "string",
+              "value": "14"
+            },
+            {
+              "id": "978db521-3422-4379-ae0f-79b061c14ccf",
+              "name": "owner_slack_channel",
+              "type": "string",
+              "value": "PASTE_YOUR_SLACK_CHANNEL"
+            },
+            {
+              "id": "7f2005cd-8d24-4af5-8934-f9a34ce0a828",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "AR"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1920aac9-19f7-4bf4-908e-ff9d3076d6fd",
+      "name": "CONFIG — AR",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "invoice",
+        "operation": "getAll",
+        "filters": {
+          "status": "open"
+        },
+        "returnAll": true
+      },
+      "credentials": {
+        "stripeApi": {
+          "id": "",
+          "name": "Stripe API"
+        }
+      },
+      "id": "9590d095-a9db-49ed-bfb1-f0f098ebb16e",
+      "name": "List Open Invoices",
+      "type": "n8n-nodes-base.stripe",
+      "typeVersion": 1,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute days overdue per open invoice; keep only invoices past due\nconst items = $input.all();\nconst now = Date.now();\nconst out = [];\nfor (const i of items) {\n  const inv = i.json;\n  const due = inv.due_date ? inv.due_date * 1000 : null;\n  if (!due) continue;\n  const days_overdue = Math.floor((now - due) / 86400000);\n  if (days_overdue < 0) continue; // not due yet\n  const reminder_day = days_overdue === 1 ? 1 : days_overdue === 7 ? 7 : days_overdue === 14 ? 14 : 0;\n  out.push({ json: {\n    invoice_id: inv.id || '',\n    number: inv.number || '',\n    customer_name: inv.customer_name || '',\n    customer_email: inv.customer_email || '',\n    amount_due: inv.amount_due || 0,\n    currency: inv.currency || 'usd',\n    due_date: new Date(due).toISOString().slice(0, 10),\n    days_overdue,\n    reminder_day,\n    hosted_invoice_url: inv.hosted_invoice_url || '',\n  }});\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "498ec997-e5b2-4e42-8047-b4a871986fe2",
+      "name": "Compute Days Overdue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AR"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "19d76d35-d321-4b5a-9060-2dad284bdda4",
+      "name": "Read AR Ledger",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flag invoices not yet present in the AR sheet (is_new: 1 = new, 0 = existing)\nconst seen = new Set(\n  $('Read AR Ledger').all().map(i => String(i.json['Invoice ID'] || '').trim()).filter(Boolean)\n);\nreturn $input.all().map(i => ({ json: {\n  ...i.json,\n  is_new: seen.has(String(i.json.invoice_id || '').trim()) ? 0 : 1,\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "0cde9548-20f9-4563-b367-ee9d4fa30da0",
+      "name": "Split New vs Existing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-new",
+              "leftValue": "={{ $json.is_new }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "number",
+                "operation": "equal",
+                "name": "filter.operator.number.equal"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "74c67ed1-0b9f-44ad-96d6-98572d96b00e",
+      "name": "IF — Is New Invoice?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice ID": "={{ $json.invoice_id }}",
+            "Number": "={{ $json.number }}",
+            "Customer": "={{ $json.customer_name }}",
+            "Email": "={{ $json.customer_email }}",
+            "Amount": "={{ $json.amount_due }}",
+            "Due Date": "={{ $json.due_date }}",
+            "Days Overdue": "={{ $json.days_overdue }}",
+            "Status": "UNPAID"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "ce42e11d-6df3-474a-9706-ad8ddcc2f993",
+      "name": "Append New Invoices",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice ID": "={{ $json.invoice_id }}",
+            "Amount": "={{ $json.amount_due }}",
+            "Due Date": "={{ $json.due_date }}",
+            "Days Overdue": "={{ $json.days_overdue }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d39fd42c-a412-4370-bfc8-cf924f642008",
+      "name": "Update Existing Invoices",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "3a8076ee-5117-47e9-b841-f7d6322e17f5",
+      "name": "Merge — Ledger Sync",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-reminder",
+              "leftValue": "={{ $json.reminder_day }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "932ca4f4-4a79-41b5-b6ef-beaed9be745c",
+      "name": "IF — Reminder Due Today?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Day-specific subject + body for the payment reminder\nconst cfg = $('CONFIG \\u2014 AR').first().json;\nconst j = $input.first().json;\nconst sender = cfg.sender_name || '';\nconst biz = cfg.business_name || '';\nconst amt = (j.currency || 'usd').toUpperCase() + ' ' + (Number(j.amount_due) / 100).toFixed(2);\nconst link = j.hosted_invoice_url || '';\nlet subject, body;\nif (j.reminder_day === 1) {\n  subject = `Friendly reminder: Invoice ${j.number} is due`;\n  body = `Hi ${j.customer_name},\\n\\nJust a friendly reminder that invoice ${j.number} for ${amt} was due on ${j.due_date}. You can pay securely here:\\n${link}\\n\\nThanks for your business!\\n\\n${sender}\\n${biz}`;\n} else if (j.reminder_day === 7) {\n  subject = `Payment overdue \\u2014 action needed: Invoice ${j.number}`;\n  body = `Hi ${j.customer_name},\\n\\nInvoice ${j.number} for ${amt} is now 7 days overdue (due ${j.due_date}). Please pay at your earliest convenience:\\n${link}\\n\\nIf you have already paid, please ignore this message.\\n\\n${sender}\\n${biz}`;\n} else {\n  subject = `Final notice before escalation: Invoice ${j.number}`;\n  body = `Hi ${j.customer_name},\\n\\nThis is a final notice: invoice ${j.number} for ${amt} is 14 days overdue (due ${j.due_date}). Please pay now to avoid further action:\\n${link}\\n\\n${sender}\\n${biz}`;\n}\nreturn [{ json: { ...j, subject, body } }];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "e3483e7f-e71d-4a12-be08-3968a35adaa9",
+      "name": "Build Reminder Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "emailType": "text",
+        "sendTo": "={{ $json.customer_email }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "id": "751fec90-064b-4bee-894a-b2addb603e05",
+      "name": "Gmail — Send Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2640,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice ID": "={{ $json.invoice_id }}",
+            "Status": "={{ 'REMINDER_SENT_DAY_' + $json.reminder_day }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "ad132d40-dd95-4fb1-844c-ba9108fe6c27",
+      "name": "Update Sheet — Status REMINDED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-escalate",
+              "leftValue": "={{ $json.days_overdue }}",
+              "rightValue": "={{ $('CONFIG \\u2014 AR').first().json.escalation_day }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "ec276661-6d21-464d-a96f-ef3c35b76e9a",
+      "name": "IF — Needs Escalation?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "={{ $('CONFIG \\u2014 AR').first().json.owner_slack_channel }}",
+        "text": "=🔴 [AR ESCALATION] Invoice {{ $json.number }} — {{ $json.customer_name }} owes {{ ($json.currency || 'usd').toUpperCase() }} {{ (Number($json.amount_due)/100).toFixed(2) }} ({{ $json.days_overdue }} days overdue).\\nPay link: {{ $json.hosted_invoice_url }}\\nPlease follow up with the customer manually.",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "d8b00161-387f-45d8-8d0d-66458ff67352",
+      "name": "Slack — Escalate to Owner",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "AR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice ID": "={{ $json.invoice_id }}",
+            "Status": "ESCALATED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a28c9a7f-f7ca-42f9-86e7-f4e636950b2f",
+      "name": "Update Sheet — ESCALATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "7b7dd39e-e56d-4d59-b621-8efab3ea3677",
+      "name": "Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Telegram summary of today's AR run (deterministic from invoice data)\nconst all = $('Compute Days Overdue').all().map(i => i.json);\nconst cfg = $('CONFIG \\u2014 AR').first().json;\nconst esc = parseInt(cfg.escalation_day || '14', 10);\nconst overdue = all.filter(j => j.days_overdue > 0);\nconst total = overdue.reduce((s, j) => s + Number(j.amount_due || 0), 0);\nconst cur = (overdue[0] && overdue[0].currency || 'usd').toUpperCase();\nconst oldest = overdue.reduce((m, j) => Math.max(m, j.days_overdue), 0);\nconst reminded = all.filter(j => j.reminder_day > 0).length;\nconst escalated = all.filter(j => j.reminder_day === 0 && j.days_overdue >= esc).length;\nconst fmt = c => (c / 100).toFixed(2);\nconst lines = [\n  `\\U0001F9FE *AR Summary \\u2014 ${new Date().toISOString().slice(0, 10)}*`,\n  ``,\n  `\\U0001F4B0 Total outstanding: *${cur} ${fmt(total)}* (${overdue.length} invoices)`,\n  `\\u23F0 Oldest overdue: *${oldest} days*`,\n  `\\u2709\\uFE0F Reminders sent today: *${reminded}*`,\n  `\\U0001F534 Escalated today: *${escalated}*`,\n];\nreturn [{ json: {\n  summary: lines.join('\\n'),\n  total_outstanding: total,\n  invoices_reminded_today: reminded,\n  escalated_today: escalated,\n  oldest_overdue_days: oldest,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "981f853d-a0f4-40c5-963b-4740d6df2ffd",
+      "name": "Build AR Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0fdc0b1c-3f00-4776-8051-55886422398e",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cbe10cdc-8a5a-4223-b682-13c78dee8e23",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "a769ee21-4e6c-41ee-aa91-b7028681dd6c",
+      "name": "Telegram — Send AR Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4320,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 8AM AR Check": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AR": {
+      "main": [
+        [
+          {
+            "node": "List Open Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Open Invoices": {
+      "main": [
+        [
+          {
+            "node": "Compute Days Overdue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Days Overdue": {
+      "main": [
+        [
+          {
+            "node": "Read AR Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read AR Ledger": {
+      "main": [
+        [
+          {
+            "node": "Split New vs Existing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split New vs Existing": {
+      "main": [
+        [
+          {
+            "node": "IF — Is New Invoice?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Is New Invoice?": {
+      "main": [
+        [
+          {
+            "node": "Append New Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Existing Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append New Invoices": {
+      "main": [
+        [
+          {
+            "node": "Merge — Ledger Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Existing Invoices": {
+      "main": [
+        [
+          {
+            "node": "Merge — Ledger Sync",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Ledger Sync": {
+      "main": [
+        [
+          {
+            "node": "IF — Reminder Due Today?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Reminder Due Today?": {
+      "main": [
+        [
+          {
+            "node": "Build Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF — Needs Escalation?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Reminder Email": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status REMINDED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status REMINDED": {
+      "main": [
+        [
+          {
+            "node": "Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Needs Escalation?": {
+      "main": [
+        [
+          {
+            "node": "Slack — Escalate to Owner",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Combine Branches",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Slack — Escalate to Owner": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — ESCALATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — ESCALATED": {
+      "main": [
+        [
+          {
+            "node": "Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build AR Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AR Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send AR Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

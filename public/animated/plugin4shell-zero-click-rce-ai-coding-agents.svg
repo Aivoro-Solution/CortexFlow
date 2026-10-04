@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of a commit chain being pinned while an orange tag breaks away">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.12" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- commit chain: five nodes on a horizontal line -->
+  <line x1="120" y1="190" x2="680" y2="190" stroke="#111111" stroke-width="3"/>
+  <g>
+    <circle cx="170" cy="190" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="300" cy="190" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="430" cy="190" r="26" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="fill" values="#FF4D00;#FFFDF5;#FF4D00" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="560" cy="190" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- the pin pressing on the pinned node: slow bobbing -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 14;0 0" dur="9s" repeatCount="indefinite"/>
+    <line x1="430" y1="70" x2="430" y2="160" stroke="#111111" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="430" cy="64" r="22" fill="#111111"/>
+  </g>
+
+  <!-- orange tag breaking away on a divergent path: slow drift -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;60 40;0 0" dur="12s" repeatCount="indefinite"/>
+    <path d="M 456 190 Q 520 260 620 300" fill="none" stroke="#FF4D00" stroke-width="6" stroke-dasharray="14 10"/>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0;60 40;0 0" dur="12s" repeatCount="indefinite"/>
+      <polygon points="620,284 668,300 620,316 636,300" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- slow rotating crosshair ring around the pinned node -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 430 190;360 430 190" dur="45s" repeatCount="indefinite"/>
+    <circle cx="430" cy="190" r="58" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 8"/>
+    <line x1="430" y1="120" x2="430" y2="140" stroke="#FF4D00" stroke-width="4"/>
+    <line x1="430" y1="240" x2="430" y2="260" stroke="#FF4D00" stroke-width="4"/>
+    <line x1="360" y1="190" x2="380" y2="190" stroke="#FF4D00" stroke-width="4"/>
+    <line x1="480" y1="190" x2="500" y2="190" stroke="#FF4D00" stroke-width="4"/>
+  </g>
+
+  <!-- faint travelling pulse along the chain -->
+  <circle cx="120" cy="190" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="cx" values="120;680;120" dur="18s" repeatCount="indefinite"/>
+  </circle>
+</svg>

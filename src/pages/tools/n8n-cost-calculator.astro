@@ -1,0 +1,121 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+---
+<BaseLayout
+  title="Automation Cost Calculator — n8n vs Zapier vs Make (2026)"
+  description="Compare what your automations really cost on n8n (self-hosted + cloud), Zapier, and Make. Enter your runs and steps — see the cheapest platform."
+  canonical={`${SITE.url}/tools/n8n-cost-calculator/`}
+>
+  <main class="wrap tool-page">
+    <nav class="crumbs"><a href="/">Home</a> <span>/</span> <a href="/tools/">Tools</a> <span>/</span> <span>Cost calculator</span></nav>
+    <p class="kicker">Free tool</p>
+    <h1>Automation cost calculator</h1>
+    <p class="lede">Enter your monthly volume. See what n8n, Zapier, and Make would actually charge — with the real billing math (executions vs tasks vs operations).</p>
+
+    <div class="calc">
+      <div class="inputs">
+        <label>
+          Workflow runs / month
+          <input type="number" id="runs" value="5000" min="1" />
+        </label>
+        <label>
+          Average steps per workflow
+          <input type="number" id="steps" value="6" min="1" />
+        </label>
+        <button class="btn" id="go">Calculate</button>
+      </div>
+      <div class="results" id="results" hidden>
+        <div class="rcard winner" id="r-self">
+          <h3>n8n self-hosted</h3>
+          <p class="price">$6<span>/mo</span></p>
+          <p class="note">~$6/mo VPS · unlimited executions · software free</p>
+        </div>
+        <div class="rcard" id="r-cloud">
+          <h3>n8n Cloud</h3>
+          <p class="price" id="p-cloud">—</p>
+          <p class="note" id="n-cloud"></p>
+        </div>
+        <div class="rcard" id="r-zapier">
+          <h3>Zapier</h3>
+          <p class="price" id="p-zapier">—</p>
+          <p class="note" id="n-zapier"></p>
+        </div>
+        <div class="rcard" id="r-make">
+          <h3>Make</h3>
+          <p class="price" id="p-make">—</p>
+          <p class="note" id="n-make"></p>
+        </div>
+      </div>
+      <p class="fine">Pricing checked Oct 2026 — n8n in €, others in $. Self-hosted assumes a small VPS. Always verify live pricing pages.</p>
+    </div>
+
+    <aside class="cta-box">
+      <p class="cta-title">Cheapest option: run it yourself</p>
+      <p>26 free production-ready n8n templates — download, import, automate.</p>
+      <a class="btn" href="/templates/">Browse free templates</a>
+    </aside>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    function calc() {
+      const runs = Math.max(1, +$("runs").value || 0);
+      const steps = Math.max(1, +$("steps").value || 0);
+      const tasks = runs * steps; // zapier tasks + make ops approx
+
+      // n8n cloud by executions
+      let cloud, cloudNote;
+      if (runs <= 2500) { cloud = "€24/mo"; cloudNote = "Starter · 2,500 executions"; }
+      else if (runs <= 10000) { cloud = "€60/mo"; cloudNote = "Pro · 10,000 executions"; }
+      else if (runs <= 40000) { cloud = "€800/mo"; cloudNote = "Business · 40,000 executions"; }
+      else { cloud = "Custom"; cloudNote = "Enterprise — talk to sales"; }
+      $("p-cloud").textContent = cloud; $("n-cloud").textContent = cloudNote;
+
+      // zapier by tasks
+      let zap, zapNote;
+      if (tasks <= 100) { zap = "$0/mo"; zapNote = "Free · 100 tasks"; }
+      else if (tasks <= 750) { zap = "$19.99/mo"; zapNote = "Professional · 750 tasks (annual)"; }
+      else if (tasks <= 2000) { zap = "$69/mo"; zapNote = "Team · 2,000 tasks (annual)"; }
+      else { zap = "$300+/mo"; zapNote = tasks.toLocaleString() + " tasks — high-volume tier"; }
+      $("p-zapier").textContent = zap; $("n-zapier").textContent = zapNote;
+
+      // make by ops
+      let make, makeNote;
+      if (tasks <= 1000) { make = "$0/mo"; makeNote = "Free · 1,000 ops"; }
+      else if (tasks <= 10000) { make = "$9/mo"; makeNote = "Core · 10,000 ops (annual)"; }
+      else { make = "$29+/mo"; makeNote = tasks.toLocaleString() + " ops — higher credit tier"; }
+      $("p-make").textContent = make; $("n-make").textContent = makeNote;
+
+      $("results").hidden = false;
+    }
+    $("go").addEventListener("click", calc);
+    calc();
+  </script>
+
+  <style>
+    .tool-page { padding: 2.5rem 0 4rem; max-width: 820px; }
+    .crumbs { font-size: 0.85rem; margin-bottom: 1rem; }
+    .crumbs a { text-decoration: underline; }
+    .kicker { display: inline-block; background: #111; color: #FFFDF5; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.7rem; margin-bottom: 1rem; }
+    .tool-page h1 { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.05; margin: 0 0 1rem; }
+    .lede { font-size: 1.1rem; margin-bottom: 2rem; max-width: 620px; }
+    .calc { border: 3px solid #111; box-shadow: 6px 6px 0 #111; background: #fff; padding: 1.75rem; margin-bottom: 2.5rem; }
+    .inputs { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; margin-bottom: 1.5rem; }
+    .inputs label { font-weight: 800; font-size: 0.9rem; display: block; }
+    .inputs input { display: block; width: 100%; margin-top: 0.4rem; padding: 0.7rem; border: 3px solid #111; font-size: 1.1rem; font-weight: 700; background: #FFFDF5; }
+    .btn { background: #FF4D00; color: #fff; border: 3px solid #111; box-shadow: 4px 4px 0 #111; padding: 0.7rem 1.4rem; font-weight: 800; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #111; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
+    .rcard { border: 3px solid #111; padding: 1rem; background: #FFFDF5; }
+    .rcard.winner { background: #FFD02F; }
+    .rcard h3 { margin: 0 0 0.5rem; font-size: 0.95rem; text-transform: uppercase; }
+    .price { font-family: "Archivo Black", sans-serif; font-size: 1.5rem; margin: 0; }
+    .price span { font-size: 0.9rem; font-family: inherit; }
+    .note { font-size: 0.82rem; margin: 0.4rem 0 0; line-height: 1.5; }
+    .fine { font-size: 0.8rem; color: #555; margin: 1.25rem 0 0; }
+    .cta-box { border: 3px solid #111; box-shadow: 6px 6px 0 #111; background: #fff; padding: 1.5rem; text-align: center; }
+    .cta-title { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: 1.25rem; margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { .inputs { grid-template-columns: 1fr; } }
+  </style>
+</BaseLayout>

@@ -1,0 +1,600 @@
+{
+  "name": "AI Meeting Notes → Tasks",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 AI MEETING NOTES → TASKS\n**What it does:** A new meeting transcript (.txt/.md) lands in your Google Drive folder → AI extracts every action item (owner, due date, priority) with structured output → each item becomes a Notion task + is logged in Google Sheets → Slack gets the meeting summary, Telegram confirms.\n\n**You'll need:**\n- Google Drive OAuth2 credential (a folder for transcripts)\n- OpenAI API key (platform.openai.com)\n- Notion integration + a Tasks database with columns: `Name` (title), `Owner` (text), `Due` (date), `Priority` (select), `Source` (text)\n- Slack OAuth2 credential (a channel to post summaries)\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Transcripts:** save from any transcription tool (Fireflies, Otter.ai, Whisper) as .txt or .md into the watched Drive folder.\n\n**Status flow in Sheets:** `EXTRACTED` → `CREATED`",
+        "height": 220,
+        "width": 3440,
+        "color": 5
+      },
+      "id": "92af9af2-8a8b-474d-8c40-caaae60741a8",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Drive trigger + transcript extraction\nNew file in the transcripts folder (polled every 5 min) → download the file binary → decode to text (truncated at ~12,000 chars with a note).",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "id": "e54b78c5-3d93-4650-9af7-4e7048e5edb0",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — AI action-item extraction\nAI Agent reads the transcript → Structured Output Parser returns `meeting_summary` + `action_items[]` (task, owner, due_date, priority). Items with no named owner fall back to the CONFIG default owner.",
+        "height": 420,
+        "width": 700,
+        "color": 4
+      },
+      "id": "bebcf305-8f38-4a67-a1b3-5565012896ac",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Notion tasks + Sheets log\nOne item per action item → create a page in your Notion database (Name / Owner / Due / Priority / Source) → append a row to the `Meeting Tasks` sheet with status `CREATED`.",
+        "height": 420,
+        "width": 730,
+        "color": 4
+      },
+      "id": "b699e8ab-5d3a-40c9-9ef3-69f2f7033f3a",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Slack summary + Telegram notification\nAll items are aggregated into one meeting summary + numbered task list → posted to your Slack channel → Telegram confirms how many tasks were created (top 3 listed).",
+        "height": 420,
+        "width": 1070,
+        "color": 4
+      },
+      "id": "e5ea3ecc-008b-48f1-8edc-91ace8f9cad8",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2130,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "event": "fileCreated",
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyXMinutes",
+              "minutesInterval": 5
+            }
+          ]
+        },
+        "options": {
+          "fileType": "all"
+        }
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      },
+      "id": "1317f382-a85d-409e-aa33-f390d0356d80",
+      "name": "New Transcript Arrived",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {
+          "fileName": "={{ $json.name }}"
+        },
+        "operation": "download"
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      },
+      "id": "2d8a229e-bce8-4f1b-aff5-d7ccf6e67f9e",
+      "name": "Download Transcript",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decode the downloaded Drive file (text/plain or .md) into transcript text\nconst fileName = $input.item.json.name || $('New Transcript Arrived').first().json.name || 'unknown';\nconst buf = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst raw = buf.toString('utf-8');\nconst MAX = 12000;\nlet transcript_text = raw, truncated_note = '';\nif (raw.length > MAX) {\n  transcript_text = raw.slice(0, MAX);\n  truncated_note = ` (truncated from ${raw.length} chars to ${MAX})`;\n}\nreturn { json: {\n  file_name: fileName,\n  transcript_text,\n  truncated_note,\n  meeting_date: new Date().toISOString().slice(0, 10),\n  char_count: raw.length,\n}};",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "a3facdf0-f48e-4bf4-b379-1e80db50b35f",
+      "name": "Extract Transcript Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c35b77bb-7aee-4c55-b5a3-4895995d6ff8",
+              "name": "notion_database_id",
+              "type": "string",
+              "value": "PASTE_YOUR_NOTION_DATABASE_ID"
+            },
+            {
+              "id": "d5022be0-9c60-4cb5-9ab0-0c2df35e6fd2",
+              "name": "slack_channel",
+              "type": "string",
+              "value": "PASTE_YOUR_SLACK_CHANNEL (e.g. #meetings)"
+            },
+            {
+              "id": "94a8c3c2-6039-4d18-b4a9-519d3c9ab9b7",
+              "name": "default_owner",
+              "type": "string",
+              "value": "PASTE_YOUR_DEFAULT_OWNER (fallback when the AI cannot identify an owner)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c0264f93-7d6c-4c1d-bed7-45dc3762fa43",
+      "name": "CONFIG — Task Routing",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert meeting assistant. Read the meeting transcript and extract EVERY action item discussed — commitments, follow-ups, and decisions that need action.\n\nFor each action item identify:\n- task: a clear, self-contained title (start with a verb)\n- owner: the person explicitly assigned; if nobody is named, use an empty string\n- due_date: any mentioned deadline as YYYY-MM-DD (use the meeting date as context); empty string if none is mentioned\n- priority: high if urgent or blocking, medium if normal, low if nice-to-have\n\nAlso write a 3-5 sentence meeting_summary capturing the key decisions and outcomes.\n\nOutput ONLY via the structured output parser. Never invent owners or dates that are not in the transcript."
+        },
+        "text": "=Meeting transcript (file: {{ $json.file_name }}, date: {{ $json.meeting_date }}{{ $json.truncated_note }}):\n\n{{ $json.transcript_text }}"
+      },
+      "id": "0685525a-c02c-4cc0-9182-1b7f4d250e8f",
+      "name": "AI Agent — Extract Action Items",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "49cfe653-871e-4623-abfb-154da40d8bcf",
+      "name": "OpenAI Chat Model — Extraction",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"meeting_summary\": \"3-5 sentence summary of the key decisions and outcomes\",\n  \"action_items\": [\n    {\n      \"task\": \"clear, self-contained task title starting with a verb\",\n      \"owner\": \"assigned person name, or empty string if nobody is named\",\n      \"due_date\": \"YYYY-MM-DD if a deadline was mentioned, or empty string\",\n      \"priority\": \"high / medium / low\"\n    }\n  ]\n}"
+      },
+      "id": "dd3c89ae-458c-4930-a21c-d337f8fa7250",
+      "name": "Structured Output Parser — Action Items",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One output item per action item, carrying meeting context + task fields\nconst cfg = $('CONFIG — Task Routing').first().json;\nconst src = $('Extract Transcript Text').first().json;\nconst defaultOwner = cfg.default_owner || '';\nconst out = [];\nfor (const a of $input.all()) {\n  const parsed = a.json.output || {};\n  const summary = parsed.meeting_summary || '';\n  const items = Array.isArray(parsed.action_items) ? parsed.action_items : [];\n  for (const t of items) {\n    const prio = String(t.priority || 'medium').toLowerCase();\n    out.push({ json: {\n      meeting_summary: summary,\n      file_name: src.file_name || '',\n      meeting_date: src.meeting_date || '',\n      task: String(t.task || '').trim(),\n      owner: String(t.owner || '').trim() || defaultOwner,\n      due_date: String(t.due_date || '').trim(),\n      priority: ['high', 'medium', 'low'].includes(prio) ? prio : 'medium',\n      status: 'EXTRACTED',\n    }});\n  }\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "3fd40d40-1e4d-4629-9628-0dff48ad5493",
+      "name": "Split Action Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Task Routing').first().json.notion_database_id }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name",
+              "title": "={{ $json.task }}"
+            },
+            {
+              "key": "Owner",
+              "richText": "={{ $json.owner }}"
+            },
+            {
+              "key": "Due",
+              "date": "={{ $json.due_date }}"
+            },
+            {
+              "key": "Priority",
+              "select": "={{ $json.priority }}"
+            },
+            {
+              "key": "Source",
+              "richText": "={{ $json.file_name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "notionApi": {
+          "id": "",
+          "name": "Notion API"
+        }
+      },
+      "id": "50b25e5e-3b3e-4130-9555-5d48f78465cf",
+      "name": "Notion — Create Task",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Meeting Tasks"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.meeting_date }}",
+            "Meeting File": "={{ $json.file_name }}",
+            "Task": "={{ $json.task }}",
+            "Owner": "={{ $json.owner }}",
+            "Due Date": "={{ $json.due_date }}",
+            "Priority": "={{ $json.priority }}",
+            "Status": "CREATED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d41ce7a6-7949-4be8-b72e-f34a2a17386b",
+      "name": "Log Task — CREATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate ALL split items into one Slack message + a short Telegram message\nconst splits = $('Split Action Items').all().map(i => i.json);\nconst summary = (splits[0] && splits[0].meeting_summary) || 'No summary available.';\nconst fileName = (splits[0] && splits[0].file_name) || '';\nconst sLines = [`📝 *Meeting summary* — ${fileName}`, '', summary, '', `✅ *${splits.length} action item(s):*`, ''];\nsplits.forEach((t, i) => {\n  const bits = [`${i + 1}. ${t.task}`];\n  if (t.owner) bits.push(`_Owner: ${t.owner}_`);\n  if (t.due_date) bits.push(`_Due: ${t.due_date}_`);\n  bits.push(`_Priority: ${t.priority}_`);\n  sLines.push('• ' + bits.join(' · '));\n});\nconst top3 = splits.slice(0, 3).map((t, i) => `${i + 1}. ${t.task}${t.owner ? ' — ' + t.owner : ''}`);\nconst tLines = [`🎯 ${splits.length} task(s) created from *${fileName}*`, ''];\nif (top3.length) { tLines.push('Top tasks:', ...top3, ''); }\ntLines.push('Full list posted to Slack.');\nreturn [{ json: {\n  slack_text: sLines.join('\\n'),\n  telegram_text: tLines.join('\\n'),\n  task_count: splits.length,\n  file_name: fileName,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "a3b22399-77cb-4396-ac41-7d3354bff85e",
+      "name": "Build Slack Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Task Routing').first().json.slack_channel }}"
+        },
+        "operation": "post",
+        "otherOptions": {},
+        "resource": "message",
+        "select": "channel",
+        "text": "={{ $json.slack_text }}"
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "",
+          "name": "Slack OAuth2 API"
+        }
+      },
+      "id": "87d8dd77-95be-40a8-9951-67206ce47e8f",
+      "name": "Slack — Post Meeting Summary",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "351d1239-cf06-46d6-9a62-10c6de9e29b6",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b465bb35-6440-4c1f-8c62-921b51c77ec5",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.telegram_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "a1be1e6e-c427-4c05-9748-52ff2334596a",
+      "name": "Telegram — Notify — Tasks Created",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "New Transcript Arrived": {
+      "main": [
+        [
+          {
+            "node": "Download Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Transcript": {
+      "main": [
+        [
+          {
+            "node": "Extract Transcript Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Transcript Text": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Task Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Task Routing": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Extract Action Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Extract Action Items": {
+      "main": [
+        [
+          {
+            "node": "Split Action Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Action Items": {
+      "main": [
+        [
+          {
+            "node": "Notion — Create Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion — Create Task": {
+      "main": [
+        [
+          {
+            "node": "Log Task — CREATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Task — CREATED": {
+      "main": [
+        [
+          {
+            "node": "Build Slack Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Slack Summary": {
+      "main": [
+        [
+          {
+            "node": "Slack — Post Meeting Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack — Post Meeting Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Notify — Tasks Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Extraction": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Extract Action Items",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Action Items": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Extract Action Items",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

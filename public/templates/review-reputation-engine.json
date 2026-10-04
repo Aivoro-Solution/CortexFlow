@@ -1,0 +1,1312 @@
+{
+  "name": "Review & Reputation Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## ⭐ REVIEW & REPUTATION ENGINE\n**What it does:** When a job completes → waits 2 days → emails the customer 5 clickable star links. Low ratings (1–3★) route to Slack support + sheet flips to `FLAGGED`; 4–5★ get your Google review link. A second flow checks your Google Business Profile reviews every morning, AI-summarizes sentiment, alerts Slack, and logs everything — ending in one Telegram digest.\n\n**You'll need:**\n- Gmail OAuth2 credential (the sending address)\n- Google Business Profile API access (Google Cloud Console → OAuth playground token; paste into CONFIG — GBP)\n- Slack API credential + a support channel name\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential + one spreadsheet with tabs `Review Requests` and `GBP Reviews`\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flows:** `Review Requests` tab: `REQUEST_PENDING` → `REVIEW_ASKED` / `FLAGGED` · `GBP Reviews` tab: new → `LOGGED`",
+        "height": 220,
+        "width": 4200,
+        "color": 5
+      },
+      "id": "d52a9f40-2e44-424e-ba1b-9db7d80f6970",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Job completed → 2-day wait → review request\nPOST /job-completed webhook (customer_name, email, phone, job_id) → CONFIG → log row as `REQUEST_PENDING` → respond OK → Wait 2 days → build 5 star-rating links → Gmail sends the review request email.",
+        "height": 420,
+        "width": 1900,
+        "color": 4
+      },
+      "id": "c1d88a2d-1edc-496d-b45d-178de0f7cc49",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Rating webhook → smart routing\nCustomer clicks a star → GET /rate webhook (query: job_id, stars) → parse → match the job in Sheets → IF stars < 4: Slack alert to support + sheet → `FLAGGED`. Else: Gmail sends your Google review link + sheet → `REVIEW_ASKED`. Both branches merge → Flow-A summary.",
+        "height": 420,
+        "width": 2200,
+        "color": 4
+      },
+      "id": "905e14f2-6ec0-44fc-af53-0b17ac70f535",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Daily Google Business Profile monitoring\n8 AM schedule → CONFIG — GBP (paste your OAuth token + account/location IDs) → list reviews via the GBP API → read already-seen review IDs from Sheets → keep only new ones → IF any new: AI Agent summarizes sentiment with a Structured Output Parser → Slack alert → append to `GBP Reviews` as `LOGGED`. No new reviews → quiet path.",
+        "height": 420,
+        "width": 2400,
+        "color": 4
+      },
+      "id": "b303ebf8-b97d-428c-9258-5e6d95347fe5",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Sheets logging + Telegram digest\nBoth flows feed one digest: new GBP reviews with sentiment counts, review requests sent, and flagged count — built by Build Daily Digest → CONFIG — Notifications → Telegram.",
+        "height": 420,
+        "width": 1600,
+        "color": 4
+      },
+      "id": "adac82ac-a79f-400d-8c79-b799e01fa4fd",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "job-completed",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a799a2de-3a4b-4897-ab04-11b7acc242e4",
+      "name": "Job Completed",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30d35226-d547-40de-aafb-9a1dec1a8ca0",
+              "name": "business_name",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_NAME"
+            },
+            {
+              "id": "6fe84c2c-81c4-4a5d-8cc3-642c0d48bd1f",
+              "name": "rating_webhook_base_url",
+              "type": "string",
+              "value": "PASTE_YOUR_N8N_WEBHOOK_BASE_URL (e.g. https://your-n8n/webhook)"
+            },
+            {
+              "id": "faafcf8a-8579-444a-adbb-41951cdeabfb",
+              "name": "google_review_url",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_REVIEW_URL (from your Google Business Profile)"
+            },
+            {
+              "id": "d8e98239-2f74-4e41-99c4-1ce0c42acf8b",
+              "name": "support_slack_channel",
+              "type": "string",
+              "value": "PASTE_YOUR_SLACK_CHANNEL (e.g. #support)"
+            },
+            {
+              "id": "bbe94ac2-2a6b-43d8-8212-70107379abc6",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7300d232-c533-4d25-8711-3c7f8dca66b3",
+      "name": "CONFIG — Review Flow",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Review Flow').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Review Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ new Date().toISOString().slice(0,10) }}",
+            "Job ID": "={{ $json.body.job_id }}",
+            "Customer": "={{ $json.body.customer_name }}",
+            "Email": "={{ $json.body.email }}",
+            "Rating": "",
+            "Status": "REQUEST_PENDING"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "58509b1a-1bfb-4184-b098-2bedb5375c78",
+      "name": "Log — REQUEST_PENDING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\": true, \"message\": \"Job received — review request scheduled in 2 days.\"}",
+        "options": {}
+      },
+      "id": "bcfe7f4b-e5d3-4214-afd3-a870ee24e46a",
+      "name": "Respond — Job Received",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "afterTimeInterval",
+        "amount": 2,
+        "unit": "days"
+      },
+      "id": "6a249737-11b9-4aaa-b0ca-bc1b46b2128f",
+      "name": "Wait 2 Days",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build 5 clickable star-rating links from the CONFIG webhook base URL\nconst cfg = $('CONFIG — Review Flow').first().json;\nconst base = (cfg.rating_webhook_base_url || '').replace(/\\/$/, '');\nconst job = $('Job Completed').first().json.body || {};\nconst jobId = job.job_id || '';\nconst links = {};\nfor (let s = 1; s <= 5; s++) {\n  links['stars_' + s] = base + '/rate?job_id=' + encodeURIComponent(jobId) + '&stars=' + s;\n}\nreturn [{ json: {\n  customer_name: job.customer_name || '',\n  email: job.email || '',\n  job_id: jobId,\n  business_name: cfg.business_name || '',\n  stars_1: links.stars_1,\n  stars_2: links.stars_2,\n  stars_3: links.stars_3,\n  stars_4: links.stars_4,\n  stars_5: links.stars_5,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "c8ad9cd5-a5bb-4b14-b776-e375a8aac6d2",
+      "name": "Build Star Links",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "subject": "=How was your experience with {{ $json.business_name }}? ⭐",
+        "sendTo": "={{ $json.email }}",
+        "emailType": "html",
+        "message": "=Hi {{ $json.customer_name }},<br><br>Thanks for choosing {{ $json.business_name }}! We'd love your honest feedback — just tap a star:<br><br><a href=\"{{ $json.stars_1 }}\">⭐</a> <a href=\"{{ $json.stars_2 }}\">⭐⭐</a> <a href=\"{{ $json.stars_3 }}\">⭐⭐⭐</a> <a href=\"{{ $json.stars_4 }}\">⭐⭐⭐⭐</a> <a href=\"{{ $json.stars_5 }}\">⭐⭐⭐⭐⭐</a><br><br>It takes 5 seconds, and it really helps us improve. 🙏",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "b2d05a5e-7e3a-468c-b954-362bd1918ac3",
+      "name": "Send Review Request",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "rate",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f7c2b513-0450-4973-9b4a-b5115329a6fe",
+      "name": "Rating Submitted",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract stars + job_id from the GET /rate webhook query string\nconst q = $input.first().json.query || {};\nconst stars = parseInt(q.stars, 10);\nreturn [{ json: {\n  job_id: String(q.job_id || ''),\n  stars: isNaN(stars) ? 0 : stars,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "5b0f7b8a-24d7-42e0-a7bb-92d1831c24ca",
+      "name": "Parse Rating",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Review Flow').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Review Requests"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "761efe12-b611-415e-b55f-d3527f6228d0",
+      "name": "Read Review Requests",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the sheet row matching this rating's job_id\nconst me = $input.first().json;\nconst rows = $('Read Review Requests').all().map(i => i.json);\nconst row = rows.find(r => String(r['Job ID'] || '').trim() === String(me.job_id).trim()) || {};\nreturn [{ json: {\n  job_id: me.job_id,\n  stars: me.stars,\n  customer_name: row['Customer'] || '',\n  email: row['Email'] || '',\n  matched: Boolean(row['Job ID']),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "a1c2d66d-edf4-4f34-bf59-e72d156da556",
+      "name": "Match Job ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-rating",
+              "leftValue": "={{ $json.stars }}",
+              "rightValue": "4",
+              "operator": {
+                "type": "number",
+                "operation": "smaller",
+                "name": "filter.operator.number.smaller"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "49f64e23-6a37-4f49-9529-f4827d8ddb74",
+      "name": "IF — Rating < 4?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Review Flow').first().json.support_slack_channel }}"
+        },
+        "text": "=🚨 *Unhappy customer alert*\nCustomer: {{ $json.customer_name }}\nRating: {{ $json.stars }}/5\nJob ID: {{ $json.job_id }}\nPlease reach out before they review publicly!",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "0b1ccfe4-6488-4b1e-a06e-c9afd444c86d",
+      "name": "Alert — Unhappy Customer",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Review Flow').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Review Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Job ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Job ID": "={{ $json.job_id }}",
+            "Rating": "={{ $json.stars }}",
+            "Status": "FLAGGED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e6c1d134-961c-42bc-9164-f10cfb4fbd89",
+      "name": "Update — FLAGGED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "subject": "=Thanks {{ $json.customer_name }}! One quick favour 🙏",
+        "sendTo": "={{ $json.email }}",
+        "emailType": "html",
+        "message": "=Hi {{ $json.customer_name }},<br><br>Thanks for the {{ $json.stars }}-star rating — it means a lot! Would you mind sharing it publicly? It takes 30 seconds:<br><br><a href=\"{{ $('CONFIG — Review Flow').first().json.google_review_url }}\">👉 Leave a Google review</a><br><br>Thank you! 🙏",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "9023044c-174e-448e-ae3e-d4f0f671bdcf",
+      "name": "Send Google Review Link",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2880,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Review Flow').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Review Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Job ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Job ID": "={{ $json.job_id }}",
+            "Rating": "={{ $json.stars }}",
+            "Status": "REVIEW_ASKED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f99989d6-5821-4901-9d3e-6f9efff5e705",
+      "name": "Update — REVIEW_ASKED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "928adc58-3e90-4b08-ac00-4dd4dbb4c5dd",
+      "name": "Merge — Combine Rating Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One-line summary of the rating event for the shared digest\nconst j = $input.first().json;\nconst route = j.stars < 4 ? 'FLAGGED — support alerted' : 'REVIEW_ASKED — Google link sent';\nreturn [{ json: {\n  flow: 'A',\n  summary: '⭐ ' + j.stars + '/5 rating from ' + (j.customer_name || 'a customer') + ' (Job ' + j.job_id + ') → ' + route,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "79530afb-33cf-45ed-b753-627726051451",
+      "name": "Build Flow-A Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "f8ca22be-6851-4259-bd89-f8acd89e2889",
+      "name": "Daily Review Check — 8AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "111d502e-ccf0-4468-ad90-ba5a308c3325",
+              "name": "gbp_access_token",
+              "type": "string",
+              "value": "PASTE_YOUR_GBP_ACCESS_TOKEN (Google Cloud Console → OAuth playground; refresh monthly)"
+            },
+            {
+              "id": "4a03e088-1d5f-4d34-9313-ba33b72fdd47",
+              "name": "gbp_account_id",
+              "type": "string",
+              "value": "PASTE_YOUR_ACCOUNT_ID"
+            },
+            {
+              "id": "b2c740dc-d85d-4b52-a822-092a60a39a9b",
+              "name": "gbp_location_id",
+              "type": "string",
+              "value": "PASTE_YOUR_LOCATION_ID"
+            },
+            {
+              "id": "136658df-33dd-4d90-b7ea-83ea8df1d507",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3b3c5eb-6a52-4026-86c3-9eac879cc051",
+      "name": "CONFIG — GBP",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://mybusiness.googleapis.com/v4/accounts/{{ $('CONFIG — GBP').first().json.gbp_account_id }}/locations/{{ $('CONFIG — GBP').first().json.gbp_location_id }}/reviews",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('CONFIG — GBP').first().json.gbp_access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "913cc284-532a-4342-9c1e-549a5c818430",
+      "name": "List New GBP Reviews",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — GBP').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "GBP Reviews"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fde8af95-37f7-47a4-97d1-7ed1b8d19207",
+      "name": "Read Seen Reviews",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep only GBP reviews whose ID is not already logged in Sheets\nconst seen = new Set(\n  $('Read Seen Reviews').all().map(i => (i.json['Review ID'] || '').trim()).filter(Boolean)\n);\nconst reviews = $input.first().json.reviews || [];\nconst fresh = (Array.isArray(reviews) ? reviews : []).filter(r => r.name && !seen.has(r.name.trim()));\nreturn fresh.map(r => ({ json: {\n  review_id: r.name,\n  reviewer: (r.reviewer && r.reviewer.displayName) || 'Anonymous',\n  stars: (r.starRating || '').replace('STAR', '') || '',\n  text: r.comment || '',\n  create_time: r.createTime || '',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "df619e0d-3431-4a3d-a89c-c2e416a957df",
+      "name": "Filter New Reviews",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — GBP').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Review Requests"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "cd656e32-4fd9-41e1-b450-5377dc722bb6",
+      "name": "Read Request Stats",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-new-reviews",
+              "leftValue": "={{ $('Filter New Reviews').all().length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "d106fc2b-1b07-49bf-8337-95016bba33cc",
+      "name": "IF — New Reviews Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a reputation manager for a local service business. Read each Google review and classify its sentiment. Be honest: a complaint is negative even if polite. Output ONLY via the structured output parser."
+        },
+        "text": "=Reviewer: {{ $json.reviewer }}\nStars: {{ $json.stars }}/5\n\nReview text:\n{{ $json.text }}\n\nClassify sentiment, write a one-line summary, flag whether it needs a public response, and draft a short professional reply (or leave empty if none is needed)."
+      },
+      "id": "63bf64a3-bd43-4579-8548-5659deb39529",
+      "name": "AI Agent — Summarize Review Sentiment",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1680,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "c28d66c1-bb5d-47c1-87b2-afde88103063",
+      "name": "OpenAI Chat Model — Sentiment",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        1160
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"sentiment\": \"positive / neutral / negative\",\n  \"summary\": \"one-line summary of what the reviewer said\",\n  \"needs_response\": false,\n  \"suggested_reply\": \"short professional public reply, or empty string if none needed\"\n}"
+      },
+      "id": "1a9d5a88-dd81-4b7f-8471-0b1c1f51f10a",
+      "name": "Structured Output Parser — Sentiment",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        1160
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Review Flow').first().json.support_slack_channel }}"
+        },
+        "text": "=⭐ *New Google review* — {{ $json.stars }}/5 by {{ $json.reviewer }}\nSentiment: {{ $json.output.sentiment }}\n{{ $json.output.summary }}\n\n> {{ $json.text }}\n\nSuggested reply: {{ $json.output.suggested_reply }}",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack API"
+        }
+      },
+      "id": "03d49954-7ef1-4994-a64d-9b2532b9fbba",
+      "name": "Post Review Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — GBP').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "GBP Reviews"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ new Date().toISOString().slice(0,10) }}",
+            "Review ID": "={{ $json.review_id }}",
+            "Reviewer": "={{ $json.reviewer }}",
+            "Stars": "={{ $json.stars }}",
+            "Text": "={{ $json.text }}",
+            "Sentiment": "={{ $json.output.sentiment }}",
+            "Status": "LOGGED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "72a28e4c-dd28-4576-8338-62080b67b404",
+      "name": "Log GBP Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Summarize Flow B: new reviews + request stats for the shared digest\nconst statsRows = $('Read Request Stats').all().map(i => i.json);\nconst count = s => statsRows.filter(r => r.Status === s).length;\n// $input carries the logged GBP rows (Status=LOGGED); empty when no new reviews\nconst logged = $input.all().map(i => i.json).filter(r => r.Status === 'LOGGED');\nconst pos = logged.filter(r => r.Sentiment === 'positive').length;\nconst neg = logged.filter(r => r.Sentiment === 'negative').length;\nreturn [{ json: {\n  flow: 'B',\n  new_reviews: logged.length,\n  positive: pos,\n  negative: neg,\n  pending: count('REQUEST_PENDING'),\n  asked: count('REVIEW_ASKED'),\n  flagged: count('FLAGGED'),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "590e7be3-8bdc-44fb-b1d1-2353d1d29436",
+      "name": "Build Flow-B Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine Flow A events + Flow B daily stats into one Telegram digest\nconst items = $input.all().map(i => i.json);\nconst a = items.find(i => i.flow === 'A');\nconst b = items.find(i => i.flow === 'B');\nconst today = new Date().toISOString().slice(0, 10);\nconst lines = ['⭐ *Reputation Digest — ' + today + '*', ''];\nif (a) lines.push('📩 ' + a.summary, '');\nif (b) {\n  lines.push('🆕 ' + b.new_reviews + ' new Google review(s) (👍 ' + b.positive + ' / 👎 ' + b.negative + ')');\n  lines.push('📨 Review requests: ' + b.pending + ' pending · ' + b.asked + ' asked · 🚩 ' + b.flagged + ' flagged');\n} else if (!a) {\n  lines.push('No activity today.');\n}\nreturn [{ json: { digest: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "9dbff3ad-3d42-44a3-9fc9-e8828cef6ad3",
+      "name": "Build Daily Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "457cf36f-7b68-4682-acff-ad03a1675332",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bb39d341-c0ed-4c7f-9f56-956244cfb12d",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2880,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "83a04713-eaf4-4709-b7cf-70377d344947",
+      "name": "Telegram — Send Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        900
+      ]
+    }
+  ],
+  "connections": {
+    "Job Completed": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Review Flow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Review Flow": {
+      "main": [
+        [
+          {
+            "node": "Log — REQUEST_PENDING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log — REQUEST_PENDING": {
+      "main": [
+        [
+          {
+            "node": "Respond — Job Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond — Job Received": {
+      "main": [
+        [
+          {
+            "node": "Wait 2 Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 Days": {
+      "main": [
+        [
+          {
+            "node": "Build Star Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Star Links": {
+      "main": [
+        [
+          {
+            "node": "Send Review Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rating Submitted": {
+      "main": [
+        [
+          {
+            "node": "Parse Rating",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Rating": {
+      "main": [
+        [
+          {
+            "node": "Read Review Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Review Requests": {
+      "main": [
+        [
+          {
+            "node": "Match Job ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Job ID": {
+      "main": [
+        [
+          {
+            "node": "IF — Rating < 4?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Rating < 4?": {
+      "main": [
+        [
+          {
+            "node": "Alert — Unhappy Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Google Review Link",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Alert — Unhappy Customer": {
+      "main": [
+        [
+          {
+            "node": "Update — FLAGGED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Google Review Link": {
+      "main": [
+        [
+          {
+            "node": "Update — REVIEW_ASKED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update — FLAGGED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Rating Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update — REVIEW_ASKED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Rating Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Rating Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Flow-A Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Review Check — 8AM": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — GBP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — GBP": {
+      "main": [
+        [
+          {
+            "node": "List New GBP Reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List New GBP Reviews": {
+      "main": [
+        [
+          {
+            "node": "Read Seen Reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Seen Reviews": {
+      "main": [
+        [
+          {
+            "node": "Filter New Reviews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Reviews": {
+      "main": [
+        [
+          {
+            "node": "Read Request Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Request Stats": {
+      "main": [
+        [
+          {
+            "node": "IF — New Reviews Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — New Reviews Found?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Summarize Review Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Flow-B Summary",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent — Summarize Review Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Post Review Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Review Alert": {
+      "main": [
+        [
+          {
+            "node": "Log GBP Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log GBP Review": {
+      "main": [
+        [
+          {
+            "node": "Build Flow-B Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Flow-A Summary": {
+      "main": [
+        [
+          {
+            "node": "Build Daily Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Flow-B Summary": {
+      "main": [
+        [
+          {
+            "node": "Build Daily Digest",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Build Daily Digest": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Sentiment": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Summarize Review Sentiment",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Sentiment": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Summarize Review Sentiment",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

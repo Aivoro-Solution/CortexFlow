@@ -1,0 +1,104 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+---
+<BaseLayout
+  title="Cron Expression Builder — Free Tool"
+  description="Build cron expressions visually for n8n Schedule Triggers. Pick the schedule, get the cron string plus a plain-English explanation."
+  canonical={`${SITE.url}/tools/cron-builder/`}
+>
+  <main class="wrap tool-page">
+    <nav class="crumbs"><a href="/">Home</a> <span>/</span> <a href="/tools/">Tools</a> <span>/</span> <span>Cron builder</span></nav>
+    <p class="kicker">Free tool</p>
+    <h1>Cron expression builder</h1>
+    <p class="lede">Click together a schedule — get the cron string for n8n's Schedule Trigger, plus what it means in plain English.</p>
+
+    <div class="calc">
+      <div class="presets" id="presets"></div>
+      <div class="inputs">
+        <label>Minute<input type="text" id="f-min" value="0" /></label>
+        <label>Hour<input type="text" id="f-hour" value="9" /></label>
+        <label>Day of month<input type="text" id="f-dom" value="*" /></label>
+        <label>Month<input type="text" id="f-mon" value="*" /></label>
+        <label>Day of week<input type="text" id="f-dow" value="*" /></label>
+      </div>
+      <div class="out">
+        <code id="cronOut">0 9 * * *</code>
+        <button class="btn btn-ghost" id="copy">Copy</button>
+      </div>
+      <p class="english" id="english"></p>
+      <p class="fine">n8n Schedule Trigger → "Custom (Cron)" → paste. Use * for "every", */15 for "every 15", 1-5 for Mon–Fri.</p>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const F = ["f-min","f-hour","f-dom","f-mon","f-dow"];
+    const presets = [
+      ["Every 15 min", "*/15 * * * *"],
+      ["Hourly", "0 * * * *"],
+      ["Daily 9am", "0 9 * * *"],
+      ["Weekdays 9am", "0 9 * * 1-5"],
+      ["Weekly Mon 9am", "0 9 * * 1"],
+      ["Monthly 1st 9am", "0 9 1 * *"],
+    ];
+    const box = $("presets");
+    presets.forEach(([label, expr]) => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.textContent = label;
+      b.onclick = () => { expr.split(" ").forEach((v,i)=>$(F[i]).value=v); update(); };
+      box.appendChild(b);
+    });
+    const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    function part(v, anyWord, names) {
+      v = v.trim();
+      if (v === "*") return "every " + anyWord;
+      if (v.startsWith("*/")) return "every " + v.slice(2) + " " + anyWord + "s";
+      if (v.includes("-") && names) {
+        const [a,b] = v.split("-").map(Number);
+        if (!isNaN(a) && !isNaN(b)) return names[a] + "–" + names[b];
+      }
+      if (v.includes(",")) return "at " + v.split(",").map(x => names ? (names[+x]||x) : x).join(", ");
+      if (names && !isNaN(+v)) return "on " + (names[+v]||v);
+      return "at " + v;
+    }
+    function update() {
+      const v = F.map(f => $(f).value.trim() || "*");
+      $("cronOut").textContent = v.join(" ");
+      $("english").textContent =
+        "Runs at minute " + part(v[0],"minute") +
+        ", " + part(v[1],"hour") +
+        ", " + part(v[2],"day of the month") +
+        ", " + part(v[3],"month",MON) +
+        ", " + part(v[4],"day of the week",DOW) + ".";
+    }
+    F.forEach(f => $(f).addEventListener("input", update));
+    $("copy").onclick = () => navigator.clipboard.writeText($("cronOut").textContent);
+    update();
+  </script>
+
+  <style>
+    .tool-page { padding: 2.5rem 0 4rem; max-width: 820px; }
+    .crumbs { font-size: 0.85rem; margin-bottom: 1rem; }
+    .crumbs a { text-decoration: underline; }
+    .kicker { display: inline-block; background: #111; color: #FFFDF5; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.7rem; margin-bottom: 1rem; }
+    .tool-page h1 { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.05; margin: 0 0 1rem; }
+    .lede { font-size: 1.1rem; margin-bottom: 2rem; max-width: 620px; }
+    .calc { border: 3px solid #111; box-shadow: 6px 6px 0 #111; background: #fff; padding: 1.75rem; }
+    .presets { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .chip { border: 2px solid #111; background: #FFFDF5; padding: 0.4rem 0.8rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+    .chip:hover { background: #FFD02F; }
+    .inputs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-bottom: 1.5rem; }
+    .inputs label { font-weight: 800; font-size: 0.8rem; display: block; }
+    .inputs input { display: block; width: 100%; margin-top: 0.4rem; padding: 0.6rem; border: 3px solid #111; font-size: 1rem; font-weight: 700; background: #FFFDF5; font-family: monospace; }
+    .out { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+    .out code { font-size: 1.6rem; font-weight: 800; background: #111; color: #FFD02F; padding: 0.6rem 1.2rem; letter-spacing: 0.05em; }
+    .btn { background: #FF4D00; color: #fff; border: 3px solid #111; box-shadow: 4px 4px 0 #111; padding: 0.7rem 1.4rem; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+    .btn-ghost { background: #fff; color: #111; }
+    .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #111; }
+    .english { font-size: 1.05rem; background: #fff8e7; border-left: 5px solid #FF4D00; padding: 0.7rem 1rem; }
+    .fine { font-size: 0.8rem; color: #555; }
+    @media (max-width: 640px) { .inputs { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</BaseLayout>

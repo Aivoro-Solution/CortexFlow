@@ -1,0 +1,1690 @@
+{
+  "name": "WhatsApp Appointment Booking + Recall",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📅 WHATSAPP APPOINTMENT BOOKING + RECALL\n**What it does:** FLOW A — a WhatsApp message arrives → AI understands the booking intent → checks Google Calendar availability → books / cancels / reschedules → replies on WhatsApp, every step logged in Google Sheets → Telegram digest. FLOW B — every Monday, customers inactive 60+ days get a WhatsApp winback message → sheet flips to `RECALLED` → Telegram digest.\n\n**You'll need:**\n- WhatsApp Business API via Meta (developers.facebook.com → WhatsApp → test number or your business number)\n- OpenAI API key (platform.openai.com)\n- Google Calendar + Google Sheets OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow (Bookings tab):** `RECEIVED` → `BOOKED` / `PENDING_SLOT` / `CANCELLED` / `RESCHEDULE_REQUESTED` / `HANDLED`\n**Recall flow (Customers tab):** inactive 60+ days → WhatsApp re-engagement → `RECALLED`",
+        "height": 220,
+        "width": 4140,
+        "color": 5
+      },
+      "id": "f2871e1f-0412-4833-8f21-3210ae1be616",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — WhatsApp trigger + AI intent parsing\nNew WhatsApp message → CONFIG — Business → log a row with status `RECEIVED` → AI Agent classifies intent (book / cancel / reschedule / other) via a Structured Output Parser → Switch routes by intent.",
+        "height": 420,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "2eabd3ae-dba1-4f08-b947-55d0deb41f58",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Calendar availability + booking\nbook → build a ±1h availability window → fetch overlapping Google Calendar events → Code decides if the slot is free → IF free: create the event → sheet `BOOKED` → WhatsApp confirmation. IF busy: propose 3 alternative 1-hour slots → WhatsApp suggestions → sheet `PENDING_SLOT`.",
+        "height": 700,
+        "width": 1740,
+        "color": 4
+      },
+      "id": "764feb7d-22f5-4d99-99ca-d497295dacfe",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Cancel / reschedule / fallback\ncancel → find the customer's upcoming event (phone in description, else name in summary) → delete it → sheet `CANCELLED` → WhatsApp confirmation. reschedule → ask for the new preferred time → sheet `RESCHEDULE_REQUESTED` (customer replies to continue the booking flow). other → business-hours fallback reply → sheet `HANDLED`.",
+        "height": 480,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "ab0e663d-e5d5-49fb-b048-8167fa909ccc",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Weekly inactive-customer recall\nEvery Monday 10 AM → read the Customers tab → Code keeps customers whose Last Visit is 60+ days ago → WhatsApp re-engagement message per customer → sheet `RECALLED` + Last Contact date → Telegram digest.\n\n⚠️ NOTE: Meta requires an APPROVED message template for business-initiated WhatsApp messages. Keep the text simple and get your template approved in WhatsApp Manager before activating.",
+        "height": 340,
+        "width": 2400,
+        "color": 4
+      },
+      "id": "f5443812-053e-4127-83c8-2b12bfd18af5",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Sheets logging + Telegram digests\nEvery booking branch merges → one booking summary is built → Telegram. The weekly recall builds its own digest → Telegram. Both digests read the chat ID from CONFIG — Notifications.",
+        "height": 420,
+        "width": 1220,
+        "color": 4
+      },
+      "id": "3930dd6a-d46a-406d-8ed8-4a51c7cc4168",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {},
+        "updates": [
+          "messages"
+        ]
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "8cb44276-4514-4db1-b969-6b9fe6a39312",
+      "name": "New WhatsApp Message",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39af5006-c596-4368-8f18-a8e0acda43c4",
+              "name": "business_name",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_NAME"
+            },
+            {
+              "id": "024b900f-9f02-4d4d-acd5-fe48d152c13f",
+              "name": "calendar_id",
+              "type": "string",
+              "value": "PASTE_YOUR_CALENDAR_ID"
+            },
+            {
+              "id": "32c30427-c62c-4759-aabf-07e92e1ff4e5",
+              "name": "timezone",
+              "type": "string",
+              "value": "Asia/Calcutta"
+            },
+            {
+              "id": "f904084b-20c4-4e2d-9949-9fda3e3c6e33",
+              "name": "whatsapp_number",
+              "type": "string",
+              "value": "PASTE_YOUR_WHATSAPP_NUMBER"
+            },
+            {
+              "id": "cf53b61c-7627-4cf3-80e0-df24c07d0e1e",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "d5780210-0748-4341-800d-06d1e85154dc",
+              "name": "bookings_sheet",
+              "type": "string",
+              "value": "Bookings"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dbd89bb6-3ae9-44cf-ada1-39f352d7edf7",
+      "name": "CONFIG — Business",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Message": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].text.body }}",
+            "Intent": "",
+            "Status": "RECEIVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "08a1ec77-37bd-4d58-9f37-82af5aac0629",
+      "name": "Log Message — RECEIVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the friendly receptionist for {{ $('CONFIG — Business').first().json.business_name }}. A customer just wrote on WhatsApp. Extract their booking intent precisely:\n- 'book' = they want a NEW appointment (with or without a date/time)\n- 'cancel' = they want to CANCEL an existing appointment\n- 'reschedule' = they want to MOVE an existing appointment to another time\n- 'other' = anything else (opening hours, prices, greetings, questions)\n\nToday is {{ $now.toFormat('yyyy-MM-dd') }} and the business timezone is {{ $('CONFIG — Business').first().json.timezone }}. Convert any mentioned date/time into ISO 8601 in that timezone (assume upcoming dates when ambiguous). Leave customer_name empty if no name is given. Output ONLY via the structured output parser."
+        },
+        "text": "=Incoming WhatsApp message:\n\n{{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].text.body }}"
+      },
+      "id": "55cd19a0-a202-484a-af14-184a8cfe963e",
+      "name": "AI Agent — Understand Booking Intent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "d466cb81-2331-4b9f-80b6-ca99c7a64968",
+      "name": "OpenAI Chat Model — Intent",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent\": \"one of: book | cancel | reschedule | other\",\n  \"customer_name\": \"customer's name, or empty string if not given\",\n  \"preferred_datetime\": \"ISO 8601 datetime in the business timezone, or empty string if no date/time mentioned\",\n  \"notes\": \"any other relevant detail from the message, or empty string\"\n}"
+      },
+      "id": "60115522-1230-4bc0-818e-acca8e681937",
+      "name": "Structured Output Parser — Intent",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "fallbackOutput": "extra"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "1674b372-4b26-45ff-ab84-b61ff60de136",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "book",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "book",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f5d412ed-14c2-4944-bd44-1b3833f610f7",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "cancel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "cancel",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "32fc47c9-e64f-49e7-a55a-bdc48cc29bbd",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "reschedule",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "reschedule",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "id": "a28ff1bd-0a70-4878-a0b4-ccb91b94f066",
+      "name": "Switch — Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a ±1h availability window around the AI-parsed preferred datetime.\n// Also pre-computes the 1-hour event end time for the Create Event node.\n// If the AI could not parse a date/time, flag needs_time (handled downstream).\nconst out = $('AI Agent \\u2014 Understand Booking Intent').first().json.output || {};\nconst preferred = (out.preferred_datetime || '').trim();\nconst base = {\n  preferred,\n  event_end: '',\n  customer_name: (out.customer_name || '').trim(),\n  notes: (out.notes || '').trim(),\n  window_start: '',\n  window_end: '',\n  needs_time: false,\n};\nif (!preferred || isNaN(new Date(preferred).getTime())) {\n  base.needs_time = true;\n  return [{ json: base }];\n}\nconst t = new Date(preferred).getTime();\nbase.window_start = new Date(t - 3600000).toISOString();\nbase.window_end = new Date(t + 3600000).toISOString();\nbase.event_end = new Date(t + 3600000).toISOString();\nreturn [{ json: base }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "214afd61-96da-4dd1-924c-15a404635644",
+      "name": "Code — Build Availability Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.calendar_id }}"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $json.window_start }}",
+          "timeMax": "={{ $json.window_end }}"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "06ccc64e-be68-4c67-b064-c856a7d6ff7e",
+      "name": "Calendar — Check Availability",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decide whether the requested 1-hour slot is free. If not, propose the next 3\n// free 1-hour slots around the preferred time (same day, ±hours). If the AI could\n// not parse a date/time, flag needs_time so WhatsApp asks the customer for one.\n// Also builds the exact reply texts used by the WhatsApp nodes below.\nconst win = $input.first().json;\nconst busy = $('Calendar \\u2014 Check Availability').all().map(i => i.json);\nfunction toMs(v) { const t = new Date(v).getTime(); return isNaN(t) ? null : t; }\nfunction overlaps(s, e) {\n  return busy.some(b => {\n    const bs = toMs(b.start && (b.start.dateTime || b.start.date));\n    const be = toMs(b.end && (b.end.dateTime || b.end.date));\n    return bs !== null && be !== null && s < be && e > bs;\n  });\n}\nconst biz = $('CONFIG \\u2014 Business').first().json.business_name;\nlet slot_free = false, alternatives = [], confirm_text = '', reply_text = '';\nif (win.needs_time) {\n  reply_text = 'Thanks for reaching out to ' + biz + '! 😊 To book your appointment, please reply with your preferred date and time (e.g. \"tomorrow 4pm\").';\n} else {\n  const pref = toMs(win.preferred);\n  slot_free = pref !== null && !overlaps(pref, pref + 3600000);\n  if (slot_free) {\n    confirm_text = '\\u2705 Appointment confirmed at ' + biz + '!\\n\\n📅 ' + win.preferred\n      + (win.customer_name ? '\\n👤 ' + win.customer_name : '')\n      + '\\n\\nReply CANCEL to cancel or RESCHEDULE to move it. See you soon! 🙏';\n  } else {\n    for (const h of [-2, -1, 1, 2, 3, 4, -3, 5]) {\n      const s = pref + h * 3600000;\n      if (!overlaps(s, s + 3600000)) {\n        alternatives.push(new Date(s).toISOString());\n        if (alternatives.length >= 3) break;\n      }\n    }\n    reply_text = 'Sorry, ' + win.preferred + ' is already booked. 😕\\n\\nHere are 3 alternatives:\\n'\n      + alternatives.map(a => '\\u2022 ' + a).join('\\n')\n      + '\\n\\nReply with the one you prefer, or suggest another time.';\n  }\n}\nreturn [{ json: Object.assign({}, win, { slot_free, alternatives, confirm_text, reply_text }) }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ace229b1-de71-4a07-9992-f6c11c2aba1b",
+      "name": "Code — Check Slot & Find Alternatives",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-slot",
+              "leftValue": "={{ $json.slot_free }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "5f3abced-d1fe-467e-b136-11d49e6f9e26",
+      "name": "IF — Slot Free?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.calendar_id }}"
+        },
+        "start": "={{ $json.preferred }}",
+        "end": "={{ $json.event_end }}",
+        "additionalFields": {
+          "summary": "=Appointment — {{ $json.customer_name || 'WhatsApp Customer' }}",
+          "description": "=Booked via WhatsApp.\nPhone: {{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}\nNotes: {{ $json.notes }}",
+          "location": "={{ $('CONFIG — Business').first().json.business_name }}"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "32959ec6-d098-425e-9594-e9bc390ca0e9",
+      "name": "Calendar — Create Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "From",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "book",
+            "Status": "BOOKED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6a64a78e-b6c0-42e2-89a0-fd4163748a09",
+      "name": "Update Sheet — BOOKED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "={{ $('Code \\u2014 Check Slot & Find Alternatives').first().json.confirm_text }}",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "4f1f5b43-ad26-4fe5-afd3-996d8a3ce616",
+      "name": "WhatsApp — Send Confirmation",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "={{ $json.reply_text }}",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "8d87c5be-3826-416c-b0e5-064cfde71194",
+      "name": "WhatsApp — Suggest Alternatives",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "From",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "book",
+            "Status": "PENDING_SLOT"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "310d598f-22a3-4818-a833-7ffb4955c359",
+      "name": "Update Sheet — PENDING_SLOT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.calendar_id }}"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $now.toISO() }}",
+          "timeMax": "={{ $now.plus({ days: 30 }).toISO() }}"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "3edd4b24-82f9-4c22-a35c-2518531398e2",
+      "name": "Calendar — Find Upcoming Events",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the customer's upcoming event: first try the sender's phone number in the\n// event description (written there by Calendar — Create Event), then fall back to\n// the customer name in the event summary.\nconst from = $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from;\nconst name = (($('AI Agent \\u2014 Understand Booking Intent').first().json.output || {}).customer_name || '').toLowerCase();\nconst events = $('Calendar \\u2014 Find Upcoming Events').all().map(i => i.json);\nconst hit = events.find(e => (e.description || '').includes(from))\n  || (name ? events.find(e => (e.summary || '').toLowerCase().includes(name)) : null);\nreturn [{ json: {\n  event_id: hit ? hit.id : '',\n  event_summary: hit ? (hit.summary || '') : '',\n  event_start: hit && hit.start ? (hit.start.dateTime || hit.start.date || '') : '',\n  found: !!hit,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ccc5060c-9847-4bed-98d0-0f626a431e3d",
+      "name": "Code — Match Event to Cancel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-found",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "7295bafb-1981-47f1-9f6c-58a7aefc5c5c",
+      "name": "IF — Event Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business').first().json.calendar_id }}"
+        },
+        "eventId": "={{ $json.event_id }}"
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "1da7fb09-6db6-4d04-b88d-17c07b194275",
+      "name": "Calendar — Delete Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "From",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "cancel",
+            "Status": "CANCELLED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "9e4685c9-014d-406f-b162-059396d101d0",
+      "name": "Update Sheet — CANCELLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "=\\u274c Done \\u2014 your appointment at {{ $('CONFIG \\u2014 Business').first().json.business_name }} is cancelled. Reply BOOK anytime to schedule a new one. 🙏",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "4a8155fe-f7b6-4772-a3e8-8f5dc9810b2d",
+      "name": "WhatsApp — Confirm Cancellation",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "=I couldn't find an upcoming appointment for this number. 😕 Please reply with the date/time of the appointment you'd like to cancel (e.g. \"cancel my appointment tomorrow 4pm\").",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "1ef6f299-56da-48da-aeff-dd21afd5ff03",
+      "name": "WhatsApp — Ask to Clarify Cancel",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "=No problem! 🔁 Your current appointment stays as-is for now. Please reply with your NEW preferred date and time, and I'll move it for you.",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "5777327e-0f1d-4606-9aea-f5597299cf3c",
+      "name": "WhatsApp — Ask for New Time",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "From",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "reschedule",
+            "Status": "RESCHEDULE_REQUESTED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f7377e5f-ebde-4349-b228-9e5bb2df7bbf",
+      "name": "Update Sheet — RESCHEDULE_REQUESTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "=Hello from {{ $('CONFIG \\u2014 Business').first().json.business_name }}! 👋\\n\\nI can help you:\\n\\u2022 BOOK \\u2014 schedule a new appointment\\n\\u2022 CANCEL \\u2014 cancel an existing one\\n\\u2022 RESCHEDULE \\u2014 move an existing one\\n\\nJust reply with what you'd like to do!",
+        "toPhoneNumber": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "91c41b1b-da7d-4f7d-907c-125324679301",
+      "name": "WhatsApp — Fallback Reply",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Bookings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "From",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "From": "={{ $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0].from }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "= {{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+            "Status": "HANDLED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0097f486-825c-4ac9-bb51-fcb369952af9",
+      "name": "Update Sheet — HANDLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "1e3a4ad7-14e7-403e-84ed-05fce5f326e9",
+      "name": "Merge — Booking Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2700,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram digest line for this booking-flow run.\nfunction ran(name) { try { return $(name).all().length > 0; } catch (e) { return false; } }\nconst biz = $('CONFIG \\u2014 Business').first().json.business_name;\nconst trigger = $('New WhatsApp Message').first().json.entry[0].changes[0].value.messages[0];\nconst intent = (($('AI Agent \\u2014 Understand Booking Intent').first().json.output) || {}).intent || 'unknown';\nconst status = ran('Update Sheet \\u2014 BOOKED') ? 'BOOKED \\u2705'\n  : ran('Update Sheet \\u2014 PENDING_SLOT') ? 'PENDING_SLOT \\u23f3 (alternatives suggested)'\n  : ran('Update Sheet \\u2014 CANCELLED') ? 'CANCELLED \\u274c'\n  : ran('Update Sheet \\u2014 RESCHEDULE_REQUESTED') ? 'RESCHEDULE_REQUESTED 🔁'\n  : 'HANDLED 💬';\nconst lines = [\n  '📅 *Booking Activity \\u2014 ' + biz + '*', '',\n  '👤 ' + trigger.from,\n  '💬 \"' + String(trigger.text.body).slice(0, 140) + '\"',\n  '🧭 Intent: ' + intent,\n  '📌 Status: ' + status,\n];\nreturn [{ json: { digest: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "fb4bcd9c-e123-40a8-b98f-3a7888796d8e",
+      "name": "Code — Build Booking Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2940,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "506c6914-fdca-4a72-9b95-d5b1fa45f825",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5236d3d6-0138-41ac-a7e2-89cd3d393a45",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3180,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "4c4c5c5f-06f3-48d4-b6eb-00ab8268e995",
+      "name": "Telegram — Booking Activity Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3420,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 10,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "0f776036-745b-47a1-951b-d3dfdbef7d17",
+      "name": "Weekly Recall — Mondays 10AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c4add15c-1d1d-4eb7-8400-2a92c848309c",
+              "name": "recall_days",
+              "type": "string",
+              "value": "60"
+            },
+            {
+              "id": "1665548c-32a7-432b-97bb-0462e6eb9345",
+              "name": "customers_sheet",
+              "type": "string",
+              "value": "Customers"
+            },
+            {
+              "id": "3a8c1574-62d2-4c01-a20d-68f2a9cc9ee8",
+              "name": "reengagement_message",
+              "type": "string",
+              "value": "Hi {name}! 👋 It's been a while since your last visit to PASTE_YOUR_BUSINESS_NAME — we miss you! 🎁 Enjoy PASTE_YOUR_OFFER (valid this week only). Reply BOOK to grab your slot."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3419f4d-c592-4f94-a4a2-119e2aebb234",
+      "name": "CONFIG — Recall",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Customers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "3eba8d00-e49b-449d-8f1b-f86a7f3c196d",
+      "name": "Read Customers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep customers whose Last Visit is older than recall_days and who have a phone number.\n// Phone_raw keeps the original sheet value for the Sheets update matcher; Phone is\n// the digit-only version used for sending the WhatsApp message.\nconst days = parseInt($('CONFIG \\u2014 Recall').first().json.recall_days || '60', 10);\nconst cutoff = Date.now() - days * 24 * 3600 * 1000;\nconst rows = $('Read Customers').all().map(i => i.json);\nconst inactive = rows.filter(r => {\n  const rawPhone = r.Phone || r.phone || '';\n  const lv = new Date(r['Last Visit'] || r.last_visit || '').getTime();\n  return String(rawPhone).trim() !== '' && !isNaN(lv) && lv < cutoff;\n});\nreturn inactive.map(r => ({ json: {\n  Name: r.Name || r.name || '',\n  Phone: String(r.Phone || r.phone || '').replace(/\\D/g, ''),\n  Phone_raw: r.Phone || r.phone || '',\n  'Last Visit': r['Last Visit'] || r.last_visit || '',\n} }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "334cecdd-46e2-4bef-86fd-30ff93d65b67",
+      "name": "Code — Filter Inactive 60+ Days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "resource": "message",
+        "textBody": "={{ $('CONFIG \\u2014 Recall').first().json.reengagement_message.replace('{name}', $json.Name || 'there') }}",
+        "toPhoneNumber": "={{ $json.Phone }}"
+      },
+      "credentials": {
+        "whatsAppApi": {
+          "id": "",
+          "name": "WhatsApp API"
+        }
+      },
+      "id": "13106bbb-6c18-4f9a-81eb-bc57a61db865",
+      "name": "WhatsApp — Send Re-engagement",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Customers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $json.Phone_raw }}",
+            "Status": "RECALLED",
+            "Last Contact": "={{ $now.toFormat('yyyy-MM-dd') }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5cf2dd54-3231-4111-993f-b69e209e0c59",
+      "name": "Update Sheet — RECALLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Count the recall run for the Telegram digest.\nconst sent = $('WhatsApp \\u2014 Send Re-engagement').all().length;\nconst names = $('Code \\u2014 Filter Inactive 60+ Days').all().map(i => i.json.Name).filter(Boolean).slice(0, 10);\nconst lines = [\n  '📣 *Weekly Recall Digest \\u2014 ' + new Date().toISOString().slice(0, 10) + '*', '',\n  '💬 ' + sent + ' re-engagement WhatsApp messages sent',\n];\nif (names.length) { lines.push('', '👥 ' + names.join(', ')); }\nlines.push('', 'Sheet status \\u2192 RECALLED. Watch for replies in Flow A!');\nreturn [{ json: { digest: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ed0eaf43-956f-4cf2-addf-35235182d224",
+      "name": "Code — Build Recall Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d9bfd70f-a93b-4f1f-9538-b468e8fb75a2",
+      "name": "Telegram — Send Recall Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        1500
+      ]
+    }
+  ],
+  "connections": {
+    "New WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Business": {
+      "main": [
+        [
+          {
+            "node": "Log Message — RECEIVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Message — RECEIVED": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Understand Booking Intent": {
+      "main": [
+        [
+          {
+            "node": "Switch — Route by Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Route by Intent": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Availability Window",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calendar — Find Upcoming Events",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp — Ask for New Time",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp — Fallback Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Availability Window": {
+      "main": [
+        [
+          {
+            "node": "Calendar — Check Availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar — Check Availability": {
+      "main": [
+        [
+          {
+            "node": "Code — Check Slot & Find Alternatives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Check Slot & Find Alternatives": {
+      "main": [
+        [
+          {
+            "node": "IF — Slot Free?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Slot Free?": {
+      "main": [
+        [
+          {
+            "node": "Calendar — Create Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp — Suggest Alternatives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar — Create Event": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — BOOKED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — BOOKED": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp — Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Send Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Suggest Alternatives": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — PENDING_SLOT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — PENDING_SLOT": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Calendar — Find Upcoming Events": {
+      "main": [
+        [
+          {
+            "node": "Code — Match Event to Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Match Event to Cancel": {
+      "main": [
+        [
+          {
+            "node": "IF — Event Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Event Found?": {
+      "main": [
+        [
+          {
+            "node": "Calendar — Delete Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp — Ask to Clarify Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar — Delete Event": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — CANCELLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — CANCELLED": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp — Confirm Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Confirm Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Ask to Clarify Cancel": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — HANDLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Ask for New Time": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — RESCHEDULE_REQUESTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — RESCHEDULE_REQUESTED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Fallback Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — HANDLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — HANDLED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge — Booking Branches": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Booking Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Booking Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Booking Activity Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Intent": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Intent": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Recall — Mondays 10AM": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Recall",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Recall": {
+      "main": [
+        [
+          {
+            "node": "Read Customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Customers": {
+      "main": [
+        [
+          {
+            "node": "Code — Filter Inactive 60+ Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Filter Inactive 60+ Days": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp — Send Re-engagement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp — Send Re-engagement": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — RECALLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — RECALLED": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Recall Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Recall Digest": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Recall Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

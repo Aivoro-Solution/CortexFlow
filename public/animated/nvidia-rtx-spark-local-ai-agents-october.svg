@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a local AI workstation chip with data streams">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.12"/>
+    </pattern>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF4D00" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FF4D00" stop-opacity="1"/>
+      <stop offset="1" stop-color="#FF4D00" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- desk baseline -->
+  <line x1="60" y1="368" x2="740" y2="368" stroke="#111111" stroke-width="3"/>
+
+  <!-- workstation tower -->
+  <g>
+    <rect x="560" y="208" width="110" height="160" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="570" y="218" width="90" height="8" fill="#111111"/>
+    <rect x="570" y="232" width="60" height="8" fill="#111111" opacity="0.35"/>
+    <rect x="570" y="248" width="90" height="40" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="615" cy="268" r="12" fill="#FF4D00" opacity="0.85">
+      <animate attributeName="opacity" values="0.85;0.35;0.85" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="570" y="300" width="90" height="8" fill="#111111" opacity="0.35"/>
+    <rect x="570" y="314" width="90" height="8" fill="#111111" opacity="0.2"/>
+  </g>
+
+  <!-- central superchip -->
+  <g>
+    <rect x="300" y="150" width="200" height="200" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <!-- chip pins -->
+    <g stroke="#111111" stroke-width="3">
+      <line x1="320" y1="150" x2="320" y2="132"/><line x1="350" y1="150" x2="350" y2="132"/>
+      <line x1="380" y1="150" x2="380" y2="132"/><line x1="410" y1="150" x2="410" y2="132"/>
+      <line x1="440" y1="150" x2="440" y2="132"/><line x1="470" y1="150" x2="470" y2="132"/>
+      <line x1="320" y1="350" x2="320" y2="368"/><line x1="350" y1="350" x2="350" y2="368"/>
+      <line x1="380" y1="350" x2="380" y2="368"/><line x1="410" y1="350" x2="410" y2="368"/>
+      <line x1="440" y1="350" x2="440" y2="368"/><line x1="470" y1="350" x2="470" y2="368"/>
+    </g>
+    <!-- inner die -->
+    <rect x="345" y="195" width="110" height="110" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="365" y="215" width="70" height="70" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.55;0.9" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <!-- slow rotating orbit ring around die -->
+    <g opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 250" to="360 400 250" dur="40s" repeatCount="indefinite"/>
+      <circle cx="400" cy="250" r="95" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="10 14"/>
+      <circle cx="400" cy="155" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+      <circle cx="495" cy="250" r="7" fill="#FF4D00"/>
+    </g>
+  </g>
+
+  <!-- memory stack module (left) -->
+  <g>
+    <rect x="140" y="230" width="90" height="138" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g fill="#111111" opacity="0.7">
+      <rect x="152" y="242" width="66" height="10"/>
+      <rect x="152" y="260" width="66" height="10"/>
+      <rect x="152" y="278" width="66" height="10"/>
+      <rect x="152" y="296" width="66" height="10"/>
+    </g>
+    <rect x="152" y="314" width="66" height="10" fill="#FF4D00" opacity="0.85">
+      <animate attributeName="opacity" values="0.85;0.3;0.85" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="152" y="332" width="66" height="10" fill="#111111" opacity="0.25"/>
+  </g>
+
+  <!-- circuit traces from memory to chip -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <path d="M230 260 H265 V250 H300"/>
+    <path d="M230 300 H255 V320 H300"/>
+  </g>
+  <!-- orange packet: memory -> chip -->
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="6s" repeatCount="indefinite" path="M230 260 H265 V250 H300"/>
+  </circle>
+  <circle r="7" fill="#FF4D00" opacity="0.85">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M230 300 H255 V320 H300"/>
+  </circle>
+
+  <!-- circuit traces from chip to tower -->
+  <g fill="none" stroke="#111111" stroke-width="2.5">
+    <path d="M500 250 H530 V288 H560"/>
+    <path d="M500 300 H540 V240 H560"/>
+  </g>
+  <!-- orange packets: chip -> tower -->
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="7s" repeatCount="indefinite" path="M500 250 H530 V288 H560"/>
+  </circle>
+  <circle r="7" fill="#FF4D00" opacity="0.85">
+    <animateMotion dur="11s" repeatCount="indefinite" path="M500 300 H540 V240 H560"/>
+  </circle>
+
+  <!-- rising data columns (ambient, slow) -->
+  <g fill="#111111" opacity="0.25">
+    <rect x="90" y="120" width="6" height="40">
+      <animate attributeName="y" values="140;90;140" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="40;70;40" dur="10s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="700" y="140" width="6" height="55">
+      <animate attributeName="y" values="160;110;160" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="55;85;55" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="725" y="100" width="6" height="30" fill="#FF4D00" opacity="0.6">
+      <animate attributeName="y" values="120;70;120" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="30;60;30" dur="8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- hard offset shadow accents -->
+  <rect x="306" y="356" width="200" height="12" fill="#111111" opacity="0.15"/>
+  <rect x="566" y="374" width="110" height="10" fill="#111111" opacity="0.15"/>
+</svg>

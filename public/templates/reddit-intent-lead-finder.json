@@ -1,0 +1,889 @@
+{
+  "name": "Reddit Intent Lead Finder",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 REDDIT INTENT LEAD FINDER\n**What it does:** Scans Reddit daily for high-intent buying conversations → filters by engagement + intent keywords → AI-scores each post 0–100 against your business → sends a Telegram digest of top leads with reply angles.\n\n**You'll need:**\n- n8n instance (self-hosted or cloud)\n- OpenAI API key for gpt-4o-mini (platform.openai.com)\n- A Google Sheet (tab for leads)\n- A Telegram bot (token from @BotFather) + your chat ID (@userinfobot)\n\n**Status flow in Sheets:** `NEW` → `SCORED` → `ALERTED`",
+        "height": 220,
+        "width": 5200,
+        "color": 5
+      },
+      "id": "8f98d69f-f076-44d1-9586-48cb950f5c85",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Scan Reddit daily\nDaily schedule trigger → CONFIG (subreddits, keywords) → expand subreddits × keywords → Reddit public search API (search.json, no key needed).",
+        "height": 420,
+        "width": 1260,
+        "color": 4
+      },
+      "id": "ba88e614-a534-42d8-9f89-f39fc4430809",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Filter + dedupe + log NEW\nFlatten results → keep posts with MIN_UPVOTES / MIN_COMMENTS and intent keywords in title or selftext → drop URLs already in the sheet → append rows with status `NEW`.",
+        "height": 420,
+        "width": 1280,
+        "color": 4
+      },
+      "id": "9e43cf57-ca46-494e-b095-4fd7971878bf",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI intent scoring\nAI Agent judges each post against your BUSINESS_DESCRIPTION with a Structured Output Parser (intent_score 0–100, category, suggested_angle, reasoning) → sheet flips to `SCORED`.",
+        "height": 420,
+        "width": 780,
+        "color": 4
+      },
+      "id": "ee84fcb2-0a85-4372-9fa2-fff30b18112e",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Intent gate + Telegram digest\nIF intent_score ≥ MIN_INTENT_SCORE AND category ≠ IGNORE → build digest of top leads with reply angles → Telegram → sheet flips to `ALERTED`.",
+        "height": 420,
+        "width": 1840,
+        "color": 4
+      },
+      "id": "7087ca46-2450-497b-a300-8b93346351a8",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "c2a49300-eb89-4796-a8f1-35f7609c9eb2",
+      "name": "Daily 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f69c718f-7ad6-45bf-92ce-757619384718",
+              "name": "subreddits",
+              "type": "string",
+              "value": "smallbusiness,Entrepreneur,marketing"
+            },
+            {
+              "id": "f6f34825-ade1-4fc8-ac60-1c8470fa4689",
+              "name": "search_keywords",
+              "type": "string",
+              "value": "looking for a tool,software for,automate,alternative to"
+            },
+            {
+              "id": "fb1045e4-a895-4565-b7e5-a2fb08119ad8",
+              "name": "intent_keywords",
+              "type": "string",
+              "value": "looking for,recommend,anyone know,best tool for,alternative to,how do you"
+            },
+            {
+              "id": "a5a0225b-efaa-436a-9916-b702c854f0ea",
+              "name": "min_upvotes",
+              "type": "string",
+              "value": "10"
+            },
+            {
+              "id": "3ab1ac20-0268-478c-b068-0aeceac815b5",
+              "name": "min_comments",
+              "type": "string",
+              "value": "3"
+            },
+            {
+              "id": "6c944cc4-203d-4d10-8ad3-3f92d0f2e417",
+              "name": "min_intent_score",
+              "type": "string",
+              "value": "70"
+            },
+            {
+              "id": "5b7b9a2f-1aad-4d75-8d41-aa9670c3d535",
+              "name": "sheet_doc_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SHEET_ID"
+            },
+            {
+              "id": "6617ec45-ecee-4af1-996f-7487016ff5ec",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Leads"
+            },
+            {
+              "id": "0fe7e0f8-6382-4497-8f49-e1a297085971",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "8882f54d-aa78-4651-9efc-5a2243829fae",
+              "name": "business_description",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_DESCRIPTION (what you sell, who it is for, key differentiators — the AI uses this to judge lead fit)"
+            },
+            {
+              "id": "eab8dd0d-7569-4b94-8d0e-d9c1cc6d776d",
+              "name": "days_back",
+              "type": "string",
+              "value": "7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74dec8d4-4f93-46a6-9e6e-78111c3cf5bb",
+      "name": "CONFIG — Reddit Intent Finder",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Expand CONFIG subreddits x keywords into one request item per pair\nconst cfg = $('CONFIG \\u2014 Reddit Intent Finder').first().json;\nconst subs = (cfg.subreddits || '').split(',').map(s => s.trim().replace(/^r\\//i, '')).filter(Boolean);\nconst kws = (cfg.search_keywords || '').split(',').map(k => k.trim()).filter(Boolean);\nconst days = parseInt(cfg.days_back || '7', 10);\nconst t = days <= 1 ? 'day' : days <= 7 ? 'week' : days <= 30 ? 'month' : 'year';\nconst pairs = [];\nfor (const sub of subs) for (const kw of kws) pairs.push({ json: { subreddit: sub, keyword: kw, t_window: t } });\nif (!pairs.length) throw new Error('CONFIG \\u2014 Reddit Intent Finder: set subreddits and search_keywords (comma-separated).');\nreturn pairs;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "523abb5b-4f52-4329-ba89-85011926cc6f",
+      "name": "Expand Subreddits × Keywords",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://www.reddit.com/r/{{ $json.subreddit }}/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.keyword }}"
+            },
+            {
+              "name": "restrict_sr",
+              "value": "1"
+            },
+            {
+              "name": "sort",
+              "value": "new"
+            },
+            {
+              "name": "t",
+              "value": "={{ $json.t_window }}"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-cortexflow-template/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5c783e07-6c8e-4831-a4c7-f94233448017",
+      "name": "Fetch Reddit Posts — Search API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten Reddit search results; keep posts with engagement + intent signals\nconst cfg = $('CONFIG \\u2014 Reddit Intent Finder').first().json;\nconst minUp = parseInt(cfg.min_upvotes || '10', 10);\nconst minCom = parseInt(cfg.min_comments || '3', 10);\nconst intentKws = (cfg.intent_keywords || '').split(',').map(k => k.trim().toLowerCase()).filter(Boolean);\nconst out = [];\nfor (const item of $input.all()) {\n  const children = (((item.json || {}).data || {}).children) || [];\n  for (const c of children) {\n    const p = c.data || {};\n    const title = p.title || '';\n    const selftext = p.selftext || '';\n    const text = (title + '\\n' + selftext).toLowerCase();\n    const hasIntent = intentKws.length === 0 || intentKws.some(k => text.includes(k));\n    const upvotes = Number(p.ups != null ? p.ups : 0);\n    const comments = Number(p.num_comments != null ? p.num_comments : 0);\n    if (!hasIntent || upvotes < minUp || comments < minCom) continue;\n    out.push({ json: {\n      date_found: new Date().toISOString().slice(0, 10),\n      subreddit: p.subreddit || '',\n      title: title,\n      post_url: 'https://www.reddit.com' + (p.permalink || ''),\n      author: p.author || '[deleted]',\n      upvotes: upvotes,\n      comments: comments,\n      selftext: selftext.slice(0, 2000),\n      status: 'NEW',\n    }});\n  }\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "a97d2e67-5b82-470c-97ba-3e1a85996b63",
+      "name": "Flatten + Filter Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dc8d650c-615a-4fae-99d0-01716db70682",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "={{ $('CONFIG \\u2014 Reddit Intent Finder').first().json.sheet_doc_id }}"
+            },
+            {
+              "id": "0a31568e-3d0e-4a5e-b6b0-2df2fcebda7e",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "={{ $('CONFIG \\u2014 Reddit Intent Finder').first().json.sheet_name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "70e801d9-1ea5-4bc8-ac20-89d7fe9022ab",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5f2c5811-fccb-46d9-966e-4db2510ad758",
+      "name": "Read Logged Post URLs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop posts whose URL is already logged in the sheet\nconst seen = new Set(\n  $('Read Logged Post URLs').all().map(i => (i.json['Post URL'] || i.json.post_url || '').trim()).filter(Boolean)\n);\nconst fresh = $('Flatten + Filter Posts').all()\n  .map(i => i.json)\n  .filter(p => p.post_url && !seen.has(p.post_url.trim()));\nreturn fresh.map(p => ({ json: p }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "88341956-af14-4406-b32f-e78d5f659a61",
+      "name": "Filter New Posts Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.date_found }}",
+            "Subreddit": "={{ $json.subreddit }}",
+            "Title": "={{ $json.title }}",
+            "Post URL": "={{ $json.post_url }}",
+            "Author": "={{ $json.author }}",
+            "Upvotes": "={{ $json.upvotes }}",
+            "Comments": "={{ $json.comments }}",
+            "Status": "={{ $json.status }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "bf8ab6b9-249e-4554-8b98-5f094e598a90",
+      "name": "Log Leads — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a lead-qualification analyst. Score how likely this Reddit post represents a buying opportunity for the business below.\n\nOUR BUSINESS:\n{{ $('CONFIG \\u2014 Reddit Intent Finder').first().json.business_description }}\n\nScore 0-100 strictly: 90+ = someone actively shopping or comparing solutions; 60-89 = a real problem we solve; 30-59 = adjacent interest, weak signal; 0-29 = irrelevant, jokes, or memes. Category: BUYING_INTENT (asking for recommendations / alternatives / 'best tool for'), PROBLEM_MATCH (venting about a pain we solve), BRAND_MENTION (mentions our business or a competitor), IGNORE (no commercial relevance). suggested_angle: one concrete, genuinely helpful reply angle (not a sales pitch). Output ONLY via the structured output parser."
+        },
+        "text": "=Subreddit: r/{{ $json.subreddit }}\nTitle: {{ $json.title }}\nUpvotes: {{ $json.upvotes }} | Comments: {{ $json.comments }}\nAuthor: u/{{ $json.author }}\nPost:\n{{ $json.selftext }}\nLink: {{ $json.post_url }}"
+      },
+      "id": "b0119177-52df-41fe-8ed3-6435a9376062",
+      "name": "AI Agent — Score Lead Intent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "f3f73204-09cc-4f0c-b4f6-021b8c3512a0",
+      "name": "OpenAI Chat Model — Intent Scoring",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2340,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent_score\": 0,\n  \"category\": \"BUYING_INTENT / PROBLEM_MATCH / BRAND_MENTION / IGNORE\",\n  \"suggested_angle\": \"one-sentence, genuinely helpful reply angle (not a sales pitch)\",\n  \"reasoning\": \"one or two sentences on why this post scored as it did\"\n}"
+      },
+      "id": "6112ea0f-9a31-4334-bb7a-8c06eef5af09",
+      "name": "Structured Output Parser — Intent Score",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2600,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Post URL"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Post URL": "={{ $json.post_url }}",
+            "Intent Score": "={{ $json.output.intent_score }}",
+            "Category": "={{ $json.output.category }}",
+            "Suggested Angle": "={{ $json.output.suggested_angle }}",
+            "Reasoning": "={{ $json.output.reasoning }}",
+            "Status": "SCORED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "73eec517-a74d-40c6-abe9-7d93546fe17d",
+      "name": "Update Sheet — Status SCORED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-score",
+              "leftValue": "={{ $json.output.intent_score }}",
+              "rightValue": "={{ $('CONFIG \\u2014 Reddit Intent Finder').first().json.min_intent_score }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            },
+            {
+              "id": "if-category",
+              "leftValue": "={{ $json.output.category }}",
+              "rightValue": "IGNORE",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals",
+                "name": "filter.operator.string.notEquals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "0facbf30-3fdf-4d3c-b3f7-0f7d9d7f0663",
+      "name": "IF — Intent ≥ Threshold & Not Ignored",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "9f1e6129-78f6-4542-b2de-250e4c649a17",
+      "name": "Merge — Collect Alert Leads",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram digest of today's top-scoring leads\nconst cfg = $('CONFIG \\u2014 Reddit Intent Finder').first().json;\nconst threshold = parseInt(cfg.min_intent_score || '70', 10);\nconst items = $input.all().map(i => i.json);\nconst leads = items\n  .filter(j => j.output && Number(j.output.intent_score) >= threshold && j.output.category !== 'IGNORE')\n  .sort((a, b) => Number(b.output.intent_score) - Number(a.output.intent_score));\nconst date = new Date().toISOString().slice(0, 10);\nlet lines = ['\\U0001F3AF *Reddit Lead Digest \\u2014 ' + date + '*', '', '\\U0001F4CB ' + items.length + ' posts scored'];\nif (leads.length) {\n  lines.push('\\u2B50 ' + leads.length + ' high-intent leads (score \\u2265 ' + threshold + '):', '');\n  for (const l of leads.slice(0, 10)) {\n    lines.push('\\u2022 *' + l.output.intent_score + '* \\u2014 [' + (l.title || '').slice(0, 80) + '](' + l.post_url + ')');\n    lines.push('  r/' + l.subreddit + ' \\u2022 ' + l.output.category + ' \\u2022 _' + (l.output.suggested_angle || '') + '_');\n  }\n} else {\n  lines.push('No high-intent leads today. The sheet still logged everything new.');\n}\nreturn [{ json: { digest: lines.join('\\n'), total: items.length, lead_count: leads.length,\n  alerted_urls: leads.map(l => l.post_url) } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ca675ff6-bd4f-4209-9da8-bd47a1b92141",
+      "name": "Build Lead Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d9e4f57-c2d4-4572-a5e8-cafdd6a67b0b",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "={{ $('CONFIG \\u2014 Reddit Intent Finder').first().json.telegram_chat_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9d17f613-434b-44d8-946c-92b8d2e7c050",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "0403c6cd-6fde-42f1-9a18-63063b13f22e",
+      "name": "Telegram — Send Lead Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Expand the digest's lead URLs back into items so the sheet can flip to ALERTED\nconst urls = $input.first().json.alerted_urls || [];\nreturn urls.map(u => ({ json: { post_url: u } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "450d32eb-a1b1-42e5-aa5e-553974cc00a6",
+      "name": "Expand Alerted URLs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Post URL"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Post URL": "={{ $json.post_url }}",
+            "Status": "ALERTED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6168aff1-20e5-43c9-8f89-8c0dac38981c",
+      "name": "Update Sheet — Status ALERTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4420,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 9AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Reddit Intent Finder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Reddit Intent Finder": {
+      "main": [
+        [
+          {
+            "node": "Expand Subreddits × Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Subreddits × Keywords": {
+      "main": [
+        [
+          {
+            "node": "Fetch Reddit Posts — Search API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Reddit Posts — Search API": {
+      "main": [
+        [
+          {
+            "node": "Flatten + Filter Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten + Filter Posts": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Logged Post URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Logged Post URLs": {
+      "main": [
+        [
+          {
+            "node": "Filter New Posts Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Posts Only": {
+      "main": [
+        [
+          {
+            "node": "Log Leads — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Leads — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Score Lead Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Score Lead Intent": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SCORED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status SCORED": {
+      "main": [
+        [
+          {
+            "node": "IF — Intent ≥ Threshold & Not Ignored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Intent ≥ Threshold & Not Ignored": {
+      "main": [
+        [
+          {
+            "node": "Merge — Collect Alert Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge — Collect Alert Leads",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Collect Alert Leads": {
+      "main": [
+        [
+          {
+            "node": "Build Lead Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lead Digest": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Lead Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send Lead Digest": {
+      "main": [
+        [
+          {
+            "node": "Expand Alerted URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Alerted URLs": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status ALERTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Intent Scoring": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Score Lead Intent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Intent Score": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Score Lead Intent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

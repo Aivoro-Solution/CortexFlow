@@ -1,0 +1,453 @@
+{
+ "active": false,
+ "connections": {
+  "Daily Check": {
+   "main": [
+    [
+     {
+      "node": "CONFIG — Watchdog",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "CONFIG — Watchdog": {
+   "main": [
+    [
+     {
+      "node": "Read Metric History",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Read Metric History": {
+   "main": [
+    [
+     {
+      "node": "Detect Anomalies",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Detect Anomalies": {
+   "main": [
+    [
+     {
+      "node": "Any Anomalies?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Any Anomalies?": {
+   "main": [
+    [
+     {
+      "node": "Expand Anomalies",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    []
+   ]
+  },
+  "Expand Anomalies": {
+   "main": [
+    [
+     {
+      "node": "AI Agent — Explain Anomaly",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "AI Agent — Explain Anomaly": {
+   "main": [
+    [
+     {
+      "node": "Format Alert",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Format Alert": {
+   "main": [
+    [
+     {
+      "node": "Telegram — Anomaly Alert",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Telegram — Anomaly Alert": {
+   "main": [
+    [
+     {
+      "node": "Log Anomaly",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "OpenAI Chat Model — Explainer": {
+   "ai_languageModel": [
+    [
+     {
+      "node": "AI Agent — Explain Anomaly",
+      "type": "ai_languageModel",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Structured Output Parser — Explanation": {
+   "ai_outputParser": [
+    [
+     {
+      "node": "AI Agent — Explain Anomaly",
+      "type": "ai_outputParser",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "meta": {
+  "instanceId": "",
+  "templateCredsSetupCompleted": false
+ },
+ "name": "KPI Anomaly Watchdog",
+ "nodes": [
+  {
+   "id": "aa15612b-aa4a-4454-bd43-6ee8ac9c28c6",
+   "name": "Sticky Note",
+   "parameters": {
+    "content": "## KPI Anomaly Watchdog\n\nReads daily KPI values from the `metrics_history` sheet (columns: `date`, `metric`, `value`), scores today's value against a trailing 14-day baseline with a z-score, and asks an AI agent to explain anything unusual in plain English.\n\n**Thresholds live in CONFIG — Watchdog.** Start strict (z_warn 2.0 / z_crit 3.0) and loosen only after a week of clean runs — alert fatigue kills monitoring faster than missed anomalies.\n\nGuards: needs >= 7 baseline points, ignores flat baselines (std = 0), and skips moves smaller than 10% relative change so tiny wiggles on big numbers don't page you.",
+    "height": 560,
+    "width": 420,
+    "color": 4
+   },
+   "position": [
+    -20,
+    180
+   ],
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1
+  },
+  {
+   "id": "2a40be17-2757-4d94-8fe5-91d47059613a",
+   "name": "Daily Check",
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "hours",
+       "hoursInterval": 24
+      }
+     ]
+    }
+   },
+   "position": [
+    240,
+    300
+   ],
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "fe8d91a3-a933-4cf6-9e59-068de023c5c4",
+   "name": "CONFIG — Watchdog",
+   "parameters": {
+    "assignments": {
+     "assignments": [
+      {
+       "id": "c-1",
+       "name": "metrics",
+       "type": "array",
+       "value": "[\"daily_revenue\", \"new_signups\", \"churn_rate_pct\"]"
+      },
+      {
+       "id": "c-2",
+       "name": "z_warn",
+       "type": "number",
+       "value": 2
+      },
+      {
+       "id": "c-3",
+       "name": "z_crit",
+       "type": "number",
+       "value": 3
+      },
+      {
+       "id": "c-4",
+       "name": "min_samples",
+       "type": "number",
+       "value": 7
+      },
+      {
+       "id": "c-5",
+       "name": "min_rel_change_pct",
+       "type": "number",
+       "value": 10
+      },
+      {
+       "id": "c-6",
+       "name": "baseline_days",
+       "type": "number",
+       "value": 14
+      },
+      {
+       "id": "c-7",
+       "name": "telegram_chat_id",
+       "type": "string",
+       "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+      }
+     ]
+    },
+    "includeOtherFields": false,
+    "options": {}
+   },
+   "position": [
+    470,
+    300
+   ],
+   "type": "n8n-nodes-base.set",
+   "typeVersion": 3.4
+  },
+  {
+   "id": "418e0496-fa37-4a87-bff1-47f3a6e1be9c",
+   "name": "Read Metric History",
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "cachedResultName": "KPI Watchdog",
+     "mode": "list",
+     "value": ""
+    },
+    "operation": "read",
+    "options": {},
+    "resource": "sheetWithinDocument",
+    "sheetName": {
+     "__rl": true,
+     "cachedResultName": "metrics_history",
+     "mode": "list",
+     "value": ""
+    }
+   },
+   "position": [
+    700,
+    300
+   ],
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.2
+  },
+  {
+   "id": "331e936e-0905-4b8d-be68-231109014ae0",
+   "name": "Detect Anomalies",
+   "parameters": {
+    "jsCode": "// Z-score anomaly detection over a trailing baseline.\n// Expects items: { date, metric, value }. Emits one item:\n// { anomalies: [...], anomalies_count: N }\nconst cfg = $('CONFIG \\u2014 Watchdog').first().json;\nconst Z_WARN = Number(cfg.z_warn);\nconst Z_CRIT = Number(cfg.z_crit);\nconst MIN_SAMPLES = Number(cfg.min_samples);\nconst MIN_REL = Number(cfg.min_rel_change_pct) / 100;\nconst BASELINE_DAYS = Number(cfg.baseline_days);\n\nconst rows = $input.all()\n  .map(i => i.json)\n  .filter(r => r.metric && r.date && r.value !== undefined && r.value !== '' && r.value !== null)\n  .map(r => ({ metric: String(r.metric).trim(), date: String(r.date).slice(0, 10), value: Number(r.value) }))\n  .filter(r => !Number.isNaN(r.value));\n\nconst byMetric = {};\nfor (const r of rows) (byMetric[r.metric] = byMetric[r.metric] || []).push(r);\n\nconst anomalies = [];\nfor (const [metric, pts] of Object.entries(byMetric)) {\n  pts.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));\n  if (pts.length < MIN_SAMPLES + 1) continue; // need history + today\n  const latest = pts[pts.length - 1];\n  const baseline = pts.slice(Math.max(0, pts.length - 1 - BASELINE_DAYS), pts.length - 1);\n  if (baseline.length < MIN_SAMPLES) continue;\n  const mean = baseline.reduce((s, p) => s + p.value, 0) / baseline.length;\n  const variance = baseline.reduce((s, p) => s + Math.pow(p.value - mean, 2), 0) / baseline.length;\n  const std = Math.sqrt(variance);\n  if (std === 0) continue; // flat baseline: z-score is meaningless\n  const z = (latest.value - mean) / std;\n  const rel = mean !== 0 ? Math.abs(latest.value - mean) / Math.abs(mean) : 1;\n  if (Math.abs(z) >= Z_WARN && rel >= MIN_REL) {\n    anomalies.push({\n      metric,\n      date: latest.date,\n      latest_value: latest.value,\n      baseline_mean: Math.round(mean * 100) / 100,\n      baseline_std: Math.round(std * 100) / 100,\n      z_score: Math.round(z * 100) / 100,\n      rel_change_pct: Math.round(rel * 1000) / 10,\n      direction: z > 0 ? 'UP' : 'DOWN',\n      severity: Math.abs(z) >= Z_CRIT ? 'CRITICAL' : 'WARNING',\n      baseline_points: baseline.length,\n    });\n  }\n}\n\nreturn [{ json: { anomalies, anomalies_count: anomalies.length } }];\n"
+   },
+   "position": [
+    930,
+    300
+   ],
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2
+  },
+  {
+   "id": "f339b248-a2c9-4df8-914c-488ca3ba3187",
+   "name": "Any Anomalies?",
+   "parameters": {
+    "conditions": {
+     "combinator": "and",
+     "conditions": [
+      {
+       "id": "4e751f37-8369-421f-b6e9-fe633bd81682",
+       "leftValue": "={{ $json.anomalies_count }}",
+       "operator": {
+        "name": "filter.operator.number.larger",
+        "operation": "larger",
+        "type": "number"
+       },
+       "rightValue": 0
+      }
+     ],
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose"
+     }
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   },
+   "position": [
+    1160,
+    300
+   ],
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2
+  },
+  {
+   "id": "dfb188e9-53e3-4856-8522-3e097d64bca5",
+   "name": "Expand Anomalies",
+   "parameters": {
+    "jsCode": "// Split the anomalies array into one item per anomaly\n// so the AI agent + alert run once each.\nconst data = $input.first().json;\nreturn (data.anomalies || []).map(a => ({ json: a }));\n"
+   },
+   "position": [
+    1390,
+    300
+   ],
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2
+  },
+  {
+   "id": "4e5a026d-8ef3-46d8-bd43-091fe5163042",
+   "name": "AI Agent — Explain Anomaly",
+   "parameters": {
+    "options": {
+     "systemMessage": "=You are a senior business analyst. Explain KPI anomalies in plain English for a non-technical founder. Be concrete: name the metric, the size of the move, and what usually causes moves like this. Never invent data you were not given. Output ONLY via the structured output parser."
+    },
+    "text": "=Metric: {{ $json.metric }}\\nDate: {{ $json.date }}\\nLatest value: {{ $json.latest_value }} (baseline mean {{ $json.baseline_mean }}, std {{ $json.baseline_std }} over {{ $json.baseline_points }} days)\\nZ-score: {{ $json.z_score }} ({{ $json.direction }}, {{ $json.rel_change_pct }}% move)\\nSeverity: {{ $json.severity }}\\n\\nExplain this anomaly and suggest what to check first."
+   },
+   "position": [
+    1620,
+    300
+   ],
+   "type": "@n8n/n8n-nodes-langchain.agent",
+   "typeVersion": 1.7
+  },
+  {
+   "id": "78f74fde-cad6-47e0-b40b-2f581c6e3b64",
+   "name": "OpenAI Chat Model — Explainer",
+   "parameters": {
+    "model": {
+     "__rl": true,
+     "mode": "list",
+     "value": "gpt-4o-mini"
+    },
+    "options": {}
+   },
+   "position": [
+    1560,
+    520
+   ],
+   "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "15048093-2b9f-4f7c-acbf-c31d3ce1ac1f",
+   "name": "Structured Output Parser — Explanation",
+   "parameters": {
+    "schemaType": "manual",
+    "inputSchema": "{\n  \"explanation\": \"2-3 sentence plain-English explanation of what happened\",\n  \"likely_causes\": [\n    \"most likely cause\",\n    \"second most likely cause\"\n  ],\n  \"suggested_checks\": [\n    \"first thing to verify\",\n    \"second thing to verify\"\n  ],\n  \"needs_human\": true\n}"
+   },
+   "position": [
+    1800,
+    520
+   ],
+   "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "dcce1eb5-a72f-4e4e-97e7-0d2fdfce8c55",
+   "name": "Format Alert",
+   "parameters": {
+    "assignments": {
+     "assignments": [
+      {
+       "id": "f-1",
+       "name": "alert_text",
+       "type": "string",
+       "value": "={{ $json.severity === 'CRITICAL' ? '🚨' : '⚠️' }} KPI anomaly: {{ $json.metric }} moved {{ $json.direction }} {{ $json.rel_change_pct }}% (z={{ $json.z_score }})\\n\\n{{ $json.output.explanation }}\\n\\nLikely causes: {{ $json.output.likely_causes.join('; ') }}\\nCheck first: {{ $json.output.suggested_checks.join('; ') }}"
+      }
+     ]
+    },
+    "includeOtherFields": true,
+    "options": {}
+   },
+   "position": [
+    1850,
+    300
+   ],
+   "type": "n8n-nodes-base.set",
+   "typeVersion": 3.4
+  },
+  {
+   "id": "7d674ee3-5947-42fe-969b-be597926d69f",
+   "name": "Telegram — Anomaly Alert",
+   "parameters": {
+    "additionalFields": {},
+    "chatId": "={{ $('CONFIG — Watchdog').first().json.telegram_chat_id }}",
+    "text": "={{ $json.alert_text }}"
+   },
+   "position": [
+    2080,
+    300
+   ],
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "0a38c210-fea0-48b7-947e-f36d11444fff",
+   "name": "Log Anomaly",
+   "parameters": {
+    "columns": {
+     "mappingMode": "defineBelow",
+     "matchingColumns": [],
+     "schema": [],
+     "value": {
+      "time": "={{ $now.toISO() }}",
+      "metric": "={{ $json.metric }}",
+      "date": "={{ $json.date }}",
+      "latest_value": "={{ $json.latest_value }}",
+      "baseline_mean": "={{ $json.baseline_mean }}",
+      "z_score": "={{ $json.z_score }}",
+      "severity": "={{ $json.severity }}",
+      "direction": "={{ $json.direction }}",
+      "ai_explanation": "={{ $json.output.explanation }}"
+     }
+    },
+    "documentId": {
+     "__rl": true,
+     "cachedResultName": "KPI Watchdog",
+     "mode": "list",
+     "value": ""
+    },
+    "operation": "append",
+    "options": {},
+    "resource": "sheetWithinDocument",
+    "sheetName": {
+     "__rl": true,
+     "cachedResultName": "anomaly_log",
+     "mode": "list",
+     "value": ""
+    }
+   },
+   "position": [
+    2310,
+    300
+   ],
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.2
+  }
+ ],
+ "pinData": {},
+ "settings": {
+  "executionOrder": "v1"
+ },
+ "tags": [],
+ "versionId": ""
+}

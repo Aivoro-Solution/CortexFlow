@@ -1,0 +1,732 @@
+{
+  "name": "Speed-to-Lead Rescue",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🔥 SPEED-TO-LEAD RESCUE\n**What it does:** Webhook catches every missed call / form lead → logs it to Google Sheets (status `NEW`) → fires an instant welcome SMS via Twilio (under 60 seconds) → AI scores & qualifies the lead (0–100, HOT/WARM/COLD) → sheet flips `NEW` → `CONTACTED` → `QUALIFIED` → hot leads trigger an instant Telegram owner alert → final Telegram summary.\n\n**You'll need:**\n- n8n instance with webhook access\n- Twilio account + a Twilio phone number (twilio.com/try-twilio)\n- OpenAI API key for gpt-4o-mini (platform.openai.com)\n- A Google Sheet + Google Sheets OAuth2 credentials\n- A Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `CONTACTED` → `QUALIFIED` (priority column: `HOT` / `WARM` / `COLD`)",
+        "height": 240,
+        "width": 3480,
+        "color": 5
+      },
+      "id": "4a9d7e83-4b24-4150-baa7-14cd15264d5d",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Webhook lead intake\nPOST /lead-in accepts JSON {name, phone, email, message, source}. Point Twilio/VAPI missed-call events or any web form at this URL.",
+        "height": 440,
+        "width": 740,
+        "color": 4
+      },
+      "id": "a94815d0-505e-469b-8c19-2a9dda32e893",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Normalize + log (status NEW)\nNormalize fields, then append one row to Google Sheets with status `NEW` and empty score/priority columns.",
+        "height": 440,
+        "width": 780,
+        "color": 4
+      },
+      "id": "5f856eb6-826b-4f76-8fa1-28003aa0ffa8",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        520,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Instant SMS text-back\nFires the welcome SMS through the Twilio Messages API (HTTP Basic Auth). This is the sub-60-second SLA that rescues the lead.",
+        "height": 440,
+        "width": 780,
+        "color": 4
+      },
+      "id": "13ec01cd-43f0-4e38-8e30-8f342664b732",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — AI qualification\nAI Agent (gpt-4o-mini + Structured Output Parser) scores buying intent 0–100 and tags urgency HOT / WARM / COLD.",
+        "height": 440,
+        "width": 780,
+        "color": 4
+      },
+      "id": "e6ee2d41-4a85-49f0-9b03-0d7cccbce2bd",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Status flow in Sheets\nSheet flips `NEW` → `CONTACTED` (after SMS) → `QUALIFIED` with lead_score + priority filled in.",
+        "height": 440,
+        "width": 780,
+        "color": 4
+      },
+      "id": "476f485f-f477-42f1-94de-156cabd6c0b9",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2920,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Hot-lead alert + final summary\nIF score ≥ HOT_SCORE_THRESHOLD → instant 🔥 Telegram alert to the owner. Branches merge → one final Telegram summary. (Webhook responseMode is lastNode, so this Telegram node is the last node.)",
+        "height": 440,
+        "width": 760,
+        "color": 4
+      },
+      "id": "98dbf52b-2757-4158-bc91-fd1d4e53563b",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3720,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-in",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "5840f8c4-937e-4fe2-a084-986c0cfa3280",
+      "name": "Webhook — Lead Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "cortexflow-speed-to-lead"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the incoming lead payload\nconst b = $input.first().json;\nreturn [{ json: {\n  name: (b.name || 'there').trim(),\n  phone: String(b.phone || '').replace(/[^\\d+]/g, ''),\n  email: (b.email || '').trim(),\n  message: (b.message || '').trim(),\n  source: (b.source || 'unknown').trim(),\n  timestamp: new Date().toISOString(),\n}}];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "467ed26b-89ac-4c84-af17-e0abc00f96a9",
+      "name": "Normalize Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "760bc48b-2c6f-42ab-88cf-63f421ba33ba",
+              "name": "BUSINESS_NAME",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_NAME"
+            },
+            {
+              "id": "033ab961-fcd8-4f69-a06c-92ddaef59e30",
+              "name": "TWILIO_FROM_NUMBER",
+              "type": "string",
+              "value": "PASTE_YOUR_TWILIO_NUMBER"
+            },
+            {
+              "id": "95b06899-42d2-47f6-9fc4-4cd44efd24a0",
+              "name": "OWNER_TELEGRAM_CHAT_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "28958308-f14f-4f41-86ef-03eedc2eb08f",
+              "name": "SHEET_DOC_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_SHEET_ID"
+            },
+            {
+              "id": "c0755991-92eb-41a9-ac14-8f361ea66cf3",
+              "name": "SHEET_NAME",
+              "type": "string",
+              "value": "Leads"
+            },
+            {
+              "id": "d51ab39c-b2a2-4a72-8aa8-882c2458978a",
+              "name": "BOOKING_LINK",
+              "type": "string",
+              "value": "PASTE_YOUR_BOOKING_LINK"
+            },
+            {
+              "id": "a0412422-11bd-4714-9bc4-9e4acc7459c1",
+              "name": "HOT_SCORE_THRESHOLD",
+              "type": "string",
+              "value": "75"
+            },
+            {
+              "id": "7139783e-8a6c-4012-9b92-582121987e45",
+              "name": "WELCOME_SMS_TEMPLATE",
+              "type": "string",
+              "value": "Hi {name}, this is {BUSINESS_NAME} — got your message, pulling up the details now. We'll get back to you within the hour."
+            },
+            {
+              "id": "923fd22f-a96b-42af-8624-a907da74ab14",
+              "name": "SERVICES_LIST",
+              "type": "string",
+              "value": "PASTE_YOUR_SERVICES (comma-separated, e.g. plumbing repairs, drain cleaning, water heater installs)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3341c7c2-7151-402a-812e-67812a94ef3e",
+      "name": "CONFIG — Lead Business",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_DOC_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_NAME }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $('Normalize Lead').first().json.timestamp }}",
+            "name": "={{ $('Normalize Lead').first().json.name }}",
+            "phone": "={{ $('Normalize Lead').first().json.phone }}",
+            "email": "={{ $('Normalize Lead').first().json.email }}",
+            "message": "={{ $('Normalize Lead').first().json.message }}",
+            "source": "={{ $('Normalize Lead').first().json.source }}",
+            "status": "NEW",
+            "lead_score": "",
+            "priority": "",
+            "ai_summary": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "22ebb586-1bbc-44ee-a134-6bf54d5156a1",
+      "name": "Log Lead — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/PASTE_YOUR_TWILIO_ACCOUNT_SID/Messages.json",
+        "authentication": "genericAuth",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Lead Business').first().json.TWILIO_FROM_NUMBER }}"
+            },
+            {
+              "name": "To",
+              "value": "={{ $('Normalize Lead').first().json.phone }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ ($('CONFIG — Lead Business').first().json.WELCOME_SMS_TEMPLATE || '').replace('{name}', $('Normalize Lead').first().json.name).replace('{BUSINESS_NAME}', $('CONFIG — Lead Business').first().json.BUSINESS_NAME) }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "",
+          "name": "Twilio HTTP Basic Auth"
+        }
+      },
+      "id": "f382d27c-d7cc-487d-9408-2bc97fdbf51e",
+      "name": "Send Welcome SMS — Twilio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_DOC_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_NAME }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "phone": "={{ $('Normalize Lead').first().json.phone }}",
+            "status": "CONTACTED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "7bfaab4a-80fe-4426-a582-1c862f761e18",
+      "name": "Update Sheet — Status CONTACTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a lead-qualification assistant for a local services business. Qualify this inbound lead honestly.\n\nBUSINESS: {{ $('CONFIG \\u2014 Lead Business').first().json.BUSINESS_NAME }}\nSERVICES: {{ $('CONFIG \\u2014 Lead Business').first().json.SERVICES_LIST }}\n\nScore buying intent 0-100. Tag urgency: HOT = ready to buy/book within 24-48h with clear need and reachable contact info; WARM = interested but vague or far out; COLD = spam, test message, or no real need. Write a one-paragraph summary, suggest the concrete next step, and guess the best time to reach them. Output ONLY via the structured output parser."
+        },
+        "text": "=Lead name: {{ $('Normalize Lead').first().json.name }}\nPhone: {{ $('Normalize Lead').first().json.phone }}\nEmail: {{ $('Normalize Lead').first().json.email }}\nSource: {{ $('Normalize Lead').first().json.source }}\n\nLead's message:\n{{ $('Normalize Lead').first().json.message }}"
+      },
+      "id": "af227a62-2184-4693-807a-cb8e8d9faa84",
+      "name": "AI Agent — Qualify Lead",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "24b0df78-15d9-40ac-826f-5803b2dbf95a",
+      "name": "OpenAI Chat Model — Qualify",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"lead_score\": 85,\n  \"urgency\": \"HOT / WARM / COLD\",\n  \"summary\": \"one-paragraph summary of who this lead is and what they need\",\n  \"suggested_next_step\": \"concrete next action (e.g. call within 10 minutes, send booking link)\",\n  \"best_contact_time\": \"best time window to reach them\"\n}"
+      },
+      "id": "f48c6cbc-f2ac-446c-832c-3fe335bcfcb4",
+      "name": "Structured Output Parser — Qualification",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten the AI agent's structured output and carry the lead forward\nconst out = $input.first().json.output || {};\nconst lead = $('Normalize Lead').first().json;\nconst cfg = $('CONFIG \\u2014 Lead Business').first().json;\nreturn [{ json: {\n  name: lead.name,\n  phone: lead.phone,\n  email: lead.email,\n  source: lead.source,\n  message: lead.message,\n  lead_score: Number(out.lead_score) || 0,\n  urgency: out.urgency || 'WARM',\n  summary: out.summary || '',\n  suggested_next_step: out.suggested_next_step || '',\n  best_contact_time: out.best_contact_time || '',\n  business_name: cfg.BUSINESS_NAME,\n  booking_link: cfg.BOOKING_LINK,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e467d110-80e4-44c5-ab13-27c27cff177d",
+      "name": "Parse Qualification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_DOC_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Lead Business').first().json.SHEET_NAME }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "phone": "={{ $json.phone }}",
+            "status": "QUALIFIED",
+            "lead_score": "={{ $json.lead_score }}",
+            "priority": "={{ $json.urgency }}",
+            "ai_summary": "={{ $json.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "cd406108-92e3-48dd-a0ec-f3f696e0022a",
+      "name": "Update Sheet — Status QUALIFIED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-hot-lead",
+              "leftValue": "={{ $json.lead_score }}",
+              "rightValue": "={{ $('CONFIG — Lead Business').first().json.HOT_SCORE_THRESHOLD }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "aabb7c03-0054-4316-8ce5-8b278fef4d2b",
+      "name": "IF — Hot Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Lead Business').first().json.OWNER_TELEGRAM_CHAT_ID }}",
+        "text": "=🔥 *HOT LEAD* \\u2014 {{ $json.business_name }}\n\n👤 {{ $json.name }} (score *{{ $json.lead_score }}/100*)\n📞 {{ $json.phone }}\n📨 Source: {{ $json.source }}\n\n{{ $json.summary }}\n\n➡️ {{ $json.suggested_next_step }}\n📅 {{ $json.booking_link }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "02ccf610-7572-4c02-b08e-013460a81272",
+      "name": "Telegram — Hot Lead Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "b4f0017d-68e8-41cb-bc0f-ae197541f663",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Lead Business').first().json.OWNER_TELEGRAM_CHAT_ID }}",
+        "text": "=📋 *Lead summary* \\u2014 {{ $json.business_name }}\n\n👤 {{ $json.name }} │ 📞 {{ $json.phone }} │ 📨 {{ $json.source }}\nStatus: `QUALIFIED` │ Priority: *{{ $json.urgency }}* │ Score: *{{ $json.lead_score }}/100*\n\n{{ $json.summary }}\n\n➡️ Next: {{ $json.suggested_next_step }}\n⏰ Best contact time: {{ $json.best_contact_time }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "27e4b08a-08d4-43c5-aea0-064cbc104972",
+      "name": "Telegram — Lead Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lead": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Lead Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Lead Business": {
+      "main": [
+        [
+          {
+            "node": "Log Lead — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Lead — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome SMS — Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome SMS — Twilio": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status CONTACTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status CONTACTED": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Qualify Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Qualify Lead": {
+      "main": [
+        [
+          {
+            "node": "Parse Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Qualification": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status QUALIFIED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status QUALIFIED": {
+      "main": [
+        [
+          {
+            "node": "IF — Hot Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Hot Lead?": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Hot Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Telegram — Hot Lead Alert": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Lead Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Qualify": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Qualify Lead",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Qualification": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Qualify Lead",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

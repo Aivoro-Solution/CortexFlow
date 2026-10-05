@@ -1,0 +1,392 @@
+{
+ "active": false,
+ "connections": {
+  "Hourly Check": {
+   "main": [
+    [
+     {
+      "node": "CONFIG — Watchdog",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "CONFIG — Watchdog": {
+   "main": [
+    [
+     {
+      "node": "Get Active Workflows",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Get Active Workflows": {
+   "main": [
+    [
+     {
+      "node": "Get Recent Executions",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Get Recent Executions": {
+   "main": [
+    [
+     {
+      "node": "Analyze Health",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Analyze Health": {
+   "main": [
+    [
+     {
+      "node": "Any Issues?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Any Issues?": {
+   "main": [
+    [
+     {
+      "node": "Expand Issues",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    []
+   ]
+  },
+  "Expand Issues": {
+   "main": [
+    [
+     {
+      "node": "Format Alert",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Format Alert": {
+   "main": [
+    [
+     {
+      "node": "Telegram — Health Alert",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Telegram — Health Alert": {
+   "main": [
+    [
+     {
+      "node": "Log Issues",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "meta": {
+  "instanceId": "",
+  "templateCredsSetupCompleted": false
+ },
+ "name": "n8n Workflow Health Watchdog",
+ "nodes": [
+  {
+   "id": "4d5968c4-acd6-448c-b1dd-a007d0024dd5",
+   "name": "Sticky Note",
+   "parameters": {
+    "content": "## n8n Workflow Health Watchdog\n\nPolls YOUR n8n instance's public API every hour and catches what the Executions tab won't tell you at a glance:\n\n- **ERROR_SPIKE** — a workflow throwing >= `error_spike_threshold` errors inside the check window (CRITICAL)\n- **ERRORS** — any failed/crashed executions in the window (WARNING)\n- **STALE** — an *active* workflow with zero executions in `stale_hours` (WARNING). Your weekly/monthly workflows belong in `ignore_workflows`.\n\nAuth: create a **Header Auth** credential in n8n (name `X-N8N-API-KEY`, value = your n8n API key from Settings > n8n API) and select it on both HTTP nodes. The API key needs permission to read workflows + executions.\n\nHonest limits: staleness is computed from the 250 most recent executions — on very busy instances the sample may not cover the full window. `startedAfter` needs n8n >= 1.x with the public API enabled; if your version rejects it, drop that query param (the limit still bounds the call).",
+    "height": 620,
+    "width": 430,
+    "color": 4
+   },
+   "position": [
+    -30,
+    160
+   ],
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1
+  },
+  {
+   "id": "1b920917-f31d-4262-bcfb-1ac087e8d721",
+   "name": "Hourly Check",
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "hours",
+       "hoursInterval": 1
+      }
+     ]
+    }
+   },
+   "position": [
+    240,
+    300
+   ],
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "d78085a9-cace-4e14-8457-c6252ccaddac",
+   "name": "CONFIG — Watchdog",
+   "parameters": {
+    "assignments": {
+     "assignments": [
+      {
+       "id": "c-1",
+       "name": "n8n_host",
+       "type": "string",
+       "value": "https://your-n8n-domain.com"
+      },
+      {
+       "id": "c-2",
+       "name": "check_window_hours",
+       "type": "number",
+       "value": 24
+      },
+      {
+       "id": "c-3",
+       "name": "stale_hours",
+       "type": "number",
+       "value": 24
+      },
+      {
+       "id": "c-4",
+       "name": "error_spike_threshold",
+       "type": "number",
+       "value": 5
+      },
+      {
+       "id": "c-5",
+       "name": "ignore_workflows",
+       "type": "array",
+       "value": "[\"Weekly Report\", \"Monthly Cleanup\"]"
+      },
+      {
+       "id": "c-6",
+       "name": "telegram_chat_id",
+       "type": "string",
+       "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+      }
+     ]
+    },
+    "includeOtherFields": false,
+    "options": {}
+   },
+   "position": [
+    490,
+    300
+   ],
+   "type": "n8n-nodes-base.set",
+   "typeVersion": 3.4
+  },
+  {
+   "id": "56cd7851-d6fd-4eab-8998-0f696c8d9125",
+   "name": "Get Active Workflows",
+   "parameters": {
+    "method": "GET",
+    "options": {
+     "response": {
+      "response": {
+       "responseFormat": "autodetect"
+      }
+     },
+     "timeout": 15000
+    },
+    "url": "={{ $json.n8n_host }}/api/v1/workflows?active=true&limit=250",
+    "genericAuthType": "httpHeaderAuth"
+   },
+   "position": [
+    740,
+    300
+   ],
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2
+  },
+  {
+   "id": "88f5a68d-06e8-487d-82f6-0f612b346088",
+   "name": "Get Recent Executions",
+   "parameters": {
+    "method": "GET",
+    "options": {
+     "response": {
+      "response": {
+       "responseFormat": "autodetect"
+      }
+     },
+     "timeout": 15000
+    },
+    "url": "={{ $json.n8n_host }}/api/v1/executions?limit=250&startedAfter={{ $now.minus({ hours: $json.check_window_hours }).toISO() }}",
+    "genericAuthType": "httpHeaderAuth"
+   },
+   "position": [
+    990,
+    300
+   ],
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2
+  },
+  {
+   "id": "a59b7863-ecbd-4e0a-998f-c7542b14b384",
+   "name": "Analyze Health",
+   "parameters": {
+    "jsCode": "// Join active workflows with recent executions -> issues[]\nconst cfg = $('CONFIG \\u2014 Watchdog').first().json;\nconst workflowsResp = $('Get Active Workflows').first().json;\nconst execResp = $input.first().json;\n\nconst workflows = workflowsResp.data || workflowsResp || [];\nconst executions = execResp.data || execResp || [];\n\nconst now = Date.now();\nconst staleMs = Number(cfg.stale_hours) * 3600 * 1000;\nconst spikeAt = Number(cfg.error_spike_threshold);\nconst ignored = new Set(cfg.ignore_workflows || []);\n\nconst byWorkflow = {};\nfor (const e of executions) {\n  if (!e.workflowId) continue;\n  (byWorkflow[e.workflowId] = byWorkflow[e.workflowId] || []).push(e);\n}\n\nconst issues = [];\nfor (const w of workflows) {\n  if (ignored.has(w.name)) continue;\n  const execs = byWorkflow[w.id] || [];\n  const errors = execs.filter(e => e.status === 'error' || e.status === 'crashed');\n  let latest = 0;\n  for (const e of execs) {\n    const t = new Date(e.startedAt).getTime();\n    if (!Number.isNaN(t) && t > latest) latest = t;\n  }\n\n  if (errors.length >= spikeAt) {\n    issues.push({\n      workflow_name: w.name, workflow_id: w.id,\n      issue_type: 'ERROR_SPIKE', severity: 'CRITICAL',\n      detail: errors.length + ' failed executions in the last ' + cfg.check_window_hours + 'h',\n      last_error_at: errors.map(e => e.startedAt).sort().pop() || null,\n    });\n  } else if (errors.length > 0) {\n    issues.push({\n      workflow_name: w.name, workflow_id: w.id,\n      issue_type: 'ERRORS', severity: 'WARNING',\n      detail: errors.length + ' failed execution(s) in the last ' + cfg.check_window_hours + 'h',\n      last_error_at: errors.map(e => e.startedAt).sort().pop() || null,\n    });\n  }\n\n  if (!latest || now - latest > staleMs) {\n    issues.push({\n      workflow_name: w.name, workflow_id: w.id,\n      issue_type: 'STALE', severity: 'WARNING',\n      detail: latest\n        ? 'no executions in the last ' + cfg.stale_hours + 'h (last ran ' + new Date(latest).toISOString() + ')'\n        : 'no executions found in the sampled window at all',\n      last_error_at: null,\n    });\n  }\n}\n\nreturn [{ json: { issues, issues_count: issues.length } }];\n"
+   },
+   "position": [
+    1240,
+    300
+   ],
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2
+  },
+  {
+   "id": "b15b70e7-535a-4da1-a5f1-c23891a6c9dc",
+   "name": "Any Issues?",
+   "parameters": {
+    "conditions": {
+     "combinator": "and",
+     "conditions": [
+      {
+       "id": "21c1bb0e-14d8-4e27-8323-029e017d8871",
+       "leftValue": "={{ $json.issues_count }}",
+       "operator": {
+        "name": "filter.operator.number.larger",
+        "operation": "larger",
+        "type": "number"
+       },
+       "rightValue": 0
+      }
+     ],
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose"
+     }
+    },
+    "looseTypeValidation": true,
+    "options": {}
+   },
+   "position": [
+    1490,
+    300
+   ],
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2
+  },
+  {
+   "id": "0de64926-70a4-4995-8915-d233b98ccfe1",
+   "name": "Expand Issues",
+   "parameters": {
+    "jsCode": "const data = $input.first().json;\nreturn (data.issues || []).map(i => ({ json: i }));\n"
+   },
+   "position": [
+    1740,
+    300
+   ],
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2
+  },
+  {
+   "id": "76c89fb1-2160-4cfc-9779-f178e5a2ef36",
+   "name": "Format Alert",
+   "parameters": {
+    "assignments": {
+     "assignments": [
+      {
+       "id": "f-1",
+       "name": "alert_text",
+       "type": "string",
+       "value": "={{ ($json.severity === 'CRITICAL' ? '🚨 CRITICAL' : '⚠️ WARNING') }} + ' [' + $json.issue_type + '] ' + $json.workflow_name + '\\n' + $json.detail + ($json.last_error_at ? '\\nLast error: ' + $json.last_error_at : '')"
+      }
+     ]
+    },
+    "includeOtherFields": true,
+    "options": {}
+   },
+   "position": [
+    1990,
+    300
+   ],
+   "type": "n8n-nodes-base.set",
+   "typeVersion": 3.4
+  },
+  {
+   "id": "9bf38e99-cbb6-4b7a-ad6c-f87b478b812b",
+   "name": "Telegram — Health Alert",
+   "parameters": {
+    "additionalFields": {},
+    "chatId": "={{ $('CONFIG — Watchdog').first().json.telegram_chat_id }}",
+    "text": "={{ $json.alert_text }}"
+   },
+   "position": [
+    2240,
+    300
+   ],
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2
+  },
+  {
+   "id": "f476973f-4249-403a-97f9-3a3e6be9933f",
+   "name": "Log Issues",
+   "parameters": {
+    "columns": {
+     "mappingMode": "defineBelow",
+     "matchingColumns": [],
+     "schema": [],
+     "value": {
+      "time": "={{ $now.toISO() }}",
+      "workflow_name": "={{ $json.workflow_name }}",
+      "issue_type": "={{ $json.issue_type }}",
+      "severity": "={{ $json.severity }}",
+      "detail": "={{ $json.detail }}"
+     }
+    },
+    "documentId": {
+     "__rl": true,
+     "cachedResultName": "n8n Watchdog",
+     "mode": "list",
+     "value": ""
+    },
+    "operation": "append",
+    "options": {},
+    "resource": "sheetWithinDocument",
+    "sheetName": {
+     "__rl": true,
+     "cachedResultName": "watchdog_log",
+     "mode": "list",
+     "value": ""
+    }
+   },
+   "position": [
+    2490,
+    300
+   ],
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.2
+  }
+ ],
+ "pinData": {},
+ "settings": {
+  "executionOrder": "v1"
+ },
+ "tags": [],
+ "versionId": ""
+}

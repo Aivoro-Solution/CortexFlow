@@ -15,8 +15,9 @@ export const SITE = {
   language: "en",
   postsPerPage: 10,
   // Google Analytics 4 measurement ID (e.g. "G-XXXXXXXXXX").
-  // Empty = analytics disabled.
-  gaMeasurementId: "G-1G1441RQKF",
+  // Empty = analytics disabled. GA4 now runs through GTM (GTM-T22CDXLD)
+  // — do NOT set this again or pageviews will double-count.
+  gaMeasurementId: "",
   social: {
     twitter: "@cortexflow",
   },

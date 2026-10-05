@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: agent control plane being patched">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111111" stroke-width="0.5" opacity="0.18">
+    <g>
+      <line x1="0" y1="50" x2="800" y2="50"/><line x1="0" y1="100" x2="800" y2="100"/>
+      <line x1="0" y1="150" x2="800" y2="150"/><line x1="0" y1="200" x2="800" y2="200"/>
+      <line x1="0" y1="250" x2="800" y2="250"/><line x1="0" y1="300" x2="800" y2="300"/>
+      <line x1="0" y1="350" x2="800" y2="350"/><line x1="0" y1="400" x2="800" y2="400"/>
+      <line x1="50" y1="0" x2="50" y2="450"/><line x1="100" y1="0" x2="100" y2="450"/>
+      <line x1="150" y1="0" x2="150" y2="450"/><line x1="200" y1="0" x2="200" y2="450"/>
+      <line x1="250" y1="0" x2="250" y2="450"/><line x1="300" y1="0" x2="300" y2="450"/>
+      <line x1="350" y1="0" x2="350" y2="450"/><line x1="400" y1="0" x2="400" y2="450"/>
+      <line x1="450" y1="0" x2="450" y2="450"/><line x1="500" y1="0" x2="500" y2="450"/>
+      <line x1="550" y1="0" x2="550" y2="450"/><line x1="600" y1="0" x2="600" y2="450"/>
+      <line x1="650" y1="0" x2="650" y2="450"/><line x1="700" y1="0" x2="700" y2="450"/>
+      <line x1="750" y1="0" x2="750" y2="450"/>
+    </g>
+  </g>
+
+  <!-- central agent control plane: hexagon hub -->
+  <g>
+    <polygon points="400,120 488,170 488,270 400,320 312,270 312,170"
+             fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <polygon points="400,160 454,191 454,254 400,285 346,254 346,191"
+             fill="none" stroke="#111111" stroke-width="2"/>
+    <circle cx="400" cy="222" r="26" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="r" values="26;30;26" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="222" r="10" fill="#111111"/>
+  </g>
+
+  <!-- satellite nodes: tool servers / agents -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="120" y="90" width="90" height="64" rx="6"/>
+    <rect x="590" y="90" width="90" height="64" rx="6"/>
+    <rect x="120" y="300" width="90" height="64" rx="6"/>
+    <rect x="590" y="300" width="90" height="64" rx="6"/>
+  </g>
+
+  <!-- connection lines with slow data pulses -->
+  <g stroke="#111111" stroke-width="2.5" fill="none">
+    <line x1="210" y1="122" x2="312" y2="185"/>
+    <line x1="590" y1="122" x2="488" y2="185"/>
+    <line x1="210" y1="332" x2="312" y2="270"/>
+    <line x1="590" y1="332" x2="488" y2="270"/>
+  </g>
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <circle cx="210" cy="122" r="7">
+      <animateMotion dur="9s" repeatCount="indefinite" path="M0,0 L102,63"/>
+    </circle>
+    <circle cx="590" cy="122" r="7">
+      <animateMotion dur="11s" repeatCount="indefinite" path="M0,0 L-102,63"/>
+    </circle>
+    <circle cx="210" cy="332" r="7">
+      <animateMotion dur="10s" repeatCount="indefinite" path="M0,0 L102,-62"/>
+    </circle>
+    <circle cx="590" cy="332" r="7">
+      <animateMotion dur="12s" repeatCount="indefinite" path="M0,0 L-102,-62"/>
+    </circle>
+  </g>
+
+  <!-- the breach: cracked route to the hub, then a shield patch sealing it -->
+  <g>
+    <path d="M400,0 L400,120" stroke="#111111" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+    <circle cx="400" cy="60" r="14" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="1;0.25;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="392" y1="52" x2="408" y2="68" stroke="#FF4D00" stroke-width="4"/>
+    <line x1="408" y1="52" x2="392" y2="68" stroke="#FF4D00" stroke-width="4"/>
+  </g>
+  <g transform="translate(400,60)">
+    <path d="M0,-34 L30,-12 L30,12 L0,34 L-30,12 L-30,-12 Z"
+          fill="#FF4D00" stroke="#111111" stroke-width="3" opacity="0.9">
+      <animate attributeName="transform" values="scale(0.9);scale(1.06);scale(0.9)"
+               dur="10s" repeatCount="indefinite" additive="sum"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 0"
+                        dur="10s" repeatCount="indefinite"/>
+    </path>
+    <g transform="rotate(0)">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360"
+                        dur="45s" repeatCount="indefinite"/>
+      <rect x="-6" y="-22" width="12" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    </g>
+  </g>
+
+  <!-- drifting scope tokens along the bottom -->
+  <g fill="none" stroke="#111111" stroke-width="2">
+    <circle cx="0" cy="410" r="9" fill="#FFFDF5">
+      <animateMotion dur="24s" repeatCount="indefinite" path="M0,0 L820,0"/>
+    </circle>
+    <circle cx="0" cy="410" r="9" fill="#FF4D00" opacity="0.7">
+      <animateMotion dur="24s" begin="12s" repeatCount="indefinite" path="M0,0 L820,0"/>
+    </circle>
+  </g>
+  <line x1="0" y1="395" x2="800" y2="395" stroke="#111111" stroke-width="2"/>
+
+  <!-- slow radar sweep on the hub -->
+  <g transform="translate(400,222)">
+    <line x1="0" y1="0" x2="0" y2="-88" stroke="#FF4D00" stroke-width="2.5" opacity="0.55">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360"
+                        dur="36s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

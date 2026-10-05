@@ -6,6 +6,7 @@ category: news
 tags: ["AI agents", "security", "GitHub", "coding agents", "data leak"]
 draft: false
 featured: false
+image: "/og/pixelleak-ai-coding-agents-github-screenshots.webp"
 ---
 
 Nobody hacked anything. That is the worst part of the PixelLeak story.

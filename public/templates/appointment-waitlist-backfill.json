@@ -1,0 +1,1408 @@
+{
+  "name": "Appointment Waitlist Backfill",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📅 APPOINTMENT WAITLIST BACKFILL\n**What it does:** A cancellation hits the webhook → waitlist is scored deterministically (wait time, no-shows, loyalty, priority) → top N candidates get a WhatsApp/SMS offer with an AI-written message → first `TAKE` reply wins via a second webhook → unclaimed offers expire after your reply window → owner gets Telegram summaries at every stage.\n\n**You’ll need:**\n- n8n (self-hosted or cloud)\n- Google Sheets OAuth2 credential + a spreadsheet with `Waitlist` and `Offers` tabs\n- A WhatsApp/SMS provider (Twilio, 360dialog, WATI…) — the send node is a clearly-marked demo placeholder you point at your provider\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- (Optional) OpenAI API key for the AI-written offer copy\n\n**Status flow in Sheets:** `NEW` → `RANKED` → `OFFER_SENT` → `BOOKED` / `EXPIRED`",
+        "height": 220,
+        "width": 5600,
+        "color": 5
+      },
+      "id": "5ad2319e-ac4e-47f7-87aa-b1c24bdbc4db",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Cancellation intake + config\nWebhook `waitlist-cancel` receives the freed slot (appointment_id, slot_time, service) → config loaded → normalized → logged to the Offers tab with status `NEW`.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "ddae60ff-14e0-4597-a947-2ec7e96e50cb",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Deterministic scoring + ranking\nWaitlist tab is read → Code node scores every candidate (wait days × weight, no-show penalty, loyalty bonus, priority boost) → top N logged with status `RANKED`.",
+        "height": 420,
+        "width": 720,
+        "color": 4
+      },
+      "id": "a9aa5126-561b-4345-a3fe-ff02ba7f49d9",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI offer copy + send\nAI Agent writes a warm, personalized offer message per candidate (Structured Output) → demo HTTP node sends it via your WhatsApp/SMS provider → rows flip to `OFFER_SENT` → owner gets a Telegram summary.",
+        "height": 420,
+        "width": 1080,
+        "color": 4
+      },
+      "id": "00497205-7a6a-43db-bc7b-2ace6ee62d9f",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Reply-window expiry sweep\nWait node pauses for your reply window → Offers re-read → still-open offers are marked `EXPIRED` → owner gets the window-closed summary.",
+        "height": 420,
+        "width": 1420,
+        "color": 4
+      },
+      "id": "4732401c-5b4f-4ce7-a242-96a15e059941",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Reply handling (first TAKE wins)\nSecond webhook `waitlist-reply` receives `{phone, message}` → normalized → matched to the latest open offer for that phone → winner flips to `BOOKED`, all other open offers for that slot flip to `EXPIRED` → owner notified.",
+        "height": 420,
+        "width": 3360,
+        "color": 4
+      },
+      "id": "3b2553c4-be14-459e-b384-c29321814394",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Owner notifications\nTelegram messages at every stage: offers sent, window closed (booked / expired counts), slot booked with winner details, and unmatched-reply alerts.",
+        "height": 420,
+        "width": 1560,
+        "color": 4
+      },
+      "id": "f33e6209-072c-4d9a-b06d-4be6adf3b813",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "waitlist-cancel",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "8a69d7b9-6b1f-4283-b2cc-75904bd04cb2",
+      "name": "Webhook — Cancellation Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "54d86240-99d5-45f8-b200-cf7797a11d5d",
+              "name": "business_name",
+              "type": "string",
+              "value": "Your Business Name"
+            },
+            {
+              "id": "a054c061-6d46-48af-8d27-5ff5bfb28f01",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "82b7d299-033e-4aa7-af4c-c8bd0063f97b",
+              "name": "waitlist_tab",
+              "type": "string",
+              "value": "Waitlist"
+            },
+            {
+              "id": "8e9ab763-e633-4297-9563-b20d93ae5ec1",
+              "name": "offers_tab",
+              "type": "string",
+              "value": "Offers"
+            },
+            {
+              "id": "07f1ec6f-1b17-42f1-8e44-44cd5bf6f03e",
+              "name": "offer_count",
+              "type": "string",
+              "value": "3"
+            },
+            {
+              "id": "10f41af7-743e-464b-8937-fe6a5ca8f5f9",
+              "name": "reply_window_minutes",
+              "type": "string",
+              "value": "120"
+            },
+            {
+              "id": "40b31a20-d492-418d-afd1-edf396d992c2",
+              "name": "reply_keyword",
+              "type": "string",
+              "value": "TAKE"
+            },
+            {
+              "id": "7df9998e-b1b3-4d81-be78-1d5f9c6eb296",
+              "name": "weight_wait_day",
+              "type": "string",
+              "value": "1"
+            },
+            {
+              "id": "adb856f8-ee66-46ed-b650-9953f0ae25b1",
+              "name": "weight_no_show",
+              "type": "string",
+              "value": "-10"
+            },
+            {
+              "id": "99ccf306-54ac-4a06-9039-6837a2fff369",
+              "name": "weight_visit_loyalty",
+              "type": "string",
+              "value": "2"
+            },
+            {
+              "id": "0284ab1a-7d75-4ea2-b1d4-c0b8f97d8151",
+              "name": "weight_priority_flag",
+              "type": "string",
+              "value": "25"
+            },
+            {
+              "id": "75efb15b-7c99-48f8-a353-6c8111203bab",
+              "name": "min_score",
+              "type": "string",
+              "value": "0"
+            },
+            {
+              "id": "1f81dba9-a2e5-453a-8631-9b495f0964d5",
+              "name": "message_provider_url",
+              "type": "string",
+              "value": "https://api.PASTE_YOUR_PROVIDER.com/v1/messages"
+            },
+            {
+              "id": "3a02a65c-71f5-4296-b3c9-927040ad32f6",
+              "name": "message_api_token",
+              "type": "string",
+              "value": "PASTE_YOUR_MESSAGE_API_TOKEN"
+            },
+            {
+              "id": "0e145b2d-53a4-440a-b900-4225f9dab4ca",
+              "name": "sender_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SENDER_ID"
+            },
+            {
+              "id": "e34ff62d-c0a7-4cd7-b4d0-42d7ca366a1b",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a103e321-3c02-4605-aa78-e800f6aaa9d6",
+      "name": "CONFIG — Waitlist Rules",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the incoming cancellation payload\nconst body = $input.first().json.body || $input.first().json;\nconst appt = String(body.appointment_id || body.appointmentId || ('APPT-' + Date.now()));\nreturn [{ json: {\n  appointment_id: appt,\n  slot_time: String(body.slot_time || body.slotTime || ''),\n  service: String(body.service || ''),\n  cancelled_by: String(body.cancelled_by || ''),\n  status: 'NEW',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "31a0a42e-cdd3-4e28-bdc0-3b29bde366f3",
+      "name": "Code — Normalize Cancellation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $json.appointment_id }}",
+            "Slot Time": "={{ $json.slot_time }}",
+            "Service": "={{ $json.service }}",
+            "Name": "",
+            "Phone": "",
+            "Score": "",
+            "Status": "={{ $json.status }}",
+            "Offer Sent At": "",
+            "Offer Expires At": "",
+            "Reply At": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "941b182d-a1ba-46c0-a73e-2c505d9d54ab",
+      "name": "Sheets — Log Cancellation (NEW)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        780,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Waitlist"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5ef77c12-5081-445c-8e47-e9cea446f907",
+      "name": "Sheets — Read Waitlist",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Deterministic waitlist scoring. No AI here — fully explainable.\nconst cfg = $('CONFIG \\u2014 Waitlist Rules').first().json;\nconst cancel = $('Code \\u2014 Normalize Cancellation').first().json;\nconst wDay = parseFloat(cfg.weight_wait_day || '1');\nconst wNoShow = parseFloat(cfg.weight_no_show || '-10');\nconst wVisit = parseFloat(cfg.weight_visit_loyalty || '2');\nconst wPrio = parseFloat(cfg.weight_priority_flag || '25');\nconst minScore = parseFloat(cfg.min_score || '0');\nconst offerCount = parseInt(cfg.offer_count || '3', 10);\nconst windowMin = parseInt(cfg.reply_window_minutes || '120', 10);\nconst now = Date.now();\nconst expires = new Date(now + windowMin * 60000).toISOString();\nconst rows = $('Sheets \\u2014 Read Waitlist').all().map(i => i.json);\nconst scored = rows\n  .filter(r => r['Phone'] && (!cancel.service || !r['Service'] || r['Service'] === cancel.service))\n  .map(r => {\n    const waitSince = Date.parse(r['Wait Since'] || '') || now;\n    const waitDays = Math.max(0, Math.floor((now - waitSince) / 86400000));\n    const noShows = parseInt(r['No Shows'] || '0', 10) || 0;\n    const visits = parseInt(r['Visits'] || '0', 10) || 0;\n    const prio = String(r['Priority'] || '').trim().toUpperCase();\n    const priority = prio === 'YES' || prio === 'TRUE' || prio === '1';\n    const score = waitDays * wDay + noShows * wNoShow + visits * wVisit + (priority ? wPrio : 0);\n    return { name: r['Name'] || '', phone: String(r['Phone']), service: r['Service'] || '', score };\n  })\n  .filter(c => c.score >= minScore)\n  .sort((a, b) => b.score - a.score)\n  .slice(0, offerCount);\nreturn scored.map(c => ({ json: {\n  appointment_id: cancel.appointment_id,\n  slot_time: cancel.slot_time,\n  service: cancel.service,\n  name: c.name,\n  phone: c.phone,\n  score: Math.round(c.score * 10) / 10,\n  status: 'RANKED',\n  offer_expires_at: expires,\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "54ab81b6-0d2e-4cdb-8d9a-b7d9843ff96a",
+      "name": "Code — Score & Rank Waitlist",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $json.appointment_id }}",
+            "Slot Time": "={{ $json.slot_time }}",
+            "Service": "={{ $json.service }}",
+            "Name": "={{ $json.name }}",
+            "Phone": "={{ $json.phone }}",
+            "Score": "={{ $json.score }}",
+            "Status": "={{ $json.status }}",
+            "Offer Sent At": "",
+            "Offer Expires At": "={{ $json.offer_expires_at }}",
+            "Reply At": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0497f15a-9384-49ec-b64d-1d660b7838aa",
+      "name": "Sheets — Log Ranked (RANKED)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a friendly receptionist for {{ $('CONFIG — Waitlist Rules').first().json.business_name }}. Write a short, warm offer message (max 280 characters) telling {{ $json.name }} that a {{ $json.service }} slot just opened at {{ $json.slot_time }} and they are first on the waitlist. Do NOT include the reply instruction (it is appended automatically). No placeholders, max 1 emoji."
+        },
+        "text": "=Candidate: {{ $json.name }} (waitlist score {{ $json.score }})\nSlot: {{ $json.slot_time }}\nService: {{ $json.service }}"
+      },
+      "id": "0ab41d0c-2002-46a6-90d5-22cf5b7880be",
+      "name": "AI Agent — Write Offer Copy",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1820,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "325f76f8-e459-4335-a04d-b73c96a1423a",
+      "name": "OpenAI Chat Model — Offer Copy",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1820,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"offer_text\": \"the offer message, max 280 characters, warm and personal\",\n  \"urgency\": \"low / medium / high\"\n}"
+      },
+      "id": "48d17d30-d245-416e-92e3-862b18c1d612",
+      "name": "Structured Output Parser — Offer Copy",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine AI copy with the deterministic reply instruction + provider config\nconst cfg = $('CONFIG \\u2014 Waitlist Rules').first().json;\nconst windowMin = cfg.reply_window_minutes || '120';\nconst keyword = cfg.reply_keyword || 'TAKE';\nreturn $input.all().map(i => {\n  const j = i.json;\n  const aiText = (j.output && j.output.offer_text) || '';\n  const fallback = `Hi ${j.name || 'there'}! A ${j.service || 'appointment'} slot opened at ${j.slot_time} and you're top of our waitlist.`;\n  const message = (aiText || fallback) + `\\n\\nReply ${keyword} within ${windowMin} minutes to claim it.`;\n  return { json: Object.assign({}, j, {\n    message,\n    provider_url: cfg.message_provider_url,\n    api_token: cfg.message_api_token,\n    sender_id: cfg.sender_id,\n  })};\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "3bc37483-633b-4105-a847-c4da42f17713",
+      "name": "Code — Build Offer Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.provider_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.api_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ to: $json.phone, from: $json.sender_id, text: $json.message }) }}",
+        "options": {}
+      },
+      "id": "38f332b9-f062-4a2d-a315-b2f32053f396",
+      "name": "HTTP — Send Offer (Demo Provider)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Appointment ID",
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $('Code — Score & Rank Waitlist').first().json.appointment_id }}",
+            "Phone": "={{ $('Code — Score & Rank Waitlist').all()[$itemIndex].json.phone }}",
+            "Status": "OFFER_SENT",
+            "Offer Sent At": "={{ new Date().toISOString() }}",
+            "Offer Expires At": "={{ $('Code — Score & Rank Waitlist').first().json.offer_expires_at }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e242b7d5-e074-4b60-a022-bbb4c288678f",
+      "name": "Sheets — Mark OFFER_SENT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Owner summary: who got an offer for which slot\nconst ranked = $('Code \\u2014 Score & Rank Waitlist').all().map(i => i.json);\nconst cfg = $('CONFIG \\u2014 Waitlist Rules').first().json;\nconst first = ranked[0] || {};\nconst lines = [`\\U0001F4CB *Waitlist offers sent*`, ``,\n  `Slot: ${first.slot_time || '—'}`, `Service: ${first.service || '—'}`,\n  `Candidates: ${ranked.length}`, ``];\nranked.forEach((c, idx) => lines.push(`${idx + 1}. ${c.name || c.phone} (${c.phone}) \\u2014 score ${c.score}`));\nlines.push(``, `Reply window: ${cfg.reply_window_minutes} min. First ${cfg.reply_keyword || 'TAKE'} wins.`);\nreturn [{ json: { summary: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d8f696d8-ae5e-4745-9593-d8928f1a8c41",
+      "name": "Code — Build Offers Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Waitlist Rules').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "820bc2a9-4e17-4c68-8bb1-3aacc803444a",
+      "name": "Telegram — Owner: Offers Sent",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "afterTimeInterval",
+        "amount": "={{ $('CONFIG — Waitlist Rules').first().json.reply_window_minutes }}",
+        "unit": "minutes"
+      },
+      "id": "9ce26bc5-e162-4738-8141-bccda72b5a6d",
+      "name": "Wait — Reply Window",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3380,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "297c5652-3353-47f2-9405-59f4e8afee9c",
+      "name": "Sheets — Re-read Offers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// After the reply window: find still-open offers and build the closing summary\nconst rows = $('Sheets \\u2014 Re-read Offers').all().map(i => i.json);\nconst now = Date.now();\nconst expired = rows.filter(r =>\n  r['Status'] === 'OFFER_SENT' && r['Offer Expires At'] && Date.parse(r['Offer Expires At']) <= now\n);\nconst booked = rows.filter(r => r['Status'] === 'BOOKED');\nconst slot = (rows[0] && rows[0]['Slot Time']) || '';\nlet summary;\nif (booked.length) {\n  const b = booked[0];\n  summary = `\\u2705 Slot ${slot} was claimed by ${b['Name'] || b['Phone']} (${b['Phone']}). Nothing to expire.`;\n} else if (expired.length) {\n  summary = `\\u23F0 Reply window closed for slot ${slot}. ${expired.length} unclaimed offer(s) marked EXPIRED.`;\n} else {\n  summary = `\\u2139\\uFE0F Reply window closed for slot ${slot}. No open offers found.`;\n}\nconst items = expired.map(r => ({ json: {\n  appointment_id: r['Appointment ID'],\n  phone: r['Phone'],\n  status: 'EXPIRED',\n  summary,\n}}));\nif (!items.length) items.push({ json: { none_expired: True, summary } });\nreturn items;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "4bec57c9-b458-40b0-8057-829f0241491c",
+      "name": "Code — Expire & Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-expired",
+              "leftValue": "={{ $json.none_expired }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "name": "filter.operator.boolean.false"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "6167c599-8789-4646-aade-ece4750f2abb",
+      "name": "IF — Any Expired?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Appointment ID",
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $json.appointment_id }}",
+            "Phone": "={{ $json.phone }}",
+            "Status": "EXPIRED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "724dd4a3-3802-4e31-8d66-1b8c788b06fe",
+      "name": "Sheets — Mark EXPIRED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4420,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Waitlist Rules').first().json.telegram_chat_id }}",
+        "text": "={{ $('Code — Expire & Summarize').first().json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "6b480664-2fe8-4fd3-975f-4cc5e3237d5e",
+      "name": "Telegram — Owner: Window Closed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "waitlist-reply",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "202dd12c-4296-4151-ab84-98f62e3ac4db",
+      "name": "Webhook — Reply Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the incoming reply: {phone, message}\nconst body = $input.first().json.body || $input.first().json;\nconst digits = String(body.phone || body.from || '').replace(/\\D/g, '');\nconst msg = String(body.message || body.text || '').trim().toUpperCase();\nconst keyword = String($('CONFIG \\u2014 Waitlist Rules').first().json.reply_keyword || 'TAKE').toUpperCase();\nreturn [{ json: { phone: digits, message: msg, wants_slot: msg.includes(keyword) } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "b608a315-63ea-4a7a-9d1a-5009eb738b96",
+      "name": "Code — Normalize Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c6c526a3-4145-4e69-9d18-e96d071d5da4",
+      "name": "Sheets — Read Open Offers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        520,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// First TAKE wins: match the reply to the latest still-open offer for this phone\nconst reply = $('Code \\u2014 Normalize Reply').first().json;\nconst rows = $input.all().map(i => i.json);\nconst now = Date.now();\nconst open = rows.filter(r =>\n  String(r['Phone'] || '').replace(/\\D/g, '') === reply.phone &&\n  r['Status'] === 'OFFER_SENT' &&\n  r['Offer Expires At'] && Date.parse(r['Offer Expires At']) > now\n).sort((a, b) => Date.parse(b['Offer Sent At'] || 0) - Date.parse(a['Offer Sent At'] || 0));\nconst win = open[0];\nif (!reply.wants_slot || !win) {\n  return [{ json: { found: False, phone: reply.phone, message: reply.message } }];\n}\nreturn [{ json: {\n  found: True,\n  appointment_id: win['Appointment ID'],\n  slot_time: win['Slot Time'],\n  service: win['Service'],\n  name: win['Name'],\n  phone: win['Phone'],\n  reply_at: new Date().toISOString(),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ab5d0ef0-16e9-4845-be18-a3bfd5e92614",
+      "name": "Code — Match Reply to Offer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-found",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "628d627f-d7fb-4dd0-bf1a-d65875c71e4e",
+      "name": "IF — Offer Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Appointment ID",
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $json.appointment_id }}",
+            "Phone": "={{ $json.phone }}",
+            "Status": "BOOKED",
+            "Reply At": "={{ $json.reply_at }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "9f898ef5-da4a-45e1-8e55-f8fd85d92ada",
+      "name": "Sheets — Mark BOOKED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5bdbc2b7-c3ef-4f4e-8010-325f625dfec3",
+      "name": "Sheets — Read Appointment Offers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Everyone else who got an offer for this slot loses it (first TAKE wins)\nconst win = $('Code \\u2014 Match Reply to Offer').first().json;\nconst winDigits = String(win.phone).replace(/\\D/g, '');\nconst rows = $input.all().map(i => i.json);\nconst others = rows.filter(r =>\n  r['Appointment ID'] === win.appointment_id &&\n  r['Status'] === 'OFFER_SENT' &&\n  String(r['Phone'] || '').replace(/\\D/g, '') !== winDigits\n);\nreturn others.map(r => ({ json: {\n  appointment_id: r['Appointment ID'],\n  phone: r['Phone'],\n  status: 'EXPIRED',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "b3c8a884-df65-4166-a579-292e7f91204a",
+      "name": "Code — Build Others to Expire",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Offers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Appointment ID",
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Appointment ID": "={{ $json.appointment_id }}",
+            "Phone": "={{ $json.phone }}",
+            "Status": "EXPIRED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "08b1e990-eb5a-42a7-9c9e-306d7c097243",
+      "name": "Sheets — Mark Others EXPIRED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2080,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Owner summary for a successful booking\nconst win = $('Code \\u2014 Match Reply to Offer').first().json;\nconst summary = `\\U0001F389 Slot ${win.slot_time} BOOKED by ${win.name || win.phone} (${win.phone}). Other open offers marked EXPIRED.`;\nreturn [{ json: { summary } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "b7abb5a8-82e2-418f-9f26-70f18ca3e334",
+      "name": "Code — Build Booking Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Waitlist Rules').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "8635bf03-f8f6-4c91-ba89-af49e1b5b9dc",
+      "name": "Telegram — Owner: Slot Booked",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2600,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Waitlist Rules').first().json.telegram_chat_id }}",
+        "text": "={{ '⚠️ Unmatched waitlist reply from +' + $json.phone + ': \"' + $json.message + '\" — no open offer found.' }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d068c996-6d4a-42be-8fe4-cfa30244f080",
+      "name": "Telegram — Owner: Unmatched Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        1060
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Cancellation Intake": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Waitlist Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Waitlist Rules": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalize Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalize Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log Cancellation (NEW)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log Cancellation (NEW)": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Read Waitlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Read Waitlist": {
+      "main": [
+        [
+          {
+            "node": "Code — Score & Rank Waitlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Score & Rank Waitlist": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log Ranked (RANKED)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log Ranked (RANKED)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Write Offer Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Write Offer Copy": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Offer Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Offer Message": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Send Offer (Demo Provider)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Send Offer (Demo Provider)": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Mark OFFER_SENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Mark OFFER_SENT": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Offers Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Offers Alert": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Owner: Offers Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Owner: Offers Sent": {
+      "main": [
+        [
+          {
+            "node": "Wait — Reply Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait — Reply Window": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Re-read Offers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Re-read Offers": {
+      "main": [
+        [
+          {
+            "node": "Code — Expire & Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Expire & Summarize": {
+      "main": [
+        [
+          {
+            "node": "IF — Any Expired?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Any Expired?": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Mark EXPIRED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Owner: Window Closed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Mark EXPIRED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Owner: Window Closed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook — Reply Intake": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalize Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalize Reply": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Read Open Offers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Read Open Offers": {
+      "main": [
+        [
+          {
+            "node": "Code — Match Reply to Offer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Match Reply to Offer": {
+      "main": [
+        [
+          {
+            "node": "IF — Offer Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Offer Found?": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Mark BOOKED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Owner: Unmatched Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Mark BOOKED": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Read Appointment Offers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Read Appointment Offers": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Others to Expire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Others to Expire": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Mark Others EXPIRED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Mark Others EXPIRED": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Booking Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Booking Alert": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Owner: Slot Booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Offer Copy": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Write Offer Copy",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Offer Copy": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Write Offer Copy",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

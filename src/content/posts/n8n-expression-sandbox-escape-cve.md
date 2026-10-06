@@ -122,6 +122,8 @@ n8n's advisory lists short-term mitigations — they reduce exposure but **do no
 
 Do these only as a bridge to the upgrade, not instead of it.
 
+**Free template:** [n8n Security Advisory Triage](/templates/n8n-security-advisory-triage/) — a ready-to-import n8n workflow that watches for new n8n security advisories and alerts you the moment one drops, so the next CVE doesn't catch you by surprise.
+
 ## Key Takeaways
 
 1. **CVE-2026-86076 (CVSS 8.7):** a class field named `__sanitize` rebinds n8n's expression sanitizer and reaches the `Function` constructor — full code execution in the n8n process, or in another editor's browser session via workflow preview.

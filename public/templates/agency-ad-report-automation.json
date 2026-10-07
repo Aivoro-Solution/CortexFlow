@@ -1,0 +1,1096 @@
+{
+  "name": "Agency Ad Report Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📊 AGENCY AD REPORT AUTOMATION\n**What it does:** Every Monday 08:00 → pulls last-7-days performance from Meta Ads, Google Ads, and GA4 → computes totals + ROAS → AI writes a plain-language client summary → branded HTML report emailed to the client + digest posted to the agency's Telegram.\n\n**You'll need:**\n- Meta app + ad account access (developers.facebook.com) — Graph API token\n- Google Ads API access (developers.google.com/google-ads) — developer token + OAuth\n- GA4 Data API access (developers.google.com/analytics) — service account or OAuth\n- OpenAI API key (platform.openai.com)\n- Google Sheets + Gmail OAuth2 credentials, one log sheet\n- Telegram bot token + chat ID (@BotFather → /newbot)\n\n**All secrets are PASTE_YOUR_* placeholders** — nothing real is hardcoded. Fill the two CONFIG nodes after import.\n\n**Status flow in Sheets:** `RUN_STARTED` → `DATA_FETCHED` → `SUMMARY_GENERATED` → `REPORT_SENT` (or `REPORT_FAILED` on empty data)",
+        "height": 240,
+        "width": 4940,
+        "color": 5
+      },
+      "id": "7437d775-6616-4e08-83af-65fc64bf127d",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Monday trigger + config\nWeekly Schedule Trigger (Mon 08:00) fires → CONFIG — Report holds client name, sheet ID, client email, Telegram chat ID, brand color → run logged to Sheets with stage `RUN_STARTED`.",
+        "height": 340,
+        "width": 980,
+        "color": 4
+      },
+      "id": "91e962cc-ba61-47b6-bc91-ba172d7acca3",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Pull ad data from 3 platforms\nCONFIG — API Access holds every token/ID as PASTE_YOUR_* placeholders → three HTTP requests run in parallel: Meta Graph API insights (spend, clicks, impressions), Google Ads GAQL (cost, clicks, conversions), GA4 Data API (conversions, revenue). Bearer tokens come from the config, never hardcoded.",
+        "height": 640,
+        "width": 700,
+        "color": 4
+      },
+      "id": "fcd68f5a-bf79-4b61-a643-2e14de070766",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        760,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Blend + sanity check\nMerge nodes combine the three API responses → IF — Any Data? verifies at least one platform returned rows. Empty data takes the failure branch: logs `REPORT_FAILED` and still notifies you on Telegram.",
+        "height": 340,
+        "width": 660,
+        "color": 4
+      },
+      "id": "ad2810b2-cfd5-4dcc-8eb4-66565f48c00e",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Totals + AI summary\nCompute Totals blends everything into total spend, clicks, impressions, conversions, revenue, ROAS, CTR, CPA → sheet flips to `DATA_FETCHED` → AI Agent (gpt-4o-mini + Structured Output Parser) writes standout_metric, risk, recommendation, summary → sheet flips to `SUMMARY_GENERATED`.",
+        "height": 560,
+        "width": 720,
+        "color": 4
+      },
+      "id": "54af7545-8758-433d-a1b8-b3fcf6e9e81e",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Report + delivery\nBuild Report HTML assembles the branded email → sheet flips to `REPORT_SENT` → Gmail sends it to the client → Telegram — Run Digest posts totals + the AI take to the agency.",
+        "height": 340,
+        "width": 1440,
+        "color": 4
+      },
+      "id": "8d94eabf-54dc-4f6a-9947-7aa09c5bcb64",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2900,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## FAILURE BRANCH\nIf all three APIs return nothing (expired token, wrong IDs), the run still logs `REPORT_FAILED` to Sheets and posts a failure alert to Telegram — a silent miss never happens.",
+        "height": 160,
+        "width": 760,
+        "color": 6
+      },
+      "id": "20dd99d8-eeab-43f9-b128-7e96e5193c83",
+      "name": "STICKY — FAILURE",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weekday": [
+                {
+                  "name": "Monday",
+                  "value": "1"
+                }
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "08802e32-60b8-44f0-b11c-41bc838df4dd",
+      "name": "Weekly Monday 8AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "44371e2b-b3f1-4592-a23a-cf7c2df65ad0",
+              "name": "client_name",
+              "type": "string",
+              "value": "Acme Corp"
+            },
+            {
+              "id": "8344895d-6f56-4d05-9a3b-365668da9b0e",
+              "name": "gsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_GSHEET_ID"
+            },
+            {
+              "id": "f3bea588-6963-4f52-8ab8-0ee51d05367e",
+              "name": "sheet_tab",
+              "type": "string",
+              "value": "Report Log"
+            },
+            {
+              "id": "4c741ddf-72a0-4a85-acd4-00cfd6ad7d64",
+              "name": "client_email",
+              "type": "string",
+              "value": "PASTE_YOUR_CLIENT_EMAIL"
+            },
+            {
+              "id": "69010e11-9862-45a9-8ff6-8dfaa2da58eb",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "5733faa3-28dc-43b9-98e0-2368455d7864",
+              "name": "brand_color",
+              "type": "string",
+              "value": "#FF4D00"
+            },
+            {
+              "id": "75a4846c-4ec2-4fd7-88ef-cbbc1f3cfaca",
+              "name": "lookback_days",
+              "type": "string",
+              "value": "7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1f9cfca-99c7-4f52-a335-265db7529954",
+      "name": "CONFIG — Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Report').first().json.gsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Report').first().json.sheet_tab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "client_name": "={{ $('CONFIG — Report').first().json.client_name }}",
+            "stage": "RUN_STARTED",
+            "detail": "Weekly ad report run started (last 7 days)"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "31b9e00b-516e-4ee1-bbb3-585795c10e16",
+      "name": "Sheets — Log RUN_STARTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5783052-2592-4a9a-854f-e2c6a33c3545",
+              "name": "meta_access_token",
+              "type": "string",
+              "value": "PASTE_YOUR_META_ACCESS_TOKEN"
+            },
+            {
+              "id": "7ee4c230-a99b-421c-a0f5-4f6428564828",
+              "name": "meta_ad_account_id",
+              "type": "string",
+              "value": "PASTE_YOUR_META_AD_ACCOUNT_ID"
+            },
+            {
+              "id": "5512992d-e88e-4045-bcae-fdd8c59d495f",
+              "name": "google_ads_customer_id",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_ADS_CUSTOMER_ID"
+            },
+            {
+              "id": "7cd1709f-0a81-4cd9-a03c-9dc3330d8560",
+              "name": "google_ads_developer_token",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_ADS_DEVELOPER_TOKEN"
+            },
+            {
+              "id": "ccd3783a-338e-4dd2-8480-85911ee22b33",
+              "name": "google_oauth_token",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_OAUTH_ACCESS_TOKEN"
+            },
+            {
+              "id": "ad95bb48-19d4-4a60-9024-450fba1eb819",
+              "name": "ga4_property_id",
+              "type": "string",
+              "value": "PASTE_YOUR_GA4_PROPERTY_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "774ba288-9c97-49fe-ab77-ca8af030800d",
+      "name": "CONFIG — API Access",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://graph.facebook.com/v21.0/act_{{$('CONFIG — API Access').first().json.meta_ad_account_id}}/insights",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "date_preset",
+              "value": "last_7d"
+            },
+            {
+              "name": "fields",
+              "value": "impressions,clicks,spend,actions"
+            },
+            {
+              "name": "time_increment",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$('CONFIG — API Access').first().json.meta_access_token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dd58682d-56dc-48d6-b9d8-fe77a1ef2b2d",
+      "name": "Meta Ads — Pull Insights",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://googleads.googleapis.com/v17/customers/{{$('CONFIG — API Access').first().json.google_ads_customer_id}}/googleAds:search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$('CONFIG — API Access').first().json.google_oauth_token}}"
+            },
+            {
+              "name": "developer-token",
+              "value": "={{$('CONFIG — API Access').first().json.google_ads_developer_token}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"query\": \"SELECT campaign.name, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions FROM campaign WHERE segments.date DURING LAST_7_DAYS\"}",
+        "options": {}
+      },
+      "id": "092f24bb-d649-41c1-a7f0-243ced26d9d6",
+      "name": "Google Ads — Pull GAQL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://analyticsdata.googleapis.com/v1beta/properties/{{$('CONFIG — API Access').first().json.ga4_property_id}}:runReport",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$('CONFIG — API Access').first().json.google_oauth_token}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"dateRanges\": [{\"startDate\": \"7daysAgo\", \"endDate\": \"yesterday\"}], \"metrics\": [{\"name\": \"sessions\"}, {\"name\": \"conversions\"}, {\"name\": \"totalRevenue\"}], \"dimensions\": [{\"name\": \"sessionDefaultChannelGroup\"}]}",
+        "options": {}
+      },
+      "id": "cf567076-e73c-44ca-a576-c52b24e96b5c",
+      "name": "GA4 — Pull Conversions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "2ecc6846-0eb5-491f-b1b1-e0f7377836c4",
+      "name": "Merge — Ads Platforms",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "640801ab-f10c-4e0a-8bdc-e921e297c43f",
+      "name": "Merge — All Channels",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-any-data",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "6e9042ef-2bb0-461d-bfba-5eca21f6d643",
+      "name": "IF — Any Data?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Blend Meta, Google Ads, and GA4 results into weekly totals\nconst meta = $('Meta Ads \\u2014 Pull Insights').first().json;\nconst gads = $('Google Ads \\u2014 Pull GAQL').first().json;\nconst ga4  = $('GA4 \\u2014 Pull Conversions').first().json;\n\nconst sum = (arr, f) => (Array.isArray(arr) ? arr : []).reduce((t, r) => t + (Number(f(r)) || 0), 0);\n\n// Meta insights rows\nconst metaRows = meta.data || [];\nconst metaSpend = sum(metaRows, r => r.spend);\nconst metaClicks = sum(metaRows, r => r.clicks);\nconst metaImpr = sum(metaRows, r => r.impressions);\nconst metaConv = sum(metaRows, r => (r.actions || [])\n  .filter(a => /purchase|lead|conversion/i.test(a.action_type || ''))\n  .reduce((t, a) => t + Number(a.value || 0), 0));\n\n// Google Ads GAQL rows\nconst gadsRows = gads.results || [];\nconst gadsSpend = sum(gadsRows, r => (r.metrics && r.metrics.costMicros ? Number(r.metrics.costMicros) / 1e6 : 0));\nconst gadsClicks = sum(gadsRows, r => r.metrics && r.metrics.clicks);\nconst gadsImpr = sum(gadsRows, r => r.metrics && r.metrics.impressions);\nconst gadsConv = sum(gadsRows, r => r.metrics && r.metrics.conversions);\n\n// GA4 channel rows (metricValues order: sessions, conversions, totalRevenue)\nconst ga4Rows = ga4.rows || [];\nconst ga4Conv = sum(ga4Rows, r => Number((r.metricValues && r.metricValues[1] && r.metricValues[1].value) || 0));\nconst revenue = sum(ga4Rows, r => Number((r.metricValues && r.metricValues[2] && r.metricValues[2].value) || 0));\n\nconst total_spend = +(metaSpend + gadsSpend).toFixed(2);\nconst total_clicks = Math.round(metaClicks + gadsClicks);\nconst total_impressions = Math.round(metaImpr + gadsImpr);\nconst total_conversions = Math.round(metaConv + gadsConv + ga4Conv);\nconst roas = total_spend > 0 ? +(revenue / total_spend).toFixed(2) : 0;\nconst ctr = total_impressions > 0 ? +((total_clicks / total_impressions) * 100).toFixed(2) : 0;\nconst cpa = total_conversions > 0 ? +(total_spend / total_conversions).toFixed(2) : 0;\n\nreturn [{ json: {\n  period: 'last 7 days',\n  meta: { spend: +metaSpend.toFixed(2), clicks: Math.round(metaClicks), impressions: Math.round(metaImpr), conversions: Math.round(metaConv) },\n  google_ads: { spend: +gadsSpend.toFixed(2), clicks: Math.round(gadsClicks), impressions: Math.round(gadsImpr), conversions: Math.round(gadsConv) },\n  ga4: { conversions: Math.round(ga4Conv), revenue: +revenue.toFixed(2) },\n  total_spend, total_clicks, total_impressions, total_conversions,\n  revenue: +revenue.toFixed(2), roas, ctr_pct: ctr, cpa,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "a798cafb-c917-48d4-914c-a4407f1f15f4",
+      "name": "Compute Totals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Report').first().json.gsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Report').first().json.sheet_tab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "client_name": "={{ $('CONFIG — Report').first().json.client_name }}",
+            "stage": "DATA_FETCHED",
+            "detail": "={{ 'Spend $' + $json.total_spend + ' · ' + $json.total_clicks + ' clicks · ROAS ' + $json.roas }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "4c3ace4e-d771-4f7a-a8df-895947c991fa",
+      "name": "Sheets — Log DATA_FETCHED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "99719b1d-be19-4237-a500-2c3ed7f792b3",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "c69e7316-5026-4bac-9a39-1a5f91aac623",
+              "name": "tone",
+              "type": "string",
+              "value": "plain-language, no jargon, honest about uncertainty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "82b7edbd-32ec-4ca3-9211-f3cf7547223a",
+      "name": "CONFIG — AI",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a paid-media analyst writing for a non-technical client. Turn the weekly ad metrics below into a plain-language summary a busy business owner can read in 60 seconds.\n\nWEEKLY METRICS (last 7 days):\nTotal spend ${{ $json.total_spend }} · Clicks {{ $json.total_clicks }} · Impressions {{ $json.total_impressions }} · Conversions {{ $json.total_conversions }} · Revenue ${{ $json.revenue }} · ROAS {{ $json.roas }}x · CTR {{ $json.ctr_pct }}% · CPA ${{ $json.cpa }}\nMeta: ${{ $json.meta.spend }} / {{ $json.meta.clicks }} clicks / {{ $json.meta.conversions }} conv.\nGoogle Ads: ${{ $json.google_ads.spend }} / {{ $json.google_ads.clicks }} clicks / {{ $json.google_ads.conversions }} conv.\nGA4: {{ $json.ga4.conversions }} conversions, ${{ $json.ga4.revenue }} revenue.\n\nTone: {{ $('CONFIG — AI').first().json.tone }}. Call out the single most important number first. Output ONLY via the structured output parser.",
+          "text": "=Write the weekly summary for {{ $('CONFIG — Report').first().json.client_name }}."
+        }
+      },
+      "id": "c4a553bb-d5dc-402f-af61-6ef1091edee4",
+      "name": "AI Agent — Write Ad Summary",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2640,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "6b8be14d-4636-4bf9-8c64-f0ed8dd35bdf",
+      "name": "OpenAI Chat Model — Summary",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"standout_metric\": \"the single most important number or change this week\",\n  \"risk\": \"the biggest risk or warning sign in the data\",\n  \"recommendation\": \"one concrete action to take next week\",\n  \"summary\": \"60-second plain-language summary of the week\"\n}"
+      },
+      "id": "9e6480a9-5281-4cc5-9acb-3334814e8fe1",
+      "name": "Structured Output Parser — Summary",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Report').first().json.gsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Report').first().json.sheet_tab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "client_name": "={{ $('CONFIG — Report').first().json.client_name }}",
+            "stage": "SUMMARY_GENERATED",
+            "detail": "={{ 'Standout: ' + $json.output.standout_metric }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "419810f4-df65-4f2d-ada1-25538ff2a1eb",
+      "name": "Sheets — Log SUMMARY_GENERATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0318e63f-a1e1-4cd1-88f4-d3c0cf8e07f3",
+              "name": "report_title",
+              "type": "string",
+              "value": "={{ 'Weekly Ad Report — ' + $('CONFIG — Report').first().json.client_name }}"
+            },
+            {
+              "id": "18816e9e-ecc1-4d8a-ae35-b5fc3c6421af",
+              "name": "report_html",
+              "type": "string",
+              "value": "=<html><head><meta charset='utf-8'></head><body style='font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#111;'><div style='background:{{$('CONFIG — Report').first().json.brand_color}};color:#fff;padding:24px;'><h1 style='margin:0;'>Weekly Ad Report</h1><p style='margin:8px 0 0;'>{{$('CONFIG — Report').first().json.client_name}} · last {{$('CONFIG — Report').first().json.lookback_days}} days · {{$now.toISO().slice(0,10)}}</p></div><div style='padding:24px;'><h2>Totals</h2><table style='width:100%;border-collapse:collapse;'><tr><td style='padding:8px;border:1px solid #ddd;'>Ad spend</td><td style='padding:8px;border:1px solid #ddd;'><strong>${{ $json.total_spend }}</strong></td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>Clicks / Impressions</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.total_clicks }} / {{ $json.total_impressions }}</td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>Conversions</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.total_conversions }}</td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>Revenue (GA4)</td><td style='padding:8px;border:1px solid #ddd;'>${{ $json.revenue }}</td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>ROAS / CTR / CPA</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.roas }}x / {{ $json.ctr_pct }}% / ${{ $json.cpa }}</td></tr></table><h2>By platform</h2><table style='width:100%;border-collapse:collapse;'><tr><th style='padding:8px;border:1px solid #ddd;text-align:left;'>Platform</th><th style='padding:8px;border:1px solid #ddd;'>Spend</th><th style='padding:8px;border:1px solid #ddd;'>Clicks</th><th style='padding:8px;border:1px solid #ddd;'>Impr.</th><th style='padding:8px;border:1px solid #ddd;'>Conv.</th></tr><tr><td style='padding:8px;border:1px solid #ddd;'>Meta Ads</td><td style='padding:8px;border:1px solid #ddd;'>${{ $json.meta.spend }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.meta.clicks }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.meta.impressions }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.meta.conversions }}</td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>Google Ads</td><td style='padding:8px;border:1px solid #ddd;'>${{ $json.google_ads.spend }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.google_ads.clicks }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.google_ads.impressions }}</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.google_ads.conversions }}</td></tr><tr><td style='padding:8px;border:1px solid #ddd;'>GA4 (site)</td><td style='padding:8px;border:1px solid #ddd;'>—</td><td style='padding:8px;border:1px solid #ddd;'>—</td><td style='padding:8px;border:1px solid #ddd;'>—</td><td style='padding:8px;border:1px solid #ddd;'>{{ $json.ga4.conversions }} (${{ $json.ga4.revenue }})</td></tr></table><h2>Analyst summary</h2><p>{{ $json.output.summary }}</p><h3>Standout metric</h3><p>{{ $json.output.standout_metric }}</p><h3>Watch out</h3><p>{{ $json.output.risk }}</p><h3>Recommendation</h3><p>{{ $json.output.recommendation }}</p><p style='color:#888;font-size:12px;'>Generated automatically by your agency's reporting automation. Figures pulled live from Meta Ads, Google Ads, and GA4.</p></div></body></html>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2a4482ab-2641-4d99-a883-08dee3b0c871",
+      "name": "Build Report HTML",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3360,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Report').first().json.gsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Report').first().json.sheet_tab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "client_name": "={{ $('CONFIG — Report').first().json.client_name }}",
+            "stage": "REPORT_SENT",
+            "detail": "={{ 'Report emailed to ' + $('CONFIG — Report').first().json.client_email }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fb8753c5-07f5-4e27-8af3-21dd9029e6e3",
+      "name": "Sheets — Log REPORT_SENT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3600,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('CONFIG — Report').first().json.client_email }}",
+        "subject": "={{ $('Build Report HTML').first().json.report_title + ' — week of ' + $now.toISO().slice(0, 10) }}",
+        "emailType": "html",
+        "message": "={{ $('Build Report HTML').first().json.report_html }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "543adb2c-f2c3-4c92-9560-b93e85bcd8cd",
+      "name": "Gmail — Send Client Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3840,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Report').first().json.telegram_chat_id }}",
+        "text": "=📊 *Weekly Ad Report — run digest*\nClient: {{$('CONFIG — Report').first().json.client_name}}\n\nSpend: ${{ $('Build Report HTML').first().json.total_spend }} · Clicks: {{ $('Build Report HTML').first().json.total_clicks }} · Impr: {{ $('Build Report HTML').first().json.total_impressions }}\nConversions: {{ $('Build Report HTML').first().json.total_conversions }} · Revenue: ${{ $('Build Report HTML').first().json.revenue }} · ROAS: {{ $('Build Report HTML').first().json.roas }}x\n\nStandout: {{ $('AI Agent — Write Ad Summary').first().json.output.standout_metric }}\nRisk: {{ $('AI Agent — Write Ad Summary').first().json.output.risk }}\n\nReport emailed to {{$('CONFIG — Report').first().json.client_email }} ✅",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "ba01de26-c611-4d17-8278-914c44aa0faf",
+      "name": "Telegram — Run Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4080,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Report').first().json.gsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('CONFIG — Report').first().json.sheet_tab }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "client_name": "={{ $('CONFIG — Report').first().json.client_name }}",
+            "stage": "REPORT_FAILED",
+            "detail": "No ad data returned from Meta / Google Ads / GA4 — check API access tokens and IDs"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0cae1cbb-6308-4e3e-bbf1-e3a20bb30811",
+      "name": "Sheets — Log REPORT_FAILED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Report').first().json.telegram_chat_id }}",
+        "text": "=⚠️ *Weekly Ad Report FAILED*\nClient: {{$('CONFIG — Report').first().json.client_name}}\nNo data returned from Meta Ads, Google Ads, or GA4. Check the API tokens and account IDs in CONFIG — API Access, then run manually.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d3962b8b-8286-4387-80be-cddf66aef435",
+      "name": "Telegram — Failure Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        460
+      ]
+    }
+  ],
+  "connections": {
+    "Weekly Monday 8AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Report": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log RUN_STARTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log RUN_STARTED": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — API Access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — API Access": {
+      "main": [
+        [
+          {
+            "node": "Meta Ads — Pull Insights",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Ads — Pull GAQL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GA4 — Pull Conversions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meta Ads — Pull Insights": {
+      "main": [
+        [
+          {
+            "node": "Merge — Ads Platforms",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Ads — Pull GAQL": {
+      "main": [
+        [
+          {
+            "node": "Merge — Ads Platforms",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Ads Platforms": {
+      "main": [
+        [
+          {
+            "node": "Merge — All Channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GA4 — Pull Conversions": {
+      "main": [
+        [
+          {
+            "node": "Merge — All Channels",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — All Channels": {
+      "main": [
+        [
+          {
+            "node": "IF — Any Data?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Any Data?": {
+      "main": [
+        [
+          {
+            "node": "Compute Totals",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets — Log REPORT_FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Totals": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log DATA_FETCHED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log DATA_FETCHED": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Write Ad Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Write Ad Summary": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log SUMMARY_GENERATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log SUMMARY_GENERATED": {
+      "main": [
+        [
+          {
+            "node": "Build Report HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report HTML": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log REPORT_SENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log REPORT_SENT": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Send Client Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Client Report": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Run Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log REPORT_FAILED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Failure Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Summary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Write Ad Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Summary": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Write Ad Summary",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

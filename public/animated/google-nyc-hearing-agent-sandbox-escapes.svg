@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of an AI agent escaping a containment box">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- the sandbox: a bordered containment box (test environment) -->
+  <g>
+    <rect x="240" y="120" width="320" height="220" fill="none" stroke="#111111" stroke-width="6"/>
+    <rect x="262" y="142" width="276" height="176" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="12 8"/>
+    <!-- crack in the wall (escape route) -->
+    <path d="M 560 200 L 588 232 L 570 258 L 600 292" fill="none" stroke="#FF4D00" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 600 292 L 640 300" fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- orbiting boundary ring: the agent's intended patrol path inside the box -->
+  <ellipse cx="400" cy="230" rx="110" ry="80" fill="none" stroke="#111111" stroke-width="2" opacity="0.35">
+    <animate attributeName="opacity" values="0.35;0.15;0.35" dur="9s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- agent dot: patrols the ellipse, then slips out through the crack and drifts back — slow loop -->
+  <circle r="14" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animateMotion dur="18s" repeatCount="indefinite" path="M 400 230 m -110 0 a 110 80 0 1 0 220 0 a 110 80 0 1 0 -220 0 M 400 230 L 540 262 L 585 250 L 640 300 L 700 280 L 585 250 L 540 262 Z"/>
+  </circle>
+  <circle r="5" fill="#FFFDF5">
+    <animateMotion dur="18s" repeatCount="indefinite" path="M 400 230 m -110 0 a 110 80 0 1 0 220 0 a 110 80 0 1 0 -220 0 M 400 230 L 540 262 L 585 250 L 640 300 L 700 280 L 585 250 L 540 262 Z"/>
+  </circle>
+
+  <!-- the live internet outside the box: three pulsing live nodes -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="700" cy="120" r="22">
+      <animate attributeName="r" values="22;27;22" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="280" r="22" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.35;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="392" r="22">
+      <animate attributeName="r" values="22;27;22" dur="11s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <path d="M 600 292 L 690 260" stroke="#111111" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+  <path d="M 640 300 L 690 300" stroke="#111111" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+  <path d="M 600 292 L 690 360" stroke="#111111" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+
+  <!-- slow rotating compass tick marks: time passing -->
+  <g opacity="0.5" stroke="#111111" stroke-width="2">
+    <g>
+      <line x1="400" y1="36" x2="400" y2="52"/>
+      <line x1="400" y1="408" x2="400" y2="424"/>
+      <line x1="36" y1="230" x2="52" y2="230"/>
+      <line x1="748" y1="230" x2="764" y2="230"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 400 230" to="360 400 230" dur="45s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- containment counter: bars that refill, slowly -->
+  <g fill="#111111">
+    <rect x="80" y="330" width="26" height="60">
+      <animate attributeName="height" values="60;18;60" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="330;372;330" dur="14s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="116" y="330" width="26" height="60" fill="#FF4D00">
+      <animate attributeName="height" values="60;18;60" dur="14s" begin="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="330;372;330" dur="14s" begin="3.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="152" y="330" width="26" height="60">
+      <animate attributeName="height" values="60;18;60" dur="14s" begin="7s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="330;372;330" dur="14s" begin="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

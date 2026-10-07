@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic: an AI agent signal escaping its containment box toward a bank vault door">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111" stroke-width="1" opacity="0.12">
+    <path d="M0 50h800M0 100h800M0 150h800M0 200h800M0 250h800M0 300h800M0 350h800M0 400h800"/>
+    <path d="M50 0v450M100 0v450M150 0v450M200 0v450M250 0v450M300 0v450M350 0v450M400 0v450M450 0v450M500 0v450M550 0v450M600 0v450M650 0v450M700 0v450M750 0v450"/>
+  </g>
+
+  <!-- vault door (right) -->
+  <g>
+    <rect x="560" y="120" width="170" height="210" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <rect x="574" y="134" width="142" height="182" fill="none" stroke="#111" stroke-width="2"/>
+    <circle cx="645" cy="225" r="58" fill="none" stroke="#111" stroke-width="4"/>
+    <g>
+      <g stroke="#111" stroke-width="5" stroke-linecap="round">
+        <line x1="645" y1="167" x2="645" y2="225"/>
+        <line x1="645" y1="225" x2="695" y2="225"/>
+        <line x1="645" y1="225" x2="620" y2="268"/>
+        <line x1="645" y1="225" x2="595" y2="225"/>
+      </g>
+      <animateTransform attributeName="transform" type="rotate" from="0 645 225" to="360 645 225" dur="48s" repeatCount="indefinite"/>
+    </g>
+    <circle cx="645" cy="225" r="14" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+    <!-- slowly pulsing threat ring on the vault -->
+    <circle cx="645" cy="225" r="58" fill="none" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="r" values="58;86;58" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.05;0.8" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- containment box (left) -->
+  <g>
+    <rect x="70" y="150" width="190" height="150" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <line x1="70" y1="150" x2="260" y2="300" stroke="#111" stroke-width="2" stroke-dasharray="6 6"/>
+    <line x1="260" y1="150" x2="70" y2="300" stroke="#111" stroke-width="2" stroke-dasharray="6 6"/>
+    <!-- cracked opening: an orange shard lifting off -->
+    <g>
+      <polygon points="150,150 190,150 170,110" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 8 -14; 0 0" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- escaping agent signals: orange nodes drifting from box toward vault -->
+  <g fill="#FF4D00" stroke="#111" stroke-width="2.5">
+    <circle cx="200" cy="225" r="10">
+      <animate attributeName="cx" values="200;560" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="225;225" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;0" dur="14s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="180" r="7">
+      <animate attributeName="cx" values="200;560" dur="18s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="180;260" dur="18s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;0" dur="18s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="270" r="8">
+      <animate attributeName="cx" values="200;560" dur="16s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="270;195" dur="16s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;0" dur="16s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- the path they travel -->
+  <path d="M260 225 C 380 225, 440 225, 560 225" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="10 10">
+    <animate attributeName="stroke-dashoffset" values="0;40" dur="10s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- shield badge (lower middle): the defense that's under strain -->
+  <g>
+    <path d="M400 330 l46 -16 v30 c0 30 -22 48 -46 58 c-24 -10 -46 -28 -46 -58 v-30 z" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <path d="M388 362 l12 12 l22 -26" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="opacity" values="1;0.35;1" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <g stroke="#111" stroke-width="2">
+      <line x1="352" y1="352" x2="330" y2="330" stroke-dasharray="4 4"/>
+      <line x1="448" y1="352" x2="470" y2="330" stroke-dasharray="4 4"/>
+    </g>
+  </g>
+</svg>

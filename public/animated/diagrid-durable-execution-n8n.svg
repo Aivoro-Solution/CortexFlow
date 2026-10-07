@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <!-- cream drawing sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111" stroke-width="3"/>
+
+  <!-- connector spine -->
+  <line x1="110" y1="225" x2="690" y2="225" stroke="#111" stroke-width="4"/>
+
+  <!-- node 1 -->
+  <g>
+    <rect x="90" y="200" width="50" height="50" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+    <circle cx="115" cy="225" r="8" fill="#FF4D00"/>
+  </g>
+  <!-- node 2 -->
+  <g>
+    <rect x="240" y="200" width="50" height="50" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+    <circle cx="265" cy="225" r="8" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- node 3 : the crashed node, resumes -->
+  <g>
+    <rect x="390" y="200" width="50" height="50" fill="#FFFDF5" stroke="#111" stroke-width="3.5">
+      <animate attributeName="fill" values="#FFFDF5;#FF4D00;#FFFDF5" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="415" cy="225" r="8" fill="#FF4D00">
+      <animate attributeName="fill" values="#FF4D00;#FFFDF5;#FF4D00" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <!-- resume checkpoint ring -->
+    <circle cx="415" cy="225" r="16" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="8 6">
+      <animateTransform attributeName="transform" type="rotate" from="0 415 225" to="360 415 225" dur="30s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- node 4 -->
+  <g>
+    <rect x="540" y="200" width="50" height="50" fill="#FFFDF5" stroke="#111" stroke-width="3.5"/>
+    <circle cx="565" cy="225" r="8" fill="#FFFDF5" stroke="#111" stroke-width="2.5">
+      <animate attributeName="fill" values="#FFFDF5;#FFFDF5;#FF4D00;#FF4D00" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- checkpoint ticks under each completed node -->
+  <g stroke="#111" stroke-width="3" fill="none">
+    <path d="M 105 292 l 8 8 l 14 -16"/>
+    <path d="M 255 292 l 8 8 l 14 -16"/>
+    <path d="M 405 292 l 8 8 l 14 -16">
+      <animate attributeName="opacity" values="0.25;1;0.25" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- slow progress pulse travelling along the spine -->
+  <circle cx="110" cy="225" r="10" fill="none" stroke="#FF4D00" stroke-width="4">
+    <animate attributeName="cx" values="110;690;110" dur="18s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;1;0.4" dur="18s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- dashed fallback arc showing resume-from-here -->
+  <path d="M 440 200 Q 480 120 565 200" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" values="0;-36" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <polygon points="565,190 565,210 582,200" fill="#FF4D00"/>
+
+  <!-- drifting marker ring, very slow -->
+  <circle cx="700" cy="90" r="26" fill="none" stroke="#111" stroke-width="2.5" opacity="0.5">
+    <animate attributeName="cy" values="90;110;90" dur="14s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="360" r="18" fill="#FF4D00" opacity="0.25">
+    <animate attributeName="r" values="18;24;18" dur="10s" repeatCount="indefinite"/>
+  </circle>
+</svg>

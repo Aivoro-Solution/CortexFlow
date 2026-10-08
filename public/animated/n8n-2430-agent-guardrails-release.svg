@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract guarded workflow nodes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- thick frame -->
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- pulsing orange shield behind the workflow (slow 8s) -->
+  <g opacity="0.9">
+    <path d="M 400 90 L 560 150 L 560 260 Q 560 350 400 390 Q 240 350 240 260 L 240 150 Z"
+          fill="none" stroke="#FF4D00" stroke-width="14" stroke-linejoin="round">
+      <animate attributeName="stroke-width" values="14;20;14" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 400 90 L 560 150 L 560 260 Q 560 350 400 390 Q 240 350 240 260 L 240 150 Z"
+          fill="none" stroke="#111111" stroke-width="4" stroke-linejoin="round" opacity="0.55" transform="translate(8,10)"/>
+  </g>
+
+  <!-- workflow nodes connected by thick lines -->
+  <g stroke="#111111" stroke-width="6" fill="#FFFDF5">
+    <rect x="150" y="190" width="110" height="70" rx="4"/>
+    <rect x="345" y="190" width="110" height="70" rx="4" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.72;1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="540" y="190" width="110" height="70" rx="4"/>
+  </g>
+
+  <!-- connector lines (dash march, slow 12s) -->
+  <g stroke="#111111" stroke-width="6" fill="none">
+    <line x1="260" y1="225" x2="345" y2="225" stroke-dasharray="16 12">
+      <animate attributeName="stroke-dashoffset" values="0;-112" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <line x1="455" y1="225" x2="540" y2="225" stroke-dasharray="16 12">
+      <animate attributeName="stroke-dashoffset" values="0;-112" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- decision diamond floating above (slow bob 7s) -->
+  <g>
+    <path d="M 400 108 L 442 145 L 400 182 L 358 145 Z" fill="#FFD02F" stroke="#111111" stroke-width="6">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -12; 0 0" dur="7s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- guard node: an X marker that slowly rotates (30s) on the shield's shoulder -->
+  <g transform="translate(560,120)">
+    <g>
+      <line x1="-16" y1="-16" x2="16" y2="16" stroke="#FF4D00" stroke-width="10" stroke-linecap="round"/>
+      <line x1="16" y1="-16" x2="-16" y2="16" stroke="#FF4D00" stroke-width="10" stroke-linecap="round"/>
+      <circle r="30" fill="none" stroke="#111111" stroke-width="6"/>
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="30s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- small drifting dots along the shield path (slow, 15s) -->
+  <circle r="9" fill="#111111">
+    <animateMotion dur="15s" repeatCount="indefinite" path="M 400 90 L 560 150 L 560 260 Q 560 350 400 390 Q 240 350 240 260 L 240 150 Z"/>
+  </circle>
+  <circle r="9" fill="#FF4D00">
+    <animateMotion dur="20s" repeatCount="indefinite" path="M 400 390 Q 560 350 560 260 L 560 150 L 400 90 L 240 150 L 240 260 Q 240 350 400 390"/>
+  </circle>
+
+  <!-- corner sticker -->
+  <g transform="translate(96,68) rotate(-8)">
+    <rect x="-72" y="-30" width="144" height="60" fill="#2F6BFF" stroke="#111111" stroke-width="6"/>
+    <rect x="-72" y="-30" width="144" height="60" fill="none" stroke="#111111" stroke-width="3" opacity="0" transform="translate(6,7)">
+      <animate attributeName="opacity" values="0;0.6;0" dur="11s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

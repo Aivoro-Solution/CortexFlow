@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: small fast model tokens orbiting a low-cost core">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111" stroke-width="0.6" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- ink border frame -->
+  <rect x="18" y="18" width="764" height="414" fill="none" stroke="#111" stroke-width="6"/>
+
+  <!-- orbit guides -->
+  <ellipse cx="400" cy="225" rx="250" ry="120" fill="none" stroke="#111" stroke-width="2.5" stroke-dasharray="14 10"/>
+  <ellipse cx="400" cy="225" rx="160" ry="76" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="8 8"/>
+
+  <!-- low-cost core: orange chip -->
+  <g>
+    <rect x="356" y="181" width="88" height="88" fill="#FF4D00" stroke="#111" stroke-width="6"/>
+    <rect x="368" y="193" width="64" height="64" fill="none" stroke="#FFFDF5" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="48s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- orbiting tokens: counter-rotating group, slow -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="30s" repeatCount="indefinite"/>
+    <rect x="640" y="212" width="26" height="26" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+    <circle cx="400" cy="105" r="15" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+    <rect x="147" y="212" width="26" height="26" fill="#FF4D00" stroke="#111" stroke-width="5"/>
+    <circle cx="400" cy="345" r="15" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+  </g>
+
+  <!-- inner orbit tokens, slowest -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+    <rect x="552" y="213" width="22" height="22" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <rect x="226" y="213" width="22" height="22" fill="#FF4D00" stroke="#111" stroke-width="4"/>
+  </g>
+
+  <!-- price pulse ring: slow breathing scale on an ink circle -->
+  <circle cx="400" cy="225" r="118" fill="none" stroke="#FF4D00" stroke-width="3" opacity="0.55">
+    <animate attributeName="r" values="112;128;112" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.55;0.15;0.55" dur="9s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- corner ticks -->
+  <g stroke="#111" stroke-width="4">
+    <line x1="40" y1="40" x2="60" y2="40"/>
+    <line x1="760" y1="40" x2="740" y2="40"/>
+    <line x1="760" y1="40" x2="760" y2="60"/>
+    <line x1="40" y1="410" x2="40" y2="390"/>
+    <line x1="40" y1="410" x2="60" y2="410"/>
+    <line x1="760" y1="410" x2="740" y2="410"/>
+    <line x1="760" y1="410" x2="760" y2="390"/>
+  </g>
+</svg>

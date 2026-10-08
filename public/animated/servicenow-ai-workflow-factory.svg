@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated abstract workflow factory loop">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.18"/>
+    </pattern>
+    <g id="gear">
+      <circle cx="0" cy="0" r="26" fill="none" stroke="#111111" stroke-width="6"/>
+      <circle cx="0" cy="0" r="9" fill="none" stroke="#111111" stroke-width="6"/>
+      <g stroke="#111111" stroke-width="8" stroke-linecap="round">
+        <line x1="0" y1="-34" x2="0" y2="-22"/><line x1="0" y1="22" x2="0" y2="34"/>
+        <line x1="-34" y1="0" x2="-22" y2="0"/><line x1="22" y1="0" x2="34" y2="0"/>
+        <line x1="-24" y1="-24" x2="-16" y2="-16"/><line x1="24" y1="-24" x2="16" y2="-16"/>
+        <line x1="-24" y1="24" x2="-16" y2="16"/><line x1="24" y1="24" x2="16" y2="16"/>
+      </g>
+    </g>
+    <g id="box">
+      <rect x="-34" y="-34" width="68" height="68" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+      <line x1="-34" y1="0" x2="34" y2="0" stroke="#111111" stroke-width="4"/>
+      <line x1="0" y1="-34" x2="0" y2="34" stroke="#111111" stroke-width="4"/>
+    </g>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- Conveyor loop -->
+  <rect x="110" y="140" width="580" height="180" rx="90" fill="none" stroke="#111111" stroke-width="8"/>
+  <rect x="150" y="180" width="500" height="100" rx="50" fill="none" stroke="#111111" stroke-width="3" opacity="0.35"/>
+
+  <!-- Moving pulse dot travelling the loop -->
+  <g>
+    <circle r="14" fill="#FF4D00" stroke="#111111" stroke-width="5">
+      <animate attributeName="opacity" values="1;0.55;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+      values="400,140; 600,140; 690,230; 600,320; 400,320; 200,320; 110,230; 200,140; 400,140"
+      calcMode="spline" keyTimes="0;0.14;0.25;0.39;0.5;0.64;0.75;0.89;1"
+      keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </g>
+
+  <!-- Workflow boxes on the loop, gently bobbing -->
+  <g transform="translate(250,230)">
+    <g>
+      <use href="#box"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -12; 0 0" dur="7s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <g transform="translate(400,230)">
+    <g>
+      <rect x="-34" y="-34" width="68" height="68" fill="#FF4D00" stroke="#111111" stroke-width="6"/>
+      <line x1="-34" y1="0" x2="34" y2="0" stroke="#111111" stroke-width="4"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <g transform="translate(550,230)">
+    <g>
+      <use href="#box"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -10; 0 0" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- Slow gears -->
+  <g transform="translate(150,90)">
+    <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    <use href="#gear"/>
+  </g>
+  <g transform="translate(650,90)">
+    <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="45s" repeatCount="indefinite"/>
+    <use href="#gear"/>
+  </g>
+
+  <!-- Central control tower dial, very slow sweep -->
+  <g transform="translate(400,390)">
+    <rect x="-90" y="-26" width="180" height="52" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <circle r="20" fill="none" stroke="#111111" stroke-width="5"/>
+    <line x1="0" y1="0" x2="0" y2="-15" stroke="#FF4D00" stroke-width="5" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="30s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="-60" cy="0" r="5" fill="#111111">
+      <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="0" r="5" fill="#111111">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Corner bolts -->
+  <g fill="#111111">
+    <circle cx="30" cy="30" r="7"/><circle cx="770" cy="30" r="7"/>
+    <circle cx="30" cy="420" r="7"/><circle cx="770" cy="420" r="7"/>
+  </g>
+</svg>

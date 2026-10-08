@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#111" stroke-width="0.4" opacity="0.18"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111" stroke-width="3"/>
+
+  <!-- central universal-agent node -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="90s" repeatCount="indefinite"/>
+    <circle cx="400" cy="225" r="110" fill="none" stroke="#111" stroke-width="4"/>
+    <circle cx="400" cy="225" r="88" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="10 8" opacity="0.6"/>
+    <g stroke="#111" stroke-width="3">
+      <line x1="400" y1="115" x2="400" y2="90"/>
+      <line x1="495" y1="170" x2="518" y2="152"/>
+      <line x1="495" y1="280" x2="518" y2="298"/>
+      <line x1="400" y1="335" x2="400" y2="360"/>
+      <line x1="305" y1="280" x2="282" y2="298"/>
+      <line x1="305" y1="170" x2="282" y2="152"/>
+    </g>
+    <g fill="#FFFDF5" stroke="#111" stroke-width="3">
+      <rect x="384" y="74" width="32" height="32" transform="rotate(45 400 90)"/>
+      <circle cx="518" cy="152" r="16"/>
+      <circle cx="518" cy="298" r="16"/>
+      <rect x="384" y="344" width="32" height="32" transform="rotate(45 400 360)"/>
+      <circle cx="282" cy="298" r="16"/>
+      <circle cx="282" cy="152" r="16"/>
+    </g>
+  </g>
+
+  <!-- core: one orange accent core, slowly pulsing -->
+  <circle cx="400" cy="225" r="34" fill="#FF4D00" stroke="#111" stroke-width="4">
+    <animate attributeName="r" values="34;40;34" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="225" r="52" fill="none" stroke="#FF4D00" stroke-width="2" opacity="0.5">
+    <animate attributeName="r" values="52;64;52" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.15;0.5" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- orbiting sub-agents (model-task matching): slow orbit -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="45s" repeatCount="indefinite"/>
+    <circle cx="400" cy="225" r="150" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.5"/>
+    <g>
+      <circle cx="550" cy="225" r="20" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <circle cx="550" cy="225" r="7" fill="#111"/>
+    </g>
+    <g>
+      <rect x="232" y="205" width="40" height="40" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+    </g>
+    <g>
+      <circle cx="400" cy="75" r="18" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+    </g>
+    <g>
+      <circle cx="400" cy="375" r="18" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- document / mail / sheet motifs drifting up slowly -->
+  <g opacity="0.85">
+    <g transform="translate(90,150)">
+      <rect x="0" y="0" width="54" height="70" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <line x1="10" y1="16" x2="44" y2="16" stroke="#111" stroke-width="3"/>
+      <line x1="10" y1="28" x2="44" y2="28" stroke="#111" stroke-width="2"/>
+      <line x1="10" y1="40" x2="44" y2="40" stroke="#111" stroke-width="2"/>
+      <line x1="10" y1="52" x2="32" y2="52" stroke="#FF4D00" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="90 150; 90 128; 90 150" dur="12s" repeatCount="indefinite"/>
+    </g>
+    <g transform="translate(640,300)">
+      <rect x="0" y="0" width="70" height="48" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <path d="M0 0L35 24L70 0" fill="none" stroke="#111" stroke-width="3"/>
+      <circle cx="70" cy="48" r="10" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="translate" values="640 300; 640 322; 640 300" dur="14s" repeatCount="indefinite"/>
+    </g>
+    <g transform="translate(90,320)">
+      <rect x="0" y="0" width="54" height="54" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <line x1="0" y1="18" x2="54" y2="18" stroke="#111" stroke-width="2"/>
+      <line x1="0" y1="36" x2="54" y2="36" stroke="#111" stroke-width="2"/>
+      <line x1="18" y1="0" x2="18" y2="54" stroke="#FF4D00" stroke-width="3"/>
+      <line x1="36" y1="0" x2="36" y2="54" stroke="#111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="translate" values="90 320; 90 340; 90 320" dur="16s" repeatCount="indefinite"/>
+    </g>
+    <g transform="translate(660,90)">
+      <rect x="0" y="0" width="54" height="54" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <circle cx="27" cy="27" r="14" fill="none" stroke="#111" stroke-width="3"/>
+      <circle cx="27" cy="27" r="5" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="rotate" values="0 687 117; 360 687 117" dur="40s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- connector lines from apps to core, dash-flow -->
+  <g stroke="#111" stroke-width="2.5" fill="none" opacity="0.7">
+    <path d="M117 185 Q 260 160 400 225" stroke-dasharray="8 8">
+      <animate attributeName="stroke-dashoffset" values="0;-64" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M675 114 Q 540 140 400 225" stroke-dasharray="8 8">
+      <animate attributeName="stroke-dashoffset" values="0;-64" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M675 324 Q 540 310 400 225" stroke-dasharray="8 8">
+      <animate attributeName="stroke-dashoffset" values="0;-64" dur="6.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M117 347 Q 260 300 400 225" stroke-dasharray="8 8">
+      <animate attributeName="stroke-dashoffset" values="0;-64" dur="7.5s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

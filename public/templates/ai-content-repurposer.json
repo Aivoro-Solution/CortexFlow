@@ -1,0 +1,684 @@
+{
+  "name": "AI Content Repurposer",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 AI CONTENT REPURPOSER\n**What it does:** Paste one video/podcast transcript → an AI agent rewrites it into 8 content formats (X thread, LinkedIn post, Facebook post, Instagram caption, newsletter section, quote cards, Shorts/Reels scripts, blog summary — ~20 pieces) → every piece logged to Google Sheets → Telegram completion summary.\n\n**You'll need:**\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `PROCESSING` → `DONE`",
+        "height": 220,
+        "width": 4300,
+        "color": 5
+      },
+      "id": "b1d44992-021d-4d1f-88f0-f50f9c34ed64",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Trigger + paste your transcript\nManual Trigger → `CONFIG — Content Source`: paste the transcript into `transcript_text`, set `source_title`, `brand_voice`, `target_audience`, `platforms_to_generate`. `CONFIG — Notifications` holds your Telegram chat ID.",
+        "height": 420,
+        "width": 1020,
+        "color": 4
+      },
+      "id": "85183495-f158-4b23-8a70-b4b777a4397a",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Validate + log source\n`Sheets — Log Source NEW` appends the transcript (status `NEW`) → `IF — Transcript Not Empty` checks you actually pasted something. Empty transcript → `Telegram — Empty Transcript Error` tells you to fix the config.",
+        "height": 420,
+        "width": 780,
+        "color": 4
+      },
+      "id": "44a3efa8-59d7-4db0-8ebe-9448f90df6f0",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI repurposes the content\nStatus flips to `PROCESSING` → `AI Agent — Repurpose Content` (gpt-4o-mini + `Structured Output Parser — Content Plan`) returns x_thread, linkedin_post, facebook_post, instagram_caption, newsletter_section, quote_cards, shorts_scripts, blog_summary — written in your `brand_voice`, for your `target_audience`.",
+        "height": 640,
+        "width": 560,
+        "color": 4
+      },
+      "id": "1c078214-f854-4123-a33f-fa1018eac51d",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Split + log every piece\n`Split Output Per Platform` turns the structured output into one item per post → `Sheets — Log Content Items` appends each row (status `PROCESSING`) → `Build Completion Summary` counts pieces per platform → `Sheets — Log RUN_DONE` closes the run.",
+        "height": 420,
+        "width": 560,
+        "color": 4
+      },
+      "id": "4a6398e6-9f73-49c6-b8af-cf5bf856f2ac",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Completion digest\n`Telegram — Repurposing Complete` sends the per-platform counts. Copy each row's Content cell from the sheet and publish wherever you like — X, LinkedIn, Facebook, Instagram, your newsletter.",
+        "height": 420,
+        "width": 720,
+        "color": 4
+      },
+      "id": "c5f0a931-9997-4590-9a53-fb9c39de700f",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        180
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5c640b34-f9b6-4a8a-89fa-eea57b036b61",
+      "name": "On Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d89cc06c-0b7d-4c2c-b888-f117ad0ba375",
+              "name": "source_title",
+              "type": "string",
+              "value": "My latest video title"
+            },
+            {
+              "id": "1f3949f6-8314-452d-a931-ef03cee41c89",
+              "name": "transcript_text",
+              "type": "string",
+              "value": "PASTE_YOUR_TRANSCRIPT_HERE"
+            },
+            {
+              "id": "a49f0b1b-d72d-4f05-b3fb-0719a42a4b7b",
+              "name": "brand_voice",
+              "type": "string",
+              "value": "practical, no-fluff, contrarian"
+            },
+            {
+              "id": "e7f7090a-9b37-4b77-8aa4-3e11cfe1e46b",
+              "name": "target_audience",
+              "type": "string",
+              "value": "solopreneurs and creators growing with AI automation"
+            },
+            {
+              "id": "7e6ace80-f5ea-453e-b351-132fab76b69d",
+              "name": "platforms_to_generate",
+              "type": "string",
+              "value": "x_thread, linkedin_post, facebook_post, instagram_caption, newsletter_section, quote_cards, shorts_scripts, blog_summary"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1b0c84eb-d0c1-499b-9ebe-444713b759fa",
+      "name": "CONFIG — Content Source",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e079d545-4365-423a-a41e-e451f83adb87",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad597d72-ae2b-45ac-8eb0-c2b395e8217f",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Content_Repurposing_Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Source Title": "={{ $json.source_title }}",
+            "Content Type": "source_transcript",
+            "Content": "={{ $json.transcript_text.slice(0, 500) }}",
+            "Status": "NEW",
+            "Notes": "run started"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "66df0443-16fd-41f4-b3f2-cffdae380fc3",
+      "name": "Sheets — Log Source NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-transcript",
+              "leftValue": "={{ $json.transcript_text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "name": "filter.operator.string.notEmpty"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "7f860e64-a84a-47c9-b371-3c9639470d28",
+      "name": "IF — Transcript Not Empty",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "=⚠️ *Transcript is empty*\n\nOpen `CONFIG — Content Source`, paste your transcript into `transcript_text`, and run the workflow again.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "0db5007b-2776-4a47-b3c4-df10459970f6",
+      "name": "Telegram — Empty Transcript Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Content_Repurposing_Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Source Title": "={{ $('CONFIG — Content Source').first().json.source_title }}",
+            "Content Type": "run_status",
+            "Content": "Repurposing started",
+            "Status": "PROCESSING",
+            "Notes": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "4b49abd2-44d7-49b7-bfdd-cfe32549e43c",
+      "name": "Sheets — Status PROCESSING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert content repurposing strategist who turns one long-form transcript into platform-native content.\n\nVoice: {{ $('CONFIG — Content Source').first().json.brand_voice }}\nTarget audience: {{ $('CONFIG — Content Source').first().json.target_audience }}\nGenerate ALL of these formats: {{ $('CONFIG — Content Source').first().json.platforms_to_generate }}\n\nRules:\n- X thread: 5-8 punchy tweets, first one a scroll-stopping hook, each under 280 characters.\n- LinkedIn post: hook + personal story + 3 takeaways + CTA. Minimal hashtags.\n- Facebook post: conversational, ends with a question to drive comments.\n- Instagram caption: short lines, 5-8 relevant hashtags.\n- Newsletter section: headline + 3 short paragraphs.\n- Quote cards: 4-6 standalone quotable one-liners.\n- Shorts/Reels scripts: 3 scripts, each = 3-second hook + 3 beats + CTA, under 60 seconds spoken.\n- Blog summary: ~150 words.\nNever invent facts not present in the transcript. Output ONLY via the structured output parser.",
+          "text": "=Source title: {{ $('CONFIG — Content Source').first().json.source_title }}\n\nTRANSCRIPT:\n{{ $('CONFIG — Content Source').first().json.transcript_text }}"
+        }
+      },
+      "id": "4afeb75f-c76f-4323-a79f-fe754daf6861",
+      "name": "AI Agent — Repurpose Content",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "96b73f3d-c34e-400d-81fc-c5e2e2e41f8f",
+      "name": "OpenAI Chat Model — Repurposer",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"x_thread\": [\"Hook tweet (under 280 chars)\", \"Tweet 2\", \"Tweet 3\", \"Tweet 4\", \"Tweet 5\"],\n  \"linkedin_post\": \"Professional LinkedIn post: hook + story + 3 takeaways + CTA\",\n  \"facebook_post\": \"Conversational Facebook post ending with a question\",\n  \"instagram_caption\": \"Instagram caption with short lines and 5-8 hashtags\",\n  \"newsletter_section\": \"Newsletter section: headline + 3 short paragraphs\",\n  \"quote_cards\": [\"Standalone quotable one-liner 1\", \"Standalone quotable one-liner 2\", \"Standalone quotable one-liner 3\"],\n  \"shorts_scripts\": [\"Shorts script 1: 3-second hook + 3 beats + CTA\", \"Shorts script 2: 3-second hook + 3 beats + CTA\"],\n  \"blog_summary\": \"~150 word blog-style summary of the video\"\n}"
+      },
+      "id": "ab407552-61da-49df-8934-8b73100a9376",
+      "name": "Structured Output Parser — Content Plan",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split the agent's structured output into one item per content piece\nconst out = $('AI Agent — Repurpose Content').first().json.output || {};\nconst cfg = $('CONFIG — Content Source').first().json;\nconst ts = new Date().toISOString();\nconst title = cfg.source_title || 'Untitled';\n\nconst items = [];\nconst push = (content_type, content) => {\n  if (!content) return;\n  items.push({ json: {\n    timestamp: ts,\n    source_title: title,\n    content_type,\n    content: String(content),\n    status: 'PROCESSING',\n    notes: '',\n  }});\n};\n\nconst arr = (v) => Array.isArray(v) ? v : [];\narr(out.x_thread).forEach(t => push('x_tweet', t));\npush('linkedin_post', out.linkedin_post);\npush('facebook_post', out.facebook_post);\npush('instagram_caption', out.instagram_caption);\npush('newsletter_section', out.newsletter_section);\narr(out.quote_cards).forEach(q => push('quote_card', q));\narr(out.shorts_scripts).forEach(s => push('shorts_script', s));\npush('blog_summary', out.blog_summary);\n\nreturn items;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "02fe1552-a4e5-4f5a-8e0e-0b079902f157",
+      "name": "Split Output Per Platform",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Content_Repurposing_Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Source Title": "={{ $json.source_title }}",
+            "Content Type": "={{ $json.content_type }}",
+            "Content": "={{ $json.content }}",
+            "Status": "={{ $json.status }}",
+            "Notes": "={{ $json.notes }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "1b853e03-c372-48c1-8f88-823119d4fe0d",
+      "name": "Sheets — Log Content Items",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Count generated items per platform and build the Telegram summary\nconst items = $input.all().map(i => i.json);\nconst cfg = $('CONFIG — Content Source').first().json;\nconst title = cfg.source_title || 'Untitled';\n\nconst count = (t) => items.filter(i => i.content_type === t).length;\nconst rows = [\n  ['X thread tweets', count('x_tweet')],\n  ['LinkedIn post', count('linkedin_post')],\n  ['Facebook post', count('facebook_post')],\n  ['Instagram caption', count('instagram_caption')],\n  ['Newsletter section', count('newsletter_section')],\n  ['Quote cards', count('quote_card')],\n  ['Shorts/Reels scripts', count('shorts_script')],\n  ['Blog summary', count('blog_summary')],\n];\nconst total = rows.reduce((a, r) => a + r[1], 0);\n\nconst lines = [\n  '✅ *Content repurposing complete*',\n  '',\n  '🎬 *' + title + '*',\n  '',\n  '📦 ' + total + ' pieces generated:'\n];\nrows.forEach(r => lines.push('• ' + r[0] + ': ' + r[1]));\nlines.push('', '📊 All items logged to Google Sheets (NEW → PROCESSING → DONE).');\n\nreturn [{ json: { summary: lines.join('\\n'), total, title } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "9c31c2ee-9448-410a-8b77-5beed13d3f4b",
+      "name": "Build Completion Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Content_Repurposing_Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Source Title": "={{ $json.title }}",
+            "Content Type": "run_summary",
+            "Content": "={{ $json.total }} pieces generated",
+            "Status": "DONE",
+            "Notes": "={{ $json.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e48ab2c9-b9e8-4552-9047-77213915e45a",
+      "name": "Sheets — Log RUN_DONE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "57c1e510-552c-45a1-b923-444520efb8e3",
+      "name": "Telegram — Repurposing Complete",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "On Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Content Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Content Source": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log Source NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log Source NEW": {
+      "main": [
+        [
+          {
+            "node": "IF — Transcript Not Empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Transcript Not Empty": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Status PROCESSING",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Empty Transcript Error",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Sheets — Status PROCESSING": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Repurpose Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Repurpose Content": {
+      "main": [
+        [
+          {
+            "node": "Split Output Per Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Output Per Platform": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log Content Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log Content Items": {
+      "main": [
+        [
+          {
+            "node": "Build Completion Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Completion Summary": {
+      "main": [
+        [
+          {
+            "node": "Sheets — Log RUN_DONE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets — Log RUN_DONE": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Repurposing Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Repurposer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Repurpose Content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Content Plan": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Repurpose Content",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of payments flowing between AI agent nodes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- hard offset frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+  <rect x="20" y="20" width="772" height="422" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.35"/>
+
+  <!-- dashed payment rails between nodes -->
+  <line x1="150" y1="150" x2="650" y2="150" stroke="#111111" stroke-width="2" stroke-dasharray="10 8" opacity="0.6">
+    <animate attributeName="stroke-dashoffset" from="0" to="-72" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="150" y1="300" x2="650" y2="300" stroke="#111111" stroke-width="2" stroke-dasharray="10 8" opacity="0.6">
+    <animate attributeName="stroke-dashoffset" from="0" to="72" dur="9s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- left node: the agent (square, black) -->
+  <g>
+    <rect x="106" y="106" width="88" height="88" fill="#111111"/>
+    <rect x="118" y="118" width="64" height="64" fill="#FFFDF5"/>
+    <rect x="134" y="134" width="32" height="32" fill="#111111">
+      <animate attributeName="opacity" values="1;0.35;1" dur="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- left node bottom: card rail (rectangle) -->
+  <g>
+    <rect x="106" y="256" width="88" height="88" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="120" y="270" width="60" height="12" fill="#111111" opacity="0.85"/>
+    <rect x="120" y="292" width="34" height="34" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.45;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="160" y="296" width="24" height="10" fill="#111111" opacity="0.5"/>
+    <rect x="160" y="312" width="24" height="10" fill="#111111" opacity="0.5"/>
+  </g>
+
+  <!-- right node: the merchant/service (square, black) -->
+  <g>
+    <rect x="606" y="106" width="88" height="88" fill="#111111"/>
+    <rect x="618" y="118" width="64" height="64" fill="#FFFDF5"/>
+    <circle cx="650" cy="150" r="16" fill="none" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="16;20;16" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- right node bottom: coin rail -->
+  <g>
+    <rect x="606" y="256" width="88" height="88" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="650" cy="300" r="24" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animateTransform attributeName="transform" type="rotate" from="0 650 300" to="360 650 300" dur="40s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="300" r="12" fill="none" stroke="#111111" stroke-width="2.5"/>
+  </g>
+
+  <!-- traveling payment packets: coin (top rail) -->
+  <g>
+    <circle r="14" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animateMotion dur="8s" repeatCount="indefinite" path="M 150 150 L 650 150"/>
+    </circle>
+    <circle r="6" fill="none" stroke="#111111" stroke-width="2">
+      <animateMotion dur="8s" repeatCount="indefinite" path="M 150 150 L 650 150"/>
+    </circle>
+  </g>
+
+  <!-- traveling payment packets: card chip (bottom rail, delayed) -->
+  <g>
+    <rect x="-22" y="-14" width="44" height="28" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animateMotion dur="9s" begin="2s" repeatCount="indefinite" path="M 150 300 L 650 300"/>
+    </rect>
+    <rect x="-12" y="-6" width="24" height="12" fill="#111111" opacity="0.8">
+      <animateMotion dur="9s" begin="2s" repeatCount="indefinite" path="M 150 300 L 650 300"/>
+    </rect>
+  </g>
+
+  <!-- slow orbiting accent dot around top-right node -->
+  <g>
+    <circle r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animateMotion dur="30s" repeatCount="indefinite" path="M 650 96 a 54 54 0 1 1 -0.1 0"/>
+    </circle>
+  </g>
+
+  <!-- slow orbiting accent dot around bottom-left node -->
+  <g>
+    <circle r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animateMotion dur="36s" repeatCount="indefinite" path="M 150 242 a 54 54 0 1 0 0.1 0"/>
+    </circle>
+  </g>
+</svg>

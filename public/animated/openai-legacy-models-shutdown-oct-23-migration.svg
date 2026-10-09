@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of API model chips being disconnected">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- thick frame -->
+  <rect x="18" y="18" width="764" height="414" fill="none" stroke="#111" stroke-width="6"/>
+
+  <!-- left: stable panel of chips (connected) -->
+  <g stroke="#111" stroke-width="4" fill="none">
+    <rect x="90" y="110" width="120" height="90"/>
+    <rect x="90" y="230" width="120" height="90"/>
+    <rect x="90" y="350" width="120" height="50" transform="translate(0,-40)" visibility="hidden"/>
+    <!-- pins -->
+    <line x1="105" y1="110" x2="105" y2="88"/>
+    <line x1="130" y1="110" x2="130" y2="88"/>
+    <line x1="155" y1="110" x2="155" y2="88"/>
+    <line x1="180" y1="110" x2="180" y2="88"/>
+    <line x1="105" y1="230" x2="105" y2="208"/>
+    <line x1="130" y1="230" x2="130" y2="208"/>
+    <line x1="155" y1="230" x2="155" y2="208"/>
+    <line x1="180" y1="230" x2="180" y2="208"/>
+    <!-- wire bundle from chips to the right -->
+    <path d="M 210 155 C 260 155 260 175 320 175"/>
+    <path d="M 210 275 C 260 275 260 255 320 255"/>
+  </g>
+  <!-- active connection dots travelling along wires -->
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M 210 155 C 260 155 260 175 320 175"/>
+  </circle>
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="8s" repeatCount="indefinite" begin="4s" path="M 210 275 C 260 275 260 255 320 255"/>
+  </circle>
+
+  <!-- center: socket / divider -->
+  <rect x="320" y="120" width="26" height="190" fill="#111"/>
+  <rect x="320" y="120" width="26" height="190" fill="none" stroke="#111" stroke-width="4"/>
+  <rect x="330" y="150" width="6" height="20" fill="#FFFDF5"/>
+  <rect x="330" y="260" width="6" height="20" fill="#FFFDF5"/>
+
+  <!-- right: unplugged chips drifting away -->
+  <g fill="none" stroke="#111" stroke-width="4">
+    <rect x="430" y="130" width="120" height="90">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 26; 0 0" dur="10s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="430" y="260" width="120" height="90">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -22; 0 0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- severed cables hanging loose, swaying slowly -->
+  <g stroke="#111" stroke-width="5" fill="none">
+    <path d="M 346 185 C 390 190 400 210 430 218">
+      <animate attributeName="d" values="M 346 185 C 390 190 400 210 430 218; M 346 185 C 390 200 400 216 430 224; M 346 185 C 390 190 400 210 430 218" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 346 265 C 390 262 400 280 430 288">
+      <animate attributeName="d" values="M 346 265 C 390 262 400 280 430 288; M 346 265 C 390 254 400 272 430 282; M 346 265 C 390 262 400 280 430 288" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- warning badge: orange signal triangle (abstract, no text) -->
+  <g transform="translate(660,90)">
+    <path d="M 0 60 L 60 60 L 30 8 Z" fill="#FF4D00" stroke="#111" stroke-width="5"/>
+    <rect x="27" y="28" width="6" height="18" fill="#111">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="30" cy="51" r="3.5" fill="#111">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- slow background sweep of orange diagonal -->
+  <rect x="-200" y="0" width="120" height="450" fill="#FF4D00" opacity="0.07" transform="skewX(-20)">
+    <animateTransform attributeName="transform" type="translate" values="-200 0; 1000 0; -200 0" dur="45s" repeatCount="indefinite" additive="replace"/>
+  </rect>
+
+  <!-- corner screws -->
+  <g fill="#111">
+    <circle cx="44" cy="44" r="6"/>
+    <circle cx="756" cy="44" r="6"/>
+    <circle cx="44" cy="406" r="6"/>
+    <circle cx="756" cy="406" r="6"/>
+  </g>
+</svg>

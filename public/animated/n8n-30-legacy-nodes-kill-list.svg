@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: legacy workflow nodes fading out while one active node pulses">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- connector lines between nodes -->
+  <g stroke="#111111" stroke-width="4" opacity="0.9">
+    <line x1="180" y1="150" x2="330" y2="150"/>
+    <line x1="470" y1="150" x2="620" y2="150"/>
+    <line x1="180" y1="320" x2="330" y2="320"/>
+    <line x1="470" y1="320" x2="620" y2="320"/>
+    <line x1="400" y1="150" x2="400" y2="320">
+      <animate attributeName="opacity" values="0.9;0.25;0.9" dur="9s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- legacy node A: slowly crossed out -->
+  <g>
+    <rect x="110" y="110" width="140" height="80" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="110" y="110" width="140" height="80" rx="10" fill="#111111" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.18;0.18;0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="110" y1="110" x2="250" y2="190" stroke="#FF4D00" stroke-width="7" stroke-linecap="round" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- legacy node B: slowly crossed out, offset phase -->
+  <g>
+    <rect x="550" y="110" width="140" height="80" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="550" y="110" width="140" height="80" rx="10" fill="#111111" opacity="0">
+      <animate attributeName="opacity" values="0;0.18;0.18;0;0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="550" y1="110" x2="690" y2="190" stroke="#FF4D00" stroke-width="7" stroke-linecap="round" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;0;0" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- legacy node C: bottom left, cross appears late -->
+  <g>
+    <rect x="110" y="280" width="140" height="80" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <line x1="110" y1="280" x2="250" y2="360" stroke="#FF4D00" stroke-width="7" stroke-linecap="round" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;1;0" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- legacy node D: bottom right, cross appears late -->
+  <g>
+    <rect x="550" y="280" width="140" height="80" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <line x1="550" y1="280" x2="690" y2="360" stroke="#FF4D00" stroke-width="7" stroke-linecap="round" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;1;0" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- the surviving modern node: slow orange pulse at the center -->
+  <g>
+    <circle cx="400" cy="235" r="46" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="400" cy="235" r="22" fill="#FF4D00" opacity="0.85">
+      <animate attributeName="r" values="22;30;22" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.85;0.45;0.85" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <!-- slow orbit marker -->
+    <g>
+      <circle cx="400" cy="235" r="62" fill="none" stroke="#111111" stroke-width="2" opacity="0.35"/>
+      <circle cx="462" cy="235" r="6" fill="#FF4D00"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 400 235" to="360 400 235" dur="45s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- drifting signal square, slow -->
+  <rect x="60" y="390" width="14" height="14" fill="#FF4D00" opacity="0.7">
+    <animate attributeName="x" values="60;680;60" dur="30s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="30s" repeatCount="indefinite"/>
+  </rect>
+</svg>

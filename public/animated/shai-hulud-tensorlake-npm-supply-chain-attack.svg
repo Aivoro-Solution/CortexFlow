@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of a supply-chain worm traveling through a chain of package boxes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.18"/>
+    </pattern>
+    <path id="wormPath" d="M 120 240 C 220 180, 320 300, 400 240 S 560 180, 680 240" fill="none"/>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- supply chain: five package boxes -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="90" y="200" width="80" height="80"/>
+    <rect x="230" y="200" width="80" height="80"/>
+    <rect x="370" y="200" width="80" height="80"/>
+    <rect x="510" y="200" width="80" height="80"/>
+    <rect x="630" y="200" width="80" height="80"/>
+  </g>
+
+  <!-- chain links between boxes -->
+  <g stroke="#111111" stroke-width="4" fill="none">
+    <line x1="170" y1="240" x2="230" y2="240"/>
+    <line x1="310" y1="240" x2="370" y2="240"/>
+    <line x1="450" y1="240" x2="510" y2="240"/>
+    <line x1="590" y1="240" x2="630" y2="240"/>
+    <circle cx="200" cy="240" r="9"/>
+    <circle cx="340" cy="240" r="9"/>
+    <circle cx="480" cy="240" r="9"/>
+    <circle cx="610" cy="240" r="9"/>
+  </g>
+
+  <!-- infected box: orange accent -->
+  <rect x="370" y="200" width="80" height="80" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  <g stroke="#111111" stroke-width="2.5" opacity="0.85">
+    <path d="M 385 215 L 400 235 L 392 255"/>
+    <path d="M 420 210 L 412 240 L 428 262"/>
+    <animate attributeName="opacity" values="0.85;0.3;0.85" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- worm pulse traveling the chain, slow loop -->
+  <g>
+    <circle r="14" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animateMotion dur="14s" repeatCount="indefinite">
+        <mpath href="#wormPath"/>
+      </animateMotion>
+    </circle>
+    <circle r="5" fill="#FFFDF5" stroke="#111111" stroke-width="2.5">
+      <animateMotion dur="14s" repeatCount="indefinite">
+        <mpath href="#wormPath"/>
+      </animateMotion>
+    </circle>
+  </g>
+
+  <!-- slow rotation: radar sweep ring, 40s -->
+  <g transform="translate(680,90)">
+    <circle r="44" fill="none" stroke="#111111" stroke-width="3"/>
+    <g>
+      <line x1="0" y1="0" x2="0" y2="-44" stroke="#FF4D00" stroke-width="5"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    </g>
+    <circle r="6" fill="#111111"/>
+  </g>
+
+  <!-- slow drifting shadow under chain -->
+  <g fill="#111111" opacity="0.10">
+    <rect x="90" y="300" width="620" height="14" rx="7">
+      <animate attributeName="x" values="90;130;90" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

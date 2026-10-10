@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of chat messages flowing into a memory buffer">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="gridm" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="url(#gridm)"/>
+
+  <!-- thick frame -->
+  <rect x="18" y="18" width="764" height="414" fill="none" stroke="#111" stroke-width="6"/>
+
+  <!-- left: incoming chat bubbles -->
+  <g stroke="#111" stroke-width="4" fill="#FFFDF5">
+    <rect x="70" y="70" width="150" height="46" rx="8"/>
+    <rect x="70" y="132" width="110" height="46" rx="8"/>
+    <rect x="70" y="194" width="150" height="46" rx="8"/>
+    <rect x="70" y="256" width="90" height="46" rx="8"/>
+    <rect x="70" y="318" width="150" height="46" rx="8"/>
+  </g>
+  <!-- wires from bubbles to the memory buffer -->
+  <g stroke="#111" stroke-width="4" fill="none">
+    <path d="M 220 93 C 300 93 300 150 380 150"/>
+    <path d="M 180 155 C 280 155 280 190 380 190"/>
+    <path d="M 220 217 C 300 217 300 230 380 230"/>
+    <path d="M 160 279 C 270 279 270 270 380 270"/>
+    <path d="M 220 341 C 300 341 300 310 380 310"/>
+  </g>
+  <!-- message packets travelling slowly into the buffer -->
+  <circle r="7" fill="#FF4D00"><animateMotion dur="12s" repeatCount="indefinite" path="M 220 93 C 300 93 300 150 380 150"/></circle>
+  <circle r="7" fill="#FF4D00"><animateMotion dur="12s" repeatCount="indefinite" begin="2.4s" path="M 180 155 C 280 155 280 190 380 190"/></circle>
+  <circle r="7" fill="#FF4D00"><animateMotion dur="12s" repeatCount="indefinite" begin="4.8s" path="M 220 217 C 300 217 300 230 380 230"/></circle>
+  <circle r="7" fill="#FF4D00"><animateMotion dur="12s" repeatCount="indefinite" begin="7.2s" path="M 160 279 C 270 279 270 270 380 270"/></circle>
+  <circle r="7" fill="#FF4D00"><animateMotion dur="12s" repeatCount="indefinite" begin="9.6s" path="M 220 341 C 300 341 300 310 380 310"/></circle>
+
+  <!-- center: the memory buffer (sliding window) -->
+  <rect x="380" y="130" width="180" height="200" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+  <!-- stored rows drifting upward slowly (sliding window) -->
+  <g stroke="#111" stroke-width="3" fill="none">
+    <line x1="396" y1="160" x2="544" y2="160"/>
+    <line x1="396" y1="200" x2="544" y2="200"/>
+    <line x1="396" y1="240" x2="544" y2="240"/>
+    <line x1="396" y1="280" x2="544" y2="280"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -20; 0 0" dur="14s" repeatCount="indefinite"/>
+  </g>
+  <!-- window cap: newest entries glow orange -->
+  <rect x="396" y="150" width="148" height="12" fill="#FF4D00">
+    <animate attributeName="y" values="150;230;150" dur="14s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- right: the agent consuming the buffer -->
+  <g stroke="#111" stroke-width="4" fill="none">
+    <path d="M 560 230 C 610 230 610 190 660 190"/>
+    <path d="M 560 230 C 610 230 610 270 660 270"/>
+  </g>
+  <circle r="7" fill="#111"><animateMotion dur="10s" repeatCount="indefinite" path="M 560 230 C 610 230 610 190 660 190"/></circle>
+  <circle r="7" fill="#111"><animateMotion dur="10s" repeatCount="indefinite" begin="5s" path="M 560 230 C 610 230 610 270 660 270"/></circle>
+  <!-- agent block -->
+  <rect x="660" y="150" width="80" height="160" fill="#111"/>
+  <circle cx="700" cy="205" r="18" fill="#FF4D00"/>
+  <circle cx="700" cy="205" r="30" fill="none" stroke="#111" stroke-width="3">
+    <animate attributeName="r" values="30;42;30" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- slow rotation ring around agent -->
+  <g transform="translate(700,205)">
+    <g>
+      <rect x="-52" y="-52" width="104" height="104" fill="none" stroke="#111" stroke-width="3" stroke-dasharray="14 10"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- session keys drifting at the bottom -->
+  <g fill="#111" opacity="0.35">
+    <rect x="70" y="392" width="60" height="10"><animate attributeName="x" values="70;140;70" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="250" y="392" width="60" height="10"><animate attributeName="x" values="250;180;250" dur="13s" repeatCount="indefinite"/></rect>
+    <rect x="430" y="392" width="60" height="10"><animate attributeName="x" values="430;500;430" dur="9s" repeatCount="indefinite"/></rect>
+  </g>
+</svg>

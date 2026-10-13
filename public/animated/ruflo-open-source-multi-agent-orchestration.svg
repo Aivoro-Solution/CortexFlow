@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated abstract swarm orchestration">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.14"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- swarm connection links -->
+  <g stroke="#111111" stroke-width="3" opacity="0.85">
+    <line x1="400" y1="225" x2="400" y2="90"/>
+    <line x1="400" y1="225" x2="540" y2="165"/>
+    <line x1="400" y1="225" x2="540" y2="285"/>
+    <line x1="400" y1="225" x2="400" y2="360"/>
+    <line x1="400" y1="225" x2="260" y2="285"/>
+    <line x1="400" y1="225" x2="260" y2="165"/>
+  </g>
+
+  <!-- queen node -->
+  <g>
+    <polygon points="400,165 452,195 452,255 400,285 348,255 348,195" fill="#FF4D00" stroke="#111111" stroke-width="6"/>
+    <polygon points="400,165 452,195 452,255 400,285 348,255 348,195" fill="none" stroke="#111111" stroke-width="6">
+      <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+
+  <!-- orbiting agent nodes (slow rotation) -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="45s" repeatCount="indefinite"/>
+    <g stroke="#111111" stroke-width="5" fill="#FFFDF5">
+      <circle cx="400" cy="90" r="26"/>
+      <circle cx="540" cy="165" r="26"/>
+      <circle cx="540" cy="285" r="26"/>
+      <circle cx="400" cy="360" r="26"/>
+      <circle cx="260" cy="285" r="26"/>
+      <circle cx="260" cy="165" r="26"/>
+    </g>
+    <g fill="#111111">
+      <circle cx="400" cy="90" r="7"/>
+      <circle cx="540" cy="165" r="7"/>
+      <circle cx="540" cy="285" r="7"/>
+      <circle cx="400" cy="360" r="7"/>
+      <circle cx="260" cy="285" r="7"/>
+      <circle cx="260" cy="165" r="7"/>
+    </g>
+  </g>
+
+  <!-- drifting signal pips along links -->
+  <g fill="#FF4D00">
+    <circle r="8" stroke="#111111" stroke-width="3">
+      <animateMotion dur="8s" repeatCount="indefinite" path="M 400 225 L 400 90"/>
+    </circle>
+    <circle r="8" stroke="#111111" stroke-width="3">
+      <animateMotion dur="11s" repeatCount="indefinite" path="M 400 225 L 540 285"/>
+    </circle>
+    <circle r="8" stroke="#111111" stroke-width="3">
+      <animateMotion dur="14s" repeatCount="indefinite" path="M 400 225 L 260 165"/>
+    </circle>
+  </g>
+
+  <!-- breathing outer ring -->
+  <circle cx="400" cy="225" r="205" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="14 12">
+    <animate attributeName="r" values="200;212;200" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="4;2.5;4" dur="12s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- frame -->
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="6"/>
+</svg>

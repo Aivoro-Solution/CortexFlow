@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of data enrichment flowing into a workflow">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111111" stroke-width="1" opacity="0.18">
+    <path d="M0 75 H800 M0 150 H800 M0 225 H800 M0 300 H800 M0 375 H800"/>
+    <path d="M100 0 V450 M200 0 V450 M300 0 V450 M400 0 V450 M500 0 V450 M600 0 V450 M700 0 V450"/>
+  </g>
+
+  <!-- left: raw record cards -->
+  <g>
+    <rect x="60" y="90" width="120" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="76" y1="112" x2="164" y2="112" stroke="#111111" stroke-width="4"/>
+    <line x1="76" y1="128" x2="140" y2="128" stroke="#111111" stroke-width="4" opacity="0.45"/>
+    <line x1="76" y1="144" x2="152" y2="144" stroke="#111111" stroke-width="4" opacity="0.45"/>
+    <rect x="60" y="200" width="120" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="76" y1="222" x2="164" y2="222" stroke="#111111" stroke-width="4"/>
+    <line x1="76" y1="238" x2="140" y2="238" stroke="#111111" stroke-width="4" opacity="0.45"/>
+    <line x1="76" y1="254" x2="152" y2="254" stroke="#111111" stroke-width="4" opacity="0.45"/>
+    <rect x="60" y="310" width="120" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="76" y1="332" x2="164" y2="332" stroke="#111111" stroke-width="4"/>
+    <line x1="76" y1="348" x2="140" y2="348" stroke="#111111" stroke-width="4" opacity="0.45"/>
+    <line x1="76" y1="364" x2="152" y2="364" stroke="#111111" stroke-width="4" opacity="0.45"/>
+  </g>
+
+  <!-- connector lines into the enrichment hub -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M180 125 C 260 125, 280 190, 340 205"/>
+    <path d="M180 235 C 250 235, 280 225, 340 220"/>
+    <path d="M180 345 C 260 345, 280 255, 340 235"/>
+  </g>
+
+  <!-- central enrichment hub -->
+  <g>
+    <rect x="345" y="175" width="110" height="100" fill="#FFD02F" stroke="#111111" stroke-width="4"/>
+    <rect x="353" y="183" width="110" height="100" fill="none" stroke="#111111" stroke-width="4" opacity="0.25"/>
+    <circle cx="400" cy="225" r="26" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="r" values="26;30;26" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="225" r="40" fill="none" stroke="#111111" stroke-width="2" opacity="0.5">
+      <animate attributeName="r" values="40;52;40" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0.1;0.5" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- output: enriched records flowing right -->
+  <g>
+    <path d="M455 225 C 520 225, 540 160, 610 140" stroke="#111111" stroke-width="3" fill="none"/>
+    <path d="M455 225 C 520 225, 540 300, 610 320" stroke="#111111" stroke-width="3" fill="none"/>
+    <g>
+      <rect x="610" y="105" width="130" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="626" y1="127" x2="724" y2="127" stroke="#111111" stroke-width="4"/>
+      <line x1="626" y1="143" x2="700" y2="143" stroke="#FF4D00" stroke-width="4"/>
+      <line x1="626" y1="159" x2="712" y2="159" stroke="#111111" stroke-width="4" opacity="0.45"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="7s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="610" y="285" width="130" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="626" y1="307" x2="724" y2="307" stroke="#111111" stroke-width="4"/>
+      <line x1="626" y1="323" x2="700" y2="323" stroke="#FF4D00" stroke-width="4"/>
+      <line x1="626" y1="339" x2="712" y2="339" stroke="#111111" stroke-width="4" opacity="0.45"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -10; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- slow orbiting signal dots around hub -->
+  <g>
+    <circle cx="400" cy="225" r="3" fill="#111111" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;0" dur="12s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="36s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="470" cy="225" r="4" fill="#FF4D00">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="48s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="330" cy="225" r="3" fill="#111111">
+      <animateTransform attributeName="transform" type="rotate" from="360 400 225" to="0 400 225" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- drifting data packets along the left connectors -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <rect x="-12" y="-8" width="24" height="16">
+      <animateMotion dur="10s" repeatCount="indefinite" path="M180 125 C 260 125, 280 190, 340 205"/>
+    </rect>
+    <rect x="-12" y="-8" width="24" height="16">
+      <animateMotion dur="14s" begin="4s" repeatCount="indefinite" path="M180 345 C 260 345, 280 255, 340 235"/>
+    </rect>
+  </g>
+</svg>

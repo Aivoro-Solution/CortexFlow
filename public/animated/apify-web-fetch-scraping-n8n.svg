@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-width="0.5" opacity="0.12">
+    <path d="M0 50 H800 M0 100 H800 M0 150 H800 M0 200 H800 M0 250 H800 M0 300 H800 M0 350 H800 M0 400 H800"/>
+    <path d="M50 0 V450 M100 0 V450 M150 0 V450 M200 0 V450 M250 0 V450 M300 0 V450 M350 0 V450 M400 0 V450 M450 0 V450 M500 0 V450 M550 0 V450 M600 0 V450 M650 0 V450 M700 0 V450 M750 0 V450"/>
+  </g>
+
+  <!-- left: tangled web of data lines drifting slowly -->
+  <g stroke="#111111" stroke-width="2.5" fill="none">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -14; 0 0" dur="9s" repeatCount="indefinite"/>
+      <path d="M60 90 C120 60, 170 130, 230 100"/>
+      <path d="M40 160 C100 180, 150 120, 220 170"/>
+      <path d="M70 240 C130 210, 180 280, 240 230"/>
+      <path d="M50 320 C110 350, 170 290, 230 340"/>
+      <rect x="200" y="80" width="44" height="32" fill="#FFFDF5"/>
+      <rect x="190" y="150" width="52" height="32" fill="#FFFDF5"/>
+      <rect x="210" y="300" width="40" height="32" fill="#FFFDF5"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="12s" repeatCount="indefinite"/>
+      <path d="M60 130 C130 100, 190 160, 250 140"/>
+      <path d="M40 200 C110 230, 170 170, 240 210"/>
+      <path d="M80 280 C140 260, 200 310, 250 280"/>
+      <rect x="160" y="110" width="40" height="30" fill="#FFFDF5"/>
+      <rect x="150" y="240" width="48" height="30" fill="#FFFDF5"/>
+    </g>
+  </g>
+
+  <!-- center: orange funnel -->
+  <g>
+    <path d="M300 120 L470 120 L400 330 L370 330 Z" fill="#FF4D00" stroke="#111111" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M300 120 L470 120" stroke="#111111" stroke-width="5"/>
+    <!-- data packets flowing through the funnel -->
+    <g fill="#111111">
+      <rect x="360" y="150" width="26" height="18">
+        <animate attributeName="y" values="140;300" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="7s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="395" y="200" width="26" height="18">
+        <animate attributeName="y" values="140;300" dur="7s" begin="2.3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="7s" begin="2.3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="368" y="250" width="26" height="18">
+        <animate attributeName="y" values="140;300" dur="7s" begin="4.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="7s" begin="4.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- right: clean document cards pulsing slowly -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <g opacity="0.9">
+      <animate attributeName="opacity" values="0.9;1;0.9" dur="10s" repeatCount="indefinite"/>
+      <rect x="560" y="100" width="120" height="150"/>
+      <path d="M580 130 H660 M580 150 H660 M580 170 H640"/>
+    </g>
+    <g opacity="0.7">
+      <animate attributeName="opacity" values="0.7;0.95;0.7" dur="10s" begin="3.3s" repeatCount="indefinite"/>
+      <rect x="590" y="140" width="120" height="150" fill="#FF4D00"/>
+      <path d="M610 170 H690 M610 190 H690 M610 210 H670" stroke="#FFFDF5"/>
+    </g>
+    <g opacity="0.9">
+      <animate attributeName="opacity" values="0.9;1;0.9" dur="10s" begin="6.6s" repeatCount="indefinite"/>
+      <rect x="620" y="180" width="120" height="150"/>
+      <path d="M640 210 H720 M640 230 H720 M640 250 H700"/>
+    </g>
+  </g>
+
+  <!-- slow rotating gear-like ring -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 520 360" to="360 520 360" dur="45s" repeatCount="indefinite"/>
+      <circle cx="520" cy="360" r="26"/>
+      <path d="M520 326 V314 M520 406 V394 M486 360 H474 M566 360 H554 M496 336 L488 328 M552 392 L544 384 M544 336 L552 328 M488 392 L496 384"/>
+    </g>
+  </g>
+</svg>

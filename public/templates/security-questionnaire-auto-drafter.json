@@ -1,0 +1,878 @@
+{
+  "name": "Security Questionnaire Auto-Drafter",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📋 SECURITY QUESTIONNAIRE AUTO-DRAFTER\n**What it does:** Reads vendor security questionnaire questions from Google Sheets → logs each with status `NEW` → an AI Agent drafts an answer strictly from YOUR approved policy doc (never invents certifications) → confidence gate: high-confidence answers flip to `APPROVED`, low-confidence ones flip to `IN_REVIEW` and ping a human on Telegram.\n\n**You'll need:**\n- OpenAI API key (platform.openai.com)\n- Google Sheets + Google Docs OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `DRAFTED` → `APPROVED` (low-confidence answers go `DRAFTED` → `IN_REVIEW`)",
+        "height": 220,
+        "width": 5300,
+        "color": 5
+      },
+      "id": "fcc22d97-409d-46c1-b39d-45848199d4cf",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Trigger + config + read questions\nManual trigger → CONFIG — Inputs (all editable values) → Read Questions pulls rows from the Questions tab (headers: `Question #`, `Category`, `Question`, `Context`).",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "1fe13352-0183-4f32-b8fd-1c25a919251d",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Log every question as NEW\nEach question row is appended to the Draft Log tab with status `NEW` — the audit trail for this run.",
+        "height": 420,
+        "width": 340,
+        "color": 4
+      },
+      "id": "1eb0403c-9984-4221-bf31-f18e5e4b6080",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        740,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Read knowledge base + loop\nRead Knowledge Base pulls your approved security-policy Google Doc (plain text) → Loop Over Questions processes one question at a time.",
+        "height": 420,
+        "width": 540,
+        "color": 4
+      },
+      "id": "d79b7256-f6fb-412f-9fc4-805666b6f418",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — AI drafts the answer\nPrepare Question shapes the item → Draft Answer Agent (gpt-4o-mini + Answer Schema Parser) drafts strictly from your knowledge text → row flips to `DRAFTED`.",
+        "height": 560,
+        "width": 780,
+        "color": 4
+      },
+      "id": "5f7122ca-533b-4d5d-b2b3-9f0feb129d8e",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Confidence gate\nConfidence ≥ threshold → APPROVED. Below threshold → IN_REVIEW + Telegram review request with the draft, confidence, and source.",
+        "height": 560,
+        "width": 1120,
+        "color": 4
+      },
+      "id": "34cc426c-43a3-45b2-8bb3-78e4231ed8d1",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Run summary\nAfter the loop: re-read the Draft Log → Build Run Summary counts total / auto-approved / in-review → Final Telegram Notification.",
+        "height": 240,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "aac0a766-6dbc-4138-b51f-f5596471d86b",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        620
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4ecc8e0a-9381-4eaf-a538-cf208c4bdd09",
+      "name": "Start Drafting",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc754f82-8400-4551-a62b-822641c7b30d",
+              "name": "COMPANY_NAME",
+              "type": "string",
+              "value": "PASTE_YOUR_COMPANY_NAME"
+            },
+            {
+              "id": "054a2541-f908-4194-92e1-fe42b26e25d2",
+              "name": "QUESTIONNAIRE_SHEET_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_QUESTIONNAIRE_SHEET_ID"
+            },
+            {
+              "id": "fb316f66-c873-41ed-8219-311b6a51a585",
+              "name": "QUESTIONS_TAB",
+              "type": "string",
+              "value": "Questions"
+            },
+            {
+              "id": "ab37bf62-5fac-4c59-9b1c-fb37e3d757be",
+              "name": "KNOWLEDGE_DOC_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_KNOWLEDGE_DOC_ID"
+            },
+            {
+              "id": "098a7d6e-d3bd-4000-9075-0c464501485a",
+              "name": "CONFIDENCE_THRESHOLD",
+              "type": "string",
+              "value": "0.7"
+            },
+            {
+              "id": "a9ab28ce-ca99-4f5e-b325-ff6ef3a191e6",
+              "name": "LOG_SHEET_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_LOG_SHEET_ID"
+            },
+            {
+              "id": "ba040e70-4f1a-4941-ac3f-c5be83f8f3a1",
+              "name": "LOG_TAB",
+              "type": "string",
+              "value": "Draft Log"
+            },
+            {
+              "id": "47fe6158-a0cf-4a85-b99a-ffedee73fc72",
+              "name": "REVIEWER_CHAT_ID",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3737ef2d-f55e-4873-a926-3f548aeae0d4",
+      "name": "CONFIG — Inputs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.QUESTIONNAIRE_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.QUESTIONS_TAB }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5b60dd00-539c-4aa2-95c7-3e4f468fa520",
+      "name": "Read Questions",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_TAB }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Question #": "={{ $json['Question #'] }}",
+            "Category": "={{ $json.Category }}",
+            "Question": "={{ $json.Question }}",
+            "Draft Answer": "",
+            "Confidence": "",
+            "Source Doc": "",
+            "Status": "NEW"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f95cd6de-7687-4b1a-80ab-26e421448def",
+      "name": "Log NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        780,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "get",
+        "documentURL": "={{ $('CONFIG — Inputs').first().json.KNOWLEDGE_DOC_ID }}",
+        "simple": true,
+        "options": {}
+      },
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "",
+          "name": "Google Docs API"
+        }
+      },
+      "id": "b73fb62f-6a4a-44fc-8f64-0e6007d39255",
+      "name": "Read Knowledge Base",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "6d92e1c7-150d-4305-bff0-0e021525d38c",
+      "name": "Loop Over Questions",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2617814-6694-429a-89a1-c666424302e8",
+              "name": "question",
+              "type": "string",
+              "value": "={{ $json.Question }}"
+            },
+            {
+              "id": "ddfc976d-8fb1-44d1-bc14-6fd5245a53e2",
+              "name": "category",
+              "type": "string",
+              "value": "={{ $json.Category }}"
+            },
+            {
+              "id": "8da5c2dd-36f0-4941-a2f0-7ee75acfad38",
+              "name": "context",
+              "type": "string",
+              "value": "={{ $json.Context }}"
+            },
+            {
+              "id": "c1c0f451-0fe5-4939-ab1c-4f9a50494175",
+              "name": "question_number",
+              "type": "string",
+              "value": "={{ $json['Question #'] }}"
+            },
+            {
+              "id": "cebc5abe-4f3a-4e58-ad7e-08729bbc5a74",
+              "name": "knowledge_text",
+              "type": "string",
+              "value": "={{ ($('Read Knowledge Base').first().json.content || '').slice(0, 15000) }}"
+            }
+          ]
+        },
+        "options": {},
+        "include": "none"
+      },
+      "id": "a0843930-9727-4b0d-8b13-20019c74cc0c",
+      "name": "Prepare Question",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1620,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a security-compliance writer drafting vendor security questionnaire answers for {{ $('CONFIG — Inputs').first().json.COMPANY_NAME }}.\n\nSTRICT RULES:\n1. Draft answers ONLY from the APPROVED KNOWLEDGE below. Never invent certifications, audits, controls, or dates.\n2. If the knowledge does not cover the question, say so plainly in the answer, set confidence below 0.5, and set needs_human to true.\n3. Keep answers to 2-4 factual sentences, first-person plural ('we').\n4. Name the knowledge section you used in source_reference.\n\nAPPROVED KNOWLEDGE:\n{{ $json.knowledge_text }}\n\nOutput ONLY via the structured output parser."
+        },
+        "text": "=Question #{{ $json.question_number }} ({{ $json.category }})\n\n{{ $json.question }}\n\nAdditional context: {{ $json.context }}\n\nDraft the answer."
+      },
+      "id": "f90d455c-ee48-4cd2-8bce-c7c583a6e4bf",
+      "name": "Draft Answer Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "f791e359-32f8-4fad-a102-13867b3a7211",
+      "name": "GPT-4o-mini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1880,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"answer\": {\n      \"type\": \"string\",\n      \"description\": \"Draft answer to the questionnaire question, written only from the approved knowledge text\"\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"description\": \"0-1 confidence that the answer is fully supported by the knowledge text\"\n    },\n    \"source_reference\": {\n      \"type\": \"string\",\n      \"description\": \"Which section of the knowledge doc the answer comes from, or 'NOT COVERED' if the knowledge does not address the question\"\n    },\n    \"needs_human\": {\n      \"type\": \"boolean\",\n      \"description\": \"True when the knowledge does not cover the question or confidence is low\"\n    }\n  },\n  \"required\": [\n    \"answer\",\n    \"confidence\",\n    \"source_reference\",\n    \"needs_human\"\n  ]\n}"
+      },
+      "id": "390bc927-2c5e-4c05-8467-14008b6b87bb",
+      "name": "Answer Schema Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2140,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_TAB }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Question #"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Question #": "={{ $json.question_number }}",
+            "Draft Answer": "={{ $json.output.answer }}",
+            "Confidence": "={{ $json.output.confidence }}",
+            "Source Doc": "={{ $json.output.source_reference }}",
+            "Status": "DRAFTED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5f7974a7-c14c-4db2-85ce-065b95dff530",
+      "name": "Mark DRAFTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2140,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-confidence",
+              "leftValue": "={{ Number($json['Confidence'] || 0) }}",
+              "rightValue": "={{ $('CONFIG — Inputs').first().json.CONFIDENCE_THRESHOLD }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "42377193-dff1-48d0-bc1a-c9c3f23b2002",
+      "name": "Confidence Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_TAB }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Question #"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Question #": "={{ $json['Question #'] }}",
+            "Status": "APPROVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "719f6fc6-6f46-4b5f-bf33-bdf497420aad",
+      "name": "Mark APPROVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2660,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_TAB }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Question #"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Question #": "={{ $json['Question #'] }}",
+            "Status": "IN_REVIEW"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c5fb6625-32b4-4173-bc7d-1553c7c9a8af",
+      "name": "Mark IN_REVIEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2660,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Inputs').first().json.REVIEWER_CHAT_ID }}",
+        "text": "=🛡️ *Security Questionnaire — Human Review Needed*\n\n*Question #{{ $json['Question #'] }}* — {{ $json['Category'] }}\n{{ $json['Question'] }}\n\n*Draft answer:*\n{{ $json['Draft Answer'] }}\n\n📊 Confidence: {{ $json['Confidence'] }} | 📄 Source: {{ $json['Source Doc'] }}\n\n_To approve manually, reply_ `APPROVED #{{ $json['Question #'] }}` _in Telegram, then flip the row to APPROVED in the Draft Log tab._",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d485f152-3a74-4ab9-93b6-84a2e24ea35b",
+      "name": "Send Review Request",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2920,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_SHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Inputs').first().json.LOG_TAB }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c156da9f-a41a-4df3-9b63-f77e45e0f927",
+      "name": "Read Draft Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1360,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Count statuses from the Draft Log rows\nconst rows = $input.all().map(i => i.json);\nconst total = rows.length;\nconst status = r => String(r['Status'] || '').toUpperCase();\nconst approved = rows.filter(r => status(r) === 'APPROVED').length;\nconst inReview = rows.filter(r => status(r) === 'IN_REVIEW').length;\nconst drafted = rows.filter(r => status(r) === 'DRAFTED').length;\nconst date = new Date().toISOString().slice(0, 10);\nconst lines = [\n  `🛡️ *Security Questionnaire Drafting — ${date}*`,\n  ``,\n  `📋 ${total} questions processed`,\n  `✅ ${approved} auto-approved`,\n  `🧑‍💻 ${inReview} need human review`,\n];\nif (drafted) lines.push(`📝 ${drafted} drafted (below review gate)`);\nlines.push(``, `📊 Full log: Draft Log tab`);\nreturn [{ json: { summary: lines.join('\\n'), total, approved, in_review: inReview, drafted } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "b613e961-ee6f-4a00-87a7-00e8a083b789",
+      "name": "Build Run Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Inputs').first().json.REVIEWER_CHAT_ID }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "eedd7516-f920-42cf-952c-80e1626dc195",
+      "name": "Final Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1880,
+        660
+      ]
+    }
+  ],
+  "connections": {
+    "Start Drafting": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Inputs": {
+      "main": [
+        [
+          {
+            "node": "Read Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Questions": {
+      "main": [
+        [
+          {
+            "node": "Log NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log NEW": {
+      "main": [
+        [
+          {
+            "node": "Read Knowledge Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Knowledge Base": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Questions": {
+      "main": [
+        [
+          {
+            "node": "Read Draft Log",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Question": {
+      "main": [
+        [
+          {
+            "node": "Draft Answer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Answer Agent": {
+      "main": [
+        [
+          {
+            "node": "Mark DRAFTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark DRAFTED": {
+      "main": [
+        [
+          {
+            "node": "Confidence Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confidence Check": {
+      "main": [
+        [
+          {
+            "node": "Mark APPROVED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark IN_REVIEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark APPROVED": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark IN_REVIEW": {
+      "main": [
+        [
+          {
+            "node": "Send Review Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Review Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Draft Log": {
+      "main": [
+        [
+          {
+            "node": "Build Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Run Summary": {
+      "main": [
+        [
+          {
+            "node": "Final Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o-mini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Draft Answer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Schema Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Draft Answer Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

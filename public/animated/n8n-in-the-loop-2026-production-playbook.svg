@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animated schematic: workflow nodes flowing through a production guardrail shield">
+  <defs>
+    <!-- fine grid -->
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.14"/>
+    </pattern>
+    <!-- traveling energy pulse along the main pipeline -->
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF4D00" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FF4D00" stop-opacity="1"/>
+      <stop offset="1" stop-color="#FF4D00" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- cream drawing sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <!-- black border frame -->
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="5"/>
+
+  <!-- main pipeline: deterministic workflow skeleton -->
+  <g stroke="#111111" stroke-width="5" fill="none" stroke-linecap="round">
+    <path d="M 60 300 L 200 300"/>
+    <path d="M 320 300 L 480 300"/>
+    <path d="M 560 300 L 740 300"/>
+    <!-- branch above: the probabilistic agent loop -->
+    <path d="M 200 300 L 200 150 L 620 150 L 620 300" opacity="0.55"/>
+  </g>
+
+  <!-- static nodes (rect = deterministic steps) -->
+  <g>
+    <rect x="40" y="270" width="60" height="60" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="70" cy="300" r="9" fill="#111111"/>
+    <rect x="300" y="270" width="60" height="60" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="330" cy="300" r="9" fill="#FF4D00"/>
+    <rect x="540" y="270" width="60" height="60" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="570" cy="300" r="9" fill="#111111"/>
+    <rect x="700" y="270" width="60" height="60" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <circle cx="730" cy="300" r="9" fill="#FF4D00"/>
+  </g>
+
+  <!-- agent core: slowly rotating hexagon on the branch (the probabilistic layer) -->
+  <g transform="translate(410 150)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite"/>
+      <polygon points="0,-52 45,-26 45,26 0,52 -45,26 -45,-26" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+      <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="none" stroke="#FF4D00" stroke-width="5"/>
+      <circle r="7" fill="#111111"/>
+    </g>
+  </g>
+
+  <!-- the production shield: slowly pulsing guardrail around the pipeline -->
+  <g transform="translate(410 300)">
+    <g stroke="#111111" stroke-width="6" fill="none">
+      <animate attributeName="opacity" values="0.55;1;0.55" dur="9s" repeatCount="indefinite"/>
+      <path d="M 0,-95 L 78,-45 L 78,45 L 0,95 L -78,45 L -78,-45 Z"/>
+    </g>
+    <g stroke="#FF4D00" stroke-width="4" fill="none">
+      <animate attributeName="opacity" values="0.25;0.9;0.25" dur="9s" repeatCount="indefinite"/>
+      <path d="M 0,-70 L 58,-33 L 58,33 L 0,70 L -58,33 L -58,-33 Z"/>
+    </g>
+  </g>
+
+  <!-- energy pulse traveling left to right along the main pipeline (slow) -->
+  <rect x="0" y="294" width="120" height="12" fill="url(#pulse)">
+    <animate attributeName="x" from="-120" to="800" dur="12s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- status dots: approval gates blinking slowly -->
+  <g fill="#111111">
+    <circle cx="200" cy="120" r="8">
+      <animate attributeName="opacity" values="1;0.25;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="120" r="8" fill="#FF4D00">
+      <animate attributeName="opacity" values="0.25;1;0.25" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- drifting spark particles (very slow rise) -->
+  <g fill="#FF4D00" opacity="0.7">
+    <circle cx="150" cy="380" r="4">
+      <animate attributeName="cy" values="380;120" dur="22s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="22s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="660" cy="400" r="3">
+      <animate attributeName="cy" values="400;160" dur="26s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="26s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

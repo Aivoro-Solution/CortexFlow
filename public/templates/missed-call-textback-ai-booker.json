@@ -1,0 +1,1735 @@
+{
+  "name": "Missed-Call Text-Back AI Booker",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📲 MISSED-CALL TEXT-BACK AI BOOKER\n**What it does:** A missed call hits your Twilio number → the caller instantly gets a friendly SMS → their replies are handled by an AI agent that classifies intent (booking / quote / existing job / wrong number) and books them straight into your Google Calendar — while a daily sweeper nudges anyone who went quiet.\n\n**You'll need:**\n- Twilio account with a phone number (twilio.com/try-twilio) — voice status-callback + SMS webhook point at this workflow's URL\n- OpenAI API key (platform.openai.com/signup)\n- Google Sheets + Google Calendar OAuth2 credentials\n- A Telegram bot (telegram.org → @BotFather → /newbot) + your chat ID\n\n**Status flow in Sheets:** `NEW` → `CONTACTED` → `REPLIED` → `BOOKED` (plus `DROPPED`, `NUDGED`)",
+        "height": 240,
+        "width": 6600,
+        "color": 5
+      },
+      "id": "39c8dbc4-9826-44c3-9d55-f46af4cf0996",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Twilio webhook + instant response\nIncoming SMS or missed-call status callback → Respond-to-Webhook returns empty TwiML immediately so Twilio is satisfied → normalize the payload (From / Body / CallStatus → event_type).",
+        "height": 400,
+        "width": 1180,
+        "color": 4
+      },
+      "id": "ec4ea285-103b-4a82-b21e-1e853f23d809",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Config + 24h dedupe\nTwo Config Set nodes hold every editable value (business name, numbers, calendar ID, AI profile, model). For missed calls: read the log — if this caller was already texted in the last 24h, stop (no spam).",
+        "height": 400,
+        "width": 1180,
+        "color": 4
+      },
+      "id": "6fe71e33-a762-47e7-99d8-931e23cf5b4e",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Instant text-back + logging\nNew missed call → row appended with status `NEW` → friendly SMS goes out via Twilio HTTP → sheet flips to `CONTACTED`.",
+        "height": 400,
+        "width": 1000,
+        "color": 4
+      },
+      "id": "9976bc22-78c0-4d8c-a052-4fb9f6828382",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — AI classifies the reply\nInbound SMS → conversation history rebuilt from the Sheets log → AI Agent (gpt-4o-mini) + Structured Output Parser returns {intent, summary, missing_fields, suggested_reply}.",
+        "height": 400,
+        "width": 1600,
+        "color": 4
+      },
+      "id": "98123dbd-2647-481e-a8a1-2e247a350ec6",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Booking branch\nintent=booking + all details present → Google Calendar event → confirmation SMS → sheet `BOOKED` → Telegram owner alert. Missing details → AI's follow-up question sent, sheet `REPLIED`.",
+        "height": 400,
+        "width": 1680,
+        "color": 4
+      },
+      "id": "f132525f-d45d-4cd2-b234-b9f6a49ce0f3",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Quote / wrong-number branches\nquote → quote-capture SMS, `REPLIED`. wrong_number → polite close, `DROPPED`. existing_job / other → friendly acknowledgement, `REPLIED`.",
+        "height": 400,
+        "width": 1300,
+        "color": 4
+      },
+      "id": "a6182675-7a8f-410c-a7f5-1491e8e85815",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3100,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 7 — Daily no-reply sweeper\nSeparate schedule flow: scan the log every 2h for `CONTACTED` rows older than 2h with no reply → send exactly one nudge SMS → mark `NUDGED`.",
+        "height": 400,
+        "width": 1600,
+        "color": 4
+      },
+      "id": "686b188e-94ff-40b4-a68b-3c8a7e3d237b",
+      "name": "STICKY — STEP 7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 8 — Telegram owner alert\nEvery booked lead fires a one-line Telegram summary to the owner (name/phone, time, what they booked).",
+        "height": 400,
+        "width": 1120,
+        "color": 4
+      },
+      "id": "e55210a4-7ed6-4d80-b46d-49e08791ba80",
+      "name": "STICKY — STEP 8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "missed-call-textback",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "de9b7d60-5c10-40a9-9681-671b7e865bbf",
+      "name": "Twilio Incoming (Missed Call / SMS)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "de4bb89c-a549-4ce1-b8ce-7814bc9c5f16",
+      "name": "Respond Empty TwiML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Twilio webhook payload into a standard lead event\n// Twilio sends form-encoded params: From, To, Body (SMS) or CallStatus (voice status callback)\nconst body = $input.first().json || {};\nconst from = body.From || body.from || '';\nconst to = body.To || body.to || '';\nconst text = body.Body || body.body || '';\nconst callStatus = body.CallStatus || body.callStatus || '';\nconst cfg = $('CONFIG — Business Settings').first().json;\n\n// Missed-call statuses from Twilio voice status callbacks\nconst missed = ['no-answer', 'busy', 'failed', 'canceled', 'cancelled'];\nlet event_type = 'unknown';\nif (text) {\n  event_type = 'sms';\n} else if (callStatus) {\n  event_type = missed.includes(String(callStatus).toLowerCase()) ? 'missed_call' : 'call_status';\n}\nreturn [{ json: {\n  phone: from,\n  twilio_number: to,\n  message: text,\n  call_status: callStatus,\n  event_type,\n  first_seen: new Date().toISOString(),\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "b8ed8d36-8f48-4766-852e-ba249bb129b0",
+      "name": "Normalize Twilio Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9c7acdd-9494-4d43-b56a-add91666719a",
+              "name": "business_name",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_NAME"
+            },
+            {
+              "id": "70dcfe4b-57a6-4569-977a-807494a6ba44",
+              "name": "owner_phone",
+              "type": "string",
+              "value": "PASTE_YOUR_OWNER_PHONE (E.164, e.g. +1555...)"
+            },
+            {
+              "id": "37de3ebf-1628-4933-a9e2-72310076bc5e",
+              "name": "twilio_number",
+              "type": "string",
+              "value": "PASTE_YOUR_TWILIO_NUMBER (E.164)"
+            },
+            {
+              "id": "9cc80a9c-9ffa-4d4f-a591-bc5db28d4ea6",
+              "name": "calendar_id",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_CALENDAR_ID"
+            },
+            {
+              "id": "86a01ad7-dc7a-4332-9282-c5486c475dd5",
+              "name": "nudge_hours",
+              "type": "string",
+              "value": "2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3ac8ee7f-d764-47be-880e-6335f6c8aaf5",
+      "name": "CONFIG — Business Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93c5e3ca-a2f9-46bb-aea2-63e2ea2b15ea",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "210ca85d-1e16-4176-a2db-9e13f02b8276",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Leads"
+            },
+            {
+              "id": "1dcc7ee9-2ada-4ef6-97f1-330a709df1e0",
+              "name": "twilio_account_sid",
+              "type": "string",
+              "value": "PASTE_YOUR_TWILIO_ACCOUNT_SID"
+            },
+            {
+              "id": "0adb01e7-3aa4-4e8f-bee4-274abe9d160e",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "6eb0d483-7d85-4bb6-be25-e7056c80d1db",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "160f4684-0f6b-4c6d-97e9-a8c3408af643",
+              "name": "ai_business_profile",
+              "type": "string",
+              "value": "PASTE_YOUR_AI_BUSINESS_PROFILE: who you are, services + prices, service area, opening hours, booking rules (e.g. 'Plumbing repairs, $89 call-out, Mon-Sat 8am-6pm, bookings need name + preferred day/time')"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "39a33061-4406-45ef-98c6-881b7e54ba6e",
+      "name": "CONFIG — AI + Services",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-missed",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "missed_call",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "cd627b20-75e9-4c58-9f66-37622a46b2a8",
+      "name": "IF — Missed Call or SMS",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "2053834f-4018-4759-a103-ea3bc59dde47",
+      "name": "Read Conversation Log — Missed Call",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Stop if this caller was already texted within the last 24h (no double-texting)\nconst cfg = $('CONFIG — Business Settings').first().json;\nconst rows = $('Read Conversation Log — Missed Call').all().map(i => i.json);\nconst phone = $('Normalize Twilio Payload').first().json.phone;\nconst windowHrs = parseInt(cfg.nudge_hours || '2', 10) * 12; // 24h when nudge_hours=2\nconst cutoff = Date.now() - windowHrs * 3600 * 1000;\nconst recent = rows.filter(r => {\n  const p = String(r['Phone'] || '').trim();\n  if (!p || p !== String(phone).trim()) return False;\n  const st = String(r['Status'] || '');\n  if (!['NEW', 'CONTACTED', 'REPLIED', 'NUDGED'].includes(st)) return False;\n  const t = new Date(r['Last Updated'] || r['Date'] || 0).getTime();\n  return !isNaN(t) && t >= cutoff;\n});\nreturn [{ json: {\n  phone,\n  first_seen: $('Normalize Twilio Payload').first().json.first_seen,\n  already_texted: recent.length > 0,\n  last_message: '',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "808f6d75-75a0-4712-b348-c6b96d43f3a2",
+      "name": "Check 24h Dedupe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-dup",
+              "leftValue": "={{ $json.already_texted }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "903980c2-fa4f-4113-b351-ad72e0e54955",
+      "name": "IF — Texted in Last 24h",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "74739ccb-b260-40d8-9ff2-f2a33e69c4d2",
+              "name": "handled",
+              "type": "string",
+              "value": "already_texted_within_24h"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2a80978-a3a7-4fab-97df-439f57b38a99",
+      "name": "No Action — Already Handled",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2160,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.first_seen.slice(0, 10) }}",
+            "Phone": "={{ $json.phone }}",
+            "Name": "",
+            "Status": "NEW",
+            "Last Message": "missed call",
+            "Conversation": "[]",
+            "Intent": "",
+            "Booking Date": "",
+            "Summary": "",
+            "Last Updated": "={{ $json.first_seen }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e4d0d2f0-fce0-491b-895e-b57e1d3f328c",
+      "name": "Log Lead — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ 'Hi, sorry we missed your call! This is ' + $('CONFIG — Business Settings').first().json.business_name + '. How can we help? Just reply here and I\\'ll get you sorted.' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "c993b796-7794-4ea6-b7bb-1370a4c57be7",
+      "name": "Send Instant SMS — Sorry We Missed You",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Normalize Twilio Payload').first().json.phone }}",
+            "Last Message": "={{ 'Sorry we missed your call! This is ' + $('CONFIG — Business Settings').first().json.business_name + '. How can we help? Just reply here and I\\'ll get you sorted.' }}",
+            "Status": "CONTACTED",
+            "Last Updated": "={{ new Date().toISOString() }}",
+            "Conversation": "[]"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "76c11db8-3fa6-4ed0-8fb4-4d9cce5bdb6f",
+      "name": "Update Sheet — Status CONTACTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0a39b7a4-c2fe-4463-89cd-d26451658ec2",
+      "name": "Read Conversation Log — Lookup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rebuild the conversation history from the Sheets log + the new inbound SMS\nconst rows = $('Read Conversation Log — Lookup').all().map(i => i.json);\nconst inbound = $('Normalize Twilio Payload').first().json;\nconst phone = inbound.phone;\nconst row = rows.find(r => String(r['Phone'] || '').trim() === String(phone).trim()) || {};\nlet history = [];\ntry { history = JSON.parse(row['Conversation'] || '[]'); } catch (e) { history = []; }\nif (!Array.isArray(history)) history = [];\nhistory.push({ role: 'user', content: inbound.message });\nreturn [{ json: {\n  phone,\n  message: inbound.message,\n  history_json: JSON.stringify(history),\n  history_count: history.length,\n  last_message: inbound.message,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "450f6b29-490f-46e7-8355-420ae0a2975f",
+      "name": "Build History Array",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the friendly AI receptionist for {{ $('CONFIG — Business Settings').first().json.business_name }}.\n\nBUSINESS PROFILE:\n{{ $('CONFIG — AI + Services').first().json.ai_business_profile }}\n\nClassify the latest customer message. intents: booking (wants an appointment/visit), quote (asks price without booking), existing_job (about an ongoing/completed job), wrong_number (clearly not our customer), other.\n\nIf intent=booking, list what's missing before a booking can be made (e.g. preferred day/time, address, phone). If everything needed is present, set booking_start and booking_end to ISO datetimes in the customer's local timezone and leave missing_fields empty.\n\nsuggested_reply must be a short SMS-ready reply (max 2 sentences, warm, no jargon). Never invent business details not in the profile. Output ONLY via the structured output parser."
+        },
+        "text": "=Conversation history (oldest first, JSON):\n{{ $json.history_json }}\n\nClassify the latest customer message and draft the next reply."
+      },
+      "id": "4c77b276-c1c4-4299-b86d-913ba7969ebc",
+      "name": "AI Agent — Classify + Draft Reply",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1920,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "33e78fe0-abd7-4a76-be27-9f2ca7a204f7",
+      "name": "OpenAI Chat Model — Booker",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent\": \"booking / quote / existing_job / wrong_number / other\",\n  \"summary\": \"one-line summary of what the customer wants\",\n  \"missing_fields\": [\"list of booking details still needed, empty when intent != booking or all details are present\"],\n  \"suggested_reply\": \"short SMS-ready reply, max 2 sentences\",\n  \"booking_start\": \"ISO datetime of the requested appointment, only when intent=booking and missing_fields is empty\",\n  \"booking_end\": \"ISO datetime the appointment ends (default: booking_start + 1h), only when intent=booking and missing_fields is empty\"\n}"
+      },
+      "id": "41d9c13d-be48-4d2f-96de-72befe26d1e0",
+      "name": "Structured Output Parser — Intent + Reply",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-intent-booking",
+              "leftValue": "={{ $json.output.intent }}",
+              "rightValue": "booking",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            },
+            {
+              "id": "if-no-missing",
+              "leftValue": "={{ $json.output.missing_fields.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals",
+                "name": "filter.operator.number.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "d8f45bd8-42be-4c00-ba17-32a37fd8ba60",
+      "name": "IF — Booking Ready",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Business Settings').first().json.calendar_id }}"
+        },
+        "start": "={{ $json.output.booking_start }}",
+        "end": "={{ $json.output.booking_end }}",
+        "additionalFields": {
+          "summary": "={{ 'Booking: ' + $('CONFIG — Business Settings').first().json.business_name }}",
+          "description": "={{ 'Phone: ' + $json.phone + '\\nCustomer request: ' + $json.output.summary }}",
+          "attendees": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "",
+          "name": "Google Calendar API"
+        }
+      },
+      "id": "6f1aa185-63fe-41b4-80c6-fbce4c6643b1",
+      "name": "Google Calendar — Create Booking",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $('Build History Array').first().json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.suggested_reply }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "914e2a6e-2c02-4c4b-9ad2-f92024a68e44",
+      "name": "Send Booking Confirmation SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Build History Array').first().json.phone }}",
+            "Last Message": "={{ 'booking confirmed for ' + $('AI Agent — Classify + Draft Reply').first().json.output.booking_start }}",
+            "Status": "BOOKED",
+            "Last Updated": "={{ new Date().toISOString() }}",
+            "Intent": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.intent }}",
+            "Booking Date": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.booking_start }}",
+            "Summary": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "b3fe09ee-d6cd-4dcd-af22-cfa8be7fabac",
+      "name": "Update Sheet — Status BOOKED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — AI + Services').first().json.telegram_chat_id }}",
+        "text": "={{ '\\📱 New booking: ' + ={{ $('Build History Array').first().json.phone }} + ' — ' + $('AI Agent — Classify + Draft Reply').first().json.output.summary + ' @ ' + $('AI Agent — Classify + Draft Reply').first().json.output.booking_start }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "0c08b3e2-9a35-495c-a3d3-a1d812660da7",
+      "name": "Telegram — Owner Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-needs-info",
+              "leftValue": "={{ $json.output.intent }}",
+              "rightValue": "booking",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "434c9642-ec27-4338-966f-e344efbdf36c",
+      "name": "IF — Needs Booking Info",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $('Build History Array').first().json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.suggested_reply }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "a8916a31-4fce-4873-abb2-62be1fd3a69f",
+      "name": "Send Follow-up SMS — AI Question",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Build History Array').first().json.phone }}",
+            "Last Message": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.suggested_reply }}",
+            "Status": "REPLIED",
+            "Last Updated": "={{ new Date().toISOString() }}",
+            "Intent": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.intent }}",
+            "Summary": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8bd544ea-d3ce-4e17-8a55-49084ff91034",
+      "name": "Update Sheet — REPLIED (Follow-up)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-wrong",
+              "leftValue": "={{ $json.output.intent }}",
+              "rightValue": "wrong_number",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "d635bd61-a40d-416b-9869-d38f82d12221",
+      "name": "IF — Wrong Number",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $('Build History Array').first().json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ 'Thanks for letting us know — no worries at all! If you ever need ' + $('CONFIG — Business Settings').first().json.business_name + ' in the future, we\\'re here.' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "610b216d-e49f-412e-8f43-a41cbe26d10a",
+      "name": "Send Polite Close SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Build History Array').first().json.phone }}",
+            "Last Message": "={{ 'wrong number — polite close sent' }}",
+            "Status": "DROPPED",
+            "Last Updated": "={{ new Date().toISOString() }}",
+            "Intent": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.intent }}",
+            "Summary": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "20bb5266-7510-4a5b-b60b-70c4f1bec3fa",
+      "name": "Update Sheet — Status DROPPED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $('Build History Array').first().json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.suggested_reply }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "301ebb03-cf4b-4cba-ba8b-d193ef980bb3",
+      "name": "Send Quote-Capture SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Build History Array').first().json.phone }}",
+            "Last Message": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.suggested_reply }}",
+            "Status": "REPLIED",
+            "Last Updated": "={{ new Date().toISOString() }}",
+            "Intent": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.intent }}",
+            "Summary": "={{ $('AI Agent — Classify + Draft Reply').first().json.output.summary }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6af0920f-4f74-4728-bcfb-5965673b5280",
+      "name": "Update Sheet — REPLIED (Quote/Other)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "03481d70-ba12-4ef8-af81-ca2ce55b6718",
+      "name": "Daily No-Reply Sweeper",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "bdc8c896-3bf0-49a3-8ea4-64a66c72d013",
+      "name": "Read Conversation Log — Sweeper",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find CONTACTED leads older than the nudge window with no reply -> exactly one nudge each\nconst cfg = $('CONFIG — Business Settings').first().json;\nconst windowHrs = parseInt(cfg.nudge_hours || '2', 10);\nconst cutoff = Date.now() - windowHrs * 3600 * 1000;\nconst rows = $('Read Conversation Log — Sweeper').all().map(i => i.json);\nconst stale = rows.filter(r => {\n  if (String(r['Status'] || '') !== 'CONTACTED') return False;\n  const t = new Date(r['Last Updated'] || r['Date'] || 0).getTime();\n  return !isNaN(t) && t < cutoff;\n});\nreturn stale.map(r => ({ json: {\n  phone: String(r['Phone'] || ''),\n  last_message: 'nudge after no reply',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "6c714f86-ee36-44a7-8845-f88d7ffd3925",
+      "name": "Find Stale CONTACTED Leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-stale",
+              "leftValue": "={{ $json.phone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "name": "filter.operator.string.notEmpty"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "81b729c2-6e74-43ab-8bf6-2dcfc6b57538",
+      "name": "IF — Stale Leads Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.twilio.com/2010-04-01/Accounts/' + $('CONFIG — AI + Services').first().json.twilio_account_sid + '/Messages.json' }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $('CONFIG — Business Settings').first().json.twilio_number }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ 'Just checking in — still need a hand with anything? Reply here and I\\'ll get you booked in. — ' + $('CONFIG — Business Settings').first().json.business_name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Twilio Auth Header"
+        }
+      },
+      "id": "dc747edf-a5a8-4609-9d20-dfab986c639d",
+      "name": "Send Nudge SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — AI + Services').first().json.sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Phone": "={{ $('Find Stale CONTACTED Leads').item.json.phone }}",
+            "Last Message": "={{ 'nudge sent' }}",
+            "Status": "NUDGED",
+            "Last Updated": "={{ new Date().toISOString() }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "453836e8-5950-4a46-a822-4832457daf41",
+      "name": "Update Sheet — Status NUDGED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        1500
+      ]
+    }
+  ],
+  "connections": {
+    "Twilio Incoming (Missed Call / SMS)": {
+      "main": [
+        [
+          {
+            "node": "Respond Empty TwiML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Empty TwiML": {
+      "main": [
+        [
+          {
+            "node": "Normalize Twilio Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Twilio Payload": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Business Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Business Settings": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI + Services",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI + Services": {
+      "main": [
+        [
+          {
+            "node": "IF — Missed Call or SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Missed Call or SMS": {
+      "main": [
+        [
+          {
+            "node": "Read Conversation Log — Missed Call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Conversation Log — Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Conversation Log — Missed Call": {
+      "main": [
+        [
+          {
+            "node": "Check 24h Dedupe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check 24h Dedupe": {
+      "main": [
+        [
+          {
+            "node": "IF — Texted in Last 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Texted in Last 24h": {
+      "main": [
+        [
+          {
+            "node": "No Action — Already Handled",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Lead — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Lead — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Send Instant SMS — Sorry We Missed You",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Instant SMS — Sorry We Missed You": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status CONTACTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Conversation Log — Lookup": {
+      "main": [
+        [
+          {
+            "node": "Build History Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build History Array": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Classify + Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Classify + Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "IF — Booking Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Booking Ready": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar — Create Booking",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF — Needs Booking Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar — Create Booking": {
+      "main": [
+        [
+          {
+            "node": "Send Booking Confirmation SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Booking Confirmation SMS": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status BOOKED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status BOOKED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Owner Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Needs Booking Info": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up SMS — AI Question",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF — Wrong Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up SMS — AI Question": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — REPLIED (Follow-up)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Wrong Number": {
+      "main": [
+        [
+          {
+            "node": "Send Polite Close SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Quote-Capture SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Polite Close SMS": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status DROPPED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Quote-Capture SMS": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — REPLIED (Quote/Other)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily No-Reply Sweeper": {
+      "main": [
+        [
+          {
+            "node": "Read Conversation Log — Sweeper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Conversation Log — Sweeper": {
+      "main": [
+        [
+          {
+            "node": "Find Stale CONTACTED Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Stale CONTACTED Leads": {
+      "main": [
+        [
+          {
+            "node": "IF — Stale Leads Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Stale Leads Found": {
+      "main": [
+        [
+          {
+            "node": "Send Nudge SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send Nudge SMS": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status NUDGED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Booker": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Classify + Draft Reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Intent + Reply": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Classify + Draft Reply",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

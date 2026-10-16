@@ -1,0 +1,1111 @@
+{
+  "name": "Multi-Store Sales Consolidator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📊 MULTI-STORE SALES CONSOLIDATOR\n**What it does:** Every Monday morning it lists each store's sales spreadsheet from a Google Drive folder → reads one sheet per store → consolidates every row into one sheet → computes per-store revenue, orders, top items and week-over-week changes → an AI analyst (gpt-4o-mini) writes insights + red flags → fires a Telegram alert if revenue swings past your anomaly threshold → emails you a formatted HTML report → logs the run and pings you on Telegram.\n\n**You'll need:**\n- Google Sheets + Google Drive OAuth2 credentials\n- OpenAI API key (platform.openai.com/signup)\n- Gmail OAuth2 credential\n- A Telegram bot (telegram.org → @BotFather → /newbot) + your chat ID\n- One Google Sheet per store in a Drive folder (tab with headers: Date | Item | Qty | Revenue)\n\n**Status flow in Sheets (`Report Runs` tab):** `NEW` → `PROCESSING` → `DONE` (or `FAILED` when no store sheets are found)",
+        "height": 220,
+        "width": 6140,
+        "color": 5
+      },
+      "id": "55ac247c-187f-4acf-bf4b-195fbb0ef6e8",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Weekly trigger + config + NEW log\nMonday 8:00 AM schedule trigger → CONFIG — Store Settings holds every editable value (owner email, sheet IDs, Drive folder, tab names, anomaly threshold) → run logged to `Report Runs` with status `NEW`.",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "id": "40e62e4c-eef0-461f-a01d-8d0744a1e94e",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — List store sheets + prepare store list\nGoogle Drive lists every spreadsheet in the configured folder → Prepare Store List maps each file to a store name + its sales tab → IF checks at least one sheet was found.",
+        "height": 420,
+        "width": 740,
+        "color": 4
+      },
+      "id": "3126ffe9-c220-4be6-9149-a53812f4185f",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Loop stores: read, tag, consolidate\nOne store per loop iteration: read that store's sales tab → tag every row with the store name → append rows to the `Consolidated Sales` sheet. Done-output continues when all stores are processed.",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "id": "edcdeed1-91de-427a-9d0b-96580a75af76",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Aggregate totals + WoW + PROCESSING\nRead the consolidated rows → compute per-store revenue, order counts, top-5 items, and week-over-week changes (this week vs last week) → run flips to `PROCESSING` in the log.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "da1b6162-c93d-4f1d-ab77-fe038341e5e9",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2380,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — AI weekly analyst\nAI Agent (gpt-4o-mini) + Structured Output Parser returns {total_revenue, per_store, top_items, insights, red_flags, revenue_wow_change_pct}.",
+        "height": 560,
+        "width": 960,
+        "color": 4
+      },
+      "id": "a1a06298-19dd-46f8-b414-1cf49abeaed0",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Anomaly check → Telegram alert\nIF |revenue WoW change| ≥ threshold → instant Telegram anomaly alert to the owner. Both branches continue to the report.",
+        "height": 300,
+        "width": 720,
+        "color": 4
+      },
+      "id": "bd826b5e-1f73-4c8e-9651-01e64ecea2c4",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 7 — HTML report → Gmail → DONE → Telegram\nBuild the owner HTML report → send via Gmail → log flips to `DONE` → final Telegram success notification.",
+        "height": 420,
+        "width": 1560,
+        "color": 4
+      },
+      "id": "ad176363-a4d9-4075-bb80-9ccdb53ee75c",
+      "name": "STICKY — STEP 7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4080,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 8 — Failure path\nNo store sheets in the Drive folder → run logged as `FAILED` → Telegram failure alert. No notifications are sent for a run that never started.",
+        "height": 420,
+        "width": 920,
+        "color": 4
+      },
+      "id": "7ea7ad61-ed9d-42bd-b8a4-ac655ee6a980",
+      "name": "STICKY — STEP 8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": 1,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "18e44920-d640-4a63-af91-efa81878744b",
+      "name": "Weekly Monday Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88014023-3eba-476d-a073-b531f4540273",
+              "name": "owner_email",
+              "type": "string",
+              "value": "PASTE_YOUR_OWNER_EMAIL"
+            },
+            {
+              "id": "a75f34f1-d0f6-4be2-913e-0d6b3e1e9a0d",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "5bd34667-6919-40ee-a0d5-7f0a1f1b9582",
+              "name": "sales_drive_folder_id",
+              "type": "string",
+              "value": "PASTE_YOUR_GOOGLE_DRIVE_FOLDER_ID"
+            },
+            {
+              "id": "f1608059-3473-4841-93d4-97ea0b6729ab",
+              "name": "store_sheet_tabs",
+              "type": "string",
+              "value": "Weekly Sales  (comma-separated: one tab name per store, in file order)"
+            },
+            {
+              "id": "b2567de3-497a-4da1-b61d-ca19918752b7",
+              "name": "log_sheet_name",
+              "type": "string",
+              "value": "Report Runs"
+            },
+            {
+              "id": "f54c932f-a1e6-4f01-9abc-c130c9de0cbc",
+              "name": "consolidated_sheet_name",
+              "type": "string",
+              "value": "Consolidated Sales"
+            },
+            {
+              "id": "821dd64f-d33a-402b-a38a-aa1500a115f9",
+              "name": "revenue_anomaly_threshold_pct",
+              "type": "string",
+              "value": "15"
+            },
+            {
+              "id": "58e80fe5-ec51-46e1-ae11-ddf5ff99f15e",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "6934640e-4a3f-43f8-9aa4-e77a0db0e2f4",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "50c28b91-a5b5-4599-8db9-ef3cb169cab0",
+      "name": "CONFIG — Store Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.log_sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $now.toISO().slice(0, 10) }}",
+            "Week Of": "={{ $now.toISO().slice(0, 10) }}",
+            "Status": "NEW",
+            "Stores": "",
+            "Total Revenue": "",
+            "Notes": "weekly run started"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e49820f9-017b-4e3f-abcf-241be656d834",
+      "name": "Log Run — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "query": "={{ \"'\" + $('CONFIG — Store Settings').first().json.sales_drive_folder_id + \"' in parents and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false\" }}",
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      },
+      "id": "ae8dcb64-e35a-4ac6-95ce-f5950862957f",
+      "name": "List Store Sheets — Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Map each Drive spreadsheet to a store: name from the file name, tab from CONFIG (positional)\nconst files = $('List Store Sheets \\u2014 Google Drive').all().map(i => i.json).filter(f => f.id);\nconst cfg = $('CONFIG \\u2014 Store Settings').first().json;\nconst tabs = String(cfg.store_sheet_tabs || 'Weekly Sales').split(',').map(s => s.trim()).filter(Boolean);\nif (!files.length) return [{ json: { found: False, found_count: 0 } }];\nreturn files.map((f, idx) => ({ json: {\n  found: True,\n  found_count: files.length,\n  sheet_id: f.id,\n  store_name: String(f.name || ('Store ' + (idx + 1))).replace(/\\.xlsx?$/i, '').trim(),\n  tab_name: tabs[idx] || tabs[0] || 'Weekly Sales',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "67ecfeed-2ef0-4934-b2c6-992992ab6570",
+      "name": "Prepare Store List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-fb695169",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "34846403-7d04-49eb-a062-abce4d78cfd0",
+      "name": "IF — Sheets Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "452b0339-bf28-4771-9e41-12e397aa0745",
+      "name": "Loop Stores — Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $json.sheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $json.tab_name }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6fe50c4a-ad11-4e9e-a0b7-6709a67d0b64",
+      "name": "Read Store Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tag every sales row from this store with its store name\nconst store = $('Loop Stores \\u2014 Split In Batches').first().json.store_name;\nreturn $input.all().map(i => ({ json: { ...i.json, Store: store } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "99bb1593-db98-4f04-9fbf-716a1fb4d251",
+      "name": "Tag Rows — Add Store Name",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.consolidated_sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.Date }}",
+            "Store": "={{ $json.Store }}",
+            "Item": "={{ $json.Item }}",
+            "Qty": "={{ $json.Qty }}",
+            "Revenue": "={{ $json.Revenue }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "b06411ed-c512-4e32-aafa-6d3bcb209995",
+      "name": "Append Consolidated Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.consolidated_sheet_name }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "171c506d-a6fe-48cd-8fcb-55e5b81ba316",
+      "name": "Read Consolidated Rows — This Week",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate consolidated rows: this ISO week (Mon-Sun) vs previous week\nconst rows = $input.all().map(i => i.json);\nconst num = v => { const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\\-]/g, '')); return isNaN(n) ? 0 : n; };\nconst now = new Date();\nconst monday = new Date(now);\nmonday.setDate(now.getDate() - ((now.getDay() + 6) % 7));\nmonday.setHours(0, 0, 0, 0);\nconst iso = d => d.toISOString().slice(0, 10);\nconst thisStart = iso(monday), thisEnd = iso(new Date(monday.getTime() + 6 * 864e5));\nconst lastStart = iso(new Date(monday.getTime() - 7 * 864e5)), lastEnd = iso(new Date(monday.getTime() - 864e5));\nconst inRange = (d, a, b) => d >= a && d <= b;\nconst wow = (cur, prev) => prev > 0 ? Math.round(((cur - prev) / prev) * 1000) / 10 : null;\nconst per = {};\nconst items = {};\nfor (const r of rows) {\n  const d = String(r['Date'] || '').slice(0, 10);\n  const store = String(r['Store'] || 'Unknown');\n  const item = String(r['Item'] || 'Unknown');\n  const qty = num(r['Qty']), rev = num(r['Revenue']);\n  if (!inRange(d, lastStart, thisEnd)) continue;\n  const wk = inRange(d, thisStart, thisEnd) ? 'this' : 'last';\n  per[store] = per[store] || { this_rev: 0, this_qty: 0, last_rev: 0 };\n  per[store][wk + '_rev'] += rev;\n  per[store][wk + '_qty'] += qty;\n  if (wk === 'this') {\n    const key = store + ' \\u2014 ' + item;\n    items[key] = items[key] || { item, store, revenue: 0 };\n    items[key].revenue += rev;\n  }\n}\nconst stores = Object.keys(per).sort().map(s => ({\n  store: s,\n  revenue: Math.round(per[s].this_rev * 100) / 100,\n  orders_qty: per[s].this_qty,\n  wow_pct: wow(per[s].this_rev, per[s].last_rev),\n}));\nconst total_revenue = Math.round(stores.reduce((a, s) => a + s.revenue, 0) * 100) / 100;\nconst total_qty = stores.reduce((a, s) => a + s.orders_qty, 0);\nconst last_total = Object.keys(per).reduce((a, s) => a + per[s].last_rev, 0);\nconst top_items = Object.keys(items).map(k => items[k]).sort((a, b) => b.revenue - a.revenue).slice(0, 5)\n  .map(x => ({ item: x.item, store: x.store, revenue: Math.round(x.revenue * 100) / 100 }));\nreturn [{ json: {\n  run_date: now.toISOString().slice(0, 10),\n  week_start: thisStart, week_end: thisEnd, prev_week_start: lastStart,\n  store_count: stores.length,\n  stores, total_revenue, total_qty,\n  overall_wow_pct: wow(total_revenue, last_total),\n  top_items,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "16d40ff5-2ecb-4c5a-804e-04e18447c21e",
+      "name": "Compute Weekly Totals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.log_sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Run Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $('Compute Weekly Totals').first().json.run_date }}",
+            "Status": "PROCESSING",
+            "Stores": "={{ $('Compute Weekly Totals').first().json.store_count }}",
+            "Total Revenue": "={{ $('Compute Weekly Totals').first().json.total_revenue }}",
+            "Notes": "stores read + consolidated"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f2ff21b0-6315-4b14-982e-46d1f22b17b3",
+      "name": "Log Run — Status PROCESSING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a retail sales analyst writing a weekly owner briefing.\n\nWEEKLY SALES DATA (JSON):\n{{ JSON.stringify($('Compute Weekly Totals').first().json) }}\n\nRules: revenue_wow_change_pct = the overall_wow_pct value from the data (0 if missing). insights = 3-5 plain-English bullets an owner can act on. red_flags = stores or items dropping hard, zero-sales stores, or data problems (empty list if none). Never invent numbers not in the data. Output ONLY via the structured output parser.",
+          "text": "=Analyze the weekly sales data above and return the structured report."
+        }
+      },
+      "id": "7ee37b6f-eab2-40e7-8ad7-924d9e2c48d3",
+      "name": "AI Agent — Weekly Sales Analyst",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "c00f9367-cf54-4180-b042-75e9fe5ffd25",
+      "name": "OpenAI Chat Model — Analyst",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"total_revenue\": 0,\n  \"revenue_wow_change_pct\": 0,\n  \"per_store\": [{\"store\": \"store name\", \"revenue\": 0, \"wow_pct\": 0}],\n  \"top_items\": [\"top 5 items by revenue, with store\"],\n  \"insights\": [\"3-5 plain-English actionable insights\"],\n  \"red_flags\": [\"stores or items dropping hard, data issues; empty when none\"]\n}"
+      },
+      "id": "7e014165-e65b-44b9-b5be-6afda4a9a90f",
+      "name": "Structured Output Parser — Sales Insights",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3360,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-7a1def35",
+              "leftValue": "={{ Math.abs($json.output.revenue_wow_change_pct) }}",
+              "rightValue": "={{ $('CONFIG — Store Settings').first().json.revenue_anomaly_threshold_pct }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "8a07af28-6b24-448d-8ec4-5e28a28a510a",
+      "name": "IF — Revenue Anomaly",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Store Settings').first().json.telegram_chat_id }}",
+        "text": "={{ '<b>\\u26A0\\uFE0F Sales anomaly detected</b>\\n\\nWeek-over-week revenue change: ' + $json.output.revenue_wow_change_pct + '% (threshold ' + $('CONFIG — Store Settings').first().json.revenue_anomaly_threshold_pct + '%)\\n\\n<b>Red flags:</b>\\n' + ($json.output.red_flags.length ? $json.output.red_flags.map(f => '\\u2022 ' + f).join('\\n') : 'none') }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "3d016062-6a01-4b5b-bcc2-b53b40b6ba76",
+      "name": "Telegram — Anomaly Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3840,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the owner email HTML from totals + AI insights\nconst totals = $('Compute Weekly Totals').first().json;\nconst ai = $('AI Agent \\u2014 Weekly Sales Analyst').first().json.output;\nconst esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst storeRows = totals.stores.map(s =>\n  '<tr><td>' + esc(s.store) + '</td><td>' + s.revenue.toFixed(2) + '</td><td>' + s.orders_qty +\n  '</td><td>' + (s.wow_pct == null ? 'n/a' : (s.wow_pct > 0 ? '+' : '') + s.wow_pct + '%') + '</td></tr>'\n).join('');\nconst topRows = totals.top_items.map(t =>\n  '<li>' + esc(t.item) + ' \\u2014 ' + esc(t.store) + ' (' + t.revenue.toFixed(2) + ')</li>'\n).join('');\nconst insights = (ai.insights || []).map(x => '<li>' + esc(x) + '</li>').join('');\nconst flags = (ai.red_flags || []).map(x => '<li>' + esc(x) + '</li>').join('');\nconst wowStr = totals.overall_wow_pct == null ? 'n/a' :\n  (totals.overall_wow_pct > 0 ? '+' : '') + totals.overall_wow_pct + '%';\nconst html = '<h2>📊 Weekly Sales Report \\u2014 ' + esc(totals.week_start) + ' to ' + esc(totals.week_end) + '</h2>'\n  + '<p><b>Total revenue:</b> ' + totals.total_revenue.toFixed(2) + ' &nbsp;|&nbsp; <b>Week-over-week:</b> ' + wowStr\n  + ' &nbsp;|&nbsp; <b>Units sold:</b> ' + totals.total_qty + ' &nbsp;|&nbsp; <b>Stores:</b> ' + totals.store_count + '</p>'\n  + '<h3>Per-store performance</h3>'\n  + '<table border=\\'1\\' cellpadding=\\'6\\' cellspacing=\\'0\\'><tr><th>Store</th><th>Revenue</th><th>Units</th><th>WoW</th></tr>' + storeRows + '</table>'\n  + '<h3>Top items this week</h3><ol>' + topRows + '</ol>'\n  + '<h3>AI insights</h3><ul>' + insights + '</ul>'\n  + (flags ? '<h3>\\u26A0\\uFE0F Red flags</h3><ul>' + flags + '</ul>' : '')\n  + '<p style=\\'color:#888\\'>Generated by the Multi-Store Sales Consolidator workflow.</p>';\nreturn [{ json: {\n  report_title: 'Weekly Sales Report \\u2014 ' + totals.week_start,\n  report_html: html,\n  total_revenue: totals.total_revenue,\n  week_start: totals.week_start, week_end: totals.week_end,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d8c08148-1edb-4f8e-a4de-769801f63c5e",
+      "name": "Build Report HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('CONFIG — Store Settings').first().json.owner_email }}",
+        "subject": "={{ $('Build Report HTML').first().json.report_title + ' \\u2014 week of ' + $('Build Report HTML').first().json.week_start }}",
+        "emailType": "html",
+        "message": "={{ $('Build Report HTML').first().json.report_html }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail API"
+        }
+      },
+      "id": "5cbdb5ec-2a49-4231-8773-911ea132292e",
+      "name": "Gmail — Send Weekly Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.log_sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Run Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $('Compute Weekly Totals').first().json.run_date }}",
+            "Status": "DONE",
+            "Stores": "={{ $('Compute Weekly Totals').first().json.store_count }}",
+            "Total Revenue": "={{ $('Compute Weekly Totals').first().json.total_revenue }}",
+            "Notes": "={{ 'report emailed; top insight: ' + ($('AI Agent \\u2014 Weekly Sales Analyst').first().json.output.insights[0] || 'n/a') }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "75c575f7-6a29-43c7-92cd-dec68b536cff",
+      "name": "Log Run — Status DONE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Store Settings').first().json.telegram_chat_id }}",
+        "text": "={{ '<b>\\u2705 Weekly sales report sent</b>\\n\\nWeek: ' + $('Compute Weekly Totals').first().json.week_start + ' \\u2013 ' + $('Compute Weekly Totals').first().json.week_end + '\\nStores: ' + $('Compute Weekly Totals').first().json.store_count + '\\nTotal revenue: ' + $('Compute Weekly Totals').first().json.total_revenue + '\\nWoW: ' + $('Compute Weekly Totals').first().json.overall_wow_pct + '%' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "068b636a-aa18-48c2-8213-12a162b7ae9d",
+      "name": "Telegram — Success Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Store Settings').first().json.log_sheet_name }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Run Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $now.toISO().slice(0, 10) }}",
+            "Status": "FAILED",
+            "Notes": "no store sheets found in the Drive folder"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "bc83776e-7c69-405d-8d92-d9f35ae6bfab",
+      "name": "Log Run — Status FAILED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Store Settings').first().json.telegram_chat_id }}",
+        "text": "={{ '<b>\\u274C Weekly sales consolidation failed</b>\\n\\nNo store spreadsheets were found in the configured Google Drive folder. Check the folder ID in CONFIG \\u2014 Store Settings and make sure each store sheet is shared with the n8n Google account.' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "12885fa9-9ec7-4c07-9b1d-257ff3372b29",
+      "name": "Telegram — Failure Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        820
+      ]
+    }
+  ],
+  "connections": {
+    "Weekly Monday Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Store Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Store Settings": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "List Store Sheets — Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Store Sheets — Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Prepare Store List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Store List": {
+      "main": [
+        [
+          {
+            "node": "IF — Sheets Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Sheets Found": {
+      "main": [
+        [
+          {
+            "node": "Loop Stores — Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Run — Status FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Stores — Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Read Consolidated Rows — This Week",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Store Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Store Sheet": {
+      "main": [
+        [
+          {
+            "node": "Tag Rows — Add Store Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Rows — Add Store Name": {
+      "main": [
+        [
+          {
+            "node": "Append Consolidated Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Consolidated Rows": {
+      "main": [
+        [
+          {
+            "node": "Loop Stores — Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Consolidated Rows — This Week": {
+      "main": [
+        [
+          {
+            "node": "Compute Weekly Totals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Weekly Totals": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status PROCESSING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status PROCESSING": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Weekly Sales Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Weekly Sales Analyst": {
+      "main": [
+        [
+          {
+            "node": "IF — Revenue Anomaly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Revenue Anomaly": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Anomaly Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Report HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Anomaly Alert": {
+      "main": [
+        [
+          {
+            "node": "Build Report HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report HTML": {
+      "main": [
+        [
+          {
+            "node": "Gmail — Send Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Weekly Report": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status DONE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status DONE": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status FAILED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Failure Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Analyst": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Weekly Sales Analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Sales Insights": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Weekly Sales Analyst",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

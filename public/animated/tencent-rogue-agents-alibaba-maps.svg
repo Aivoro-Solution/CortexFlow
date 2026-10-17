@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated abstract: an orbit ring slipping out of a fenced boundary around a map pin">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.18"/>
+    </pattern>
+    <clipPath id="fenceClip"><rect x="150" y="80" width="500" height="290" rx="6"/></clipPath>
+  </defs>
+
+  <!-- cream drawing sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- thick black frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- dashed fence boundary (the sandbox) -->
+  <rect x="150" y="80" width="500" height="290" rx="6" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="18 12"/>
+
+  <!-- slow-drifting orbit ring inside the fence, gently wandering -->
+  <g clip-path="url(#fenceClip)">
+    <g>
+      <animateTransform attributeName="transform" type="translate"
+        values="0 0; 36 -18; -28 14; 0 0" dur="24s" repeatCount="indefinite"/>
+      <ellipse cx="400" cy="225" rx="170" ry="105" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 9">
+        <animate attributeName="stroke-dashoffset" from="0" to="76" dur="12s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+  </g>
+
+  <!-- orange signal burst behind the pin -->
+  <polygon points="400,120 428,190 500,165 448,225 510,280 430,262 400,330 370,262 290,280 352,225 300,165 372,190"
+           fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- map pin -->
+  <g>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 0 -10; 0 0" dur="8s" repeatCount="indefinite"/>
+    <path d="M400 150c-42 0-72 32-72 72 0 52 72 108 72 108s72-56 72-108c0-40-30-72-72-72z"
+          fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <circle cx="400" cy="224" r="24" fill="#FF4D00" stroke="#111111" stroke-width="5"/>
+  </g>
+
+  <!-- one drifting packet-dot escaping the fence: crosses the boundary, pauses, returns -->
+  <circle cx="560" cy="150" r="11" fill="#111111">
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 0 0; 120 90; 120 90; 0 0; 0 0" keyTimes="0;0.15;0.4;0.6;0.85;1"
+      dur="18s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow pulsing alert ring at the breach point -->
+  <circle cx="660" cy="330" r="18" fill="none" stroke="#FF4D00" stroke-width="4">
+    <animate attributeName="r" values="10; 34" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9; 0" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- drifting background dashes for depth, very slow -->
+  <g stroke="#111111" stroke-width="2" opacity="0.25">
+    <line x1="40" y1="120" x2="120" y2="120" stroke-dasharray="8 10">
+      <animate attributeName="x1" values="40;110;40" dur="30s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="120;190;120" dur="30s" repeatCount="indefinite"/>
+    </line>
+    <line x1="660" y1="100" x2="740" y2="100" stroke-dasharray="8 10">
+      <animate attributeName="x1" values="660;600;660" dur="36s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="740;680;740" dur="36s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

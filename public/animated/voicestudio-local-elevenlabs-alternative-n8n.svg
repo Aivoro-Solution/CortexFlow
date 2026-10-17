@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of voice synthesis: waveform bars pulsing, sound waves radiating, a laptop workstation">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-width="0.6" opacity="0.12">
+    <path d="M0 45 H800 M0 90 H800 M0 135 H800 M0 180 H800 M0 225 H800 M0 270 H800 M0 315 H800 M0 360 H800 M0 405 H800"/>
+    <path d="M40 0 V450 M80 0 V450 M120 0 V450 M160 0 V450 M200 0 V450 M240 0 V450 M280 0 V450 M320 0 V450 M360 0 V450 M400 0 V450 M440 0 V450 M480 0 V450 M520 0 V450 M560 0 V450 M600 0 V450 M640 0 V450 M680 0 V450 M720 0 V450 M760 0 V450"/>
+  </g>
+  <!-- border frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="6"/>
+  <!-- workstation: laptop base -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="90" y="300" width="220" height="14"/>
+    <path d="M110 300 L130 240 L290 240 L310 300 Z"/>
+  </g>
+  <!-- laptop screen: waveform bars -->
+  <g stroke="#111111" stroke-width="3" fill="#111111">
+    <rect x="120" y="180" width="16" height="70">
+      <animate attributeName="height" values="70;30;70" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="180;200;180" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="146" y="165" width="16" height="100">
+      <animate attributeName="height" values="100;50;100" dur="7.2s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="165;190;165" dur="7.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="172" y="190" width="16" height="60" fill="#FF4D00" stroke="#111111">
+      <animate attributeName="height" values="60;110;60" dur="6.6s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="190;165;190" dur="6.6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="198" y="175" width="16" height="80">
+      <animate attributeName="height" values="80;40;80" dur="7.8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="175;195;175" dur="7.8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="224" y="190" width="16" height="60">
+      <animate attributeName="height" values="60;95;60" dur="6.3s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="190;172.5;190" dur="6.3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="250" y="170" width="16" height="90">
+      <animate attributeName="height" values="90;55;90" dur="8.4s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="170;187.5;170" dur="8.4s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- cursor dot on laptop -->
+  <circle cx="310" cy="220" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="cx" values="310;330;310" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="220;200;220" dur="9s" repeatCount="indefinite"/>
+  </circle>
+  <!-- sound waves radiating from laptop -->
+  <g fill="none" stroke="#111111" stroke-width="4">
+    <path d="M 400 190 Q 440 250 400 310">
+      <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 30 0; 0 0" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 450 170 Q 505 250 450 330" stroke="#FF4D00">
+      <animate attributeName="opacity" values="0.9;0.25;0.9" dur="7.5s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 40 0; 0 0" dur="7.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 510 150 Q 580 250 510 350">
+      <animate attributeName="opacity" values="0.7;0.15;0.7" dur="9s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 50 0; 0 0" dur="9s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <!-- rotating gear-like ring motif -->
+  <g transform="translate(660, 250)">
+    <g stroke="#111111" stroke-width="4" fill="none">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite"/>
+      <circle r="52"/>
+      <circle r="34"/>
+      <path d="M-52 0 H-66 M52 0 H66 M0 -52 V-66 M0 52 V66 M-37 -37 L-47 -47 M37 37 L47 47 M37 -37 L47 -47 M-37 37 L-47 47"/>
+    </g>
+    <circle r="12" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="12;16;12" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- floating note particles -->
+  <g fill="#111111">
+    <circle cx="470" cy="120" r="7">
+      <animate attributeName="cy" values="120;100;120" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.4;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="560" cy="90" r="5" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="cy" values="90;70;90" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.4;1" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="140" r="6">
+      <animate attributeName="cy" values="140;118;140" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- accent starburst -->
+  <g transform="translate(120, 100)" stroke="#111111" stroke-width="3" fill="#FF4D00">
+    <path d="M0 -28 L7 -7 L28 0 L7 7 L0 28 L-7 7 L-28 0 L-7 -7 Z">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="36s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

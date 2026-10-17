@@ -1,0 +1,838 @@
+{
+  "name": "AI Guest Messaging Assistant for Vacation Rentals",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🏠 AI GUEST MESSAGING ASSISTANT FOR VACATION RENTALS\n**What it does:** Webhook receives inbound guest messages (Airbnb / Booking.com via channel-manager or PMS webhook, email via an IMAP-to-webhook bridge) → AI classifies the message and drafts a reply → safe FAQs (WiFi, check-in/out, house rules, amenities) get an instant auto-reply → sensitive topics (refunds, complaints, access codes, safety) escalate to the host on Telegram with a suggested draft.\n\n**You'll need:**\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- A channel-manager/PMS (Hostaway, Lodgify, Guesty…) or OTA webhook forwarding inbound guest messages to the workflow's webhook URL\n\n**Status flow in Sheets:** `NEW` → `PROCESSING` → `AUTO_REPLIED` / `ESCALATED`",
+        "height": 260,
+        "width": 6200,
+        "color": 5
+      },
+      "id": "e2e6d4ac-640e-4eeb-9434-95a602de40be",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Inbound guest message\nWebhook receives the guest message from your PMS/channel-manager/email bridge → normalize channel, property, guest name and message text.",
+        "height": 420,
+        "width": 1320,
+        "color": 4
+      },
+      "id": "b5002eaf-5f48-479b-8135-28143fc25be1",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Log to Google Sheets\nAppend a row with status `NEW`, then flip it to `PROCESSING` while the AI works.",
+        "height": 420,
+        "width": 880,
+        "color": 4
+      },
+      "id": "b9a96d70-0b32-4fd4-aa68-2ddede17f66b",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI classify + draft\nAI Agent reads the message with property context and returns structured output: intent, confidence 0–1, auto_reply_allowed, draft_reply, escalation_reason.",
+        "height": 420,
+        "width": 560,
+        "color": 4
+      },
+      "id": "f582168c-0192-4e20-b485-b3e8636f6b07",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Safe auto-reply branch\n`auto_reply_allowed = true` AND confidence ≥ threshold → POST the draft to your reply endpoint → sheet flips to `AUTO_REPLIED` → host gets a Telegram summary.",
+        "height": 150,
+        "width": 1420,
+        "color": 4
+      },
+      "id": "b5445675-dd24-445f-bf8c-3a9f343a164c",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Escalation branch\nRefunds, complaints, access codes, safety, schedule changes or low confidence → sheet flips to `ESCALATED` → host gets a Telegram alert with the AI's suggested draft. The host replies manually.",
+        "height": 150,
+        "width": 1420,
+        "color": 4
+      },
+      "id": "fedab551-44b4-4ca3-8339-32af938901b5",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        590
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Acknowledge webhook\nBoth branches merge → return `{\"status\": \"ok\"}` to the caller.",
+        "height": 420,
+        "width": 660,
+        "color": 4
+      },
+      "id": "6551110c-7219-4879-9364-a94b1161f385",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3060,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guest-message",
+        "responseMode": "respondToWebhook",
+        "options": {}
+      },
+      "id": "ce646622-8f42-489e-aa03-d0b7b68e04dd",
+      "name": "Guest Message Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78c7a50d-8be5-4a9e-bb56-db9b58b9dded",
+              "name": "property_name",
+              "type": "string",
+              "value": "PASTE_YOUR_PROPERTY_NAME (comma-separated list for multiple properties)"
+            },
+            {
+              "id": "5e25d50c-5330-4cfa-840f-9105b51db5f9",
+              "name": "checkin_time",
+              "type": "string",
+              "value": "PASTE_YOUR_CHECKIN_TIME (e.g. 15:00)"
+            },
+            {
+              "id": "cb7e35ff-5922-4467-abd2-63b11a772704",
+              "name": "checkout_time",
+              "type": "string",
+              "value": "PASTE_YOUR_CHECKOUT_TIME (e.g. 11:00)"
+            },
+            {
+              "id": "ef4298e8-6672-4c6c-afd7-69ef5937a399",
+              "name": "wifi_password",
+              "type": "string",
+              "value": "PASTE_YOUR_WIFI_PASSWORD"
+            },
+            {
+              "id": "6f6d1986-51d6-4fb4-ab09-7263b034d2d8",
+              "name": "house_rules_url",
+              "type": "string",
+              "value": "PASTE_YOUR_HOUSE_RULES_URL"
+            },
+            {
+              "id": "4f40f9e1-7901-449d-836d-b62306fa0005",
+              "name": "safe_intents",
+              "type": "string",
+              "value": "wifi,checkin,checkout,houserules,amenities,parking,directions"
+            },
+            {
+              "id": "91e866e2-b8a6-4b69-b06f-c35986bcf765",
+              "name": "confidence_threshold",
+              "type": "string",
+              "value": "0.85"
+            },
+            {
+              "id": "a40bf5f2-cc1b-4552-b075-82d0ba2392ee",
+              "name": "reply_api_url",
+              "type": "string",
+              "value": "PASTE_YOUR_REPLY_ENDPOINT (your PMS/channel-manager reply webhook URL)"
+            },
+            {
+              "id": "fc46656a-2020-4288-b34c-84a66a55ca25",
+              "name": "reply_api_key",
+              "type": "string",
+              "value": "PASTE_YOUR_REPLY_API_KEY"
+            },
+            {
+              "id": "241c4c37-91d9-4f54-82ea-4adf84083913",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "52a1ca65-11af-46d0-a03d-ce5a80e9e905",
+              "name": "escalation_email",
+              "type": "string",
+              "value": "PASTE_YOUR_EMAIL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "764e1c24-bd62-4c64-b85f-cb604b475960",
+      "name": "CONFIG — Properties & Rules",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize inbound payloads from PMS/channel-manager/email bridges into one shape\nconst body = $input.first().json;\nconst cfg = $('CONFIG — Properties & Rules').first().json;\nconst msg = body.message || body.text || body.body || '';\nreturn [{ json: {\n  message_id: body.message_id || ('msg-' + Date.now()),\n  timestamp: new Date().toISOString(),\n  channel: body.channel || body.source || 'unknown',\n  property: body.property || body.property_name || cfg.property_name,\n  guest_name: body.guest_name || body.guest || 'Guest',\n  message: msg,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "0c2f1796-1702-4a22-8a29-16cb3f1af6a6",
+      "name": "Normalize Guest Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa3ffe08-2080-4f50-97ee-570200905eff",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "0c384881-eee3-4771-a529-12331cd93a64",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Guest Messages"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f77a1732-8e32-4b16-ba6f-de9fddb7d995",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Guest Messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Message ID": "={{ $json.message_id }}",
+            "Timestamp": "={{ $json.timestamp }}",
+            "Channel": "={{ $json.channel }}",
+            "Property": "={{ $json.property }}",
+            "Guest Name": "={{ $json.guest_name }}",
+            "Message": "={{ $json.message }}",
+            "Intent": "",
+            "Confidence": "",
+            "Status": "NEW",
+            "Draft Reply": "",
+            "Replied At": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "47501a03-d245-43df-9d9e-66dc1cc43b06",
+      "name": "Log Message — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Guest Messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Message ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Message ID": "={{ $json.message_id }}",
+            "Status": "PROCESSING"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "86687fe5-9b2d-42bc-a9c5-38d903e23d11",
+      "name": "Update Sheet — Status PROCESSING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the guest-messaging concierge for a vacation-rental business (15–30 properties). Answer ONLY from the property context below; never invent policies, prices or access codes.\n\nPROPERTY CONTEXT:\n- Properties: {{ $('CONFIG — Properties & Rules').first().json.property_name }}\n- Check-in: {{ $('CONFIG — Properties & Rules').first().json.checkin_time }} · Check-out: {{ $('CONFIG — Properties & Rules').first().json.checkout_time }}\n- House rules: {{ $('CONFIG — Properties & Rules').first().json.house_rules_url }}\n- WiFi password: {{ $('CONFIG — Properties & Rules').first().json.wifi_password }}\n\nSAFE INTENTS you may answer yourself: {{ $('CONFIG — Properties & Rules').first().json.safe_intents }}\n\nALWAYS ESCALATE (set auto_reply_allowed=false) when the message involves: refunds or payment disputes, complaints or damage reports, safety/security issues (lockouts, alarms, intruders), access codes or door codes, early check-in / late checkout requests, anything illegal or medical, or when you are unsure what the guest wants.\n\nDraft replies in a warm, professional host tone, under 80 words, in the guest's language. Output ONLY via the structured output parser."
+        },
+        "text": "=Guest message (channel: {{ $json.channel }}, property: {{ $json.property }}):\n\n{{ $json.message }}\n\nGuest: {{ $json.guest_name }}"
+      },
+      "id": "265ed525-1063-4938-9648-adf02d8553cd",
+      "name": "AI Agent — Classify & Draft",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "e1e0811e-2140-45e0-8188-49135861c9a6",
+      "name": "OpenAI Chat Model — Guest AI",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent\": \"one of wifi, checkin, checkout, houserules, amenities, parking, directions, refund, complaint, access, schedule_change, other\",\n  \"confidence\": 0.0,\n  \"auto_reply_allowed\": true,\n  \"draft_reply\": \"the reply text — ALWAYS fill this, even when escalating (it becomes the suggested draft)\",\n  \"escalation_reason\": \"empty string if auto-reply is safe, otherwise a one-line reason\"\n}"
+      },
+      "id": "d4b74bb7-a029-4400-9be8-d680d6cb15d3",
+      "name": "Structured Output Parser — Guest Intent",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1960,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-auto",
+              "leftValue": "={{ $json.output.auto_reply_allowed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            },
+            {
+              "id": "if-conf",
+              "leftValue": "={{ $json.output.confidence }}",
+              "rightValue": "={{ $('CONFIG — Properties & Rules').first().json.confidence_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "cc2b8617-2ee5-4a86-840f-37a81adb60f4",
+      "name": "IF — Safe to Auto-Reply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('CONFIG — Properties & Rules').first().json.reply_api_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('CONFIG — Properties & Rules').first().json.reply_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message_id: $json.message_id, channel: $json.channel, property: $json.property, guest_name: $json.guest_name, reply_text: $json.output.draft_reply }) }}",
+        "options": {}
+      },
+      "id": "1b39e4a8-2e65-4b4a-b6aa-5a161f8b3012",
+      "name": "Send Guest Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Guest Messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Message ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Message ID": "={{ $json.message_id }}",
+            "Intent": "={{ $json.output.intent }}",
+            "Confidence": "={{ $json.output.confidence }}",
+            "Status": "AUTO_REPLIED",
+            "Draft Reply": "={{ $json.output.draft_reply }}",
+            "Replied At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "9329fd1f-c515-42ed-a88f-6c84cc056f49",
+      "name": "Update Sheet — Status AUTO_REPLIED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2520,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Properties & Rules').first().json.telegram_chat_id }}",
+        "text": "=✅ *Auto-replied to guest*\n\n🏠 {{ $json.property }} — {{ $json.guest_name }} ({{ $json.channel }})\n🎯 Intent: `{{ $json.output.intent }}` (confidence {{ $json.output.confidence }})\n\n📤 *Reply sent:*\n{{ $json.output.draft_reply }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "51b988e8-44a3-49de-852d-417a7849b203",
+      "name": "Telegram — Notify Host (Auto-replied)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2800,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Guest Messages"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Message ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Message ID": "={{ $json.message_id }}",
+            "Intent": "={{ $json.output.intent }}",
+            "Confidence": "={{ $json.output.confidence }}",
+            "Status": "ESCALATED",
+            "Draft Reply": "={{ $json.output.draft_reply }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6dcd5428-d9c0-4195-b95c-55916cfb0041",
+      "name": "Update Sheet — Status ESCALATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2240,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Properties & Rules').first().json.telegram_chat_id }}",
+        "text": "=🚨 *Guest message needs you*\n\n🏠 Property: {{ $json.property }}\n👤 Guest: {{ $json.guest_name }} (via {{ $json.channel }})\n\n💬 *Message:*\n{{ $json.message }}\n\n🤖 *AI read:* intent `{{ $json.output.intent }}` — confidence {{ $json.output.confidence }}\n⚠️ *Why escalated:* {{ $json.output.escalation_reason }}\n\n✏️ *Suggested draft (edit before sending):*\n{{ $json.output.draft_reply }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "5d3dea6a-9101-4ede-a9c1-c61eb3522a92",
+      "name": "🚨 Telegram — Escalate to Host",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2520,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "5d28c12b-7267-4d7f-9a34-80243ff0b6f5",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\": \"ok\"}",
+        "options": {}
+      },
+      "id": "1392823e-46eb-4bcf-8005-c5b809f7140c",
+      "name": "Respond — OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3360,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Guest Message Webhook": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Properties & Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Properties & Rules": {
+      "main": [
+        [
+          {
+            "node": "Normalize Guest Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Guest Message": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Log Message — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Message — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status PROCESSING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status PROCESSING": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Classify & Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Classify & Draft": {
+      "main": [
+        [
+          {
+            "node": "IF — Safe to Auto-Reply?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Safe to Auto-Reply?": {
+      "main": [
+        [
+          {
+            "node": "Send Guest Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status ESCALATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Guest Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status AUTO_REPLIED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status AUTO_REPLIED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Notify Host (Auto-replied)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Notify Host (Auto-replied)": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status ESCALATED": {
+      "main": [
+        [
+          {
+            "node": "🚨 Telegram — Escalate to Host",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚨 Telegram — Escalate to Host": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Respond — OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Guest AI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Classify & Draft",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Guest Intent": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Classify & Draft",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

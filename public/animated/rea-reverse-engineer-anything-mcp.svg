@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Reverse engineering flow animation">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#E8E2D2" stroke-width="1">
+    <path d="M0 45 H800 M0 90 H800 M0 135 H800 M0 180 H800 M0 225 H800 M0 270 H800 M0 315 H800 M0 360 H800 M0 405 H800"/>
+    <path d="M45 0 V450 M90 0 V450 M135 0 V450 M180 0 V450 M225 0 V450 M270 0 V450 M315 0 V450 M360 0 V450 M405 0 V450 M450 0 V450 M495 0 V450 M540 0 V450 M585 0 V450 M630 0 V450 M675 0 V450 M720 0 V450 M765 0 V450"/>
+  </g>
+
+  <!-- closed black box (the app) drifting left-to-right -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="12s" repeatCount="indefinite"/>
+    <rect x="90" y="170" width="120" height="120" fill="#111111" stroke="#111111" stroke-width="4"/>
+    <rect x="102" y="182" width="120" height="120" fill="none" stroke="#111111" stroke-width="3"/>
+    <path d="M120 210 h60 M120 230 h60 M120 250 h36" stroke="#FFFDF5" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- scanning beam sweeping across the box -->
+  <line x1="60" y1="150" x2="60" y2="310" stroke="#FF4D00" stroke-width="3" opacity="0.9">
+    <animate attributeName="x1" values="60; 260; 60" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="x2" values="60; 260; 60" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9; 0.25; 0.9" dur="8s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- arrow carrying findings to open layers -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M250 235 H420">
+      <animate attributeName="stroke-dashoffset" values="0; -40" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1; 0.6; 1" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M404 219 L424 235 L404 251" stroke-dasharray="0"/>
+  </g>
+
+  <!-- opened layers (pseudocode-like abstract rows) -->
+  <g fill="#111111">
+    <g>
+      <rect x="470" y="150" width="200" height="14" rx="2">
+        <animate attributeName="width" values="200; 236; 200" dur="9s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="470" y="176" width="160" height="14" rx="2">
+        <animate attributeName="width" values="160; 190; 160" dur="9s" begin="1.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="470" y="202" width="220" height="14" rx="2">
+        <animate attributeName="width" values="220; 180; 220" dur="9s" begin="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="470" y="228" width="140" height="14" rx="2">
+        <animate attributeName="width" values="140; 170; 140" dur="9s" begin="4.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="470" y="254" width="188" height="14" rx="2">
+        <animate attributeName="width" values="188; 220; 188" dur="9s" begin="6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- orange accent marker pulsing on the findings -->
+  <circle cx="700" cy="208" r="10" fill="#FF4D00">
+    <animate attributeName="r" values="10; 16; 10" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.55; 1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow-rotating lens ring over the opened layers -->
+  <g transform="translate(600,300)">
+    <animateTransform attributeName="transform" type="rotate" from="0 600 300" to="360 600 300" dur="40s" repeatCount="indefinite"/>
+    <circle cx="0" cy="0" r="52" fill="none" stroke="#111111" stroke-width="5"/>
+    <circle cx="0" cy="0" r="8" fill="#FF4D00"/>
+    <line x1="36" y1="36" x2="58" y2="58" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-52 0 h12 M52 0 h-12 M0 -52 v12 M0 52 v-12" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- drifting analysis particles -->
+  <g fill="#111111" opacity="0.5">
+    <circle cx="330" cy="120" r="4">
+      <animate attributeName="cy" values="120; 150; 120" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="380" cy="330" r="3">
+      <animate attributeName="cy" values="330; 300; 330" dur="11s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="520" cy="100" r="5" fill="#FF4D00" opacity="0.8">
+      <animate attributeName="cy" values="100; 130; 100" dur="13s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <rect x="4" y="4" width="792" height="442" fill="none" stroke="#111111" stroke-width="8"/>
+</svg>

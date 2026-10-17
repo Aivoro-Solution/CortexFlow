@@ -40,6 +40,8 @@ Demand-research picks for the n8n templates library. The daily-workflow-research
 | 2026-10-09 | kpi-anomaly-watchdog | KPI Anomaly Watchdog — Stats Detect, Agent Explains | backlog item + SellerLabs anomaly-alerts guide (Oct 5) + Oct 2026 IG/FB n8n anomaly-detector reels |
 | 2026-10-14 | security-questionnaire-auto-drafter | Security Questionnaire Auto-Drafter | enterprise teams getting ~23% more vendor security questionnaires/quarter (2026 market data: tribble.ai/steerlab.ai) + backlog item (high WTP) |
 | 2026-10-15 | missed-call-textback-ai-booker | Missed-Call Text-Back AI Booker | dev.to Oct 14 "missed-call text-back" repost + Medium Sep 2026 "#1 n8n workflow to sell SMBs" + GitHub leadlockai product (backlog: AI-qualified meeting booker) |
+| 2026-10-16 | multi-store-sales-consolidator | Multi-Store Sales Consolidator | YouTube Oct 13 "How to Consolidate Sales Data from Multiple Stores in n8n + Claude" (explicitly pitched as sellable to small retail businesses) + GitHub ecommerce-sales-reporting-n8n |
+| 2026-10-17 | ai-guest-messaging-vacation-rentals | AI Guest Messaging Assistant for Vacation Rentals | n8n forum Oct 16 "AI guest messaging assistant across Airbnb, Booking.com and email for a 15–30 property business?" (9 replies, 236 views) + 2026 AI guest-messaging market ($10–50/property/mo: Bestie AI, Enso Connect, Hospitable) |
 
 ## Research backlog (demand-validated, not yet built)
 

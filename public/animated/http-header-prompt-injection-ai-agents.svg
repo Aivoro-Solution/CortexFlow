@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0C0C10" stroke-width="0.5" opacity="0.15"/>
+    </pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0C0C10"/>
+    </marker>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- page / website on the left -->
+  <g>
+    <rect x="90" y="110" width="230" height="240" fill="#FFFDF5" stroke="#0C0C10" stroke-width="4"/>
+    <rect x="90" y="110" width="230" height="44" fill="#0C0C10"/>
+    <circle cx="112" cy="132" r="6" fill="#FFFDF5"/>
+    <circle cx="134" cy="132" r="6" fill="#FFFDF5"/>
+    <circle cx="156" cy="132" r="6" fill="#FF4D00"/>
+    <rect x="112" y="178" width="186" height="14" fill="#0C0C10"/>
+    <rect x="112" y="206" width="150" height="10" fill="#0C0C10" opacity="0.55"/>
+    <rect x="112" y="230" width="170" height="10" fill="#0C0C10" opacity="0.55"/>
+    <rect x="112" y="254" width="120" height="10" fill="#0C0C10" opacity="0.55"/>
+    <rect x="112" y="292" width="60" height="30" fill="#0C0C10" opacity="0.85"/>
+    <rect x="184" y="292" width="60" height="30" fill="#0C0C10" opacity="0.35"/>
+  </g>
+
+  <!-- hidden header packets drifting right -->
+  <g stroke="#0C0C10" stroke-width="3" fill="#FFFDF5">
+    <rect x="348" y="150" width="120" height="36" rx="4">
+      <animate attributeName="x" values="348;360;348" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="352" y="206" width="120" height="36" rx="4" fill="#FF4D00">
+      <animate attributeName="x" values="352;368;352" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="348" y="262" width="120" height="36" rx="4">
+      <animate attributeName="x" values="348;360;348" dur="15s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- question marks inside packets, pulsing -->
+  <g fill="#0C0C10" font-family="monospace" font-size="20" text-anchor="middle" opacity="0.9">
+    <text x="408" y="176">
+      <animate attributeName="opacity" values="0.9;0.25;0.9" dur="6s" repeatCount="indefinite"/>
+    </text>
+    <text x="412" y="232" fill="#FFFDF5">
+      <animate attributeName="opacity" values="0.95;0.35;0.95" dur="8s" repeatCount="indefinite"/>
+    </text>
+    <text x="408" y="288">
+      <animate attributeName="opacity" values="0.9;0.25;0.9" dur="10s" repeatCount="indefinite"/>
+    </text>
+  </g>
+
+  <!-- pipe carrying headers to the agent -->
+  <line x1="470" y1="225" x2="596" y2="225" stroke="#0C0C10" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- agent head on the right -->
+  <g>
+    <rect x="612" y="140" width="120" height="120" rx="16" fill="#FFFDF5" stroke="#0C0C10" stroke-width="4"/>
+    <rect x="638" y="200" width="28" height="34" fill="#0C0C10" opacity="0.25">
+      <animate attributeName="y" values="200;196;200" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="34;42;34" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="678" y="200" width="28" height="34" fill="#0C0C10" opacity="0.25">
+      <animate attributeName="y" values="200;196;200" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="34;42;34" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <!-- mouth -->
+    <rect x="648" y="250" width="48" height="8" fill="#0C0C10">
+      <animate attributeName="width" values="48;64;48" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="x" values="648;640;648" dur="11s" repeatCount="indefinite"/>
+    </rect>
+    <!-- antenna -->
+    <line x1="672" y1="140" x2="672" y2="106" stroke="#0C0C10" stroke-width="4"/>
+    <circle cx="672" cy="98" r="10" fill="#FF4D00" stroke="#0C0C10" stroke-width="3">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- guard shield rising between packets and agent, slow pulse -->
+  <g opacity="0.95">
+    <path d="M 545 300 L 585 318 L 585 352 C 585 376 565 392 545 400 C 525 392 505 376 505 352 L 505 318 Z"
+          fill="#FFFDF5" stroke="#0C0C10" stroke-width="4">
+      <animate attributeName="transform" values="translate(0,0);translate(0,-12);translate(0,0)"
+               dur="13s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="545" cy="352" r="10" fill="#FF4D00" stroke="#0C0C10" stroke-width="3">
+      <animate attributeName="transform" values="translate(0,0);translate(0,-12);translate(0,0)"
+               dur="13s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- slow rotation accent ring around antenna -->
+  <g opacity="0.7">
+    <circle cx="672" cy="98" r="26" fill="none" stroke="#0C0C10" stroke-width="2" stroke-dasharray="10 8">
+      <animateTransform attributeName="transform" type="rotate" from="0 672 98" to="360 672 98"
+                        dur="36s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

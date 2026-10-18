@@ -1,0 +1,323 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { SITE } from "../../config";
+---
+<BaseLayout
+  title="Free cURL to n8n JSON Converter"
+  description="Paste any cURL command and get a ready-to-import n8n HTTP Request node JSON — method, headers, body, and auth mapped automatically. Free, no signup, runs 100% in your browser."
+  canonicalPath={`${SITE.url}/tools/curl-to-n8n-converter/`}
+>
+  <main class="wrap tool-page">
+    <nav class="crumbs"><a href="/">Home</a> <span>/</span> <a href="/tools/">Tools</a> <span>/</span> <span>cURL to n8n</span></nav>
+    <p class="kicker">Free tool</p>
+    <h1>cURL to n8n converter</h1>
+    <p class="lede">Paste any cURL command. Get a ready-to-paste n8n HTTP Request node JSON (v4.2) — method, headers, body, and basic auth mapped automatically. Nothing leaves your browser.</p>
+
+    <div class="calc">
+      <label class="tlabel" for="curl">cURL command
+        <textarea id="curl" rows="8" spellcheck="false" placeholder="curl -X POST https://api.example.com/v1/items &#10;  -H &quot;Content-Type: application/json&quot; &#10;  -d '{&quot;name&quot;: &quot;widget&quot;}'"></textarea>
+      </label>
+      <div class="actions">
+        <button class="btn" id="go">Convert to n8n JSON</button>
+        <button class="btn ghost" id="sample">Load example</button>
+      </div>
+      <p class="err" id="err" hidden></p>
+      <div id="out" hidden>
+        <div class="chips" id="chips"></div>
+        <label class="tlabel" for="json">n8n HTTP Request node JSON
+          <pre id="json" tabindex="0"></pre>
+        </label>
+        <div class="actions">
+          <button class="btn" id="copy">Copy JSON</button>
+        </div>
+        <p class="fine" id="copied" hidden>Copied — paste it straight onto your n8n canvas (Ctrl/Cmd+V).</p>
+      </div>
+    </div>
+
+    <section class="how">
+      <h2>How to use it</h2>
+      <ol>
+        <li><strong>Paste</strong> your cURL command above and hit Convert.</li>
+        <li><strong>Copy</strong> the generated node JSON.</li>
+        <li><strong>Paste</strong> it onto your n8n canvas (Ctrl+V / Cmd+V) — the HTTP Request node appears with everything filled in. Create the prompted credentials and you're done.</li>
+      </ol>
+      <h2>What gets converted</h2>
+      <ul>
+        <li>Method (<code>-X</code>), URL, and query strings</li>
+        <li>Headers (<code>-H</code>) — <code>Content-Length</code> and <code>Host</code> are dropped; n8n recalculates them</li>
+        <li>Body (<code>-d</code>, <code>--data-raw</code>, <code>--data-binary</code>, <code>--json</code>, <code>-F</code>) — auto-detected as JSON, form-encoded, multipart, or plain text</li>
+        <li>Basic auth (<code>-u user:pass</code>) — mapped to n8n's HTTP Basic Auth credential slot</li>
+      </ul>
+    </section>
+
+    <aside class="cta-box">
+      <p class="cta-title">Prefer a ready-made workflow?</p>
+      <p>37 free production-ready n8n templates — download, import, automate.</p>
+      <a class="btn" href="/templates/">Browse free templates</a>
+    </aside>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // Split a shell command into tokens, honoring single/double quotes and \ + newline.
+    function tokenize(cmd) {
+      cmd = cmd.replace(/\\\r?\n/g, " ");
+      const tokens = [];
+      let cur = "", quote = null;
+      for (let i = 0; i < cmd.length; i++) {
+        const ch = cmd[i];
+        if (quote) {
+          if (ch === "\\" && quote === '"' && i + 1 < cmd.length) { cur += cmd[++i]; }
+          else if (ch === quote) { quote = null; }
+          else { cur += ch; }
+        } else if (ch === '"' || ch === "'") {
+          quote = ch;
+        } else if (/\s/.test(ch)) {
+          if (cur !== "") { tokens.push(cur); cur = ""; }
+        } else {
+          cur += ch;
+        }
+      }
+      if (cur !== "") tokens.push(cur);
+      return tokens;
+    }
+
+    const FLAG_KIND = {
+      "-X": "method", "--request": "method",
+      "-H": "header", "--header": "header",
+      "-d": "data", "--data": "data", "--data-raw": "data", "--data-ascii": "data",
+      "--data-binary": "data", "--data-urlencode": "data",
+      "--json": "json",
+      "-F": "form", "--form": "form",
+      "-u": "auth", "--user": "auth",
+      "--url": "url",
+      "-A": "ua", "--user-agent": "ua",
+      "-e": "referer", "--referer": "referer", "--referrer": "referer",
+    };
+    // flags that take a value we can safely ignore
+    const IGNORED = new Set(["-b","--cookie","-o","--output","-O","--remote-name","-m","--max-time",
+      "--connect-timeout","--retry","-K","--config","--cacert","--cert","--key","--proxy","-x",
+      "--noproxy","--resolve","--connect-to","--limit-rate","-T","--upload-file","--proto",
+      "--http1.1","--http2","--interface","--local-port","--ciphers","--tlsv1.2","--tlsv1.3"]);
+
+    function parseCurl(input) {
+      const tokens = tokenize(input.trim());
+      if (!tokens.length) throw new Error("Paste a cURL command first.");
+      let i = tokens[0].toLowerCase() === "curl" ? 1 : 0;
+      if (i >= tokens.length) throw new Error('That is just the word "curl" — paste the full command, including the URL.');
+
+      const r = { method: null, url: null, headers: [], data: [], multipart: [], auth: null, get: false, jsonFlag: false };
+      const positional = [];
+
+      const apply = (kind, val) => {
+        if (kind === "method") r.method = val.toUpperCase();
+        else if (kind === "header") {
+          const c = val.indexOf(":");
+          if (c > 0) r.headers.push([val.slice(0, c).trim(), val.slice(c + 1).trim()]);
+        }
+        else if (kind === "data") r.data.push(val);
+        else if (kind === "json") { r.data.push(val); r.jsonFlag = true; }
+        else if (kind === "form") r.multipart.push(val);
+        else if (kind === "auth") r.auth = val;
+        else if (kind === "url") { if (!r.url) r.url = val; }
+        else if (kind === "ua") r.headers.push(["User-Agent", val]);
+        else if (kind === "referer") r.headers.push(["Referer", val]);
+      };
+
+      while (i < tokens.length) {
+        let t = tokens[i];
+        let inline = null;
+        if (t.startsWith("--") && t.includes("=")) {
+          const eq = t.indexOf("=");
+          inline = t.slice(eq + 1);
+          t = t.slice(0, eq);
+        }
+        if (t === "-G" || t === "--get") { r.get = true; i++; continue; }
+        if (/^-[a-zA-Z]{2,}$/.test(t) && !t.startsWith("--")) {
+          // combined short flags, e.g. -sSL or -sSXPOST
+          const letters = t.slice(1);
+          if (letters.includes("G")) r.get = true;
+          const xm = letters.match(/X([A-Z]+)/);
+          if (xm) r.method = xm[1];
+          i++; continue;
+        }
+        const kind = FLAG_KIND[t];
+        if (kind) {
+          let val = inline;
+          if (val === null) { i++; if (i >= tokens.length) throw new Error("Flag " + t + " needs a value."); val = tokens[i]; }
+          apply(kind, val);
+          i++; continue;
+        }
+        if (IGNORED.has(t)) { i += inline === null ? 2 : 1; continue; }
+        if (t.startsWith("-") && t.length > 1) { i++; continue; } // unknown flag — skip
+        positional.push(t);
+        i++;
+      }
+
+      if (!r.url) {
+        r.url = positional.find((p) => /^(https?:\/\/|localhost(:\d+)?(\/|$)|[a-z0-9.-]+\.[a-z]{2,}(\/|$)|\d+\.\d+\.\d+\.\d+(:\d+)?(\/|$))/i.test(p)) || null;
+      }
+      if (!r.url) throw new Error("Couldn't find a URL in that command — make sure it includes something like https://api.example.com/endpoint.");
+      return r;
+    }
+
+    function safeDecode(s) {
+      try { return decodeURIComponent(s.replace(/\+/g, " ")); } catch (e) { return s; }
+    }
+
+    function buildNode(r) {
+      const hasBody = r.data.length > 0 || r.multipart.length > 0;
+      let method = r.method || (r.get ? "GET" : (hasBody ? "POST" : "GET"));
+      let url = r.url;
+      let body = r.data.join("&");
+      const chips = [];
+
+      // --get moves data into the query string
+      if (r.get && body) {
+        url += (url.includes("?") ? "&" : "?") + body;
+        body = "";
+      }
+
+      // headers (drop ones n8n/curl recalculates)
+      const SKIP = new Set(["content-length", "host"]);
+      const headers = r.headers.filter(([n]) => !SKIP.has(n.toLowerCase()));
+      let ctHeader = "";
+      for (const [n, v] of headers) {
+        if (n.toLowerCase() === "content-type") { ctHeader = v; break; }
+      }
+
+      const params = { method: method, url: url, options: {} };
+      chips.push("Method: " + method);
+
+      if (headers.length) {
+        params.sendHeaders = true;
+        params.headerParameters = { parameters: headers.map(([name, value]) => ({ name: name, value: value })) };
+        chips.push(headers.length + " header" + (headers.length > 1 ? "s" : ""));
+      }
+
+      // auth
+      if (r.auth) {
+        params.authentication = "genericAuth";
+        params.genericAuthType = "httpBasicAuth";
+        chips.push("Basic auth");
+      }
+
+      // body
+      if (body || r.multipart.length) {
+        params.sendBody = true;
+        let kind;
+        if (r.multipart.length) kind = "multipart";
+        else if (/json/i.test(ctHeader) || r.jsonFlag) kind = "json";
+        else if (/x-www-form-urlencoded/i.test(ctHeader)) kind = "form";
+        else {
+          let isJson = false;
+          try { JSON.parse(body); isJson = true; } catch (e) { /* not json */ }
+          if (isJson) kind = "json";
+          else if (/^[^=\s&]+=[^&]*(&[^=\s&]+=[^&]*)*$/.test(body)) kind = "form";
+          else kind = "raw";
+        }
+
+        if (kind === "json") {
+          params.specifyBody = "json";
+          try { params.jsonBody = JSON.stringify(JSON.parse(body), null, 2); }
+          catch (e) { params.jsonBody = body; }
+          chips.push("Body: JSON");
+        } else if (kind === "form" || kind === "multipart") {
+          params.specifyBody = kind === "multipart" ? "multipart-form-data" : "form-urlencoded";
+          const fields = kind === "multipart" ? r.multipart : body.split("&");
+          params.bodyParameters = {
+            parameters: fields.map((f) => {
+              const eq = f.indexOf("=");
+              const name = eq >= 0 ? f.slice(0, eq) : f;
+              let value = eq >= 0 ? f.slice(eq + 1) : "";
+              if (value.startsWith("@")) value = value.slice(1); // file upload → treat as text path
+              return { name: safeDecode(name), value: safeDecode(value) };
+            }).filter((p) => p.name !== ""),
+          };
+          chips.push("Body: " + (kind === "multipart" ? "multipart form-data" : "form-encoded"));
+        } else {
+          // plain text — n8n sends jsonBody as-is; flag it so the user can adjust Content-Type
+          params.specifyBody = "json";
+          params.jsonBody = body;
+          chips.push("Body: plain text (check Content-Type in n8n)");
+        }
+      }
+
+      const node = {
+        name: "HTTP Request",
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.2,
+        position: [680, 340],
+        parameters: params,
+        credentials: {},
+      };
+      if (typeof crypto !== "undefined" && crypto.randomUUID) node.id = crypto.randomUUID();
+      if (r.auth) {
+        node.credentials = { httpBasicAuth: { id: "", name: "HTTP Basic Auth" } };
+      }
+      return { node: node, chips: chips, auth: !!r.auth };
+    }
+
+    const SAMPLE = 'curl -X POST https://api.example.com/v1/messages \\\n  -H "Authorization: Bearer sk_test_123" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"to": "+15551234567", "body": "Hello from n8n!"}\'';
+
+    function convert() {
+      const err = $("err"), out = $("out");
+      err.hidden = true; out.hidden = true; $("copied").hidden = true;
+      try {
+        const parsed = parseCurl($("curl").value);
+        const built = buildNode(parsed);
+        $("json").textContent = JSON.stringify(built.node, null, 2);
+        $("chips").innerHTML = built.chips.map((c) => '<span class="chip">' + c.replace(/</g, "&lt;") + "</span>").join("");
+        out.hidden = false;
+      } catch (e) {
+        err.textContent = "Couldn't convert that: " + e.message;
+        err.hidden = false;
+      }
+    }
+
+    $("go").addEventListener("click", convert);
+    $("sample").addEventListener("click", () => { $("curl").value = SAMPLE; convert(); });
+    $("copy").addEventListener("click", async () => {
+      const text = $("json").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); ta.remove();
+      }
+      $("copied").hidden = false;
+    });
+  </script>
+
+  <style>
+    .tool-page { padding: 2.5rem 0 4rem; max-width: 820px; }
+    .crumbs { font-size: 0.85rem; margin-bottom: 1rem; }
+    .crumbs a { text-decoration: underline; }
+    .kicker { display: inline-block; background: #111; color: #FFFDF5; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.7rem; margin-bottom: 1rem; }
+    .tool-page h1 { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.05; margin: 0 0 1rem; }
+    .lede { font-size: 1.1rem; margin-bottom: 2rem; max-width: 620px; }
+    .calc { border: 3px solid #111; box-shadow: 6px 6px 0 #111; background: #fff; padding: 1.75rem; margin-bottom: 2.5rem; }
+    .tlabel { font-weight: 800; font-size: 0.9rem; display: block; }
+    .tlabel textarea, .tlabel pre { display: block; width: 100%; margin-top: 0.4rem; }
+    .tlabel textarea { padding: 0.7rem; border: 3px solid #111; font-size: 0.95rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #FFFDF5; resize: vertical; }
+    .tlabel pre { padding: 1rem; border: 3px solid #111; font-size: 0.85rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #FFFDF5; max-height: 420px; overflow: auto; white-space: pre-wrap; word-break: break-word; margin-bottom: 0; }
+    .actions { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+    .btn { background: #FF4D00; color: #fff; border: 3px solid #111; box-shadow: 4px 4px 0 #111; padding: 0.7rem 1.4rem; font-weight: 800; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #111; }
+    .btn.ghost { background: #FFFDF5; color: #111; }
+    .err { border: 3px solid #111; background: #ffd7d7; padding: 0.8rem 1rem; font-weight: 700; font-size: 0.9rem; margin: 1rem 0 0; }
+    .chips { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1rem 0 0.4rem; }
+    .chip { display: inline-block; background: #FFD02F; border: 2px solid #111; font-size: 0.78rem; font-weight: 800; padding: 0.25rem 0.7rem; }
+    .fine { font-size: 0.85rem; color: #1a7a2e; font-weight: 700; margin: 0.75rem 0 0; }
+    .how { border: 3px solid #111; background: #FFFDF5; padding: 1.5rem; margin-bottom: 2.5rem; }
+    .how h2 { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: 1.15rem; margin: 0 0 0.75rem; }
+    .how h2:not(:first-child) { margin-top: 1.5rem; }
+    .how ol, .how ul { margin: 0; padding-left: 1.4rem; line-height: 1.7; }
+    .how code { background: #fff; border: 2px solid #111; padding: 0 0.35rem; font-size: 0.85em; }
+    .cta-box { border: 3px solid #111; box-shadow: 6px 6px 0 #111; background: #fff; padding: 1.5rem; text-align: center; }
+    .cta-title { font-family: "Archivo Black", sans-serif; text-transform: uppercase; font-size: 1.25rem; margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { .calc { padding: 1.1rem; } }
+  </style>
+</BaseLayout>

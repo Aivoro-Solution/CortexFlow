@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of a Telegram RAG chatbot: chat bubbles flowing into a vector database">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- ============ LEFT: chat bubbles drifting up ============ -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <g>
+      <rect x="90" y="300" width="150" height="70" rx="18"/>
+      <path d="M 120 370 L 112 396 L 140 370 Z" fill="#FFFDF5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -26; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="70" y="170" width="170" height="70" rx="18"/>
+      <path d="M 210 240 L 222 266 L 190 240 Z" fill="#FFFDF5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 22; 0 0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="100" y="60" width="140" height="64" rx="18"/>
+      <path d="M 130 124 L 122 148 L 150 124 Z" fill="#FFFDF5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- message dots inside bubbles, blinking slowly -->
+  <g fill="#111111">
+    <circle cx="130" cy="335" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="9s" repeatCount="indefinite"/></circle>
+    <circle cx="155" cy="335" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="9s" begin="0.6s" repeatCount="indefinite"/></circle>
+    <circle cx="180" cy="335" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="9s" begin="1.2s" repeatCount="indefinite"/></circle>
+    <circle cx="120" cy="205" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="11s" repeatCount="indefinite"/></circle>
+    <circle cx="145" cy="205" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="11s" begin="0.7s" repeatCount="indefinite"/></circle>
+    <circle cx="170" cy="205" r="6"><animate attributeName="opacity" values="1;0.25;1" dur="11s" begin="1.4s" repeatCount="indefinite"/></circle>
+  </g>
+
+  <!-- ============ MIDDLE: embedding pipeline dashes flowing right ============ -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 280 200 C 340 200, 340 260, 400 260" stroke-dasharray="10 12">
+      <animate attributeName="stroke-dashoffset" values="0;-88" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 280 300 C 340 300, 340 250, 400 250" stroke-dasharray="10 12">
+      <animate attributeName="stroke-dashoffset" values="0;-88" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 270 95 C 330 95, 350 150, 400 160" stroke-dasharray="10 12">
+      <animate attributeName="stroke-dashoffset" values="0;-88" dur="8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <!-- orange pulse packets riding the pipeline -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <circle r="9">
+      <animateMotion dur="6s" repeatCount="indefinite" path="M 280 200 C 340 200, 340 260, 400 260"/>
+    </circle>
+    <circle r="9">
+      <animateMotion dur="7s" repeatCount="indefinite" path="M 280 300 C 340 300, 340 250, 400 250"/>
+    </circle>
+    <circle r="9">
+      <animateMotion dur="8s" repeatCount="indefinite" path="M 270 95 C 330 95, 350 150, 400 160"/>
+    </circle>
+  </g>
+
+  <!-- ============ RIGHT: vector database cylinder ============ -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <ellipse cx="560" cy="140" rx="90" ry="26"/>
+    <path d="M 470 140 L 470 330 A 90 26 0 0 0 650 330 L 650 140" fill="#FFFDF5"/>
+    <ellipse cx="560" cy="330" rx="90" ry="26" fill="none"/>
+    <path d="M 470 205 A 90 26 0 0 0 650 205" fill="none"/>
+    <path d="M 470 265 A 90 26 0 0 0 650 265" fill="none"/>
+  </g>
+  <!-- orange vector dots inside the store, pulsing slowly -->
+  <g fill="#FF4D00" stroke="#111111" stroke-width="1.5">
+    <circle cx="530" cy="235" r="7"><animate attributeName="opacity" values="1;0.3;1" dur="6s" repeatCount="indefinite"/></circle>
+    <circle cx="575" cy="235" r="7"><animate attributeName="opacity" values="1;0.3;1" dur="6s" begin="1s" repeatCount="indefinite"/></circle>
+    <circle cx="552" cy="295" r="7"><animate attributeName="opacity" values="1;0.3;1" dur="6s" begin="2s" repeatCount="indefinite"/></circle>
+    <circle cx="597" cy="295" r="7"><animate attributeName="opacity" values="1;0.3;1" dur="6s" begin="3s" repeatCount="indefinite"/></circle>
+  </g>
+
+  <!-- ============ retrieval arrow: answer flowing back left ============ -->
+  <g stroke="#FF4D00" stroke-width="4" fill="none">
+    <path d="M 470 355 C 380 380, 300 380, 250 340" stroke-dasharray="14 12">
+      <animate attributeName="stroke-dashoffset" values="0;104" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <polygon points="250,340 268,332 264,350" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+  </g>
+
+  <!-- slow rotating retrieval sweep inside the store -->
+  <g opacity="0.9">
+    <line x1="560" y1="235" x2="560" y2="150" stroke="#FF4D00" stroke-width="3">
+      <animateTransform attributeName="rotate" type="rotate" from="0 560 235" to="360 560 235" dur="36s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="560" cy="235" r="5" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+  </g>
+</svg>

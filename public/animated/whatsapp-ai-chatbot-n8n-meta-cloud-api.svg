@@ -1,0 +1,64 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WhatsApp chatbot workflow animation">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="0.6" opacity="0.14"/>
+    </pattern>
+  </defs>
+
+  <!-- cream paper + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- thick frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- message bubbles drifting up the phone side -->
+  <g>
+    <rect x="120" y="300" width="120" height="46" rx="12" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -22; 0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+  <g>
+    <rect x="150" y="216" width="150" height="46" rx="12" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 -18; 0 4; 0 -18" dur="11s" repeatCount="indefinite"/>
+  </g>
+  <g>
+    <rect x="110" y="132" width="110" height="42" rx="12" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 6; 0 -14; 0 6" dur="13s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- abstract phone outline -->
+  <rect x="90" y="70" width="240" height="310" rx="26" fill="none" stroke="#111111" stroke-width="6"/>
+  <line x1="200" y1="70" x2="200" y2="92" stroke="#111111" stroke-width="8"/>
+
+  <!-- connector lines from phone to node chain -->
+  <path d="M330 190 C 400 190, 400 140, 480 140" fill="none" stroke="#111111" stroke-width="5"/>
+  <path d="M330 240 C 410 240, 410 290, 480 290" fill="none" stroke="#111111" stroke-width="5"/>
+  <circle cx="405" cy="190" r="7" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="cx" values="405;440;405" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="405" cy="290" r="7" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="cx" values="440;405;440" dur="10s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- workflow node chain -->
+  <g>
+    <rect x="480" y="110" width="90" height="60" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <rect x="480" y="260" width="90" height="60" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+    <rect x="600" y="185" width="110" height="70" rx="10" fill="#FF4D00" stroke="#111111" stroke-width="5"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 6 0; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+  <path d="M570 140 C 600 140, 590 190, 600 190" fill="none" stroke="#111111" stroke-width="5"/>
+  <path d="M570 290 C 600 290, 590 230, 600 230" fill="none" stroke="#111111" stroke-width="5"/>
+
+  <!-- slow rotating dial -->
+  <g transform="translate(240,380)">
+    <circle r="26" fill="none" stroke="#111111" stroke-width="5"/>
+    <line x1="0" y1="-26" x2="0" y2="-8" stroke="#FF4D00" stroke-width="7"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 240 380" to="360 240 380" dur="36s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- pulsing status dot -->
+  <circle cx="716" cy="60" r="10" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animate attributeName="r" values="10;15;10" dur="7s" repeatCount="indefinite"/>
+  </circle>
+</svg>

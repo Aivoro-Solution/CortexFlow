@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: an OAuth key turning in a lock while a calendar marker counts toward November">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-width="1" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="6"/>
+
+  <!-- slow dashed orbit ring around the lock -->
+  <g transform="translate(400,235)">
+    <circle r="150" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="18 14" opacity="0.55">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="112" fill="none" stroke="#FF4D00" stroke-width="4" stroke-dasharray="6 22" opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="32s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- padlock body -->
+  <g>
+    <rect x="330" y="235" width="140" height="115" rx="8" fill="#111111"/>
+    <rect x="342" y="247" width="116" height="91" rx="5" fill="#FFFDF5"/>
+    <path d="M352 235 v-28 a48 48 0 0 1 96 0 v28" fill="none" stroke="#111111" stroke-width="16"/>
+    <!-- keyhole pulsing -->
+    <g>
+      <circle cx="400" cy="290" r="17" fill="#FF4D00">
+        <animate attributeName="r" values="17;22;17" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0.72;1" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <rect x="394" y="296" width="12" height="28" fill="#FF4D00">
+        <animate attributeName="opacity" values="1;0.72;1" dur="8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- the OAuth key turning slowly in the lock -->
+  <g transform="translate(400,290)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="0;18;0;-18;0" dur="12s" repeatCount="indefinite"/>
+      <circle cx="0" cy="-72" r="26" fill="none" stroke="#111111" stroke-width="10"/>
+      <rect x="-6" y="-46" width="12" height="88" fill="#111111"/>
+      <rect x="6" y="14" width="22" height="12" fill="#111111"/>
+      <rect x="6" y="34" width="16" height="12" fill="#111111"/>
+    </g>
+  </g>
+
+  <!-- calendar marker drifting toward November, slow loop -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="40,70; 150,70; 40,70" dur="20s" repeatCount="indefinite"/>
+    <rect x="0" y="0" width="120" height="96" rx="6" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <rect x="0" y="0" width="120" height="30" rx="6" fill="#FF4D00" stroke="#111111" stroke-width="6"/>
+    <rect x="20" y="-14" width="12" height="30" rx="6" fill="#111111"/>
+    <rect x="88" y="-14" width="12" height="30" rx="6" fill="#111111"/>
+    <rect x="0" y="24" width="120" height="6" fill="#111111"/>
+  </g>
+
+  <!-- agent bot peeking from the side, gentle bob -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0,0; 0,-14; 0,0" dur="9s" repeatCount="indefinite"/>
+    <g transform="translate(660,300)">
+      <rect x="-46" y="-60" width="92" height="84" rx="10" fill="#111111"/>
+      <rect x="-38" y="-52" width="76" height="68" rx="7" fill="#FFFDF5"/>
+      <circle cx="-20" cy="-26" r="9" fill="#111111"/>
+      <circle cx="20" cy="-26" r="9" fill="#111111"/>
+      <circle cx="-20" cy="-26" r="3.5" fill="#FF4D00"/>
+      <circle cx="20" cy="-26" r="3.5" fill="#FF4D00"/>
+      <rect x="-14" y="4" width="28" height="8" rx="4" fill="#111111"/>
+      <rect x="-8" y="-84" width="16" height="26" fill="#111111"/>
+      <circle cx="0" cy="-90" r="11" fill="#FF4D00" stroke="#111111" stroke-width="5"/>
+    </g>
+  </g>
+</svg>

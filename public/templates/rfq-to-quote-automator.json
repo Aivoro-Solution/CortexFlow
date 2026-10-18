@@ -1,0 +1,1263 @@
+{
+  "name": "AI RFQ-to-Quote Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 AI RFQ-TO-QUOTE AUTOMATOR\n**What it does:** RFQ PDF upload via n8n form → AI extracts line items (code / description / quantity / unit) → matches them against your Catalogue + approved Price List → matched lines go to the Quote Draft sheet (one-click Excel download) → uncertain lines go to a Review Queue → Telegram review alert, or a quote email to the reviewer when everything matched.\n\n**You'll need:**\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential + one spreadsheet with 5 tabs (see guide)\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- SMTP credentials for the quote email\n\n**Status flow in Sheets:** `NEW` → `EXTRACTED` → `MATCHED` → `QUOTED` / `REVIEW_NEEDED` → `SENT`\n\n**Hard rules:** prices come ONLY from the approved Price List — never from the AI. Uncertain matches are flagged for human review, never auto-substituted.",
+        "height": 220,
+        "width": 6060,
+        "color": 5
+      },
+      "id": "30274a08-7e83-4ebd-ad4a-53fcbbc38907",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — RFQ intake\nForm Trigger (RFQ PDF upload + customer fields) → Extract from File pulls the PDF text → Prepare RFQ Record builds the RFQ reference → RFQ Log row appended with status `NEW`.",
+        "height": 420,
+        "width": 1600,
+        "color": 4
+      },
+      "id": "c39b10ee-6ea1-407c-9bc1-8db879c38862",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — AI line-item extraction\nAI Agent (gpt-4o-mini + Structured Output Parser) extracts code / description / quantity / unit per line → Normalize Line Items flattens them → RFQ Log flips to `EXTRACTED`.",
+        "height": 420,
+        "width": 1000,
+        "color": 4
+      },
+      "id": "9986d995-a683-48ba-8a91-6f3f45978889",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Catalogue + price matching\nRead Catalogue + Price List → match (exact code = 1.0, description = 0.8; price ONLY from the approved list; unknown codes / missing prices / low confidence → REVIEW, never substituted) → Quote Draft + Review Queue sheets → RFQ Log flips to `MATCHED`.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "a4f9d4c2-33b9-4ae6-acaa-3f678ddc0ca0",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Review alert or quote email\nIF any review lines → Telegram review alert listing the flagged lines. ELSE → Build Quote Email → SMTP email with the HTML quote table to the reviewer. Branches merge.",
+        "height": 560,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "98095620-50a6-40f4-ad65-e21bbc6900bf",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3640,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Final log + summary\nRFQ Log final status (`QUOTED` → `SENT`, or `REVIEW_NEEDED`) → Telegram summary notification.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "f6019501-e6a9-4059-aa85-cf5cbc325ddc",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5080,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "appendAttribution": true,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "RFQ received! Your quote draft is being prepared — check your email shortly."
+            }
+          }
+        },
+        "formTitle": "Submit RFQ — Quote Request",
+        "formDescription": "Upload the customer's RFQ PDF and we will extract the line items, match them against your catalogue and approved price list, and prepare a quote draft.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "rfq_file",
+              "fieldType": "file",
+              "placeholder": "Upload RFQ PDF",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "customer_name",
+              "fieldType": "text",
+              "placeholder": "e.g. Acme Electricals Ltd.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "customer_email",
+              "fieldType": "text",
+              "placeholder": "buyer@example.com",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "notes",
+              "fieldType": "textarea",
+              "placeholder": "Any context (deadline, delivery terms…)",
+              "requiredField": false
+            }
+          ]
+        },
+        "responseMode": "lastNode"
+      },
+      "id": "a340d4b5-ce77-4ab3-a937-e739f4b8ae92",
+      "name": "RFQ Intake — Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f3e9e77-6f9a-43f2-a601-d449a0068513",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "e459920f-4596-4844-b68a-eb05bc9e2ca4",
+              "name": "catalogue_sheet",
+              "type": "string",
+              "value": "Catalogue"
+            },
+            {
+              "id": "44e2fc50-d62e-4e2b-abce-cbdf212e2709",
+              "name": "price_list_sheet",
+              "type": "string",
+              "value": "PriceList"
+            },
+            {
+              "id": "65eee6fe-523d-49e8-a2f0-c78f540ebd34",
+              "name": "rfq_log_sheet",
+              "type": "string",
+              "value": "RFQ Log"
+            },
+            {
+              "id": "d83f73a9-772c-4c4b-ac3e-4cf632e2e2f9",
+              "name": "review_queue_sheet",
+              "type": "string",
+              "value": "Review Queue"
+            },
+            {
+              "id": "c0d6ce20-408f-495f-a861-76b31632cc1c",
+              "name": "quote_draft_sheet",
+              "type": "string",
+              "value": "Quote Draft"
+            },
+            {
+              "id": "055c352c-4a40-40ee-9bff-e7b76a624c4b",
+              "name": "company_name",
+              "type": "string",
+              "value": "PASTE_YOUR_COMPANY_NAME"
+            },
+            {
+              "id": "a5f40ff3-85fc-43fa-97ec-e94b113d3762",
+              "name": "currency",
+              "type": "string",
+              "value": "USD"
+            },
+            {
+              "id": "c720b45c-8ca9-41bb-8269-1395f1ede160",
+              "name": "confidence_threshold",
+              "type": "string",
+              "value": "0.8"
+            },
+            {
+              "id": "1bca5ab6-2b7b-4843-97d5-d995d85eeab5",
+              "name": "reviewer_email",
+              "type": "string",
+              "value": "PASTE_YOUR_REVIEWER_EMAIL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6201fa73-0766-4f07-81d1-f5aa1e1367a4",
+      "name": "CONFIG — RFQ Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1d769369-e488-4a28-af19-f837ef859b52",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "633c7c9b-8035-4bf9-b1db-db7ac7cb40a4",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "rfq_file"
+      },
+      "id": "2cf00deb-a309-4091-9493-e33843017604",
+      "name": "Extract RFQ Text — PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the RFQ record from the form submission + extracted PDF text\nconst form = $('RFQ Intake \\u2014 Form Trigger').first().json;\nconst text = ($input.first().json.text || '').slice(0, 15000);\nconst d = new Date();\nconst ref = 'RFQ-' + d.toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.floor(1000 + Math.random() * 9000);\nreturn [{ json: {\n  rfq_reference: ref,\n  customer_name: form.customer_name || '',\n  customer_email: form.customer_email || '',\n  notes: form.notes || '',\n  rfq_text: text,\n  received_at: d.toISOString(),\n  stage: 'NEW',\n  status: 'NEW',\n  line_count: 0,\n  matched_count: 0,\n  review_count: 0,\n  quote_total: 0,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "94fb5455-0f35-418f-916f-bd5b507f45cc",
+      "name": "Prepare RFQ Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.rfq_log_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $json.rfq_reference }}",
+            "customer_name": "={{ $json.customer_name }}",
+            "received_at": "={{ $json.received_at }}",
+            "stage": "={{ $json.stage }}",
+            "line_count": "={{ $json.line_count }}",
+            "matched_count": "={{ $json.matched_count }}",
+            "review_count": "={{ $json.review_count }}",
+            "quote_total": "={{ $json.quote_total }}",
+            "currency": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.currency }}",
+            "status": "={{ $json.status }}",
+            "notes": "={{ $json.notes }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "715d42da-05dc-41d2-9a8a-973d8a53e89d",
+      "name": "Log RFQ — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a precise procurement data-extraction assistant. Read the RFQ document text and extract EVERY purchasable line item: product code (SKU/part number exactly as written), description, quantity, and unit (pcs, meters, boxes, kg…). Output ONLY via the structured output parser — no commentary.\n\nRules:\n- Keep codes exactly as written; never invent a code. If a line shows no code, leave code empty.\n- Split bundled lines into separate items; ignore headers, footers, and terms & conditions.\n- NEVER guess prices — pricing is handled downstream from the approved price list only."
+        },
+        "text": "=RFQ DOCUMENT TEXT:\n{{ $('Prepare RFQ Record').first().json.rfq_text }}"
+      },
+      "id": "185c312e-3268-4db3-9442-8201877fd21b",
+      "name": "AI Agent — Extract Line Items",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "568e46f8-20b4-4bea-a812-8b9cc3ecc2af",
+      "name": "OpenAI Chat Model — Extraction",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"line_items\": [\n    {\n      \"line_no\": 1,\n      \"code\": \"EL-CAB-100\",\n      \"description\": \"Copper cable 2.5 sqmm\",\n      \"quantity\": 100,\n      \"unit\": \"meters\"\n    }\n  ]\n}"
+      },
+      "id": "526993a8-b40d-45fa-8efa-6da0c08d6a9c",
+      "name": "Structured Output Parser — Line Items",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.rfq_log_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "rfq_reference"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $('Prepare RFQ Record').first().json.rfq_reference }}",
+            "line_count": "={{ $json.output.line_items.length }}",
+            "stage": "EXTRACTED",
+            "status": "EXTRACTED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a5888274-8056-4ef6-aa7a-ce8459c4a146",
+      "name": "Update RFQ Log — Status EXTRACTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten the agent's structured line items into one item per line.\n// Guarantees at least one output item so the chain stays alive.\nconst rec = $('Prepare RFQ Record').first().json;\nconst out = ($input.first().json.output && $input.first().json.output.line_items) || [];\nconst items = (Array.isArray(out) ? out : []).map((l, idx) => ({ json: {\n  rfq_reference: rec.rfq_reference,\n  line_no: l.line_no || (idx + 1),\n  code: String(l.code || '').trim(),\n  description: String(l.description || '').trim(),\n  quantity: Number(l.quantity || 0),\n  unit: String(l.unit || '').trim(),\n}})).filter(l => l.json.description || l.json.code);\nif (!items.length) {\n  return [{ json: {\n    rfq_reference: rec.rfq_reference,\n    line_no: 0,\n    code: '',\n    description: 'No line items could be extracted from the PDF',\n    quantity: 0,\n    unit: '',\n  }}];\n}\nreturn items;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "33398091-dfc5-4759-888b-07ef61d0ced3",
+      "name": "Normalize Line Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.catalogue_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e624e023-f21d-462c-8a2c-35b7e58a136d",
+      "name": "Read Catalogue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.price_list_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "bb13e911-3ded-4e59-bd66-8cba23c0cd16",
+      "name": "Read Price List",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Match extracted RFQ lines against the Catalogue + approved Price List.\n// HARD RULES: price comes ONLY from the Price List. Never substitute products:\n// unknown codes, missing prices, missing units, or low confidence go to REVIEW.\nconst cfg = $('CONFIG \\u2014 RFQ Settings').first().json;\nconst threshold = parseFloat(cfg.confidence_threshold || '0.8');\nconst currency = cfg.currency || 'USD';\n\nconst normCode = s => String(s || '').trim().toUpperCase();\nconst normDesc = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();\n\nconst catByCode = {};\nconst catByDesc = {};\nfor (const i of $('Read Catalogue').all()) {\n  const j = i.json;\n  const code = normCode(j.product_code);\n  if (code && !catByCode[code]) catByCode[code] = j;\n  const d = normDesc(j.description);\n  if (d && !catByDesc[d]) catByDesc[d] = j;\n}\nconst priceByCode = {};\nfor (const i of $('Read Price List').all()) {\n  const j = i.json;\n  const code = normCode(j.product_code);\n  if (code && priceByCode[code] === undefined) priceByCode[code] = j; // first price version wins\n}\n\nconst ref = $('Prepare RFQ Record').first().json.rfq_reference;\nconst out = [];\nfor (const item of $('Normalize Line Items').all()) {\n  const L = item.json;\n  const code = normCode(L.code);\n  let matched = null, confidence = 0, issue = '';\n  if (catByCode[code]) { matched = catByCode[code]; confidence = 1.0; }\n  else if (catByDesc[normDesc(L.description)]) { matched = catByDesc[normDesc(L.description)]; confidence = 0.8; }\n  else { issue = 'UNKNOWN_CODE'; }\n\n  let unit_price = null, line_total = 0;\n  if (matched) {\n    const priceRow = priceByCode[normCode(matched.product_code)];\n    if (priceRow && priceRow.unit_price !== '' && priceRow.unit_price !== undefined && priceRow.unit_price !== null) {\n      unit_price = Number(priceRow.unit_price);\n      line_total = Math.round(Number(L.quantity || 0) * unit_price * 100) / 100;\n    } else {\n      issue = 'NO_APPROVED_PRICE';\n    }\n  }\n  if (!L.unit) issue = issue || 'UNIT_MISSING';\n  if (matched && confidence < threshold) issue = issue || 'LOW_CONFIDENCE';\n\n  const status = (matched && !issue) ? 'MATCHED' : 'REVIEW';\n  out.push({ json: {\n    rfq_reference: ref,\n    line_no: L.line_no,\n    code: L.code || '',\n    matched_code: matched ? String(matched.product_code) : '',\n    description: L.description || '',\n    quantity: L.quantity || 0,\n    unit: L.unit || '',\n    unit_price: unit_price === null ? '' : unit_price,\n    line_total: status === 'MATCHED' ? line_total : 0,\n    currency: currency,\n    confidence: confidence,\n    status: status,\n    issue: issue,\n  }});\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "374c72ac-2810-4ed1-9b21-ea69fc316807",
+      "name": "Match Lines Against Catalogue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-review",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "REVIEW",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "45ce5e9c-1d48-400d-a81b-79829f4d6546",
+      "name": "IF — Line Needs Review?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.review_queue_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $json.rfq_reference }}",
+            "line_no": "={{ $json.line_no }}",
+            "code": "={{ $json.code }}",
+            "description": "={{ $json.description }}",
+            "quantity": "={{ $json.quantity }}",
+            "unit": "={{ $json.unit }}",
+            "issue": "={{ $json.issue }}",
+            "confidence": "={{ $json.confidence }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "3feebf44-c2eb-4666-97fb-0b314388334a",
+      "name": "Append Review Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.quote_draft_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $json.rfq_reference }}",
+            "line_no": "={{ $json.line_no }}",
+            "code": "={{ $json.code }}",
+            "matched_code": "={{ $json.matched_code }}",
+            "description": "={{ $json.description }}",
+            "quantity": "={{ $json.quantity }}",
+            "unit": "={{ $json.unit }}",
+            "unit_price": "={{ $json.unit_price }}",
+            "line_total": "={{ $json.line_total }}",
+            "currency": "={{ $json.currency }}",
+            "confidence": "={{ $json.confidence }}",
+            "status": "={{ $json.status }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "998c078b-0cd2-41cd-af79-edc85b80e3c4",
+      "name": "Append Quote Draft",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "865ed60b-c13c-4d35-bac1-8708f9cbcb41",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One summary item: counts, quote total, and the MATCHED stage flip.\nconst rec = $('Prepare RFQ Record').first().json;\nconst lines = $('Match Lines Against Catalogue').all().map(i => i.json);\nconst matched = lines.filter(l => l.status === 'MATCHED');\nconst review = lines.filter(l => l.status === 'REVIEW');\nconst total = Math.round(matched.reduce((s, l) => s + Number(l.line_total || 0), 0) * 100) / 100;\nreturn [{ json: {\n  rfq_reference: rec.rfq_reference,\n  customer_name: rec.customer_name,\n  line_count: lines.length,\n  matched_count: matched.length,\n  review_count: review.length,\n  quote_total: total,\n  currency: $('CONFIG \\u2014 RFQ Settings').first().json.currency || 'USD',\n  stage: 'MATCHED',\n  status: 'MATCHED',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "5cd217d4-01e9-4d34-8f0e-6f3c21d63860",
+      "name": "Build RFQ Stats",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.rfq_log_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "rfq_reference"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $json.rfq_reference }}",
+            "line_count": "={{ $json.line_count }}",
+            "matched_count": "={{ $json.matched_count }}",
+            "review_count": "={{ $json.review_count }}",
+            "quote_total": "={{ $json.quote_total }}",
+            "stage": "={{ $json.stage }}",
+            "status": "={{ $json.status }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "10d5fa05-15cc-470e-926a-65736e8fbb19",
+      "name": "Update RFQ Log — Status MATCHED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-needed",
+              "leftValue": "={{ $json.review_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "35117daf-7429-4d67-bedc-3d39c8291919",
+      "name": "IF — Review Needed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Telegram alert listing every flagged line for human review.\nconst rec = $('Prepare RFQ Record').first().json;\nconst stats = $('Build RFQ Stats').first().json;\nconst review = $('Match Lines Against Catalogue').all().map(i => i.json).filter(l => l.status === 'REVIEW');\nconst lines = review.slice(0, 15).map(l =>\n  `\\u2022 L${l.line_no} | ${l.code || '\\u2014'} | ${l.description} | Qty ${l.quantity} ${l.unit} \\u2014 <b>${l.issue}</b> (conf ${l.confidence})`\n);\nconst more = review.length > 15 ? `\\n\\u2026and ${review.length - 15} more \\u2014 see the Review Queue sheet.` : '';\nreturn [{ json: { message:\n`<b>\\u26a0\\ufe0f Quote review needed</b>\\nRFQ <b>${rec.rfq_reference}</b> \\u2014 ${rec.customer_name}\\n${review.length} of ${stats.line_count} line(s) flagged for human review:\\n${lines.join('\\n')}${more}\\n\\nOpen the <b>Review Queue</b> tab, approve or correct each line, then update the Quote Draft. Nothing was auto-substituted.`\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d0446846-e85d-4f28-8a47-da4ce7a5c0f3",
+      "name": "Build Review Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "029832dc-ce77-4a20-9429-e806de43acc6",
+      "name": "Telegram — Review Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// HTML quote table email for the reviewer (no review lines pending).\nconst cfg = $('CONFIG \\u2014 RFQ Settings').first().json;\nconst rec = $('Prepare RFQ Record').first().json;\nconst stats = $('Build RFQ Stats').first().json;\nconst matched = $('Match Lines Against Catalogue').all().map(i => i.json).filter(l => l.status === 'MATCHED');\nconst rows = matched.map(l =>\n  `<tr><td>${l.line_no}</td><td>${l.matched_code}</td><td>${l.description}</td>` +\n  `<td>${l.quantity}</td><td>${l.unit}</td><td>${stats.currency} ${Number(l.unit_price).toFixed(2)}</td>` +\n  `<td>${stats.currency} ${Number(l.line_total).toFixed(2)}</td></tr>`\n).join('');\nconst html =\n`<h2>Quote draft \\u2014 RFQ ${rec.rfq_reference}</h2>` +\n`<p>Hi, the AI RFQ-to-Quote Automator prepared this draft for <b>${rec.customer_name}</b> (${cfg.company_name}). ` +\n`All prices come from the approved price list only, and no lines needed human review.</p>` +\n`<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\" style=\"border-collapse:collapse\">` +\n`<tr><th>#</th><th>Matched code</th><th>Description</th><th>Qty</th><th>Unit</th><th>Unit price</th><th>Line total</th></tr>` +\nrows + `</table>` +\n`<p><b>Quote total: ${stats.currency} ${Number(stats.quote_total).toFixed(2)}</b></p>` +\n`<p>Tip: open the <b>Quote Draft</b> sheet and use File \\u2192 Download \\u2192 Microsoft Excel (.xlsx) for a customer-ready file.</p>`;\nreturn [{ json: {\n  subject: `Quote draft ready \\u2014 RFQ ${rec.rfq_reference} (${rec.customer_name})`,\n  html: html,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "92089809-c3bb-4e11-8964-053206beb261",
+      "name": "Build Quote Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.html }}",
+        "options": {},
+        "subject": "={{ $json.subject }}",
+        "toEmail": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.reviewer_email }}",
+        "fromEmail": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.reviewer_email }}"
+      },
+      "credentials": {
+        "smtp": {
+          "id": "",
+          "name": "SMTP"
+        }
+      },
+      "id": "000a1da2-31b7-4880-9822-7fe094a0774f",
+      "name": "Email — Send Quote Draft",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        4560,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "db3e0971-76cd-43f9-9526-85c0613c4347",
+      "name": "Merge — Combine Notify Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG \\u2014 RFQ Settings').first().json.rfq_log_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "rfq_reference"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "rfq_reference": "={{ $('Prepare RFQ Record').first().json.rfq_reference }}",
+            "stage": "={{ $('Build RFQ Stats').first().json.review_count > 0 ? 'REVIEW_NEEDED' : 'QUOTED' }}",
+            "status": "={{ $('Build RFQ Stats').first().json.review_count > 0 ? 'REVIEW_NEEDED' : 'SENT' }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fd3d3e63-839f-493c-a091-a7b19acacb65",
+      "name": "Update RFQ Log — Final Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Final Telegram summary of the whole RFQ run.\nconst rec = $('Prepare RFQ Record').first().json;\nconst stats = $('Build RFQ Stats').first().json;\nconst finalStatus = stats.review_count > 0 ? 'REVIEW_NEEDED' : 'SENT';\nconst detail = stats.review_count > 0\n  ? `${stats.review_count} line(s) need human review \\u2014 check the Review Queue sheet.`\n  : `Quote email sent to the reviewer.`;\nreturn [{ json: { message:\n`<b>\\u2705 RFQ processed</b>\\n<b>${rec.rfq_reference}</b> \\u2014 ${rec.customer_name}\\nLines: ${stats.line_count} | Matched: ${stats.matched_count} | Review: ${stats.review_count}\\nQuote total: ${stats.currency} ${Number(stats.quote_total).toFixed(2)}\\nStatus: <b>${finalStatus}</b>\\n${detail}`\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "df68c5cb-3232-4431-a4e4-7e3a24619188",
+      "name": "Build Summary Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "5818ee89-a1c9-4291-8b1a-ed58d13b0cae",
+      "name": "Telegram — Send Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5520,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "RFQ Intake — Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — RFQ Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — RFQ Settings": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Extract RFQ Text — PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract RFQ Text — PDF": {
+      "main": [
+        [
+          {
+            "node": "Prepare RFQ Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare RFQ Record": {
+      "main": [
+        [
+          {
+            "node": "Log RFQ — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log RFQ — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Extract Line Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Extract Line Items": {
+      "main": [
+        [
+          {
+            "node": "Update RFQ Log — Status EXTRACTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update RFQ Log — Status EXTRACTED": {
+      "main": [
+        [
+          {
+            "node": "Normalize Line Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Line Items": {
+      "main": [
+        [
+          {
+            "node": "Read Catalogue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Catalogue": {
+      "main": [
+        [
+          {
+            "node": "Read Price List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Price List": {
+      "main": [
+        [
+          {
+            "node": "Match Lines Against Catalogue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Lines Against Catalogue": {
+      "main": [
+        [
+          {
+            "node": "IF — Line Needs Review?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Line Needs Review?": {
+      "main": [
+        [
+          {
+            "node": "Append Review Queue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append Quote Draft",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Append Review Queue": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Quote Draft": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build RFQ Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build RFQ Stats": {
+      "main": [
+        [
+          {
+            "node": "Update RFQ Log — Status MATCHED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update RFQ Log — Status MATCHED": {
+      "main": [
+        [
+          {
+            "node": "IF — Review Needed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Review Needed?": {
+      "main": [
+        [
+          {
+            "node": "Build Review Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Quote Email",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Build Review Alert": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Review Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Review Alert": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Notify Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Quote Email": {
+      "main": [
+        [
+          {
+            "node": "Email — Send Quote Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email — Send Quote Draft": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Notify Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Notify Branches": {
+      "main": [
+        [
+          {
+            "node": "Update RFQ Log — Final Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update RFQ Log — Final Status": {
+      "main": [
+        [
+          {
+            "node": "Build Summary Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Summary Message": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Extraction": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Extract Line Items",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Line Items": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Extract Line Items",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

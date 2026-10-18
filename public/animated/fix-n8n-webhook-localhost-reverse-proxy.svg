@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Reverse proxy routing diagram animation">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111" stroke-width="1" opacity="0.18">
+    <path d="M0,75 H800 M0,150 H800 M0,225 H800 M0,300 H800 M0,375 H800"/>
+    <path d="M100,0 V450 M200,0 V450 M300,0 V450 M400,0 V450 M500,0 V450 M600,0 V450 M700,0 V450"/>
+  </g>
+
+  <g stroke="#111" stroke-width="5" fill="#FFFDF5">
+    <rect x="60" y="140" width="190" height="170" fill="#FFFDF5"/>
+    <rect x="60" y="140" width="190" height="170" fill="none" transform="translate(10,10)" opacity="0.12"/>
+    <rect x="550" y="140" width="190" height="170" fill="#FFFDF5"/>
+    <rect x="550" y="140" width="190" height="170" fill="none" transform="translate(10,10)" opacity="0.12"/>
+    <rect x="330" y="160" width="140" height="130" fill="#FF4D00"/>
+  </g>
+
+  <g stroke="#111" stroke-width="5" fill="none">
+    <rect x="88" y="180" width="60" height="44"/>
+    <rect x="156" y="180" width="60" height="44"/>
+    <rect x="88" y="232" width="60" height="44"/>
+    <rect x="156" y="232" width="60" height="44"/>
+  </g>
+  <g stroke="#FFFDF5" stroke-width="6" fill="none">
+    <rect x="355" y="185" width="90" height="60"/>
+    <rect x="355" y="185" width="90" height="60" fill="none"/>
+  </g>
+
+  <circle cx="645" cy="225" r="52" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+  <path d="M600,205 Q645,180 690,205 M600,225 Q645,200 690,225 M600,245 Q645,220 690,245" stroke="#111" stroke-width="3" fill="none"/>
+  <ellipse cx="645" cy="225" rx="24" ry="52" stroke="#111" stroke-width="3" fill="none"/>
+
+  <g stroke="#111" stroke-width="5" fill="none">
+    <path d="M250,210 C300,210 290,200 330,200">
+      <animate attributeName="d" values="M250,210 C300,210 290,200 330,200;M250,210 C300,210 290,240 330,240;M250,210 C300,210 290,200 330,200" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M470,200 C520,200 500,225 550,225">
+      <animate attributeName="d" values="M470,200 C520,200 500,225 550,225;M470,260 C520,260 500,225 550,225;M470,200 C520,200 500,225 550,225" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle r="12" fill="#FF4D00" stroke="#111" stroke-width="4">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M250,210 C300,210 290,200 330,200"/>
+  </circle>
+  <circle r="9" fill="#FFFDF5" stroke="#111" stroke-width="4">
+    <animateMotion dur="11s" repeatCount="indefinite" path="M470,200 C520,200 500,225 550,225"/>
+  </circle>
+
+  <g stroke="#111" stroke-width="4" fill="none">
+    <path d="M250,255 C300,255 290,262 330,262" opacity="0.45"/>
+    <path d="M470,250 C520,250 500,240 550,240" opacity="0.45"/>
+  </g>
+  <g transform="rotate(0 645 225)">
+    <animateTransform attributeName="transform" type="rotate" from="0 645 225" to="360 645 225" dur="60s" repeatCount="indefinite"/>
+    <circle cx="645" cy="173" r="6" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+  </g>
+  <g stroke="#FF4D00" stroke-width="5" fill="none">
+    <path d="M330,225 H470">
+      <animate attributeName="opacity" values="1;0.25;1" dur="7s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

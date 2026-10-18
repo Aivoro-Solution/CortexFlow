@@ -1,8 +1,10 @@
 ---
 import { getCollection, render } from "astro:content";
+import { micromark } from "micromark";
 import BaseLayout from "../../components/BaseLayout.astro";
 import { SITE } from "../../config";
 import { categoryName, formatDate, getPublishedPosts, postUrl } from "../../lib/posts";
+import usecasesData from "../../data/template-usecases.json";
 
 export async function getStaticPaths() {
   const templates = await getCollection("templates", ({ data }) => !data.draft);
@@ -23,6 +25,242 @@ const difficultyLabel: Record<string, string> = {
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
+
+// ---------- Dynamic workflow introspection (nodes / setup / use-cases) ----------
+type WfNode = {
+  name: string;
+  type: string;
+  typeVersion: number;
+  parameters?: Record<string, any>;
+  credentials?: Record<string, any>;
+};
+const wfGlob = import.meta.glob("../../../public/templates/*.json", { eager: true }) as Record<string, { default: any }>;
+const wfMod = wfGlob[`../../../public/templates/${slug}.json`];
+const wfJson: { nodes?: WfNode[] } | null = wfMod ? (wfMod.default ?? wfMod) : null;
+const wfNodes: WfNode[] = (wfJson?.nodes ?? []).filter((n) => n.type !== "n8n-nodes-base.stickyNote");
+
+const NODE_LABELS: Record<string, string> = {
+  "n8n-nodes-base.googleSheets": "Google Sheets",
+  "n8n-nodes-base.code": "Code",
+  "n8n-nodes-base.set": "Set",
+  "n8n-nodes-base.if": "IF",
+  "n8n-nodes-base.httpRequest": "HTTP Request",
+  "n8n-nodes-base.telegram": "Telegram",
+  "n8n-nodes-base.gmail": "Gmail",
+  "n8n-nodes-base.slack": "Slack",
+  "n8n-nodes-base.merge": "Merge",
+  "n8n-nodes-base.scheduleTrigger": "Schedule Trigger",
+  "n8n-nodes-base.webhook": "Webhook",
+  "n8n-nodes-base.wait": "Wait",
+  "n8n-nodes-base.openAi": "OpenAI",
+  "n8n-nodes-base.whatsapp": "WhatsApp",
+  "n8n-nodes-base.googleCalendar": "Google Calendar",
+  "n8n-nodes-base.googleDrive": "Google Drive",
+  "n8n-nodes-base.gmailTrigger": "Gmail Trigger",
+  "n8n-nodes-base.splitInBatches": "Split In Batches",
+  "n8n-nodes-base.executeWorkflowTrigger": "Execute Workflow Trigger",
+  "n8n-nodes-base.switch": "Switch",
+  "n8n-nodes-base.googleDriveTrigger": "Google Drive Trigger",
+  "n8n-nodes-base.respondToWebhook": "Respond to Webhook",
+  "n8n-nodes-base.telegramTrigger": "Telegram Trigger",
+  "n8n-nodes-base.whatsAppTrigger": "WhatsApp Trigger",
+  "n8n-nodes-base.formTrigger": "n8n Form Trigger",
+  "n8n-nodes-base.emailSend": "Send Email (SMTP)",
+  "n8n-nodes-base.googleDocs": "Google Docs",
+  "n8n-nodes-base.notion": "Notion",
+  "n8n-nodes-base.manualTrigger": "Manual Trigger",
+  "n8n-nodes-base.rssFeedRead": "RSS Feed Read",
+  "n8n-nodes-base.htmlExtract": "HTML Extract",
+  "n8n-nodes-base.splitOut": "Split Out",
+  "n8n-nodes-base.executeWorkflow": "Execute Workflow",
+  "n8n-nodes-base.html": "HTML",
+  "n8n-nodes-base.stopAndError": "Stop and Error",
+  "n8n-nodes-base.stripe": "Stripe",
+  "n8n-nodes-base.shopify": "Shopify",
+  "n8n-nodes-base.extractFromFile": "Extract from File",
+  "@n8n/n8n-nodes-langchain.agent": "AI Agent",
+  "@n8n/n8n-nodes-langchain.lmChatOpenAi": "OpenAI Chat Model",
+  "@n8n/n8n-nodes-langchain.outputParserStructured": "Structured Output Parser",
+  "@n8n/n8n-nodes-langchain.memoryBufferWindow": "Window Buffer Memory",
+  "@n8n/n8n-nodes-langchain.vectorStorePinecone": "Pinecone Vector Store",
+  "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini": "Google Gemini Embeddings",
+  "@n8n/n8n-nodes-langchain.chatTrigger": "Chat Trigger",
+  "@n8n/n8n-nodes-langchain.lmChatGoogleGemini": "Google Gemini Chat Model",
+  "@n8n/n8n-nodes-langchain.toolWorkflow": "Workflow Tool",
+  "@n8n/n8n-nodes-langchain.toolThink": "Think Tool",
+  "@n8n/n8n-nodes-langchain.documentDefaultDataLoader": "Document Loader",
+  "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter": "Text Splitter",
+  "@n8n/n8n-nodes-langchain.toolVectorStore": "Vector Store Tool",
+  "@n8n/n8n-nodes-langchain.openAi": "OpenAI (sub-node)",
+  "@blotato/n8n-nodes-blotato.blotato": "Blotato (Social Poster)",
+};
+function nodeLabel(type: string): string {
+  if (NODE_LABELS[type]) return NODE_LABELS[type];
+  const base = type.split(".").pop() ?? type;
+  return base
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
+const NODE_PURPOSE: Record<string, string> = {
+  "n8n-nodes-base.googleSheets": "Reads from or writes to a Google Sheet — this workflow's log and state store.",
+  "n8n-nodes-base.code": "Runs custom JavaScript to transform, filter, or compute data between steps.",
+  "n8n-nodes-base.set": "Holds editable configuration values — fill in your own settings here before activating.",
+  "n8n-nodes-base.if": "Splits the flow into branches based on a condition.",
+  "n8n-nodes-base.httpRequest": "Calls an external API or webhook endpoint.",
+  "n8n-nodes-base.telegram": "Sends you a Telegram message or alert.",
+  "n8n-nodes-base.gmail": "Sends or reads email through your Gmail account.",
+  "n8n-nodes-base.slack": "Posts messages or reads data in Slack.",
+  "n8n-nodes-base.merge": "Combines the outputs of two or more branches back into one flow.",
+  "n8n-nodes-base.scheduleTrigger": "Starts the workflow automatically on a schedule.",
+  "n8n-nodes-base.webhook": "Entry point — receives incoming HTTP requests that trigger the workflow.",
+  "n8n-nodes-base.wait": "Pauses the workflow until a condition or time is met.",
+  "n8n-nodes-base.openAi": "Sends a prompt to OpenAI and returns the AI's answer.",
+  "n8n-nodes-base.whatsapp": "Sends WhatsApp messages through the Meta Cloud API.",
+  "n8n-nodes-base.googleCalendar": "Creates or reads events in Google Calendar.",
+  "n8n-nodes-base.googleDrive": "Uploads, downloads, or manages files in Google Drive.",
+  "n8n-nodes-base.gmailTrigger": "Starts the workflow when a new email arrives in Gmail.",
+  "n8n-nodes-base.splitInBatches": "Processes a long list of items in small batches.",
+  "n8n-nodes-base.executeWorkflowTrigger": "Lets this workflow be called as a sub-workflow from another workflow.",
+  "n8n-nodes-base.switch": "Routes items to one of several outputs based on rules.",
+  "n8n-nodes-base.googleDriveTrigger": "Starts the workflow when a file changes in Google Drive.",
+  "n8n-nodes-base.respondToWebhook": "Sends the HTTP response back to whoever called the webhook.",
+  "n8n-nodes-base.telegramTrigger": "Starts the workflow when a Telegram message arrives.",
+  "n8n-nodes-base.whatsAppTrigger": "Starts the workflow when a WhatsApp message arrives.",
+  "n8n-nodes-base.formTrigger": "Starts the workflow from an n8n form submission.",
+  "n8n-nodes-base.emailSend": "Sends email through your SMTP server.",
+  "n8n-nodes-base.googleDocs": "Creates or updates a Google Doc.",
+  "n8n-nodes-base.notion": "Reads or writes pages in a Notion database.",
+  "n8n-nodes-base.manualTrigger": "Lets you run the workflow manually for testing.",
+  "n8n-nodes-base.rssFeedRead": "Fetches new items from an RSS feed.",
+  "n8n-nodes-base.htmlExtract": "Extracts structured data from HTML pages.",
+  "n8n-nodes-base.splitOut": "Splits one item containing a list into many items.",
+  "n8n-nodes-base.executeWorkflow": "Calls another n8n workflow as a sub-workflow.",
+  "n8n-nodes-base.html": "Renders an HTML page as a workflow response.",
+  "n8n-nodes-base.stopAndError": "Stops the workflow and reports an error.",
+  "n8n-nodes-base.stripe": "Works with Stripe payments, customers, and invoices.",
+  "n8n-nodes-base.shopify": "Reads or updates data in your Shopify store.",
+  "n8n-nodes-base.extractFromFile": "Extracts text content from uploaded files (PDF, docs).",
+  "@n8n/n8n-nodes-langchain.agent": "The AI brain — reasons over the task and calls tools to get it done.",
+  "@n8n/n8n-nodes-langchain.lmChatOpenAi": "The language model powering the AI agent.",
+  "@n8n/n8n-nodes-langchain.outputParserStructured": "Forces the AI to return clean, structured JSON instead of free text.",
+  "@n8n/n8n-nodes-langchain.memoryBufferWindow": "Gives the agent short-term chat memory across messages.",
+  "@n8n/n8n-nodes-langchain.vectorStorePinecone": "Semantic search over your documents stored in Pinecone.",
+  "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini": "Turns text into vector embeddings with Google Gemini.",
+  "@n8n/n8n-nodes-langchain.chatTrigger": "Starts the workflow from the n8n chat interface.",
+  "@n8n/n8n-nodes-langchain.lmChatGoogleGemini": "The language model powering the AI agent (Google Gemini).",
+  "@n8n/n8n-nodes-langchain.toolWorkflow": "Exposes a sub-workflow as a tool the AI agent can call.",
+  "@n8n/n8n-nodes-langchain.toolThink": "Lets the agent 'think' step-by-step before acting.",
+  "@n8n/n8n-nodes-langchain.documentDefaultDataLoader": "Loads documents into the RAG pipeline.",
+  "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter": "Splits long documents into chunks for embedding.",
+  "@n8n/n8n-nodes-langchain.toolVectorStore": "Lets the agent search your vector database as a tool.",
+  "@n8n/n8n-nodes-langchain.openAi": "OpenAI sub-node attached to an AI agent.",
+  "@blotato/n8n-nodes-blotato.blotato": "Publishes posts to social platforms via Blotato.",
+};
+function nodePurpose(type: string): string {
+  return NODE_PURPOSE[type] ?? `Handles this workflow's ${nodeLabel(type).toLowerCase()} step.`;
+}
+
+const CRED_LABELS: Record<string, string> = {
+  googleSheetsOAuth2Api: "Google Sheets OAuth2",
+  telegramApi: "Telegram Bot API",
+  openAiApi: "OpenAI API",
+  gmailOAuth2: "Gmail OAuth2",
+  httpHeaderAuth: "HTTP Header Auth",
+  slackOAuth2Api: "Slack OAuth2",
+  whatsAppApi: "WhatsApp Cloud API",
+  googleDriveOAuth2Api: "Google Drive OAuth2",
+  blotatoApi: "Blotato API",
+  slackApi: "Slack API (token)",
+  googleCalendarOAuth2Api: "Google Calendar OAuth2",
+  googlePalmApi: "Google PaLM / Gemini API",
+  pineconeApi: "Pinecone API",
+  smtp: "SMTP",
+  googleDocsOAuth2Api: "Google Docs OAuth2",
+  notionApi: "Notion API",
+  stripeApi: "Stripe API",
+  shopifyApi: "Shopify API",
+  httpBasicAuth: "HTTP Basic Auth",
+};
+function credLabel(credType: string): string {
+  if (CRED_LABELS[credType]) return CRED_LABELS[credType];
+  return credType
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/Api$/, " API")
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
+// Credentials used by this workflow: node name + credential type
+const credRows: { node: string; credType: string }[] = [];
+for (const n of wfNodes) {
+  for (const ct of Object.keys(n.credentials ?? {})) {
+    credRows.push({ node: n.name, credType: ct });
+  }
+}
+
+// PASTE_YOUR_* placeholders in node parameters
+type Placeholder = { node: string; field: string; value: string };
+function collectPlaceholders(obj: any, path: string, out: Placeholder[], nodeName: string): void {
+  if (typeof obj === "string") {
+    const m = obj.match(/PASTE_YOUR_[A-Z0-9_]+/g);
+    if (m) for (const v of [...new Set(m)]) out.push({ node: nodeName, field: path || "value", value: v });
+    return;
+  }
+  if (Array.isArray(obj)) {
+    obj.forEach((v, i) => collectPlaceholders(v, `${path}[${i}]`, out, nodeName));
+    return;
+  }
+  if (obj && typeof obj === "object") {
+    // Set-node assignment shape: { name, value, ... } — use the field name
+    if (typeof obj.name === "string" && typeof obj.value === "string" && "value" in obj) {
+      const m = (obj.value as string).match(/PASTE_YOUR_[A-Z0-9_]+/g);
+      if (m) {
+        for (const v of [...new Set(m)]) out.push({ node: nodeName, field: obj.name, value: v });
+        return;
+      }
+    }
+    for (const k of Object.keys(obj)) collectPlaceholders(obj[k], path ? `${path}.${k}` : k, out, nodeName);
+  }
+}
+const phRaw: Placeholder[] = [];
+for (const n of wfNodes) collectPlaceholders(n.parameters ?? {}, "", phRaw, n.name);
+const phSeen = new Set<string>();
+const placeholders: Placeholder[] = phRaw.filter((p) => {
+  const k = `${p.node}|${p.field}|${p.value}`;
+  if (phSeen.has(k)) return false;
+  phSeen.add(k);
+  return true;
+});
+function placeholderHint(v: string): string {
+  return "Your " + v.replace(/^PASTE_YOUR_/, "").toLowerCase().replace(/_/g, " ");
+}
+
+// Trigger info
+const triggerRows: { label: string; detail: string }[] = [];
+for (const n of wfNodes) {
+  const t = n.type;
+  const p = n.parameters ?? {};
+  if (t === "n8n-nodes-base.webhook") {
+    triggerRows.push({
+      label: "Webhook",
+      detail: `Listens on path /${p.path ?? "(set in node)"} — copy the production URL from the node after activating the workflow.`,
+    });
+  } else if (t === "n8n-nodes-base.formTrigger") {
+    triggerRows.push({ label: "Form Trigger", detail: `Form "${p.formTitle ?? "n8n form"}" — share the generated form URL to collect submissions.` });
+  } else if (t === "n8n-nodes-base.scheduleTrigger") {
+    const rule = p.rule as any;
+    const det = rule?.interval?.[0]?.field
+      ? `Runs every ${rule.interval[0].minutesInterval ?? ""} ${rule.interval[0].field}.`
+      : "Runs on the schedule configured inside the node.";
+    triggerRows.push({ label: "Schedule Trigger", detail: det });
+  } else if (t.endsWith("Trigger")) {
+    triggerRows.push({ label: nodeLabel(t), detail: "Fires automatically on its event — activate the workflow and connect the service." });
+  }
+}
+
+// Use-cases (per-template markdown → HTML)
+const usecaseMd: string = (usecasesData as Record<string, string>)[slug] ?? "";
+const usecaseHtml: string = usecaseMd ? micromark(usecaseMd) : "";
 
 // Daisy-chain internal linking (Sturm/Quaid playbook): template money pages link
 // out to the most topically relevant tutorials, so authority flows both ways.
@@ -108,6 +346,108 @@ const jsonLd = {
       </div>
 
       <Content />
+
+      {wfNodes.length > 0 && (
+        <section aria-label="Workflow breakdown">
+          <div class="sec-head">
+            <h2><span class="sq" aria-hidden="true"></span>Workflow nodes</h2>
+          </div>
+          <div class="post">
+            <p>
+              This workflow is built from <strong>{wfNodes.length} nodes</strong>. Here's what each one does:
+            </p>
+            <table>
+              <thead>
+                <tr><th>#</th><th>Node</th><th>Type</th><th>What it does</th></tr>
+              </thead>
+              <tbody>
+                {wfNodes.map((n, i) => (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td><code>{n.name}</code></td>
+                    <td>{nodeLabel(n.type)}</td>
+                    <td>{nodePurpose(n.type)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {(credRows.length > 0 || placeholders.length > 0 || triggerRows.length > 0) && (
+        <section aria-label="Setup instructions">
+          <div class="sec-head">
+            <h2><span class="sq" aria-hidden="true"></span>Setup instructions</h2>
+          </div>
+          <div class="post">
+            {credRows.length > 0 && (
+              <>
+                <h3>1. Add your credentials</h3>
+                <p>
+                  In n8n go to <strong>Credentials → New</strong>, create each credential below,
+                  then open the named node and select it:
+                </p>
+                <table>
+                  <thead>
+                    <tr><th>Node</th><th>Credential to add</th></tr>
+                  </thead>
+                  <tbody>
+                    {credRows.map((r) => (
+                      <tr>
+                        <td><code>{r.node}</code></td>
+                        <td>{credLabel(r.credType)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+            {placeholders.length > 0 && (
+              <>
+                <h3>{credRows.length > 0 ? "2" : "1"}. Fill in your config values</h3>
+                <p>
+                  Open the config node listed below and replace each placeholder with your own value
+                  before activating the workflow:
+                </p>
+                <table>
+                  <thead>
+                    <tr><th>Node</th><th>Field</th><th>What to paste</th></tr>
+                  </thead>
+                  <tbody>
+                    {placeholders.map((p) => (
+                      <tr>
+                        <td><code>{p.node}</code></td>
+                        <td><code>{p.field}</code></td>
+                        <td><code>{p.value}</code><br /><small>{placeholderHint(p.value)}</small></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+            {triggerRows.length > 0 && (
+              <>
+                <h3>How this workflow starts</h3>
+                <ul>
+                  {triggerRows.map((tr) => (
+                    <li><strong>{tr.label}:</strong> {tr.detail}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {usecaseHtml && (
+        <section aria-label="Use cases">
+          <div class="sec-head">
+            <h2><span class="sq" aria-hidden="true"></span>Use cases</h2>
+          </div>
+          <div class="post" set:html={usecaseHtml} />
+        </section>
+      )}
 
       <div class="tpl-download tpl-download--bottom">
         <a class="tpl-download__btn" href={t.data.workflow} data-dl-url={t.data.workflow} data-dl-name={fileName}>

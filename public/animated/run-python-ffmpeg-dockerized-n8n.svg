@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of a container box receiving flowing data streams">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- outer drawing frame -->
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111" stroke-width="3"/>
+
+  <!-- container box (the n8n Docker container) -->
+  <g>
+    <rect x="320" y="140" width="200" height="170" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <line x1="320" y1="190" x2="520" y2="190" stroke="#111" stroke-width="2"/>
+    <!-- ridged container lines -->
+    <line x1="350" y1="140" x2="350" y2="310" stroke="#111" stroke-width="1.5" opacity="0.55"/>
+    <line x1="390" y1="140" x2="390" y2="310" stroke="#111" stroke-width="1.5" opacity="0.55"/>
+    <line x1="430" y1="140" x2="430" y2="310" stroke="#111" stroke-width="1.5" opacity="0.55"/>
+    <line x1="470" y1="140" x2="470" y2="310" stroke="#111" stroke-width="1.5" opacity="0.55"/>
+    <!-- orange accent stripe -->
+    <rect x="320" y="230" width="200" height="26" fill="#FF4D00" stroke="#111" stroke-width="2.5"/>
+  </g>
+
+  <!-- flowing code stream (left) drifting into the container -->
+  <g stroke="#111" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M 60 170 C 140 170, 160 210, 260 210 C 290 210, 300 225, 320 225">
+      <animate attributeName="stroke-dasharray" values="10 22;10 22" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dashoffset" from="0" to="-128" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 60 250 C 150 250, 170 270, 270 270 C 295 270, 305 285, 320 285">
+      <animate attributeName="stroke-dashoffset" from="0" to="-96" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="6 18;6 18" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- media / film strip stream (right) drifting into the container -->
+  <g stroke="#111" stroke-width="3" fill="none">
+    <path d="M 740 170 C 660 170, 640 210, 540 210 C 530 210, 525 215, 520 218">
+      <animate attributeName="stroke-dashoffset" from="0" to="-96" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="8 20;8 20" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 740 250 C 650 250, 630 270, 530 270 C 526 270, 522 276, 520 282">
+      <animate attributeName="stroke-dashoffset" from="0" to="-128" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="10 24;10 24" dur="11s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- processing pulses inside the container -->
+  <circle cx="420" cy="282" r="7" fill="#FF4D00" stroke="#111" stroke-width="2">
+    <animate attributeName="r" values="7;16;7" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0.35;1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- rising packet dots below the container -->
+  <g fill="#111">
+    <circle cx="380" cy="360" r="5">
+      <animate attributeName="cy" values="360;330;360" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="420" cy="370" r="5">
+      <animate attributeName="cy" values="370;335;370" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="460" cy="360" r="5" fill="#FF4D00">
+      <animate attributeName="cy" values="360;330;360" dur="10s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- slow orbiting node ring (abstract task runner) -->
+  <g transform="translate(640, 340)">
+    <circle cx="0" cy="0" r="34" fill="none" stroke="#111" stroke-width="2.5"/>
+    <g>
+      <circle cx="34" cy="0" r="8" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="36s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- slow drifting film-frame rectangles (media frames) -->
+  <g stroke="#111" stroke-width="2" fill="none">
+    <rect x="90" y="330" width="70" height="44">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 24 0; 0 0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="175" y="330" width="70" height="44" opacity="0.5">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -20 0; 0 0" dur="14s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

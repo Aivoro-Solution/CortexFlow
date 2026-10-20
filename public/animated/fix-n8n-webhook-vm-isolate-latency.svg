@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of alternating webhook latency and a warming isolate pool">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#0C0C10" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream drawing sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#0C0C10" stroke-width="3"/>
+
+  <!-- left: incoming webhook requests as alternating pulses -->
+  <g id="pulses">
+    <!-- fast pulses (short bars) -->
+    <g id="fastGroup">
+      <rect x="60" y="120" width="10" height="40" fill="#0C0C10"/>
+      <rect x="100" y="120" width="10" height="40" fill="#0C0C10"/>
+      <rect x="140" y="120" width="10" height="40" fill="#0C0C10"/>
+      <rect x="180" y="120" width="10" height="40" fill="#0C0C10"/>
+    </g>
+    <!-- slow pulses (tall orange bars, gently rising/falling to mark latency spikes) -->
+    <g id="slowGroup" fill="#FF4D00">
+      <rect x="80" y="60" width="12" height="100">
+        <animate attributeName="height" values="100;150;100" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="60;10;60" dur="8s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="120" y="60" width="12" height="100">
+        <animate attributeName="height" values="100;150;100" dur="8s" begin="2s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="60;10;60" dur="8s" begin="2s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="160" y="60" width="12" height="100">
+        <animate attributeName="height" values="100;150;100" dur="8s" begin="4s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="60;10;60" dur="8s" begin="4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="200" y="60" width="12" height="100">
+        <animate attributeName="height" values="100;150;100" dur="8s" begin="6s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="60;10;60" dur="8s" begin="6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- arrow into the isolate pool -->
+  <g stroke="#0C0C10" stroke-width="3" fill="none">
+    <line x1="250" y1="140" x2="330" y2="140"/>
+    <polyline points="315,128 332,140 315,152"/>
+  </g>
+
+  <!-- isolate pool: 3 cubes; the third one warms up (stroke turns orange) after cold start -->
+  <g id="pool">
+    <rect x="360" y="100" width="80" height="80" fill="#FFFDF5" stroke="#0C0C10" stroke-width="3"/>
+    <circle cx="400" cy="140" r="10" fill="#0C0C10"/>
+    <rect x="470" y="100" width="80" height="80" fill="#FFFDF5" stroke="#0C0C10" stroke-width="3"/>
+    <circle cx="510" cy="140" r="10" fill="#0C0C10"/>
+    <rect x="580" y="100" width="80" height="80" fill="#FFFDF5" stroke="#0C0C10" stroke-width="3">
+      <animate attributeName="stroke" values="#0C0C10;#FF4D00;#0C0C10" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="620" cy="140" r="10" fill="#FF4D00">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- response timeline: steady fast pulses leaving the pool -->
+  <g id="responses" fill="#0C0C10">
+    <rect x="700" y="130" width="8" height="30"/>
+    <rect x="716" y="130" width="8" height="30"/>
+    <rect x="732" y="130" width="8" height="30"/>
+    <rect x="748" y="130" width="8" height="30"/>
+    <g opacity="0.9">
+      <rect x="700" y="130" width="8" height="30">
+        <animate attributeName="y" values="130;110;130" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="30;50;30" dur="6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+
+  <!-- slow rotating dashed ring around pool = lazy acquire doing work once per cycle -->
+  <g transform="translate(510,140)">
+    <circle r="95" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="12 10">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- baseline floor line -->
+  <line x1="40" y1="330" x2="760" y2="330" stroke="#0C0C10" stroke-width="3"/>
+  <!-- schematic pipeline: request -> webhook -> isolate -> response -->
+  <g fill="none" stroke="#0C0C10" stroke-width="3">
+    <rect x="60" y="360" width="120" height="50" fill="#FFFDF5"/>
+    <rect x="220" y="360" width="120" height="50" fill="#FFFDF5"/>
+    <rect x="380" y="360" width="120" height="50" fill="#FF4D00"/>
+    <rect x="540" y="360" width="120" height="50" fill="#FFFDF5"/>
+    <line x1="180" y1="385" x2="220" y2="385"/>
+    <line x1="340" y1="385" x2="380" y2="385"/>
+    <line x1="500" y1="385" x2="540" y2="385"/>
+  </g>
+</svg>

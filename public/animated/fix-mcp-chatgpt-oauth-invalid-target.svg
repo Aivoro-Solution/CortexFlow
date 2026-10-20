@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: OAuth token blocked at one hostname doorway, redirected to the matching doorway">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0C0C10" stroke-width="0.6" opacity="0.12"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="#FF4D00" stroke-width="2"/>
+    </marker>
+  </defs>
+
+  <!-- cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#0C0C10" stroke-width="3"/>
+
+  <!-- left server block: main UI hostname -->
+  <g>
+    <rect x="70" y="150" width="150" height="180" fill="#FFFDF5" stroke="#0C0C10" stroke-width="4"/>
+    <rect x="70" y="150" width="150" height="44" fill="#0C0C10"/>
+    <rect x="92" y="216" width="106" height="12" fill="#0C0C10" opacity="0.85"/>
+    <rect x="92" y="240" width="70" height="12" fill="#0C0C10" opacity="0.45"/>
+    <rect x="92" y="264" width="88" height="12" fill="#0C0C10" opacity="0.65"/>
+  </g>
+
+  <!-- right server block: MCP hostname -->
+  <g>
+    <rect x="580" y="150" width="150" height="180" fill="#FFFDF5" stroke="#0C0C10" stroke-width="4"/>
+    <rect x="596" y="142" width="150" height="180" fill="none" stroke="#FF4D00" stroke-width="4"/>
+    <rect x="580" y="150" width="150" height="44" fill="#0C0C10"/>
+    <rect x="602" y="216" width="106" height="12" fill="#0C0C10" opacity="0.85"/>
+    <rect x="602" y="240" width="70" height="12" fill="#0C0C10" opacity="0.45"/>
+    <rect x="602" y="264" width="88" height="12" fill="#0C0C10" opacity="0.65"/>
+  </g>
+
+  <!-- pipeline between the two servers -->
+  <line x1="220" y1="240" x2="580" y2="240" stroke="#0C0C10" stroke-width="4" stroke-dasharray="14 10"/>
+
+  <!-- travelling token: key shape gliding left -> right, then looping back below -->
+  <g>
+    <circle cx="0" cy="0" r="14" fill="#FF4D00" stroke="#0C0C10" stroke-width="4"/>
+    <rect x="14" y="-4" width="26" height="8" fill="#FF4D00" stroke="#0C0C10" stroke-width="3"/>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 240 240 L 560 240 L 560 370 L 240 370 Z"/>
+  </g>
+
+  <!-- gate at the wrong doorway: shield that pulses, blocking the key -->
+  <g>
+    <path d="M 400 200 l 44 16 v 40 c 0 34 -20 56 -44 66 c -24 -10 -44 -32 -44 -66 v -40 z"
+          fill="#FFFDF5" stroke="#0C0C10" stroke-width="4"/>
+    <line x1="386" y1="248" x2="414" y2="276" stroke="#FF4D00" stroke-width="8"/>
+    <line x1="414" y1="248" x2="386" y2="276" stroke="#FF4D00" stroke-width="8"/>
+    <animateTransform attributeName="transform" type="scale" values="1;1.06;1" dur="8s" repeatCount="indefinite" additive="sum"/>
+  </g>
+
+  <!-- corrected redirect arrow: orange, arcing toward the right doorway -->
+  <path d="M 430 300 C 480 340, 540 340, 592 296" fill="none" stroke="#FF4D00" stroke-width="6" marker-end="url(#arrow)">
+    <animate attributeName="stroke-dashoffset" from="60" to="0" dur="6s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- slow rotating validator gear above the gate -->
+  <g opacity="0.9">
+    <g transform="translate(400 120)">
+      <circle r="30" fill="none" stroke="#0C0C10" stroke-width="4"/>
+      <g id="teeth">
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10"/>
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10" transform="rotate(60)"/>
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10" transform="rotate(120)"/>
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10" transform="rotate(180)"/>
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10" transform="rotate(240)"/>
+        <rect x="-4" y="-44" width="8" height="16" fill="#0C0C10" transform="rotate(300)"/>
+      </g>
+      <circle r="10" fill="#FF4D00" stroke="#0C0C10" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- drifting dotted baseline, slow -->
+  <g opacity="0.35">
+    <line x1="0" y1="400" x2="800" y2="400" stroke="#0C0C10" stroke-width="3" stroke-dasharray="4 16">
+      <animate attributeName="stroke-dashoffset" from="0" to="80" dur="12s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

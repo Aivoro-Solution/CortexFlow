@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of a single thinking block diverging into duplicated parallel branches">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-width="0.5" opacity="0.08">
+    <path d="M0 45 H800 M0 90 H800 M0 135 H800 M0 180 H800 M0 225 H800 M0 270 H800 M0 315 H800 M0 360 H800 M0 405 H800"/>
+    <path d="M80 0 V450 M160 0 V450 M240 0 V450 M320 0 V450 M400 0 V450 M480 0 V450 M560 0 V450 M640 0 V450 M720 0 V450"/>
+  </g>
+
+  <!-- single source thinking block (diamond) drifting gently -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="8s" repeatCount="indefinite"/>
+    <polygon points="150,225 215,160 280,225 215,290" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <polygon points="150,225 215,160 280,225 215,290" fill="none" stroke="#111111" stroke-width="2" opacity="0.25" transform="translate(10,10)"/>
+    <circle cx="215" cy="225" r="18" fill="none" stroke="#111111" stroke-width="5"/>
+    <circle cx="215" cy="225" r="6" fill="#FF4D00">
+      <animate attributeName="r" values="6;9;6" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- diverging branches -->
+  <g stroke="#111111" stroke-width="5" fill="none">
+    <path d="M280 225 C 360 225 380 140 470 120">
+      <animate attributeName="d" values="M280 225 C 360 225 380 140 470 120; M280 225 C 360 225 380 160 470 140; M280 225 C 360 225 380 140 470 120" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M280 225 C 360 225 380 310 470 330">
+      <animate attributeName="d" values="M280 225 C 360 225 380 310 470 330; M280 225 C 360 225 380 290 470 310; M280 225 C 360 225 380 310 470 330" dur="9s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- duplicated thinking block (upper branch) — slow drift -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 14 0; 0 0" dur="11s" repeatCount="indefinite"/>
+    <polygon points="520,80 570,35 620,80 570,125" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <polygon points="520,80 570,35 620,80 570,125" fill="none" stroke="#FF4D00" stroke-width="3" opacity="0.9" transform="translate(6,6)"/>
+    <circle cx="570" cy="80" r="10" fill="#111111"/>
+  </g>
+
+  <!-- duplicated thinking block (lower branch) — identical copy, one cracked -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; -10 6; 0 0" dur="10s" repeatCount="indefinite"/>
+    <polygon points="520,370 570,325 620,370 570,415" fill="#FFFDF5" stroke="#111111" stroke-width="6"/>
+    <!-- crack line in orange -->
+    <path d="M555 340 L 566 358 L 560 372 L 575 388 L 568 402" stroke="#FF4D00" stroke-width="5" fill="none"/>
+    <circle cx="570" cy="370" r="10" fill="none" stroke="#FF4D00" stroke-width="4"/>
+  </g>
+
+  <!-- signature pulse travelling between the duplicates -->
+  <g fill="#FF4D00" opacity="0.85">
+    <rect x="640" y="218" width="26" height="14" rx="3">
+      <animate attributeName="opacity" values="0.85;0.2;0.85" dur="6s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 -60; 0 60; 0 -60" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- slow rotating dashed ring marking the divergence zone -->
+  <g fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="12 10" opacity="0.55">
+    <circle cx="380" cy="225" r="95">
+      <animateTransform attributeName="transform" type="rotate" from="0 380 225" to="360 380 225" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- small accent nodes drifting on branches -->
+  <g fill="#FF4D00">
+    <circle cx="400" cy="168" r="7">
+      <animate attributeName="cy" values="168;182;168" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="282" r="7">
+      <animate attributeName="cy" values="282;268;282" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- corner frame marks -->
+  <g stroke="#111111" stroke-width="5">
+    <path d="M20 60 V20 H60" fill="none"/>
+    <path d="M740 20 H780 V60" fill="none"/>
+    <path d="M20 390 V430 H60" fill="none"/>
+    <path d="M740 430 H780 V390" fill="none"/>
+  </g>
+</svg>

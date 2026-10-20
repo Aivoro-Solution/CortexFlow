@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of a torn document being repaired">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.18"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- document outline: two torn halves drifting together (8s loop) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="8s" repeatCount="indefinite"/>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="-40 0; 0 0; -40 0" dur="8s" repeatCount="indefinite"/>
+      <path d="M 250 120 L 380 120 L 380 200 L 300 220 L 260 210 L 250 160 Z" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+      <rect x="270" y="145" width="80" height="8" fill="#111111" opacity="0.55"/>
+      <rect x="270" y="162" width="60" height="8" fill="#111111" opacity="0.35"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="40 0; 0 0; 40 0" dur="8s" repeatCount="indefinite"/>
+      <path d="M 420 250 L 550 250 L 550 330 L 440 330 L 400 290 L 380 270 Z" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+      <rect x="440" y="272" width="80" height="8" fill="#111111" opacity="0.55"/>
+      <rect x="440" y="289" width="55" height="8" fill="#111111" opacity="0.35"/>
+    </g>
+    <!-- orange repair seam that draws itself across the gap (12s) -->
+    <path d="M 385 205 L 420 245" fill="none" stroke="#FF4D00" stroke-width="5" stroke-linecap="round"
+          stroke-dasharray="6 10" opacity="0.9">
+      <animate attributeName="stroke-dashoffset" from="64" to="0" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="402" cy="225" r="7" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="5; 9; 5" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- rotating gear motif (slow, 40s) -->
+  <g transform="translate(150 330)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+      <circle r="34" fill="none" stroke="#111111" stroke-width="4"/>
+      <circle r="12" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+      <g stroke="#111111" stroke-width="5" stroke-linecap="round">
+        <line x1="0" y1="-34" x2="0" y2="-48"/>
+        <line x1="0" y1="34" x2="0" y2="48"/>
+        <line x1="-34" y1="0" x2="-48" y2="0"/>
+        <line x1="34" y1="0" x2="48" y2="0"/>
+        <line x1="-24" y1="-24" x2="-34" y2="-34"/>
+        <line x1="24" y1="-24" x2="34" y2="-34"/>
+        <line x1="-24" y1="24" x2="-34" y2="34"/>
+        <line x1="24" y1="24" x2="34" y2="34"/>
+      </g>
+    </g>
+    <rect x="-60" y="64" width="120" height="4" fill="#111111" opacity="0.5">
+      <animate attributeName="x" values="-60; -42; -60" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- container / image layer stack: pulsing orange block (7s) -->
+  <g transform="translate(620 300)">
+    <rect x="-50" y="-40" width="100" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="-50" y="-58" width="100" height="18" fill="#111111"/>
+    <rect x="-34" y="-22" width="68" height="44" fill="#FF4D00" stroke="#111111" stroke-width="3" opacity="0.92">
+      <animate attributeName="opacity" values="0.55; 0.95; 0.55" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="-34" y="-12" width="42" height="7" fill="#FFFDF5" opacity="0.8"/>
+    <rect x="-34" y="0" width="28" height="7" fill="#FFFDF5" opacity="0.5"/>
+  </g>
+
+  <!-- scan line drifting across the page (10s) -->
+  <rect x="230" y="100" width="340" height="6" fill="#FF4D00" opacity="0.35">
+    <animate attributeName="y" values="100; 340; 100" dur="10s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- small floating sparks (slow drift, 9s) -->
+  <g fill="#111111">
+    <circle cx="620" cy="120" r="4">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -24; 0 0" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="680" cy="150" r="3">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 20; 0 0" dur="9s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="140" r="3">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="9s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

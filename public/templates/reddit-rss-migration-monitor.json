@@ -1,0 +1,1112 @@
+{
+  "name": "Reddit RSS Migration Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📡 REDDIT RSS MIGRATION MONITOR\n**What it does:** Reddit kills RSS feeds on Nov 13, 2026 (public API ends Mar 2027). Paste your OLD `.rss` URLs → this workflow parses the subreddits + queries out of them → fetches posts through a swappable JSON source (Reddit public `.json` today, your Apify actor / JSON proxy for after Mar 2027) → dedupes by post ID against Google Sheets → AI relevance-scores each post → Telegram digest with a heartbeat note when nothing qualifies.\n\n**You'll need:**\n- Your old Reddit `.rss` feed URLs (find them before Nov 13)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- (Only needed after Mar 2027) an Apify actor endpoint or any JSON proxy URL\n\n**Status flow in Sheets:** `NEW` → `SCORED` → `SENT` (+ `IGNORED` for below-threshold posts)",
+        "height": 220,
+        "width": 5480,
+        "color": 5
+      },
+      "id": "2e8fc726-aa0d-4a40-b9d4-29b24c675ddc",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Paste old RSS feeds\nCONFIG — RSS Migration holds your old `.rss` URLs, the swappable source setting, and filters. Parse Old RSS Feed URLs extracts the subreddit + search query from each `.rss` URL and maps old RSS fields (title / link / pubDate) to Reddit JSON fields (title / permalink / created_utc).",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "988ab482-637b-40d5-99f1-f191d61f55bc",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Fetch via swappable source\nIF — JSON Source Selector routes on `json_source`. `reddit_public` → Fetch Reddit — Public JSON (polite User-Agent, no key). `custom` → Fetch Reddit — Custom JSON Source (your Apify actor or JSON proxy, ready for the Mar 2027 shutdown).",
+        "height": 420,
+        "width": 1120,
+        "color": 4
+      },
+      "id": "3eecf18b-5f57-4ad9-bfb9-a34bb85fc1b7",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Normalize, dedupe, log\nNormalize Reddit Posts — RSS Field Map flattens results and applies your keyword/upvote/recency filters → Read Logged Post IDs → Filter New Posts Only drops already-seen post IDs → Log Posts — Status NEW.",
+        "height": 420,
+        "width": 1080,
+        "color": 4
+      },
+      "id": "f78fb53f-3b8f-4eb3-a078-7d360777403c",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2280,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — AI relevance scoring\nAI Agent — Score Relevance reads each post against your `business_description` with a Structured Output Parser (relevance_score 0–100, verdict, why_relevant, suggested_action) → Update Sheet — Status SCORED.",
+        "height": 420,
+        "width": 1000,
+        "color": 4
+      },
+      "id": "2244fb62-a4ef-4585-a47b-4bdae0adc171",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3380,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Relevance gate\nIF — Relevance ≥ Threshold sends qualifying posts to Merge — Collect Alert Posts; below-threshold posts go to Update Sheet — Status IGNORED first, then join the merge.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "f058ec84-356a-4994-9416-35d627065df8",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Digest + heartbeat\nBuild Migration Digest builds one Telegram digest (top posts sorted by score). Empty runs send a 💓 heartbeat so you notice if the source ever breaks silently → Telegram — Send Digest → Expand Sent URLs → Update Sheet — Status SENT.",
+        "height": 420,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "868edcca-a407-4935-9bd6-deee4545b4bb",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "e0ea25bd-53a2-4b5f-9971-9ad62862814f",
+      "name": "Daily 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9432eb3a-7485-4f27-a11c-f0f858842ff1",
+              "name": "old_rss_feeds",
+              "type": "string",
+              "value": "https://www.reddit.com/r/n8n/new.rss\nhttps://www.reddit.com/r/selfhosted/search.rss?q=automation+workflow&restrict_sr=on&sort=new&t=week"
+            },
+            {
+              "id": "91b18165-612d-4341-a1e0-e64873b2688e",
+              "name": "json_source",
+              "type": "string",
+              "value": "reddit_public"
+            },
+            {
+              "id": "412a51c6-cc28-4027-9571-9b55802e981c",
+              "name": "custom_json_url",
+              "type": "string",
+              "value": "PASTE_YOUR_JSON_PROXY_OR_APIFY_ENDPOINT (only used when json_source = custom; must return Reddit-shaped JSON: data.children[].data)"
+            },
+            {
+              "id": "29763e62-7fa5-4d2b-9c90-7e6cc56d61f2",
+              "name": "min_upvotes",
+              "type": "string",
+              "value": "5"
+            },
+            {
+              "id": "79596360-d2a5-4832-af6e-c8990639063e",
+              "name": "min_relevance_score",
+              "type": "string",
+              "value": "60"
+            },
+            {
+              "id": "8b9bac8c-911d-4018-ac94-aa0a3da0c6fb",
+              "name": "watch_keywords",
+              "type": "string",
+              "value": "automation,workflow,n8n"
+            },
+            {
+              "id": "f2c1819b-0ca4-4da8-841b-e3a1b9ed1a97",
+              "name": "business_description",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_DESCRIPTION (what you sell or monitor for — the AI scores each post's relevance to this)"
+            },
+            {
+              "id": "738acbc7-191b-4b8c-8641-c5beea466bc7",
+              "name": "days_back",
+              "type": "string",
+              "value": "7"
+            },
+            {
+              "id": "00855bf6-de5c-4a17-9193-387fff7dd986",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "da7560d6-3ce0-48a4-b3d4-f0b4cbbf5b04",
+      "name": "CONFIG — RSS Migration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse old Reddit .rss URLs into fetchable subreddit/query specs.\n// RSS -> JSON field map (used later):\n//   <title>     -> p.title\n//   <link>      -> 'https://www.reddit.com' + p.permalink\n//   <pubDate>   -> new Date(p.created_utc * 1000).toISOString()\n//   <dc:creator>-> p.author\n//   <guid>      -> p.id  (used for dedupe)\nconst cfg = $('CONFIG — RSS Migration').first().json;\nconst source = (cfg.json_source || 'reddit_public').trim();\nif (source === 'custom' && (cfg.custom_json_url || '').includes('PASTE_YOUR')) {\n  throw new Error('CONFIG — RSS Migration: json_source is \"custom\" but custom_json_url still has the PASTE_YOUR placeholder.');\n}\nconst feeds = (cfg.old_rss_feeds || '').split('\\n').map(s => s.trim()).filter(Boolean);\nconst days = parseInt(cfg.days_back || '7', 10);\nconst t = days <= 1 ? 'day' : days <= 7 ? 'week' : days <= 30 ? 'month' : 'year';\nconst specs = [];\nfor (const raw of feeds) {\n  let u;\n  try { u = new URL(raw); } catch (e) { throw new Error('Could not parse RSS URL: ' + raw); }\n  const path = u.pathname.replace(/\\.rss$/, '');\n  const q = u.searchParams.get('q') || '';\n  const m = path.match(/^\\/r\\/([^/]+)(?:\\/(new|hot|top|rising|search))?$/);\n  let endpoint, subreddit = '', query = q, sort = 'new', restrict = '';\n  if (path === '/search') {\n    endpoint = 'https://www.reddit.com/search.json';  // all-Reddit search\n  } else if (m) {\n    subreddit = m[1];\n    const listing = m[2] || 'new';\n    if (listing === 'search') {\n      endpoint = 'https://www.reddit.com/r/' + subreddit + '/search.json';\n      restrict = '1';\n    } else {\n      endpoint = 'https://www.reddit.com/r/' + subreddit + '/' + listing + '.json';\n      sort = listing;\n      query = '';  // listing feeds have no query; ignore any q param\n    }\n  } else {\n    throw new Error('RSS URL not recognized (expected /r/<sub>/[new|hot|top|search].rss or /search.rss): ' + raw);\n  }\n  specs.push({ json: {\n    subreddit, query, sort, restrict_sr: restrict,\n    t_window: t, days_back: days,\n    endpoint_url: endpoint, source_label: raw,\n  }});\n}\nif (!specs.length) throw new Error('CONFIG — RSS Migration: paste at least one old .rss URL into old_rss_feeds.');\nreturn specs;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "9244661a-ff42-4f0a-9a09-d186a421f65a",
+      "name": "Parse Old RSS Feed URLs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-source",
+              "leftValue": "={{ $('CONFIG — RSS Migration').first().json.json_source }}",
+              "rightValue": "reddit_public",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "2be4fdfe-59f1-4cb8-8416-946ab1735168",
+      "name": "IF — JSON Source Selector",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.endpoint_url }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.query }}"
+            },
+            {
+              "name": "restrict_sr",
+              "value": "={{ $json.restrict_sr }}"
+            },
+            {
+              "name": "sort",
+              "value": "new"
+            },
+            {
+              "name": "t",
+              "value": "={{ $json.t_window }}"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-cortexflow-template/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25dd7ef3-2516-4af0-8f1d-9d2ddddaee33",
+      "name": "Fetch Reddit — Public JSON",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('CONFIG — RSS Migration').first().json.custom_json_url }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.query }}"
+            },
+            {
+              "name": "subreddit",
+              "value": "={{ $json.subreddit }}"
+            },
+            {
+              "name": "sort",
+              "value": "new"
+            },
+            {
+              "name": "t",
+              "value": "={{ $json.t_window }}"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-cortexflow-template/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "415908e2-0a64-4529-b515-154820f77f71",
+      "name": "Fetch Reddit — Custom JSON Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten Reddit JSON and apply the RSS -> JSON field map + filters.\nconst cfg = $('CONFIG — RSS Migration').first().json;\nconst minUp = parseInt(cfg.min_upvotes || '5', 10);\nconst kws = (cfg.watch_keywords || '').split(',').map(k => k.trim().toLowerCase()).filter(Boolean);\nconst cutoff = Date.now() - (parseInt(cfg.days_back || '7', 10) * 24 * 3600 * 1000);\nconst out = [];\nfor (const item of $input.all()) {\n  const children = (((item.json || {}).data || {}).children) || [];\n  for (const c of children) {\n    const p = c.data || {};\n    const title = p.title || '';\n    const selftext = p.selftext || '';\n    const text = (title + '\\n' + selftext).toLowerCase();\n    const hasKw = kws.length === 0 || kws.some(k => text.includes(k));\n    const upvotes = Number(p.ups != null ? p.ups : 0);\n    const createdAt = p.created_utc ? new Date(p.created_utc * 1000).toISOString() : '';\n    const fresh = p.created_utc ? (p.created_utc * 1000 >= cutoff) : True;\n    if (!hasKw || upvotes < minUp || !fresh) continue;\n    out.push({ json: {\n      date_found: new Date().toISOString().slice(0, 10),\n      post_id: p.id || '',\n      subreddit: p.subreddit || item.json.subreddit || '',\n      title: title,\n      post_url: 'https://www.reddit.com' + (p.permalink || ''),\n      author: p.author || '[deleted]',\n      upvotes: upvotes,\n      comments: Number(p.num_comments != null ? p.num_comments : 0),\n      created_at: createdAt,\n      selftext: selftext.slice(0, 2000),\n      status: 'NEW',\n    }});\n  }\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "70915091-0939-435e-9efc-240f8d4376fa",
+      "name": "Normalize Reddit Posts — RSS Field Map",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00b7eba2-e808-4489-a85f-65ff2d6e96f5",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "f0104e10-e9a9-41bd-aca1-fc4eb8cf287d",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "RedditMonitor"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "43809002-a51c-4dd6-9448-1f37054fe6e7",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "RedditMonitor"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "432d51f5-e4f4-4c5a-87e3-71a17979dbcf",
+      "name": "Read Logged Post IDs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop posts whose post ID is already in the sheet\nconst seen = new Set(\n  $('Read Logged Post IDs').all().map(i => (i.json['Post ID'] || i.json.post_id || '').trim()).filter(Boolean)\n);\nconst fresh = $('Normalize Reddit Posts — RSS Field Map').all()\n  .map(i => i.json)\n  .filter(p => p.post_id && !seen.has(String(p.post_id).trim()));\nreturn fresh.map(p => ({ json: p }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "3fb8af80-fce6-4396-a5cd-b4d18de5439e",
+      "name": "Filter New Posts Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "RedditMonitor"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.date_found }}",
+            "Post ID": "={{ $json.post_id }}",
+            "Subreddit": "={{ $json.subreddit }}",
+            "Title": "={{ $json.title }}",
+            "Post URL": "={{ $json.post_url }}",
+            "Author": "={{ $json.author }}",
+            "Upvotes": "={{ $json.upvotes }}",
+            "Comments": "={{ $json.comments }}",
+            "Created At": "={{ $json.created_at }}",
+            "Status": "={{ $json.status }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a5071a06-c9a7-4c46-973b-cc280d3c14b5",
+      "name": "Log Posts — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c15472fb-61a5-4be4-aecf-0d2fabd14e7a",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "c1ef9a6b-d3b1-4558-b1e8-f8b22fb8f0f1",
+              "name": "min_relevance_score",
+              "type": "string",
+              "value": "60"
+            },
+            {
+              "id": "00a2ee5b-a827-4576-aac0-d3ee6dfd1d44",
+              "name": "business_description",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_DESCRIPTION (what you sell or monitor for — the AI prompt is built from this, so be specific)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7dfb245d-41ae-4c2e-87ce-b923a025d4e7",
+      "name": "CONFIG — AI Scoring",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a relevance analyst. Score how relevant this Reddit post is to the business/topic below.\n\nOUR BUSINESS / WATCHLIST:\n{{ $('CONFIG — AI Scoring').first().json.business_description }}\n\nScore 0-100 strictly: 90+ = directly about our topic, actionable opportunity or threat; 60-89 = genuinely relevant discussion worth reading; 30-59 = loosely adjacent, probably skippable; 0-29 = irrelevant, jokes, or memes. Category verdict: HIGHLY_RELEVANT / RELEVANT / LOW / IGNORE. why_relevant: one sentence on the connection. suggested_action: one concrete next step (read, reply angle, or 'skip'). Output ONLY via the structured output parser."
+        },
+        "text": "=Subreddit: r/{{ $json.subreddit }}\nTitle: {{ $json.title }}\nUpvotes: {{ $json.upvotes }} | Comments: {{ $json.comments }}\nAuthor: u/{{ $json.author }} | Posted: {{ $json.created_at }}\nPost:\n{{ $json.selftext }}\nLink: {{ $json.post_url }}"
+      },
+      "id": "c49969bc-26f8-43d2-893e-4a155ed38b2f",
+      "name": "AI Agent — Score Relevance",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "d3f4b6d1-ff4e-4f1c-a803-4cd04c2986d5",
+      "name": "OpenAI Chat Model — Relevance Scoring",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"relevance_score\": 0,\n  \"verdict\": \"HIGHLY_RELEVANT / RELEVANT / LOW / IGNORE\",\n  \"why_relevant\": \"one sentence on the post's connection to our watchlist\",\n  \"suggested_action\": \"one concrete next step: read, reply angle, or 'skip'\"\n}"
+      },
+      "id": "f51ebb33-0f77-4427-b93e-55cfc95c5c94",
+      "name": "Structured Output Parser — Relevance Score",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2900,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "RedditMonitor"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Post ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Post ID": "={{ $json.post_id }}",
+            "Relevance Score": "={{ $json.output.relevance_score }}",
+            "Verdict": "={{ $json.output.verdict }}",
+            "Why Relevant": "={{ $json.output.why_relevant }}",
+            "Status": "SCORED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "27052f23-a4a0-4c98-88b2-99441008d3b4",
+      "name": "Update Sheet — Status SCORED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-score",
+              "leftValue": "={{ $json.output.relevance_score }}",
+              "rightValue": "={{ $('CONFIG — AI Scoring').first().json.min_relevance_score }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "e43ff79b-7610-4004-b452-4b0f3422add4",
+      "name": "IF — Relevance ≥ Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "RedditMonitor"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Post ID"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Post ID": "={{ $json.post_id }}",
+            "Status": "IGNORED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5faf7be3-6397-46ea-9a9a-52f90fbdb92f",
+      "name": "Update Sheet — Status IGNORED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3420,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "5402a1d7-55a5-4c4c-8f69-f27f368b147e",
+      "name": "Merge — Collect Alert Posts",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram digest; empty runs send a heartbeat so a broken source is noticed\nconst cfg = $('CONFIG — AI Scoring').first().json;\nconst threshold = parseInt(cfg.min_relevance_score || '60', 10);\nconst src = ($('CONFIG — RSS Migration').first().json.json_source || 'reddit_public').trim();\nconst items = $input.all().map(i => i.json);\nconst hits = items\n  .filter(j => j.output && Number(j.output.relevance_score) >= threshold)\n  .sort((a, b) => Number(b.output.relevance_score) - Number(a.output.relevance_score));\nconst date = new Date().toISOString().slice(0, 10);\nlet lines = ['\\U0001F4E1 *Reddit Migration Digest \\u2014 ' + date + '*', '',\n  '\\U0001F50C Source: ' + src, '\\U0001F4E5 ' + items.length + ' posts checked', ''];\nif (hits.length) {\n  lines.push('\\u2B50 ' + hits.length + ' relevant (score \\u2265 ' + threshold + '):', '');\n  for (const h of hits.slice(0, 10)) {\n    lines.push('\\u2022 *' + h.output.relevance_score + '* \\u2014 [' + (h.title || '').slice(0, 90) + '](' + h.post_url + ')');\n    lines.push('  r/' + h.subreddit + ' \\u2022 ' + h.output.verdict + ' \\u2022 _' + (h.output.why_relevant || '') + '_');\n  }\n} else {\n  lines.push('\\U0001F493 Heartbeat: scan ran clean \\u2014 ' + items.length + ' posts checked, none met your bar.');\n  lines.push('If this message ever stops arriving, check your JSON source (the Reddit public API ends March 2027).');\n}\nreturn [{ json: { digest: lines.join('\\n'), total: items.length, relevant: hits.length,\n  alerted_urls: hits.map(h => h.post_url) } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e8405a5b-253d-4a33-8013-405a3a0bdb95",
+      "name": "Build Migration Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0735d99b-c3fc-4266-8c8a-0ef217b5d557",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "46105fab-e9d4-4cf4-9f76-64d39bde55dc",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d74fe1db-8d33-4b0f-bea6-64039677145e",
+      "name": "Telegram — Send Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Expand the digest's alert URLs back into items so the sheet can flip to SENT\nconst urls = $input.first().json.alerted_urls || [];\nreturn urls.map(u => ({ json: { post_url: u } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d971604c-1060-414f-bd95-9877d60ed0a8",
+      "name": "Expand Sent URLs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "RedditMonitor"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Post URL"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Post URL": "={{ $json.post_url }}",
+            "Status": "SENT"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "17887155-865e-439a-839c-76e9802eec2f",
+      "name": "Update Sheet — Status SENT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4980,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 9AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — RSS Migration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — RSS Migration": {
+      "main": [
+        [
+          {
+            "node": "Parse Old RSS Feed URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Old RSS Feed URLs": {
+      "main": [
+        [
+          {
+            "node": "IF — JSON Source Selector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — JSON Source Selector": {
+      "main": [
+        [
+          {
+            "node": "Fetch Reddit — Public JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Reddit — Custom JSON Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Reddit — Public JSON": {
+      "main": [
+        [
+          {
+            "node": "Normalize Reddit Posts — RSS Field Map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Reddit — Custom JSON Source": {
+      "main": [
+        [
+          {
+            "node": "Normalize Reddit Posts — RSS Field Map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Reddit Posts — RSS Field Map": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Logged Post IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Logged Post IDs": {
+      "main": [
+        [
+          {
+            "node": "Filter New Posts Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Posts Only": {
+      "main": [
+        [
+          {
+            "node": "Log Posts — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Posts — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI Scoring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI Scoring": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Score Relevance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Score Relevance": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SCORED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status SCORED": {
+      "main": [
+        [
+          {
+            "node": "IF — Relevance ≥ Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Relevance ≥ Threshold": {
+      "main": [
+        [
+          {
+            "node": "Merge — Collect Alert Posts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status IGNORED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status IGNORED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Collect Alert Posts",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Collect Alert Posts": {
+      "main": [
+        [
+          {
+            "node": "Build Migration Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Migration Digest": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send Digest": {
+      "main": [
+        [
+          {
+            "node": "Expand Sent URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Sent URLs": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Relevance Scoring": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Score Relevance",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Relevance Score": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Score Relevance",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

@@ -45,6 +45,7 @@ Demand-research picks for the n8n templates library. The daily-workflow-research
 | 2026-10-18 | rfq-to-quote-automator | AI RFQ-to-Quote Automator | n8n forum Jobs "Seeking estimates: n8n developer for a small RFQ-to-quote prototype" (421 replies / 6,256 views Oct 17 — largest demand thread in scan series; buyer wants RFQ PDF → line-item extraction → catalogue + approved price-list matching → human review flags → Excel quote draft) |
 | 2026-10-19 | ghl-ai-lead-qualification-pipeline | AI Lead Qualification Pipeline for GoHighLevel | n8n forum Jobs "Seeking n8n/GHL Automation Developer — Insurance Lead Pipeline + AI Agents" (162 replies / 3,912 views, active Oct 18) — lead intake → AI qualification → GHL contact/opportunity sync; + Upwork 5.0 "AI lead qualification workflow that updates GoHighLevel" |
 | 2026-10-20 | reddit-rss-migration-monitor | Reddit RSS Migration Monitor | Reddit killing RSS Nov 13, 2026 (r/modnews official) + public API ends Mar 2027; dev.to "Replace Reddit RSS in n8n before November 13" (Oct 18) + YouTube fix video (Oct 16) + multi-source coverage — migration kit: old RSS URLs → JSON source pipeline |
+| 2026-10-21 | ai-jira-ticket-autopilot | AI Jira Ticket Autopilot — Agent Triages, Resolves & Notifies | n8n forum Oct 21 "N8n workflow idea: notify your team when an AI agent finishes a Jira ticket" (Help me Build my Workflow, 6 replies) |
 
 ## Research backlog (demand-validated, not yet built)
 

@@ -9,7 +9,7 @@ featured: false
 image: "/og/voicestudio-local-elevenlabs-alternative-n8n.webp"
 ---
 
-If your voice agent reads long content aloud, you have felt the meter running: every regeneration burns characters off a paid plan, and rewriting one line costs the same as the first draft. VoiceStudio — an open-source, fully-local ElevenLabs alternative built by Palash Debnath — has picked up roughly 72,000 GitHub stars in about six months, including around 15,000 in the last seven days alone (as of October 17, 2026), by attacking exactly that problem: voice cloning, voice design, video dubbing, dictation, transcription, and audiobook creation in 646 languages, all on your own machine, with no account and no usage meter.
+If your voice agent reads long content aloud, you have felt the meter running: every regeneration burns characters off a paid plan, and rewriting one line costs the same as the first draft. VoiceStudio — an open-source, fully-local [ElevenLabs](https://try.elevenlabs.io/cortexflow) alternative built by Palash Debnath — has picked up roughly 72,000 GitHub stars in about six months, including around 15,000 in the last seven days alone (as of October 17, 2026), by attacking exactly that problem: voice cloning, voice design, video dubbing, dictation, transcription, and audiobook creation in 646 languages, all on your own machine, with no account and no usage meter.
 
 But VoiceStudio is not interesting because it is free. It is interesting because it exposes a local API and an MCP server — which makes it a building block for n8n voice-agent stacks, not just a desktop app. By the end of this post you'll know what the tool actually is, where it genuinely beats a managed voice API and where it doesn't, and how to call its local API from an n8n workflow.
 
@@ -29,7 +29,7 @@ The privacy story is the point: the project states that local workflows run on y
 
 ## The head-to-head: what actually changes
 
-| Criterion | VoiceStudio (local) | Managed cloud API (e.g. ElevenLabs) |
+| Criterion | VoiceStudio (local) | Managed cloud API (e.g. [ElevenLabs](https://try.elevenlabs.io/cortexflow)) |
 |---|---|---|
 | Per-generation cost | $0 on your hardware after setup — your GPU, electricity, and time | Billed per character with plan caps; every retry counts |
 | Account | None — download, install, no sign-up | API key + account + billing |

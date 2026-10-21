@@ -69,7 +69,7 @@ n8n self-hosts; Make doesn't. Same story as the Zapier comparison: if data resid
 At low volumes with simple scenarios, yes — $9/mo for 10,000 ops is the cheapest paid entry anywhere. At high volumes with complex workflows, n8n's per-execution billing (or free self-hosting) usually wins.
 
 **Can Make do AI agents?**
-Yes — AI agents are included in every paid Make plan, and they're genuinely useful for standard business agents. For custom multi-agent architectures, n8n's LangChain nodes go further.
+Yes — AI agents are included in every paid [Make](https://www.make.com/en/register?pc=cortexflow) plan, and they're genuinely useful for standard business agents. For custom multi-agent architectures, n8n's LangChain nodes go further.
 
 **Does Make offer self-hosting?**
 No. Make is cloud-only. n8n is the self-hostable option.

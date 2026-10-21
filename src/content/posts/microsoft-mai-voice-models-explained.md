@@ -53,7 +53,7 @@ Run the arithmetic for a typical voice agent — say a customer-service agent ha
 
 A five-minute call in which the agent speaks roughly 2,500 characters costs about $0.045 of audio plus $0.04–0.055 of speech — under ten cents a call before the LLM's token cost, which still dominates the bill. The honest takeaway: these models don't make voice agents cheap, they make them *fast enough to feel human*. The biggest line item remains the reasoning model behind them.
 
-If you're comparing voice options more broadly, the incumbent worth knowing is ElevenLabs — its valuation doubled to $22B in 2026 on voice-agent demand ([our breakdown of what 15M calls a week means for builders](/blog/elevenlabs-22b-valuation-voice-agents/)). Microsoft's play isn't to undercut ElevenLabs on price; it's to make voice a first-class Azure citizen you procure next to your databases.
+If you're comparing voice options more broadly, the incumbent worth knowing is [ElevenLabs](https://try.elevenlabs.io/cortexflow) — its valuation doubled to $22B in 2026 on voice-agent demand ([our breakdown of what 15M calls a week means for builders](/blog/elevenlabs-22b-valuation-voice-agents/)). Microsoft's play isn't to undercut ElevenLabs on price; it's to make voice a first-class Azure citizen you procure next to your databases.
 
 ## Using MAI voice models in n8n today
 

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Schematic animation of a token bucket: tokens refill into a bucket and requests spend them one at a time toward an API node">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#E4E0D5" stroke-width="1">
+    <path d="M0 50 H800 M0 100 H800 M0 150 H800 M0 200 H800 M0 250 H800 M0 300 H800 M0 350 H800 M0 400 H800"/>
+    <path d="M50 0 V450 M100 0 V450 M150 0 V450 M200 0 V450 M250 0 V450 M300 0 V450 M350 0 V450 M400 0 V450 M450 0 V450 M500 0 V450 M550 0 V450 M600 0 V450 M650 0 V450 M700 0 V450 M750 0 V450"/>
+  </g>
+
+  <!-- Refill tap -->
+  <g stroke="#111" stroke-width="3" fill="#FFFDF5">
+    <rect x="150" y="60" width="120" height="22"/>
+    <rect x="200" y="82" width="20" height="34"/>
+  </g>
+  <rect x="160" y="67" width="60" height="8" fill="#E4E0D5"/>
+
+  <!-- Token drops falling from tap into bucket -->
+  <g fill="#111">
+    <circle r="8" cx="210" cy="130">
+      <animateMotion dur="6s" repeatCount="indefinite" path="M0 0 L0 74"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="8" cx="210" cy="130" fill="#FF4D00">
+      <animateMotion dur="6s" begin="3s" repeatCount="indefinite" path="M0 0 L0 74"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="6s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Bucket -->
+  <g stroke="#111" stroke-width="3">
+    <path d="M140 200 L165 360 L255 360 L280 200" fill="#FFFDF5"/>
+    <rect x="132" y="186" width="156" height="18" fill="#FFFDF5"/>
+  </g>
+  <!-- Token level inside bucket: rises and falls slowly -->
+  <path d="M152 268 L172 348 L248 348 L268 268 Z" fill="#E4E0D5">
+    <animate attributeName="d" values="M152 268 L172 348 L248 348 L268 268 Z; M157 300 L175 348 L245 348 L263 300 Z; M152 268 L172 348 L248 348 L268 268 Z" dur="18s" repeatCount="indefinite"/>
+  </path>
+  <g fill="#111">
+    <circle cx="185" cy="300" r="9">
+      <animate attributeName="cy" values="300;322;300" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="215" cy="288" r="9" fill="#FF4D00">
+      <animate attributeName="cy" values="288;314;288" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="240" cy="306" r="9">
+      <animate attributeName="cy" values="306;326;306" dur="18s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Gate -->
+  <g stroke="#111" stroke-width="3" fill="#FFFDF5">
+    <rect x="330" y="180" width="26" height="150"/>
+    <rect x="322" y="166" width="42" height="18" fill="#FF4D00"/>
+  </g>
+
+  <!-- Request path: bucket -> gate -> API -->
+  <path d="M288 285 H322 M356 285 H610" stroke="#111" stroke-width="3" fill="none"/>
+  <g fill="#111">
+    <circle r="7" cx="290" cy="285">
+      <animateMotion dur="9s" repeatCount="indefinite" path="M0 0 L320 0"/>
+      <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.8;0.9;1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="7" cx="290" cy="285" fill="#FF4D00">
+      <animateMotion dur="9s" begin="4.5s" repeatCount="indefinite" path="M0 0 L320 0"/>
+      <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.8;0.9;1" dur="9s" begin="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- API node -->
+  <g stroke="#111" stroke-width="3">
+    <rect x="610" y="230" width="130" height="110" fill="#FFFDF5"/>
+    <rect x="628" y="252" width="94" height="14" fill="#E4E0D5"/>
+    <rect x="628" y="276" width="64" height="14" fill="#E4E0D5"/>
+    <rect x="628" y="300" width="80" height="14" fill="#FF4D00">
+      <animate attributeName="width" values="80;40;80" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- Gauge above API node -->
+  <g stroke="#111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="675" cy="140" r="52"/>
+  </g>
+  <g stroke="#111" stroke-width="2">
+    <path d="M640 118 L646 128 M675 100 V112 M710 118 L704 128 M632 150 H644 M706 150 H718"/>
+  </g>
+  <g stroke="#FF4D00" stroke-width="4">
+    <line x1="675" y1="140" x2="650" y2="112">
+      <animateTransform attributeName="transform" type="rotate" values="-18 675 140; 42 675 140; -18 675 140" dur="18s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <circle cx="675" cy="140" r="6" fill="#111"/>
+</svg>

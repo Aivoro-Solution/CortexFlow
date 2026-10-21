@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of an agent request being rerouted between endpoints">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e3ddd2" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="18" y="18" width="764" height="414" fill="none" stroke="#111111" stroke-width="4"/>
+
+  <!-- left node: Agent Builder (abstract console) -->
+  <rect x="90" y="165" width="130" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <circle cx="155" cy="225" r="34" fill="none" stroke="#111111" stroke-width="4">
+    <animate attributeName="r" values="34;40;34" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="155" cy="225" r="10" fill="#FF4D00">
+    <animate attributeName="r" values="10;14;10" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- right node: custom endpoint (abstract server rack) -->
+  <rect x="580" y="165" width="130" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <line x1="600" y1="205" x2="690" y2="205"/>
+    <line x1="600" y1="225" x2="690" y2="225"/>
+    <line x1="600" y1="245" x2="690" y2="245"/>
+    <line x1="600" y1="265" x2="690" y2="265"/>
+  </g>
+  <circle cx="600" cy="205" r="4" fill="#FF4D00"/>
+  <circle cx="600" cy="245" r="4" fill="#111111"/>
+
+  <!-- middle node: gateway router (the one that mangles) -->
+  <rect x="345" y="185" width="110" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <polygon points="400,265 430,305 370,305" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 291" to="360 400 291" dur="30s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- top path: direct chat-completions lane (works, slow pulse) -->
+  <path id="lane-ok" d="M 220 165 L 220 120 L 580 120 L 580 165" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" from="0" to="-72" dur="6s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- bottom path: responses-first lane through the mangling gateway -->
+  <path id="lane-bad" d="M 220 285 L 345 285 L 345 225 L 455 225 L 455 285 L 580 285" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- packet: orange square travelling the bottom lane, gets stuck at gateway -->
+  <g>
+    <rect x="-14" y="-14" width="28" height="28" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateMotion dur="9s" repeatCount="indefinite" rotate="0"
+      path="M 220 285 L 345 285 L 345 225 L 455 225 L 455 285 L 580 285"/>
+    <animate attributeName="opacity" values="1;1;0.25;0.25;1;1" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- schema block that fails validation: flickering invalid block at gateway output -->
+  <g opacity="0.9">
+    <rect x="472" y="196" width="56" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="3" stroke-dasharray="6 5"/>
+    <line x1="472" y1="196" x2="528" y2="252" stroke="#FF4D00" stroke-width="4"/>
+    <animate attributeName="opacity" values="0.9;0.2;0.9" dur="6s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting diagnostic dots along the top lane -->
+  <circle cx="0" cy="0" r="6" fill="#111111">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 220 165 L 220 120 L 580 120 L 580 165"/>
+  </circle>
+  <circle cx="0" cy="0" r="6" fill="#FF4D00">
+    <animateMotion dur="12s" begin="6s" repeatCount="indefinite" path="M 220 165 L 220 120 L 580 120 L 580 165"/>
+  </circle>
+
+  <!-- slow orbiting ring around the mangling gateway -->
+  <circle cx="400" cy="225" r="64" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="4 10">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="36s" repeatCount="indefinite"/>
+  </circle>
+</svg>

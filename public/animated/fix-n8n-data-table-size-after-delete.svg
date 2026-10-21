@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Bloated drum shrinking under a slow press">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream background + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <!-- press frame -->
+    <line x1="400" y1="30" x2="400" y2="150"/>
+    <line x1="330" y1="30" x2="470" y2="30"/>
+    <rect x="330" y="16" width="140" height="16" fill="#111111" stroke="none"/>
+
+    <!-- press ram (orange accent) -->
+    <rect x="370" y="150" width="60" height="40" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="y" values="150;190;150" dur="9s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- drum: bloated ellipse that shrinks -->
+    <g>
+      <ellipse cx="400" cy="330" rx="170" ry="46" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+        <animate attributeName="rx" values="170;120;170" dur="12s" repeatCount="indefinite"/>
+      </ellipse>
+      <rect x="230" y="260" width="340" height="72" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+        <animate attributeName="x" values="230;280;230" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="width" values="340;240;340" dur="12s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- dead-tuple slabs inside the drum -->
+      <g stroke-width="2">
+        <rect x="280" y="286" width="60" height="18" fill="#111111" opacity="0.25">
+          <animate attributeName="opacity" values="0.25;0.05;0.25" dur="6s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="355" y="286" width="60" height="18" fill="#111111" opacity="0.25">
+          <animate attributeName="opacity" values="0.05;0.25;0.05" dur="6s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="430" y="286" width="60" height="18" fill="#FF4D00" opacity="0.35">
+          <animate attributeName="opacity" values="0.35;0.05;0.35" dur="7s" repeatCount="indefinite"/>
+        </rect>
+        <line x1="282" y1="288" x2="338" y2="302" stroke="#111111" opacity="0.4"/>
+        <line x1="432" y1="288" x2="488" y2="302" stroke="#111111" opacity="0.4"/>
+      </g>
+
+      <!-- squeezed-out reclaimed space puffs drifting up -->
+      <circle cx="250" cy="230" r="10" fill="#FF4D00" opacity="0">
+        <animate attributeName="cy" values="260;140" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="560" cy="230" r="8" fill="#111111" opacity="0">
+        <animate attributeName="cy" values="260;150" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.5;0" dur="10s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="470" cy="240" r="6" fill="#FF4D00" opacity="0">
+        <animate attributeName="cy" values="255;130" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.6;0" dur="11s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- gauge dial slowly returning to low -->
+    <g>
+      <circle cx="650" cy="360" r="42" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="650" y1="360" x2="650" y2="328" stroke="#FF4D00" stroke-width="4">
+        <animateTransform attributeName="transform" type="rotate" values="55 650 360;-45 650 360;55 650 360" dur="14s" repeatCount="indefinite"/>
+      </line>
+      <circle cx="650" cy="360" r="6" fill="#111111" stroke="none"/>
+    </g>
+
+    <!-- slow rotating status ring -->
+    <circle cx="150" cy="360" r="34" stroke-dasharray="10 8">
+      <animateTransform attributeName="transform" type="rotate" values="0 150 360;360 150 360" dur="30s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

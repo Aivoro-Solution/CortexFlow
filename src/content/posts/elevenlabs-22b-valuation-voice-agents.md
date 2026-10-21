@@ -9,7 +9,7 @@ draft: false
 featured: false
 ---
 
-ElevenLabs closed a **$300 million employee tender offer** on September 30 that values the voice-AI company at **$22 billion** — double the $11 billion valuation it held after raising $500 million in its Series D round in February. The reason for the doubling is the company's voice agents, which now handle more than **15 million conversations a week**, three times the February level. If you build agents or automations, this is the clearest signal yet that voice has moved from demo to deployed workload. Here are the verified facts, what the numbers actually prove, and what to watch before you build on voice yourself.
+[ElevenLabs](https://try.elevenlabs.io/cortexflow) closed a **$300 million employee tender offer** on September 30 that values the voice-AI company at **$22 billion** — double the $11 billion valuation it held after raising $500 million in its Series D round in February. The reason for the doubling is the company's voice agents, which now handle more than **15 million conversations a week**, three times the February level. If you build agents or automations, this is the clearest signal yet that voice has moved from demo to deployed workload. Here are the verified facts, what the numbers actually prove, and what to watch before you build on voice yourself.
 
 One note on sourcing: the facts below come from Reuters' September 30 reporting on the tender. Company figures (conversation counts, language coverage) are company-reported and I have not tested ElevenLabs' voice agents hands-on.
 

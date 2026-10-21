@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: an encrypted flow from a client into a proxy tower, then a plain flow out to a backend, with a pulsing verification seal on the proxy">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111" stroke-width="0.25" opacity="0.25"/>
+    </pattern>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111" stroke-width="3"/>
+
+  <!-- ======== LEG 1: client -> proxy (encrypted) ======== -->
+  <!-- client station -->
+  <g>
+    <rect x="90" y="190" width="110" height="70" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <rect x="98" y="198" width="110" height="70" fill="none" stroke="#111" stroke-width="2" opacity="0.35"/>
+    <rect x="118" y="212" width="54" height="26" fill="#111"/>
+  </g>
+  <!-- encrypted pipe leg 1: thick black line with orange dashed core -->
+  <line x1="200" y1="225" x2="360" y2="225" stroke="#111" stroke-width="14" stroke-linecap="round"/>
+  <line x1="200" y1="225" x2="360" y2="225" stroke="#FF4D00" stroke-width="6" stroke-dasharray="18 14" stroke-linecap="round">
+    <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="3s" repeatCount="indefinite"/>
+  </line>
+  <!-- packet gliding along the encrypted leg -->
+  <circle cx="200" cy="225" r="10" fill="#FF4D00" stroke="#111" stroke-width="3" filter="url(#soft)">
+    <animate attributeName="cx" values="200;360" keyTimes="0;1" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.9;0.95;1" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ======== proxy tower (TLS termination point) ======== -->
+  <g>
+    <rect x="360" y="120" width="90" height="210" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <rect x="368" y="128" width="90" height="210" fill="none" stroke="#111" stroke-width="2" opacity="0.35"/>
+    <!-- tower bands -->
+    <line x1="360" y1="170" x2="450" y2="170" stroke="#111" stroke-width="2"/>
+    <line x1="360" y1="280" x2="450" y2="280" stroke="#111" stroke-width="2"/>
+    <!-- seal: pulsing orange ring = TLS terminated + cert verified -->
+    <circle cx="405" cy="225" r="34" fill="none" stroke="#FF4D00" stroke-width="6">
+      <animate attributeName="r" values="34;40;34" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values="1;0.45;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="405" cy="225" r="22" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <!-- padlock body -->
+    <rect x="395" y="224" width="20" height="16" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+    <path d="M 399 224 v -6 a 6 6 0 0 1 12 0 v 6" fill="none" stroke="#111" stroke-width="3"/>
+  </g>
+
+  <!-- ======== LEG 2: proxy -> backend (plain pipe) ======== -->
+  <line x1="450" y1="225" x2="610" y2="225" stroke="#111" stroke-width="14" stroke-linecap="round"/>
+  <line x1="450" y1="225" x2="610" y2="225" stroke="#111" stroke-width="6" stroke-dasharray="18 14" stroke-linecap="round" opacity="0.45">
+    <animate attributeName="stroke-dashoffset" from="0" to="-64" dur="9s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="450" cy="225" r="8" fill="#111" opacity="0.75">
+    <animate attributeName="cx" values="450;610" keyTimes="0;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.75;0.75;0;0" keyTimes="0;0.9;0.95;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ======== backend tank (Postgres compute) ======== -->
+  <g>
+    <rect x="610" y="190" width="110" height="70" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <rect x="618" y="198" width="110" height="70" fill="none" stroke="#111" stroke-width="2" opacity="0.35"/>
+    <ellipse cx="665" cy="190" rx="55" ry="12" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <ellipse cx="665" cy="190" rx="55" ry="12" fill="none" stroke="#FF4D00" stroke-width="2" opacity="0.0"/>
+  </g>
+
+  <!-- ======== misleading gauge over the backend leg ======== -->
+  <g>
+    <circle cx="665" cy="120" r="40" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <line x1="665" y1="120" x2="665" y2="152" stroke="#111" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0 665 120;-25 665 120;0 665 120" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="665" cy="120" r="5" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+    <circle cx="645" cy="140" r="3" fill="#111"/>
+    <circle cx="685" cy="140" r="3" fill="#111"/>
+  </g>
+
+  <!-- ======== verified gauge over the client leg ======== -->
+  <g>
+    <circle cx="280" cy="120" r="40" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <circle cx="280" cy="120" r="24" fill="none" stroke="#FF4D00" stroke-width="6">
+      <animate attributeName="stroke-opacity" values="1;0.4;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="280" cy="120" r="5" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+  </g>
+
+  <!-- dotted tether between the two gauges: same truth, two readouts -->
+  <line x1="320" y1="120" x2="625" y2="120" stroke="#111" stroke-width="2" stroke-dasharray="6 8" opacity="0.5"/>
+</svg>

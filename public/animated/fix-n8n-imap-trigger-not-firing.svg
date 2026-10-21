@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of an email trigger reconnecting: dead signal revived by a pulse">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111111" stroke-width="1" opacity="0.18">
+    <path d="M0 75 H800 M0 150 H800 M0 225 H800 M0 300 H800 M0 375 H800"/>
+    <path d="M100 0 V450 M200 0 V450 M300 0 V450 M400 0 V450 M500 0 V450 M600 0 V450 M700 0 V450"/>
+  </g>
+
+  <!-- left: inbox tray with envelopes waiting -->
+  <g>
+    <rect x="60" y="300" width="160" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="72" y="288" width="136" height="24" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g>
+      <rect x="88" y="250" width="56" height="40" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <path d="M88 250 L116 276 L144 250" fill="none" stroke="#111111" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="7s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="152" y="238" width="56" height="40" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <path d="M152 238 L180 264 L208 238" fill="none" stroke="#111111" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 12; 0 0" dur="9s" begin="1s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- middle: dead signal waves from a cracked bell -->
+  <g>
+    <path d="M330 130 L380 170 L330 210 Z" fill="none" stroke="#111111" stroke-width="3" opacity="0.35"/>
+    <line x1="318" y1="118" x2="392" y2="222" stroke="#111111" stroke-width="4" opacity="0.35"/>
+    <path d="M410 170 H560" stroke="#111111" stroke-width="3" stroke-dasharray="14 12" opacity="0.5">
+      <animate attributeName="stroke-dashoffset" values="0;52" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- reconnect pulse button -->
+  <g>
+    <rect x="575" y="140" width="90" height="90" fill="#FFD02F" stroke="#111111" stroke-width="4"/>
+    <circle cx="620" cy="185" r="24" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="r" values="24;30;24" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="185" r="38" fill="none" stroke="#FF4D00" stroke-width="2" opacity="0.6">
+      <animate attributeName="r" values="38;56;38" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0.05;0.6" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- right: live signal waves arriving at workflow nodes -->
+  <g>
+    <path d="M665 170 C 700 150, 710 200, 745 185" fill="none" stroke="#FF4D00" stroke-width="4" opacity="0.85">
+      <animate attributeName="opacity" values="0.85;0.3;0.85" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M665 205 C 700 190, 705 235, 745 220" fill="none" stroke="#111111" stroke-width="3" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;0.2;0.6" dur="7s" begin="2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- rotating gear motif (slow) -->
+  <g transform="translate(280, 320)">
+    <g stroke="#111111" stroke-width="3" fill="none">
+      <circle r="34"/>
+      <path d="M0 -46 V-34 M0 34 V46 M-46 0 H-34 M34 0 H46 M-33 -33 L-24 -24 M33 33 L24 24 M-33 33 L-24 24 M33 -33 L24 -24"/>
+      <circle r="10" fill="#FF4D00" stroke="#111111"/>
+    </g>
+    <animateTransform attributeName="transform" type="rotate" from="0 280 320" to="360 280 320" dur="40s" repeatCount="indefinite"/>
+  </g>
+</svg>

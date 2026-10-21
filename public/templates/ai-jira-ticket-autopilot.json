@@ -1,0 +1,1090 @@
+{
+  "name": "AI Jira Ticket Autopilot",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 AI JIRA TICKET AUTOPILOT\n**What it does:** Every hour → fetches open Jira tickets → dedupes against Google Sheets → an AI agent triages each ticket with structured output → safe tickets get auto-resolved (Jira comment + Done transition + `ai-resolved` label) → risky tickets get escalated to a human → your team gets one Telegram digest.\n\n**You'll need:**\n- Jira Cloud (free at atlassian.com) + an API token (Atlassian account → Security → API tokens)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credential\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `TRIAGED` → `RESOLVED` / `ESCALATED`",
+        "height": 220,
+        "width": 5980,
+        "color": 5
+      },
+      "id": "eb555ddb-a308-41c5-a457-884d40bf8e5c",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Fetch open Jira tickets\nHourly schedule trigger → Basic-auth header built from your Jira email + API token → Jira REST API `/rest/api/3/search` with JQL `project=<key> AND status in (\"To Do\",\"Open\")` → normalize key/summary/description/priority/reporter/URL.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "8f8e84a8-e7fb-4ec4-81b9-dd709b9c2e27",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Dedupe + log to Google Sheets\nRead already-logged ticket keys → keep only new tickets → append rows with status `NEW`.",
+        "height": 420,
+        "width": 1140,
+        "color": 4
+      },
+      "id": "ebcd6724-88a7-4941-80e1-461e6bbdc2d8",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI triage with structured output\nAI Ticket Triage Agent (gpt-4o-mini) decides per ticket: auto-resolve or escalate — returns can_resolve, confidence 0–100, category, resolution comment, escalation reason via a Structured Output Parser → sheet flips to `TRIAGED`.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "d9c2d13d-731e-48a0-85bc-8b77f5db961b",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Auto-resolve / escalate gate\n`IF — Auto-Resolve?` passes only can_resolve=true AND confidence ≥ your threshold.\nTRUE: post the AI's resolution comment → look up the Jira \"Done\" transition → transition the ticket → add your `ai-resolved` label → sheet flips to `RESOLVED`.\nFALSE: sheet flips to `ESCALATED` with the AI's escalation reason for a human.",
+        "height": 560,
+        "width": 1640,
+        "color": 4
+      },
+      "id": "7fe34ff4-ccf6-4114-b63b-7615655718c5",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3040,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Team digest + Telegram\nBoth branches merge → one digest built (resolved count + escalated count + per-ticket lines with links) → Telegram to your team.",
+        "height": 420,
+        "width": 1020,
+        "color": 4
+      },
+      "id": "b986cd09-29b5-4359-855e-c2c6de32b85c",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4720,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "a08e9895-8417-45e7-8874-ddc027ac1e17",
+      "name": "Hourly Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6bcd5010-5007-4355-8614-4dccf751537a",
+              "name": "jira_host",
+              "type": "string",
+              "value": "yourcompany.atlassian.net"
+            },
+            {
+              "id": "a1976403-39b2-4b51-b23b-3c9343bd8144",
+              "name": "jira_email",
+              "type": "string",
+              "value": "PASTE_YOUR_JIRA_EMAIL"
+            },
+            {
+              "id": "3cb2f8f8-d026-4d31-b9f4-278e9c4e7c2f",
+              "name": "jira_api_token",
+              "type": "string",
+              "value": "PASTE_YOUR_JIRA_API_TOKEN"
+            },
+            {
+              "id": "c97568cc-80c0-48fc-84f9-4c6391ff3811",
+              "name": "project_key",
+              "type": "string",
+              "value": "PROJ"
+            },
+            {
+              "id": "65cc8ba0-d92f-4e54-a00a-2698069ce142",
+              "name": "confidence_threshold",
+              "type": "string",
+              "value": "75"
+            },
+            {
+              "id": "65acbdeb-9961-4151-a54b-9b22efaa6747",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "da6e50e8-0c3b-4499-8feb-0cb46d373898",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "654a78b0-662f-4602-84da-4bf1ba67edf1",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "TicketLog"
+            },
+            {
+              "id": "bb8921ea-5e34-41e2-8d96-32f0b931d897",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "2919bc77-b8c8-48f2-a7f6-baca4a27c196",
+              "name": "label_resolved",
+              "type": "string",
+              "value": "ai-resolved"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8a928d2-8b44-4094-9f7f-35f32800c9e0",
+      "name": "CONFIG — Jira + AI",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the Jira Basic auth header from email + API token (no creds hardcoded)\nconst cfg = $('CONFIG — Jira + AI').first().json;\nconst email = (cfg.jira_email || '').trim();\nconst token = (cfg.jira_api_token || '').trim();\nif (!email || !token || token.indexOf('PASTE_YOUR') === 0 || email.indexOf('PASTE_YOUR') === 0) {\n  throw new Error('Fill jira_email and jira_api_token in the \"CONFIG — Jira + AI\" node first (Atlassian account → Security → API tokens).');\n}\nconst auth = 'Basic ' + Buffer.from(email + ':' + token, 'utf8').toString('base64');\nreturn $input.all().map(i => ({ json: { ...i.json, auth_header: auth } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "5ab7698c-942a-4055-a03e-ab35b3134d83",
+      "name": "Build Jira Auth Header",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://{{ $('CONFIG — Jira + AI').first().json.jira_host }}/rest/api/3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "=project={{ $('CONFIG — Jira + AI').first().json.project_key }} AND status in (\"To Do\",\"Open\") ORDER BY created DESC"
+            },
+            {
+              "name": "maxResults",
+              "value": "25"
+            },
+            {
+              "name": "fields",
+              "value": "summary,description,priority,status,reporter,created"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Build Jira Auth Header').first().json.auth_header }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1bc1f79-a766-4feb-b103-6d6748c135d8",
+      "name": "Jira — Fetch Open Tickets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten Jira issues into clean ticket objects (ADF description -> plain text)\nfunction adfText(node) {\n  if (!node) return '';\n  if (typeof node === 'string') return node;\n  if (Array.isArray(node)) return node.map(adfText).join('\\n');\n  let t = node.text || '';\n  if (node.content) t += (t ? '\\n' : '') + adfText(node.content);\n  return t;\n}\nconst cfg = $('CONFIG — Jira + AI').first().json;\nconst host = (cfg.jira_host || '').trim();\nconst issues = $input.first().json.issues || [];\nreturn issues.map(issue => {\n  const f = issue.fields || {};\n  return { json: {\n    ticket_key: issue.key,\n    summary: (f.summary || '').slice(0, 200),\n    description: adfText(f.description).slice(0, 2000),\n    priority: (f.priority && f.priority.name) || '',\n    status: (f.status && f.status.name) || '',\n    reporter: (f.reporter && f.reporter.displayName) || '',\n    created: f.created || '',\n    ticket_url: 'https://' + host + '/browse/' + issue.key,\n    status_flow: 'NEW',\n  }};\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "fba64776-6de6-46a8-9e26-5a00cf45bd23",
+      "name": "Normalize Tickets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "TicketLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {}
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "ba10e475-2ef4-43ea-b68e-ab1033711781",
+      "name": "Read Logged Ticket Keys",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop tickets whose key is already in the sheet\nconst seen = new Set(\n  $('Read Logged Ticket Keys').all().map(i => (i.json['Ticket Key'] || i.json.ticket_key || '').trim()).filter(Boolean)\n);\nconst fresh = $('Normalize Tickets').all()\n  .map(i => i.json)\n  .filter(t => t.ticket_key && !seen.has(t.ticket_key.trim()));\nreturn fresh.map(t => ({ json: t }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "cfcd77c2-ec6e-417f-9e6b-a80eaf502653",
+      "name": "Filter New Tickets Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "TicketLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Ticket Key": "={{ $json.ticket_key }}",
+            "Summary": "={{ $json.summary }}",
+            "Priority": "={{ $json.priority }}",
+            "Reporter": "={{ $json.reporter }}",
+            "Ticket URL": "={{ $json.ticket_url }}",
+            "Created": "={{ $json.created }}",
+            "Status": "NEW"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "9ab93c4a-6c9a-412f-a798-36a1288cac03",
+      "name": "Log Tickets — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a senior support engineer triaging Jira tickets for project {{ $('CONFIG — Jira + AI').first().json.project_key }}. For each ticket decide: can it be safely AUTO-RESOLVED (clear question with a known answer, simple config/access change with a documented procedure, duplicate of an already-resolved ticket) or must it be ESCALATED to a human (ambiguous requirements, production incidents, security issues, anything touching customer data, billing, or access grants, low confidence)? Be conservative: when in doubt, escalate. Output ONLY via the structured output parser — no prose."
+        },
+        "text": "=Ticket: {{ $json.ticket_key }} — {{ $json.summary }}\nPriority: {{ $json.priority }} | Status: {{ $json.status }} | Reporter: {{ $json.reporter }}\nURL: {{ $json.ticket_url }}\n\nDescription:\n{{ $json.description }}"
+      },
+      "id": "51faf7c2-f46e-478b-b637-d68619e48881",
+      "name": "AI Ticket Triage Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2060,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "e9371a3e-ce1e-4ef6-9a0a-76f4d9fe4603",
+      "name": "OpenAI Chat Model — Triage",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2060,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"can_resolve\": true,\n  \"confidence\": 85,\n  \"summary\": \"one-line summary of the issue\",\n  \"category\": \"BUG / QUESTION / ACCESS_REQUEST / FEATURE_REQUEST / INCIDENT / OTHER\",\n  \"resolution_comment\": \"the exact comment to post on the Jira ticket when auto-resolving (empty string when escalating)\",\n  \"escalation_reason\": \"one-line reason a human must handle this (empty string when auto-resolving)\"\n}"
+      },
+      "id": "7a5d3c0c-477c-48df-9a3d-dd328292008b",
+      "name": "Structured Output Parser — Triage",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "TicketLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Ticket Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Ticket Key": "={{ $json.ticket_key }}",
+            "AI Summary": "={{ $json.output.summary }}",
+            "Category": "={{ $json.output.category }}",
+            "Can Resolve": "={{ $json.output.can_resolve }}",
+            "Confidence": "={{ $json.output.confidence }}",
+            "Escalation Reason": "={{ $json.output.escalation_reason }}",
+            "Status": "TRIAGED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "52d4d990-ba12-4d22-a2cb-87bea771b4cb",
+      "name": "Update Sheet — Status TRIAGED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-can-resolve",
+              "leftValue": "={{ $json.output.can_resolve === true ? 'yes' : 'no' }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            },
+            {
+              "id": "if-confidence",
+              "leftValue": "={{ $json.output.confidence }}",
+              "rightValue": "={{ $('CONFIG — Jira + AI').first().json.confidence_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "c78f9bf0-ecf6-4af5-96c0-8f954158f83d",
+      "name": "IF — Auto-Resolve?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2580,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://{{ $('CONFIG — Jira + AI').first().json.jira_host }}/rest/api/3/issue/{{ $json.ticket_key }}/comment",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Build Jira Auth Header').first().json.auth_header }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"body\": {\"type\": \"doc\", \"version\": 1, \"content\": [{\"type\": \"paragraph\", \"content\": [{\"type\": \"text\", \"text\": \"{{ $json.output.resolution_comment }}\"}]}]}}",
+        "options": {}
+      },
+      "id": "e5b7db9d-a26c-40a2-ad5d-07abde5b1d98",
+      "name": "Jira — Add Resolution Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2840,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://{{ $('CONFIG — Jira + AI').first().json.jira_host }}/rest/api/3/issue/{{ $('IF — Auto-Resolve?').item.json.ticket_key }}/transitions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Build Jira Auth Header').first().json.auth_header }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ff76841c-0639-47f6-b8bf-15e505eabbb0",
+      "name": "Jira — Get Transitions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3100,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the Jira \"Done\" transition id; carry ticket context forward (paired by index)\nconst ifItems = $('IF — Auto-Resolve?').all();\nconst auth = $('Build Jira Auth Header').first().json.auth_header;\nreturn $input.all().map((item, i) => {\n  const ticket = (ifItems[i] && ifItems[i].json) || {};\n  const transitions = item.json.transitions || [];\n  const done = transitions.find(t => String(t.name || '').toLowerCase() === 'done');\n  if (!done) {\n    throw new Error('No \"Done\" transition found for ticket ' + (ticket.ticket_key || '?') + ' — check your Jira workflow has a transition named \"Done\".');\n  }\n  return { json: {\n    ticket_key: ticket.ticket_key,\n    ticket_url: ticket.ticket_url,\n    summary: ticket.summary,\n    confidence: ticket.output ? ticket.output.confidence : 0,\n    ai_category: ticket.output ? ticket.output.category : '',\n    resolution_comment: ticket.output ? ticket.output.resolution_comment : '',\n    done_transition_id: done.id,\n    auth_header: auth,\n  }};\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "acdaf8b6-135c-4380-b468-514d5bbdbaf3",
+      "name": "Pick Done Transition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://{{ $('CONFIG — Jira + AI').first().json.jira_host }}/rest/api/3/issue/{{ $('Pick Done Transition').item.json.ticket_key }}/transitions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Pick Done Transition').item.json.auth_header }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"transition\": {\"id\": \"{{ $('Pick Done Transition').item.json.done_transition_id }}\"}}",
+        "options": {}
+      },
+      "id": "06e066f3-9629-496b-821d-b930135f1ece",
+      "name": "Jira — Transition to Done",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3620,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://{{ $('CONFIG — Jira + AI').first().json.jira_host }}/rest/api/3/issue/{{ $('Pick Done Transition').item.json.ticket_key }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Pick Done Transition').item.json.auth_header }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"update\": {\"labels\": [{\"add\": \"{{ $('CONFIG — Jira + AI').first().json.label_resolved }}\"}]}}",
+        "options": {}
+      },
+      "id": "2459a13d-4faa-4a3c-9db9-a38e800bb200",
+      "name": "Jira — Add Resolved Label",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rebuild a clean digest item after the Jira writes (paired by index with Pick output)\nconst ctx = $('Pick Done Transition').all();\nreturn $input.all().map((item, i) => {\n  const c = (ctx[i] && ctx[i].json) || {};\n  return { json: {\n    ticket_key: c.ticket_key,\n    ticket_url: c.ticket_url,\n    summary: c.summary,\n    verdict: 'RESOLVED',\n    confidence: c.confidence,\n    ai_category: c.ai_category,\n    resolution_comment: c.resolution_comment,\n  }};\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "79ef155b-0e9a-48f8-9e4d-eeaa6343cc87",
+      "name": "Build Resolved Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4140,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "TicketLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Ticket Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Ticket Key": "={{ $json.ticket_key }}",
+            "Confidence": "={{ $json.confidence }}",
+            "Category": "={{ $json.ai_category }}",
+            "Resolution Comment": "={{ $json.resolution_comment }}",
+            "Status": "RESOLVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d5d9198d-7915-4757-8fd6-f29876e1ec1c",
+      "name": "Update Sheet — Status RESOLVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "TicketLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Ticket Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Ticket Key": "={{ $json.ticket_key }}",
+            "Escalation Reason": "={{ $json.output.escalation_reason }}",
+            "Confidence": "={{ $json.output.confidence }}",
+            "Category": "={{ $json.output.category }}",
+            "Status": "ESCALATED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "2cd1bd64-5d53-4d5e-a421-da18089ebdd6",
+      "name": "Update Sheet — Status ESCALATED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2840,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "e417ef62-3760-4b7d-a940-ea76e2dfd49d",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Telegram digest: resolved vs escalated tickets with links\nconst items = $input.all().map(i => i.json);\nconst date = new Date().toISOString().slice(0, 10);\nconst resolved = items.filter(j => j.verdict === 'RESOLVED');\nconst escalated = items.filter(j => j.verdict !== 'RESOLVED');\nconst lines = ['\\U0001F3AF *AI Jira Ticket Autopilot — ' + date + '*', '',\n  '\\u2705 Auto-resolved: ' + resolved.length,\n  '\\U0001F6A8 Escalated to humans: ' + escalated.length, ''];\nif (resolved.length) {\n  lines.push('*Resolved:*');\n  for (const r of resolved.slice(0, 15)) {\n    lines.push('\\u2022 ' + r.ticket_key + ' (' + r.confidence + '% confident) — ' + r.summary + ' ([open](' + r.ticket_url + '))');\n  }\n  lines.push('');\n}\nif (escalated.length) {\n  lines.push('*Needs a human:*');\n  for (const e of escalated.slice(0, 15)) {\n    const reason = (e.output && e.output.escalation_reason) || 'no reason given';\n    const key = e.ticket_key || '?';\n    const url = e.ticket_url || '#';\n    lines.push('\\u2022 ' + key + ' — ' + reason + ' ([open](' + url + '))');\n  }\n}\nreturn [{ json: { digest: lines.join('\\n'), resolved: resolved.length, escalated: escalated.length } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e0cc29bd-f0b9-43af-a4b4-82cc0019edd3",
+      "name": "Build Team Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Jira + AI').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "831338bc-e351-4813-9150-4e0408c4554f",
+      "name": "Telegram — Send Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5180,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Hourly Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Jira + AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Jira + AI": {
+      "main": [
+        [
+          {
+            "node": "Build Jira Auth Header",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Jira Auth Header": {
+      "main": [
+        [
+          {
+            "node": "Jira — Fetch Open Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira — Fetch Open Tickets": {
+      "main": [
+        [
+          {
+            "node": "Normalize Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Tickets": {
+      "main": [
+        [
+          {
+            "node": "Read Logged Ticket Keys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Logged Ticket Keys": {
+      "main": [
+        [
+          {
+            "node": "Filter New Tickets Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Tickets Only": {
+      "main": [
+        [
+          {
+            "node": "Log Tickets — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Tickets — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "AI Ticket Triage Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Ticket Triage Agent": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status TRIAGED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status TRIAGED": {
+      "main": [
+        [
+          {
+            "node": "IF — Auto-Resolve?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Auto-Resolve?": {
+      "main": [
+        [
+          {
+            "node": "Jira — Add Resolution Comment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status ESCALATED",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Jira — Add Resolution Comment": {
+      "main": [
+        [
+          {
+            "node": "Jira — Get Transitions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira — Get Transitions": {
+      "main": [
+        [
+          {
+            "node": "Pick Done Transition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Done Transition": {
+      "main": [
+        [
+          {
+            "node": "Jira — Transition to Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira — Transition to Done": {
+      "main": [
+        [
+          {
+            "node": "Jira — Add Resolved Label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira — Add Resolved Label": {
+      "main": [
+        [
+          {
+            "node": "Build Resolved Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Resolved Record": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status RESOLVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status RESOLVED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status ESCALATED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Team Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Team Digest": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Triage": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Ticket Triage Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Triage": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Ticket Triage Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

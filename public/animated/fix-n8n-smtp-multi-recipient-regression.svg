@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- nested crates: three boxes entering the flattener -->
+  <g>
+    <g opacity="0.95">
+      <rect x="90" y="170" width="70" height="70" fill="none" stroke="#111" stroke-width="3"/>
+      <rect x="104" y="184" width="42" height="42" fill="none" stroke="#111" stroke-width="2.5"/>
+      <rect x="114" y="194" width="22" height="22" fill="#FF4D00" stroke="#111" stroke-width="2.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 300 0; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+    <g opacity="0.9">
+      <rect x="60" y="260" width="60" height="60" fill="none" stroke="#111" stroke-width="3"/>
+      <rect x="72" y="272" width="36" height="36" fill="none" stroke="#111" stroke-width="2.5"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 330 0; 0 0" dur="12s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- the flattener: two slow rollers -->
+  <g>
+    <rect x="440" y="150" width="120" height="24" fill="#111"/>
+    <rect x="440" y="300" width="120" height="24" fill="#111"/>
+    <circle cx="500" cy="162" r="6" fill="#FF4D00">
+      <animate attributeName="r" values="6;8;6" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="500" cy="312" r="6" fill="#FF4D00">
+      <animate attributeName="r" values="6;8;6" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <!-- crushed-tape output: the clean comma-joined string as paper tape -->
+    <rect x="470" y="220" width="60" height="34" fill="#FFFDF5" stroke="#111" stroke-width="3">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 230 0; 0 0" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- envelopes emerging on the right, two clean ones -->
+  <g>
+    <g>
+      <rect x="620" y="180" width="90" height="56" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <path d="M 620 180 L 665 216 L 710 180" fill="none" stroke="#111" stroke-width="3"/>
+      <rect x="632" y="196" width="66" height="10" fill="#FF4D00" opacity="0.85"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 60; 0 0" dur="8s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="620" y="260" width="90" height="56" fill="#FFFDF5" stroke="#111" stroke-width="3"/>
+      <path d="M 620 260 L 665 296 L 710 260" fill="none" stroke="#111" stroke-width="3"/>
+      <rect x="632" y="276" width="66" height="10" fill="#FF4D00" opacity="0.85"/>
+      <animateTransform attributeName="transform" type="translate" values="0 -60; 0 0; 0 -60" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- reject bin pulse: the mangled address falls away -->
+  <g>
+    <rect x="250" y="350" width="130" height="52" fill="none" stroke="#111" stroke-width="3"/>
+    <rect x="262" y="362" width="106" height="8" fill="#111" opacity="0.5">
+      <animate attributeName="opacity" values="0.5;0.15;0.5" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="262" y="376" width="70" height="8" fill="#111" opacity="0.35">
+      <animate attributeName="opacity" values="0.35;0.1;0.35" dur="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- slow conveyor dashes -->
+  <g stroke="#111" stroke-width="3" opacity="0.6">
+    <line x1="180" y1="200" x2="420" y2="200">
+      <animate attributeName="x1" values="180;420;180" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="420;660;420" dur="9s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111" stroke-width="4"/>
+</svg>

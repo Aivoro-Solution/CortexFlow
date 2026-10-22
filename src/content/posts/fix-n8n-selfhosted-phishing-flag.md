@@ -36,6 +36,11 @@ Two extra tripwires the community has confirmed ([forum thread t/55142](https://
 
 The warning does **not** mean your instance is compromised. But rule out a real compromise first (Fix 1), then clear the flag (Fix 2), then harden against recurrence (Fixes 3–4).
 
+<figure class="anatomy-fig">
+  <img src="/figures/fix-n8n-selfhosted-phishing-flag-quarantine.svg" alt="Isometric false-positive triage bench: a fresh domain certificate on a brass token rides through a Certificate Transparency log drum, a verdict chamber stamping PHISHING, and an appeal gate releasing a cleared token" loading="lazy" />
+  <figcaption>The false positive as a triage bench: your fresh domain certificate (brass token, brand-new lock) passes a Certificate Transparency log drum, then the verdict chamber where the bot's <strong>PHISHING</strong> stamp lands on it — the false positive — and finally the appeal gate releases it cleared. <strong>Notice:</strong> the console readouts show the real numbers — flag in <strong>hours–days</strong>, trigger <strong>/signin</strong>, review turnaround <strong>24–72 h</strong>. The two fixes engraved on the bench are the whole job: Search Console → Security Issues → Request Review, and <code>X-Robots-Tag: noindex</code> on <code>/signin</code>.</figcaption>
+</figure>
+
 ## Fix 1: Prove the instance is actually clean
 
 Before appealing, verify there is nothing real on the box. A fresh n8n should pass all of these in minutes:

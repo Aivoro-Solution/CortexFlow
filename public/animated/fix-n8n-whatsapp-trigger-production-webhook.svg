@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animated schematic of a WhatsApp webhook registration switchboard">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- switchboard panel -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="180" y="120" width="440" height="220" rx="6"/>
+  </g>
+  <!-- two jacks: TEST (left) and PRODUCTION (right) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="300" cy="200" r="26"/>
+    <circle cx="300" cy="200" r="10" fill="#111111"/>
+    <circle cx="500" cy="200" r="26"/>
+    <circle cx="500" cy="200" r="10" fill="#FF4D00"/>
+  </g>
+  <!-- plug cable swinging between jacks -->
+  <g>
+    <path id="cable" d="M300 226 C 340 300, 460 300, 500 226" fill="none" stroke="#111111" stroke-width="8" stroke-linecap="round"/>
+    <circle r="13" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animateMotion dur="12s" repeatCount="indefinite" rotate="0">
+        <mpath href="#cable"/>
+      </animateMotion>
+    </circle>
+  </g>
+  <!-- message packets flowing through the production line -->
+  <g fill="#FF4D00">
+    <rect x="470" y="272" width="60" height="34" rx="4" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="440;620" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="470" y="272" width="60" height="34" rx="4" stroke="#111111" stroke-width="3" opacity="0.5">
+      <animate attributeName="x" values="350;530" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- output gate with rotating register drum -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="620" y="160" width="70" height="120" rx="4"/>
+  </g>
+  <g>
+    <line x1="655" y1="220" x2="655" y2="190" stroke="#FF4D00" stroke-width="6" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 655 220" to="360 655 220" dur="30s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <circle cx="655" cy="220" r="8" fill="#111111"/>
+  <!-- signal pulses rising from the panel -->
+  <g stroke="#FF4D00" stroke-width="3" stroke-linecap="round">
+    <line x1="300" y1="120" x2="300" y2="70" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="120;70" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="500" y1="120" x2="500" y2="70" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="8s" begin="2s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="120;70" dur="8s" begin="2s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <!-- slow drifting dashed route line -->
+  <path d="M90 340 C 250 300, 550 380, 710 320" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="10 8" opacity="0.5">
+    <animate attributeName="stroke-dashoffset" values="0;-36" dur="9s" repeatCount="indefinite"/>
+  </path>
+</svg>

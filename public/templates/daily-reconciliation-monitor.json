@@ -1,0 +1,885 @@
+{
+  "name": "Daily Reconciliation Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🔍 DAILY RECONCILIATION MONITOR\n**What it does:** Every morning it reads yesterday's rows from your source sheet and your destination sheet → compares them on a key field → flags MISSING_IN_DESTINATION, EXTRA_IN_DESTINATION and MISMATCHED rows (numeric fields compared with a tolerance) → logs every break + the run status to a Run Log sheet → AI classifies each mismatch cause → Telegram summary.\n\n**You'll need:**\n- Google Sheets OAuth2 credentials (sheets.google.com)\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- OpenAI API key (platform.openai.com)\n\n**Status flow in the Run Log:** `NEW` → `COMPARING` → `BREAK_FOUND` (one row per break) → `REPORTED` → `DONE`",
+        "height": 240,
+        "width": 4740,
+        "color": 5
+      },
+      "id": "ede6d6d2-4bbd-4ca8-a8a6-84661e2f60bd",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Yesterday's window + read both sides\nDaily 7AM Trigger → CONFIG — Reconciliation (all user-editable values) → Build Yesterday Window computes yesterday's date → Log Run — Status NEW → Read Source Rows + Read Destination Rows from Google Sheets.",
+        "height": 420,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "387f346c-2c70-4659-86cb-9ff5fe393725",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Compare row sets on the key field\nCompare Row Sets filters both sides to yesterday, matches on KEY_FIELD, and flags missing / extra / mismatched rows (numeric fields use TOLERANCE). → Log Run — Status COMPARING → IF — Breaks ≥ Threshold routes on ALERT_THRESHOLD.",
+        "height": 420,
+        "width": 900,
+        "color": 4
+      },
+      "id": "52071d3d-de6d-4db8-9e05-df1343a2ee75",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Log every break\nExpand Break Rows turns each break into its own row → Log Breaks — Status BREAK_FOUND appends one row per break.",
+        "height": 560,
+        "width": 460,
+        "color": 4
+      },
+      "id": "ddb84e71-a96f-4a35-a3a5-6eeccdc67525",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — AI classifies each mismatch\nAI Agent — Classify Mismatches (gpt-4o-mini + Structured Output Parser) labels every mismatch: timing_difference / transformation_bug / genuine_loss.",
+        "height": 560,
+        "width": 440,
+        "color": 4
+      },
+      "id": "93084b3c-7d38-4d17-995b-d52ca9a8a1f9",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Telegram summary + final statuses\nBoth branches merge → Build Summary assembles one message (clean ✅ or breaks ⚠️ with top details) → Telegram — Send Summary → Log Run — Status REPORTED → Log Run — Status DONE.",
+        "height": 420,
+        "width": 1240,
+        "color": 4
+      },
+      "id": "8685817b-861d-4032-92f0-7aecc08b327f",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 7,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "2a4988d8-d1d3-46fd-a16c-fff2b7bece65",
+      "name": "Daily 7AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5943322-1b9f-4701-a147-a56d3fac4e8c",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "b63b4623-604e-4651-9d1f-248b744ed69d",
+              "name": "source_sheet",
+              "type": "string",
+              "value": "SourceRows"
+            },
+            {
+              "id": "fbf9a99a-6f04-4292-a289-3c38bbfcf8dc",
+              "name": "dest_sheet",
+              "type": "string",
+              "value": "DestRows"
+            },
+            {
+              "id": "aeccca5d-354b-485a-bc37-b48cc30fbf4f",
+              "name": "log_sheet",
+              "type": "string",
+              "value": "RunLog"
+            },
+            {
+              "id": "9d0b921b-095c-473c-a2ed-44d3bfe11e8f",
+              "name": "key_field",
+              "type": "string",
+              "value": "order_id"
+            },
+            {
+              "id": "cdebd16a-a375-4d39-9947-c3531fa8f39e",
+              "name": "timestamp_field",
+              "type": "string",
+              "value": "created_at"
+            },
+            {
+              "id": "f353f2e1-3138-4fc5-b45e-49d7e267889e",
+              "name": "compare_fields",
+              "type": "string",
+              "value": "total,quantity,status"
+            },
+            {
+              "id": "2885b2f1-eb9f-4463-b6b1-084bfc84b7c3",
+              "name": "tolerance",
+              "type": "string",
+              "value": "0.01"
+            },
+            {
+              "id": "64e87b92-0f82-4943-ae2a-07a7ac8ffb21",
+              "name": "alert_threshold",
+              "type": "string",
+              "value": "1"
+            },
+            {
+              "id": "be958168-5d33-4044-9d28-d3eb33534bc6",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "87a7df32-63dc-4050-adec-28a29df7eedc",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "941cf040-ace6-4ab1-95f4-d4daa1853db3",
+      "name": "CONFIG — Reconciliation",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute yesterday's date (YYYY-MM-DD) to scope both reads\nconst d = new Date();\nd.setDate(d.getDate() - 1);\nconst yesterday = d.toISOString().slice(0, 10);\nreturn [{ json: { yesterday } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "2436d6ba-f2c5-4319-b3c2-c0d08c3ca77e",
+      "name": "Build Yesterday Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.log_sheet }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $json.yesterday }}",
+            "Source": "={{ $('CONFIG — Reconciliation').first().json.source_sheet }}",
+            "Destination": "={{ $('CONFIG — Reconciliation').first().json.dest_sheet }}",
+            "Status": "NEW",
+            "Note": "Run started"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "be9a2bc9-5b3c-4e3e-a9c5-06457a8fcfe8",
+      "name": "Log Run — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.source_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "314353f1-c0ba-40eb-9a10-27aee6fe5919",
+      "name": "Read Source Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.dest_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6d7c292f-9ad0-4ee0-a8c6-f9274ffa0dba",
+      "name": "Read Destination Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compare yesterday's source vs destination rows on KEY_FIELD\nconst cfg = $('CONFIG — Reconciliation').first().json;\nconst win = $('Build Yesterday Window').first().json;\nconst keyField = cfg.key_field;\nconst tsField = cfg.timestamp_field;\nconst compareFields = String(cfg.compare_fields || '').split(',').map(s => s.trim()).filter(Boolean);\nconst tolerance = parseFloat(cfg.tolerance || '0');\nconst yday = win.yesterday; // YYYY-MM-DD\n\nfunction inWindow(row) {\n  const ts = String(row[tsField] || '').slice(0, 10);\n  return ts === yday;\n}\nconst srcRows = $('Read Source Rows').all().map(i => i.json).filter(inWindow);\nconst dstRows = $('Read Destination Rows').all().map(i => i.json).filter(inWindow);\n\nconst dstByKey = new Map();\nfor (const r of dstRows) dstByKey.set(String(r[keyField] ?? ''), r);\nconst srcByKey = new Map();\nfor (const r of srcRows) srcByKey.set(String(r[keyField] ?? ''), r);\n\n// Numeric fields are equal within TOLERANCE; everything else is exact string match\nfunction fieldsEqual(a, b) {\n  const na = parseFloat(a), nb = parseFloat(b);\n  if (isNaN(na) || isNaN(nb)) return String(a ?? '') === String(b ?? '');\n  return Math.abs(na - nb) <= tolerance;\n}\n\nconst breaks = [];\nfor (const r of srcRows) {\n  const k = String(r[keyField] ?? '');\n  if (!k) continue;\n  const d = dstByKey.get(k);\n  if (!d) {\n    breaks.push({ break_type: 'MISSING_IN_DESTINATION', key: k, field: '', source_value: '', dest_value: '' });\n    continue;\n  }\n  for (const f of compareFields) {\n    if (!fieldsEqual(r[f], d[f])) {\n      breaks.push({ break_type: 'MISMATCHED', key: k, field: f,\n        source_value: String(r[f] ?? ''), dest_value: String(d[f] ?? '') });\n    }\n  }\n}\nfor (const r of dstRows) {\n  const k = String(r[keyField] ?? '');\n  if (k && !srcByKey.has(k)) {\n    breaks.push({ break_type: 'EXTRA_IN_DESTINATION', key: k, field: '', source_value: '', dest_value: '' });\n  }\n}\nconst mismatches = breaks.filter(b => b.break_type === 'MISMATCHED');\nreturn [{ json: {\n  yesterday: yday,\n  rows_checked_source: srcRows.length,\n  rows_checked_dest: dstRows.length,\n  missing_count: breaks.filter(b => b.break_type === 'MISSING_IN_DESTINATION').length,\n  extra_count: breaks.filter(b => b.break_type === 'EXTRA_IN_DESTINATION').length,\n  mismatch_count: mismatches.length,\n  break_count: breaks.length,\n  breaks: breaks,\n  mismatches: mismatches,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "f4c6f96f-0d51-4f2b-92db-766a519897d4",
+      "name": "Compare Row Sets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.log_sheet }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $('Compare Row Sets').first().json.yesterday }}",
+            "Source": "={{ $('CONFIG — Reconciliation').first().json.source_sheet }}",
+            "Destination": "={{ $('CONFIG — Reconciliation').first().json.dest_sheet }}",
+            "Rows Checked": "={{ $('Compare Row Sets').first().json.rows_checked_source }} src / {{ $('Compare Row Sets').first().json.rows_checked_dest }} dst",
+            "Missing": "={{ $('Compare Row Sets').first().json.missing_count }}",
+            "Extra": "={{ $('Compare Row Sets').first().json.extra_count }}",
+            "Mismatched": "={{ $('Compare Row Sets').first().json.mismatch_count }}",
+            "Status": "COMPARING"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "3e622b6d-f031-4d1d-89ff-804cc411b28a",
+      "name": "Log Run — Status COMPARING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-breaks",
+              "leftValue": "={{ $('Compare Row Sets').first().json.break_count }}",
+              "rightValue": "={{ $('CONFIG — Reconciliation').first().json.alert_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "1800d61a-41e9-4624-985b-83359ae3c8af",
+      "name": "IF — Breaks ≥ Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One output item per break, so the Run Log gets one row per break\nconst sum = $('Compare Row Sets').first().json;\nreturn (sum.breaks || []).map(b => ({ json: {\n  yesterday: sum.yesterday,\n  break_type: b.break_type,\n  key: b.key,\n  field: b.field || '',\n  source_value: b.source_value || '',\n  dest_value: b.dest_value || '',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "20c8657a-b619-460a-817e-53d6e7f4e23b",
+      "name": "Expand Break Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.log_sheet }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $json.yesterday }}",
+            "Status": "BREAK_FOUND",
+            "Note": "={{ $json.break_type + ' — key ' + $json.key + ($json.field ? ' / field ' + $json.field + ' (src: ' + $json.source_value + ' → dst: ' + $json.dest_value + ')' : '') }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e5b7cf5e-2047-498c-b0a1-d2d4521ef682",
+      "name": "Log Breaks — Status BREAK_FOUND",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a data-quality analyst. Classify each mismatched record into one likely cause:\n- timing_difference: the destination usually catches up later (sync lag, batch delays)\n- transformation_bug: a mapping, rounding, or formatting error between source and destination\n- genuine_loss: the values are irreconcilable and data is actually wrong\n\nBe conservative: label 'genuine_loss' only when the values cannot be explained by timing or transformation.\n\nCompare fields: {{ $('CONFIG — Reconciliation').first().json.compare_fields }}. Numeric tolerance used: {{ $('CONFIG — Reconciliation').first().json.tolerance }}. Output ONLY via the structured output parser.",
+          "text": "=Reconciliation date: {{ $('Compare Row Sets').first().json.yesterday }}.\n\nMismatched records (key | field | source value | destination value):\n{{ JSON.stringify($('Compare Row Sets').first().json.mismatches) }}"
+        }
+      },
+      "id": "4a1e2bb6-6eb5-4f97-8bec-43eaafe9d3f8",
+      "name": "AI Agent — Classify Mismatches",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2640,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "e67a9b9b-25f9-475c-8d3b-5ff962af40ca",
+      "name": "OpenAI Chat Model — Classifier",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"classifications\": [\n    {\n      \"key\": \"the record's key value\",\n      \"field\": \"the mismatched field name\",\n      \"cause\": \"timing_difference / transformation_bug / genuine_loss\",\n      \"confidence\": 85,\n      \"reasoning\": \"one sentence explaining the call\"\n    }\n  ],\n  \"overall_verdict\": \"one sentence: are these mismatches likely benign or do they need investigation?\"\n}"
+      },
+      "id": "7831dd7a-094f-4faa-9f4f-18738bff17e5",
+      "name": "Structured Output Parser — Cause",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "93c8f842-fc4f-441d-aadf-5ce4fe5b1701",
+      "name": "Merge — Combine Reports",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram summary from the reconciliation result\nconst sum = $('Compare Row Sets').first().json;\nconst prev = $input.first().json;\nconst cls = prev.output ? prev.output : null;\nconst date = sum.yesterday;\nconst rows = sum.rows_checked_source + sum.rows_checked_dest;\nlet lines;\nif (sum.break_count === 0) {\n  lines = [`🔍 Reconciliation ${date}: ✅ clean — ${rows} rows checked, no breaks.`];\n} else {\n  lines = [\n    `🔍 Reconciliation ${date}: ⚠️ ${sum.missing_count} missing / ${sum.extra_count} extra / ${sum.mismatch_count} mismatched (${rows} rows checked)`,\n    ``,\n  ];\n  for (const b of sum.breaks.slice(0, 8)) {\n    if (b.break_type === 'MISMATCHED') {\n      lines.push(`• ${b.key} — ${b.field}: src ${b.source_value} → dst ${b.dest_value}`);\n    } else {\n      lines.push(`• ${b.key} — ${b.break_type}`);\n    }\n  }\n  if (sum.breaks.length > 8) lines.push(`…and ${sum.breaks.length - 8} more (see the RunLog sheet)`);\n  if (cls && cls.classifications) {\n    lines.push(``, `🤖 Likely causes: ${cls.overall_verdict || ''}`);\n    for (const c of cls.classifications.slice(0, 5)) {\n      lines.push(`• ${c.key}${c.field ? ' / ' + c.field : ''}: ${c.cause} — ${c.reasoning || ''}`);\n    }\n  }\n}\nreturn [{ json: {\n  summary_message: lines.join('\\n'),\n  date: date,\n  rows_checked: rows,\n  missing_count: sum.missing_count,\n  extra_count: sum.extra_count,\n  mismatch_count: sum.mismatch_count,\n  break_count: sum.break_count,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "36db4fc9-e095-4e5d-9e29-46b8454a983a",
+      "name": "Build Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Reconciliation').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary_message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "76448eb4-f01c-4d60-8fc2-ce16e7e95fcd",
+      "name": "Telegram — Send Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.log_sheet }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $('Compare Row Sets').first().json.yesterday }}",
+            "Missing": "={{ $('Compare Row Sets').first().json.missing_count }}",
+            "Extra": "={{ $('Compare Row Sets').first().json.extra_count }}",
+            "Mismatched": "={{ $('Compare Row Sets').first().json.mismatch_count }}",
+            "Status": "REPORTED",
+            "Note": "Telegram summary sent"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0c108c65-bcd6-44c3-9cf1-44ebea69e079",
+      "name": "Log Run — Status REPORTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('CONFIG — Reconciliation').first().json.log_sheet }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Run Date": "={{ $('Compare Row Sets').first().json.yesterday }}",
+            "Status": "DONE",
+            "Note": "Run complete"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fc9972f7-393d-44f4-ad52-569c205ea091",
+      "name": "Log Run — Status DONE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4080,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 7AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Reconciliation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Reconciliation": {
+      "main": [
+        [
+          {
+            "node": "Build Yesterday Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Yesterday Window": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Read Source Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Source Rows": {
+      "main": [
+        [
+          {
+            "node": "Read Destination Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Destination Rows": {
+      "main": [
+        [
+          {
+            "node": "Compare Row Sets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Row Sets": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status COMPARING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status COMPARING": {
+      "main": [
+        [
+          {
+            "node": "IF — Breaks ≥ Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Breaks ≥ Threshold": {
+      "main": [
+        [
+          {
+            "node": "Expand Break Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge — Combine Reports",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Expand Break Rows": {
+      "main": [
+        [
+          {
+            "node": "Log Breaks — Status BREAK_FOUND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Breaks — Status BREAK_FOUND": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Classify Mismatches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Classify Mismatches": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Reports",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Reports": {
+      "main": [
+        [
+          {
+            "node": "Build Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Summary": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send Summary": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status REPORTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Run — Status REPORTED": {
+      "main": [
+        [
+          {
+            "node": "Log Run — Status DONE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Classifier": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Classify Mismatches",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Cause": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Classify Mismatches",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

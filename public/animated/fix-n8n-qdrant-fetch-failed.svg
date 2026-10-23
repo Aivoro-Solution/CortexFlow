@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of the dispatcher relay mismatch">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <g stroke="#111111" stroke-width="1" opacity="0.25">
+    <path d="M0 45 H800 M0 90 H800 M0 135 H800 M0 180 H800 M0 225 H800 M0 270 H800 M0 315 H800 M0 360 H800 M0 405 H800"/>
+    <path d="M45 0 V450 M90 0 V450 M135 0 V450 M180 0 V450 M225 0 V450 M270 0 V450 M315 0 V450 M360 0 V450 M405 0 V450 M450 0 V450 M495 0 V450 M540 0 V450 M585 0 V450 M630 0 V450 M675 0 V450 M720 0 V450 M765 0 V450"/>
+  </g>
+
+  <!-- junction box -->
+  <g>
+    <rect x="250" y="120" width="300" height="220" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+    <rect x="250" y="120" width="300" height="220" fill="none" stroke="#111" stroke-width="2" transform="translate(10,10)"/>
+  </g>
+
+  <!-- socket (Node 26 / undici 8) -->
+  <g>
+    <rect x="290" y="180" width="120" height="110" fill="#111" stroke="#111" stroke-width="3"/>
+    <g fill="#FFFDF5">
+      <circle cx="315" cy="210" r="7"/>
+      <circle cx="345" cy="210" r="7"/>
+      <circle cx="375" cy="210" r="7"/>
+      <circle cx="315" cy="250" r="7"/>
+      <circle cx="345" cy="250" r="7"/>
+      <circle cx="375" cy="250" r="7"/>
+    </g>
+  </g>
+
+  <!-- v6 cartridge failing to seat: bobs up and down, never seats -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 18; 0 0" dur="8s" repeatCount="indefinite"/>
+    <rect x="455" y="140" width="110" height="120" fill="#FFFDF5" stroke="#111" stroke-width="5"/>
+    <rect x="468" y="152" width="84" height="30" fill="#FF4D00" stroke="#111" stroke-width="3"/>
+    <g fill="#111">
+      <rect x="470" y="200" width="14" height="42"/>
+      <rect x="500" y="200" width="14" height="42"/>
+      <rect x="530" y="200" width="14" height="42"/>
+    </g>
+    <!-- pins misaligned with socket holes: orange flash -->
+    <circle cx="477" cy="245" r="10" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.15;0.9" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="507" cy="245" r="10" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.15;0.9;0.15" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="537" cy="245" r="10" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.15;0.9" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- fault lamp pulses -->
+  <g>
+    <circle cx="400" cy="150" r="14" fill="#FFFDF5" stroke="#111" stroke-width="4"/>
+    <circle cx="400" cy="150" r="8" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- cable feed: packets flow in, get stopped at the box -->
+  <g fill="none" stroke="#111" stroke-width="4">
+    <path d="M60 235 H250"/>
+    <path d="M550 235 H740"/>
+  </g>
+  <g>
+    <rect x="0" y="0" width="26" height="16" fill="#FF4D00" stroke="#111" stroke-width="3">
+      <animateMotion dur="6s" repeatCount="indefinite" path="M60 227 H224"/>
+    </rect>
+    <rect x="0" y="0" width="26" height="16" fill="#FFFDF5" stroke="#111" stroke-width="3">
+      <animateMotion dur="9s" repeatCount="indefinite" path="M60 227 H224" begin="3s"/>
+    </rect>
+  </g>
+
+  <!-- slow rotation: big ring around the box, calm orbit -->
+  <g opacity="0.9">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 235" to="360 400 235" dur="45s" repeatCount="indefinite"/>
+    <circle cx="400" cy="235" r="195" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="14 10"/>
+    <circle cx="400" cy="40" r="7" fill="#FF4D00" stroke="#111" stroke-width="2"/>
+  </g>
+</svg>

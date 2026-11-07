@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of AI agent memory: message bubbles and a chain of tool calls, one card slipping out of the stack">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- stack of memory cards, centre -->
+  <g>
+    <rect x="330" y="150" width="220" height="46" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="330" y="205" width="220" height="46" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="330" y="260" width="220" height="46" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <!-- slipping card: drifts out of the stack and back, slowly -->
+    <g>
+      <rect x="330" y="95" width="220" height="46" rx="8" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 26 10; 0 0" dur="12s" repeatCount="indefinite"/>
+    </g>
+    <!-- card lines -->
+    <line x1="350" y1="173" x2="470" y2="173" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    <line x1="350" y1="228" x2="500" y2="228" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    <line x1="350" y1="283" x2="450" y2="283" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- message bubbles, left -->
+  <g>
+    <rect x="90" y="90" width="180" height="64" rx="32" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="90" y="180" width="150" height="64" rx="32" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="90" y="270" width="180" height="64" rx="32" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <!-- bubble that bobs gently -->
+    <g>
+      <rect x="90" y="180" width="150" height="64" rx="32" fill="none" stroke="#FF4D00" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="9s" repeatCount="indefinite"/>
+    </g>
+    <line x1="115" y1="122" x2="225" y2="122" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    <line x1="115" y1="212" x2="195" y2="212" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    <line x1="115" y1="302" x2="225" y2="302" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- tool-call chain links, right: one link rotates slowly, one pulses -->
+  <g>
+    <circle cx="640" cy="140" r="26" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="640" cy="140" r="10" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="640" cy="225" r="26" fill="none" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="r" values="26; 32; 26" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="640" cy="310" r="26" fill="none" stroke="#111111" stroke-width="3"/>
+    <line x1="640" y1="166" x2="640" y2="199" stroke="#111111" stroke-width="3"/>
+    <line x1="640" y1="251" x2="640" y2="284" stroke="#111111" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="0; -20" dur="6s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- slow rotating cog, top right -->
+  <g>
+    <g>
+      <circle cx="700" cy="70" r="18" fill="none" stroke="#111111" stroke-width="3"/>
+      <circle cx="700" cy="70" r="6" fill="#111111"/>
+      <path d="M700 44 v-10 M700 96 v10 M674 70 h-10 M726 70 h10 M682 52 l-7 -7 M718 52 l7 -7 M682 88 l-7 7 M718 88 l7 7" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 700 70" to="360 700 70" dur="45s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- drifting orange dot along the memory path -->
+  <circle cx="280" cy="130" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M 280 130 L 320 130 L 320 330 L 560 330 L 560 200 L 610 200"/>
+  </circle>
+
+  <!-- bottom rule -->
+  <line x1="90" y1="390" x2="710" y2="390" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  <line x1="90" y1="404" x2="480" y2="404" stroke="#FF4D00" stroke-width="3" stroke-linecap="round"/>
+</svg>

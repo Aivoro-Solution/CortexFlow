@@ -1,0 +1,1595 @@
+{
+  "name": "Food Delivery Order Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🍔 FOOD DELIVERY ORDER AUTOMATOR\n**What it does:** Your food-delivery app posts order events to a webhook → the workflow acks instantly → dedupes repeat events → routes by event type → notifies the restaurant, dispatches drivers (first-accept claims it), sends AI-drafted customer updates, handles failed payments and cancellations → logs every stage to Google Sheets → Telegram summary.\n\n**You'll need:**\n- A food-delivery app/backend that POSTs order webhooks (or any system that can POST JSON)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- Restaurant / driver / customer notify endpoints (your backend, WhatsApp Business API, or any HTTP endpoint)\n\n**Status flow in Sheets:** `NEW` → `CONFIRMED` → `DISPATCHED` → `OUT_FOR_DELIVERY` → `DELIVERED` (plus `PAYMENT_FAILED` and `CANCELLED`)\n**Events:** `order.created` · `restaurant.confirmed` · `driver.assigned` · `driver.picked_up` · `order.delivered` · `payment.failed` · `order.cancelled`",
+        "height": 220,
+        "width": 2840,
+        "color": 5
+      },
+      "id": "32485e5c-4e5b-4597-ac0a-d3854081caf8",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Webhook intake + instant ack\nFood-delivery app POSTs an order event → normalize into one clean shape → Respond to Webhook answers immediately so the sender never times out while the rest runs.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "b37c3ab8-e7d3-461e-81a7-2e30505b7adb",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Idempotency dedupe\nRead logged events → if this order_id + event_type was already seen, skip all notifications (no duplicate messages when many orders arrive at once). New events get a row appended with status `NEW` — the row itself is the in-flight reservation.",
+        "height": 420,
+        "width": 1060,
+        "color": 4
+      },
+      "id": "0aee3bf6-21bd-489f-8def-481271adcdb8",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Route by event type\nSwitch sends each event to its own branch: created → restaurant, confirmed → dispatch, assigned → AI customer update, picked up / delivered → status, payment failed → hold + retry, cancelled → release + refund flag.",
+        "height": 420,
+        "width": 560,
+        "color": 4
+      },
+      "id": "dc82dc65-3a7b-4fef-a206-524116e18b2e",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Event branches\nRestaurant confirmation, driver dispatch (first-accept claims it), AI-drafted customer updates, failed-payment hold + retry, cancellation release + refund review. Every branch updates the sheet status before merging.",
+        "height": 220,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "b04be697-d1d7-42c8-9141-ffdbd2bd1e4f",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — One Telegram summary\nAll branches merge → a single summary (order, event, outcome, AI-drafted customer message) → Telegram.",
+        "height": 220,
+        "width": 940,
+        "color": 4
+      },
+      "id": "f280d922-8e42-4e98-ac68-845027410e9f",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "food-delivery-order",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "fa0073a9-da6e-4fd7-b466-f45a24557c6b",
+      "name": "Webhook — Order Events",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "1f9c8cd9-330c-453d-833e-e2598e695405"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f195393f-79f9-45a2-bf06-c9300ac6dc81",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Orders"
+            },
+            {
+              "id": "6551d23b-6175-4836-9b2a-9f7662af081a",
+              "name": "supported_events",
+              "type": "string",
+              "value": "order.created, restaurant.confirmed, driver.assigned, driver.picked_up, order.delivered, payment.failed, order.cancelled"
+            },
+            {
+              "id": "89ff373b-6fe4-4828-a701-d33e8a8b8b72",
+              "name": "claim_timeout_minutes",
+              "type": "string",
+              "value": "5"
+            },
+            {
+              "id": "22ad19c7-9bee-4d74-a0f2-4198497a40bb",
+              "name": "default_currency",
+              "type": "string",
+              "value": "USD"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b54ee884-9430-438b-9c7a-37d462f0f071",
+      "name": "CONFIG — Order Intake",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the incoming order event into one clean shape\nconst raw = $input.first().json;\nconst b = raw.body && typeof raw.body === 'object' ? raw.body : raw;\nconst orderId = String(b.order_id || b.orderId || '');\nconst eventType = String(b.event_type || b.eventType || b.type || 'order.created');\nconst items = Array.isArray(b.items)\n  ? b.items.map(i => typeof i === 'string' ? i : `${i.qty || 1}x ${i.name || 'item'}`).join('; ')\n  : String(b.items || '');\nreturn [{ json: {\n  order_id: orderId,\n  event_type: eventType,\n  dedupe_key: `${orderId}|${eventType}`,\n  customer_name: b.customer_name || b.customerName || '',\n  customer_phone: b.customer_phone || b.customerPhone || '',\n  restaurant_id: b.restaurant_id || b.restaurantId || '',\n  restaurant_name: b.restaurant_name || b.restaurantName || '',\n  items,\n  total: b.total != null ? String(b.total) : '',\n  currency: b.currency || 'USD',\n  payment_status: b.payment_status || b.paymentStatus || '',\n  driver_id: b.driver_id || b.driverId || '',\n  driver_name: b.driver_name || b.driverName || '',\n  timestamp: b.timestamp || new Date().toISOString(),\n  status: 'NEW',\n  refund_review: '',\n  customer_message: '',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "36073eab-88ba-4289-8f1e-f57cc14182f9",
+      "name": "Normalize Order Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"received\": true, \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"event_type\": \"{{ $('Normalize Order Event').first().json.event_type }}\", \"status\": \"queued\"}",
+        "options": {}
+      },
+      "id": "a502806d-6987-40d5-9e77-5d27cf168a83",
+      "name": "Respond — Order Received",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d0fbc4a-1e6c-4503-ac98-782588339fb8",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "b1c1ecb1-b9c4-4917-8e7a-8c4ec218fa7f",
+              "name": "sheet_name",
+              "type": "string",
+              "value": "Orders"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9058f855-80a0-490b-b313-5eb65f19fc6f",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "ad1eee10-4651-417c-aeb8-7cff0afb99ba",
+      "name": "Read Logged Events",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Idempotency: skip events whose order_id + event_type is already logged\nconst event = $('Normalize Order Event').first().json;\nconst seen = new Set(\n  $('Read Logged Events').all()\n    .map(i => (i.json['Dedupe Key'] || i.json.dedupe_key || '').trim())\n    .filter(Boolean)\n);\nconst isDuplicate = seen.has(event.dedupe_key);\nreturn [{ json: { ...event, duplicate_flag: isDuplicate ? 'true' : 'false', is_duplicate: isDuplicate } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "579c574c-cfe7-498f-9c5e-6e1f3d925f19",
+      "name": "Check Duplicate Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-duplicate",
+              "leftValue": "={{ $json.duplicate_flag }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "85c55b2f-f486-4f4c-bd77-d75015f981fd",
+      "name": "IF — Duplicate Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const e = $('Normalize Order Event').first().json;\nreturn [{ json: {\n  ...e,\n  duplicate: true,\n  note: `Duplicate ${e.event_type} for order ${e.order_id} — already logged, no notifications sent.`,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "6b03f4d1-6f67-4ce7-8ef2-81f90e3e5fa3",
+      "name": "Build Duplicate Notice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Order ID": "={{ $('Normalize Order Event').first().json.order_id }}",
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Event Type": "={{ $('Normalize Order Event').first().json.event_type }}",
+            "Customer Name": "={{ $('Normalize Order Event').first().json.customer_name }}",
+            "Restaurant": "={{ $('Normalize Order Event').first().json.restaurant_name }}",
+            "Items": "={{ $('Normalize Order Event').first().json.items }}",
+            "Total": "={{ $('Normalize Order Event').first().json.total }}",
+            "Payment Status": "={{ $('Normalize Order Event').first().json.payment_status }}",
+            "Driver": "={{ $('Normalize Order Event').first().json.driver_name }}",
+            "Status": "NEW",
+            "Refund Review": "",
+            "Timestamp": "={{ $('Normalize Order Event').first().json.timestamp }}",
+            "Customer Message": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0e220ee1-8591-40f8-a1bd-3fb3e5c212a0",
+      "name": "Log Event — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "74fb525f-d272-4d5c-9d4a-135ea7e2cedf",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "order.created",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Order Created",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "89ab63b1-2101-4d7f-ac5f-6ddcb786f59d",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "restaurant.confirmed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Restaurant Confirmed",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "a4a131a8-2d30-4ca6-8356-998111b03301",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "driver.assigned",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Driver Assigned",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "e5ac5d1c-ab3f-4be5-ad1d-4026c8f4a1e6",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "driver.picked_up",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Driver Picked Up",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "77a6772a-f32c-430b-881a-5f465ae3884b",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "order.delivered",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Order Delivered",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "23fc44b7-5f2d-4ec6-84d9-4d1a6b32ae22",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "payment.failed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Payment Failed",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "8faa5a42-186b-40de-91ec-ef78074dcfbb",
+                    "leftValue": "={{ $('Normalize Order Event').first().json.event_type }}",
+                    "rightValue": "order.cancelled",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "Order Cancelled",
+              "renameOutput": true
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Unknown Event"
+        }
+      },
+      "id": "e64fed03-84ac-4210-a1eb-0e82431605be",
+      "name": "Switch — Route by Event Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93ac18d6-a404-42cf-89cf-b9ec18059044",
+              "name": "restaurant_endpoint",
+              "type": "string",
+              "value": "PASTE_YOUR_RESTAURANT_WEBHOOK_URL"
+            },
+            {
+              "id": "f3821391-72c3-49b5-8897-d6cce4e0d782",
+              "name": "driver_dispatch_endpoint",
+              "type": "string",
+              "value": "PASTE_YOUR_DRIVER_DISPATCH_URL"
+            },
+            {
+              "id": "959e1d6a-c305-4551-94c4-d95ff4f35fae",
+              "name": "customer_notify_endpoint",
+              "type": "string",
+              "value": "PASTE_YOUR_CUSTOMER_NOTIFY_URL"
+            },
+            {
+              "id": "e1252459-aaef-48cb-8b86-cc957b949709",
+              "name": "payment_provider",
+              "type": "string",
+              "value": "PASTE_YOUR_PAYMENT_PROVIDER (e.g. stripe)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4a87647-9bb8-459e-b3fe-080ef2b14bb3",
+      "name": "CONFIG — Restaurant & Dispatch",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2640,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.restaurant_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"new_order\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"restaurant_id\": \"{{ $('Normalize Order Event').first().json.restaurant_id }}\", \"restaurant_name\": \"{{ $('Normalize Order Event').first().json.restaurant_name }}\", \"items\": \"{{ $('Normalize Order Event').first().json.items }}\", \"total\": \"{{ $('Normalize Order Event').first().json.total }}\", \"currency\": \"{{ $('Normalize Order Event').first().json.currency }}\", \"customer_name\": \"{{ $('Normalize Order Event').first().json.customer_name }}\"}",
+        "options": {}
+      },
+      "id": "7c27d4bb-58d3-4b67-82cd-3f3c20f6259b",
+      "name": "HTTP — Notify Restaurant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Status": "CONFIRMED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c435035e-cad5-4c6e-9fb0-f0132f61c3d1",
+      "name": "Update Sheet — Status CONFIRMED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.driver_dispatch_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"dispatch\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"restaurant_name\": \"{{ $('Normalize Order Event').first().json.restaurant_name }}\", \"items\": \"{{ $('Normalize Order Event').first().json.items }}\", \"total\": \"{{ $('Normalize Order Event').first().json.total }}\", \"claim_timeout_minutes\": \"{{ $('CONFIG — Order Intake').first().json.claim_timeout_minutes }}\", \"note\": \"First driver to accept claims this delivery.\"}",
+        "options": {}
+      },
+      "id": "5f46237e-1641-42ca-ba95-433c9bf3ac12",
+      "name": "HTTP — Dispatch to Drivers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Driver": "={{ $('Normalize Order Event').first().json.driver_name }}",
+            "Status": "DISPATCHED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "abd0d21f-9f25-4f8a-87da-3c17527a3ad2",
+      "name": "Update Sheet — Status DISPATCHED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the customer-support copywriter for a food-delivery app. Draft one short, warm customer status update (max 2 sentences, under 280 characters) for the order below. Mention the driver by name when known. No placeholders, no brackets, no generic fluff. Output ONLY via the structured output parser."
+        },
+        "text": "=Order {{ $('Normalize Order Event').first().json.order_id }} from {{ $('Normalize Order Event').first().json.restaurant_name }}. Event: driver assigned. Driver: {{ $('Normalize Order Event').first().json.driver_name }}. Items: {{ $('Normalize Order Event').first().json.items }}. Total: {{ $('Normalize Order Event').first().json.currency }} {{ $('Normalize Order Event').first().json.total }}."
+      },
+      "id": "6b4fda0f-a701-4388-a923-56248d227437",
+      "name": "AI Agent — Draft Customer Update",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2880,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "60e159c9-3f4e-4675-aeb5-045332e10e48",
+      "name": "OpenAI Chat Model — Customer Updates",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"message_text\": \"the customer update message, max 280 characters\",\n  \"eta_minutes\": 0,\n  \"tone\": \"friendly / apologetic / neutral\"\n}"
+      },
+      "id": "35fa902d-1bce-4dbe-ac2c-32dc07362035",
+      "name": "Structured Output Parser — Customer Message",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.customer_notify_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"customer_update\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"customer_name\": \"{{ $('Normalize Order Event').first().json.customer_name }}\", \"customer_phone\": \"{{ $('Normalize Order Event').first().json.customer_phone }}\", \"message\": \"{{ $('AI Agent — Draft Customer Update').first().json.output.message_text }}\", \"eta_minutes\": \"{{ $('AI Agent — Draft Customer Update').first().json.output.eta_minutes }}\"}",
+        "options": {}
+      },
+      "id": "d81f3bf8-8ba1-42c5-bfe8-58d1acc3d620",
+      "name": "HTTP — Send Customer Update",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Status": "OUT_FOR_DELIVERY"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "083920ed-be08-4eaf-a736-cc21193d7603",
+      "name": "Update Sheet — Status OUT_FOR_DELIVERY",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Status": "DELIVERED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "2506a124-a83c-493d-a5c5-15dba7a3f5f9",
+      "name": "Update Sheet — Status DELIVERED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Payment Status": "FAILED",
+            "Status": "PAYMENT_FAILED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8b94afac-e97e-4f87-a254-a89a8066f0a3",
+      "name": "Update Sheet — Status PAYMENT_FAILED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.restaurant_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"hold_prep\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"restaurant_id\": \"{{ $('Normalize Order Event').first().json.restaurant_id }}\", \"reason\": \"payment_failed\", \"note\": \"Do not start cooking until payment clears.\"}",
+        "options": {}
+      },
+      "id": "44bf8710-a5d9-44d7-872f-817504fbeacb",
+      "name": "HTTP — Hold Prep at Restaurant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const e = $('Normalize Order Event').first().json;\nconst msg = `Hi ${e.customer_name || 'there'} — your payment for order ${e.order_id} (${e.restaurant_name}) failed, so we have paused preparation. Tap your payment link to retry — your food starts cooking as soon as payment clears. Total: ${e.currency} ${e.total}.`;\nreturn [{ json: { ...e, retry_message: msg } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "40625aca-d598-4f38-ba42-a8bba706d87f",
+      "name": "Build Retry Payment Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.customer_notify_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"retry_payment\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"customer_name\": \"{{ $('Normalize Order Event').first().json.customer_name }}\", \"customer_phone\": \"{{ $('Normalize Order Event').first().json.customer_phone }}\", \"message\": \"{{ $json.retry_message }}\"}",
+        "options": {}
+      },
+      "id": "d9837a8f-3412-49be-a693-5f8c5302c119",
+      "name": "HTTP — Send Retry Payment Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3360,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Dedupe Key"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Dedupe Key": "={{ $('Normalize Order Event').first().json.dedupe_key }}",
+            "Status": "CANCELLED",
+            "Refund Review": "YES — review before refund"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "a12a7abc-f780-482b-a7ca-a67bf1bc3960",
+      "name": "Update Sheet — Status CANCELLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.driver_dispatch_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"release_driver\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"driver_id\": \"{{ $('Normalize Order Event').first().json.driver_id }}\", \"reason\": \"order_cancelled\"}",
+        "options": {}
+      },
+      "id": "bace457d-5544-435e-a897-c6a04ab2a3ad",
+      "name": "HTTP — Release Driver",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.restaurant_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"cancel_order\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"restaurant_id\": \"{{ $('Normalize Order Event').first().json.restaurant_id }}\", \"reason\": \"order_cancelled\", \"note\": \"Stop preparation. Refund under review.\"}",
+        "options": {}
+      },
+      "id": "563be02e-33fe-44d3-8830-02a28f7b2026",
+      "name": "HTTP — Notify Restaurant — Cancelled",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "= {{ $('CONFIG — Restaurant & Dispatch').first().json.customer_notify_endpoint }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"order_cancelled\", \"order_id\": \"{{ $('Normalize Order Event').first().json.order_id }}\", \"customer_name\": \"{{ $('Normalize Order Event').first().json.customer_name }}\", \"customer_phone\": \"{{ $('Normalize Order Event').first().json.customer_phone }}\", \"message\": \"Your order has been cancelled. If you were charged, a refund is under review and we will update you shortly.\"}",
+        "options": {}
+      },
+      "id": "867da26c-4660-4ba1-8bc8-b7c636545922",
+      "name": "HTTP — Notify Customer — Cancelled",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3360,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const e = $('Normalize Order Event').first().json;\nreturn [{ json: {\n  ...e,\n  outcome: `Unknown event type \"${e.event_type}\" for order ${e.order_id} — logged only, no notifications sent.`,\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "2aa7cdbf-4970-49ec-b690-50de09f3c428",
+      "name": "Build Unknown Event Note",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "01557619-dc38-4099-af23-d84590e2d25a",
+      "name": "Merge — Combine Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Telegram summary for the processed order event\nconst e = $('Normalize Order Event').first().json;\nconst items = $input.all().map(i => i.json);\nconst dup = items.find(i => i.duplicate);\nconst outcomeMap = {\n  'order.created': 'Restaurant notified — order received into the pipeline.',\n  'restaurant.confirmed': 'Restaurant confirmed — drivers notified, first-accept claims the delivery.',\n  'driver.assigned': `Driver ${e.driver_name || e.driver_id || 'assigned'} — customer update sent.`,\n  'driver.picked_up': 'Driver picked up the order — out for delivery.',\n  'order.delivered': 'Order delivered.',\n  'payment.failed': 'Payment failed — prep held, retry-payment message sent to customer.',\n  'order.cancelled': 'Order cancelled — driver released, restaurant + customer notified, refund flagged for review.',\n};\nlet lines = [\n  `\\u{1F354} *Food Delivery \\u2014 Order ${e.order_id}*`,\n  ``,\n  `Event: ${e.event_type}`,\n  `Restaurant: ${e.restaurant_name || '—'}`,\n  `Customer: ${e.customer_name || '—'}`,\n  `Items: ${e.items || '—'}`,\n  `Total: ${e.currency} ${e.total || '—'}`,\n];\nif (dup) {\n  lines.push(``, `\\u26A0\\uFE0F Duplicate event — already processed, no notifications sent.`);\n} else if (outcomeMap[e.event_type]) {\n  lines.push(``, `\\u2705 ${outcomeMap[e.event_type]}`);\n} else {\n  lines.push(``, `\\u2139\\uFE0F Unknown event type — logged only.`);\n}\nlet aiMsg = '';\ntry {\n  const a = $('AI Agent — Draft Customer Update').first().json;\n  if (a && a.output && a.output.message_text) aiMsg = a.output.message_text;\n} catch (err) { /* agent only runs for driver.assigned */ }\nif (aiMsg) lines.push(``, `\\u{1F4AC} Customer message: \\u201C${aiMsg}\\u201D`);\nreturn [{ json: { ...e, summary: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "13bc4f55-4a70-4c52-b476-b7ab745c8023",
+      "name": "Build Order Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b71f4829-27d5-4b03-b2d8-61e583cec1eb",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "009b11bb-eba2-4d1b-8384-73ceae5b494d",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "c92d5344-20fa-47a8-9a05-4e961f0b6b16",
+      "name": "Telegram — Send Order Update",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4320,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Order Events": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Order Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Order Intake": {
+      "main": [
+        [
+          {
+            "node": "Normalize Order Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Order Event": {
+      "main": [
+        [
+          {
+            "node": "Respond — Order Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond — Order Received": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Logged Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Logged Events": {
+      "main": [
+        [
+          {
+            "node": "Check Duplicate Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Duplicate Event": {
+      "main": [
+        [
+          {
+            "node": "IF — Duplicate Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Duplicate Event?": {
+      "main": [
+        [
+          {
+            "node": "Build Duplicate Notice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Event — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Event — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Switch — Route by Event Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Route by Event Type": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Restaurant & Dispatch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status CONFIRMED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status DISPATCHED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status OUT_FOR_DELIVERY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status DELIVERED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status PAYMENT_FAILED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status CANCELLED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Unknown Event Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Restaurant & Dispatch": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Notify Restaurant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Notify Restaurant": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status CONFIRMED": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Dispatch to Drivers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Dispatch to Drivers": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status DISPATCHED": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Draft Customer Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Draft Customer Update": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Send Customer Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Send Customer Update": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status OUT_FOR_DELIVERY": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status DELIVERED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status PAYMENT_FAILED": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Hold Prep at Restaurant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Hold Prep at Restaurant": {
+      "main": [
+        [
+          {
+            "node": "Build Retry Payment Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Retry Payment Message": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Send Retry Payment Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Send Retry Payment Message": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status CANCELLED": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Release Driver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Release Driver": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Notify Restaurant — Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Notify Restaurant — Cancelled": {
+      "main": [
+        [
+          {
+            "node": "HTTP — Notify Customer — Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP — Notify Customer — Cancelled": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Build Unknown Event Note": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Build Duplicate Notice": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Branches",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Order Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Order Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Order Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Customer Updates": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Draft Customer Update",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Customer Message": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Draft Customer Update",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

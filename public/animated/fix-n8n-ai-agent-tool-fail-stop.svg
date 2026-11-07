@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract diagram of an AI agent loop: model, tool and observation nodes connected in a cycle, with one tool node repaired">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- loop path: model -> tool -> observation -> model -->
+  <path d="M 400 110 L 560 260 L 400 360 L 240 260 Z" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" from="0" to="-72" dur="12s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- model node (top) -->
+  <g>
+    <rect x="355" y="65" width="90" height="90" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="400" cy="110" r="26" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="400" cy="110" r="10" fill="#FF4D00">
+      <animate attributeName="r" values="10;14;10" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- tool node (right) - the repaired one, orange -->
+  <g>
+    <rect x="515" y="215" width="90" height="90" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <path d="M 545 260 L 560 245 L 575 260 L 560 275 Z" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 560 260" to="360 560 260" dur="45s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- observation node (bottom) -->
+  <g>
+    <rect x="355" y="315" width="90" height="90" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="400" cy="360" r="26" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="400" cy="360" r="8" fill="#111111">
+      <animate attributeName="r" values="8;12;8" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- fallback node (left) -->
+  <g>
+    <rect x="195" y="215" width="90" height="90" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <path d="M 220 260 L 240 240 L 260 260 L 240 280 Z" fill="none" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- travelling pulse along the loop -->
+  <circle r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 400 110 L 560 260 L 400 360 L 240 260 Z"/>
+  </circle>
+
+  <!-- slow rotating dashed ring around the model node -->
+  <circle cx="400" cy="110" r="62" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 10">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 110" to="360 400 110" dur="60s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- hard offset shadow accents -->
+  <rect x="370" y="80" width="90" height="90" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 6" opacity="0.35">
+    <animate attributeName="opacity" values="0.35;0.15;0.35" dur="9s" repeatCount="indefinite"/>
+  </rect>
+</svg>

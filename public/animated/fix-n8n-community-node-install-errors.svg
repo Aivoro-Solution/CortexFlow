@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of interlocking package blocks, one sliding into place">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- orbit ring, slow rotation -->
+  <g transform="translate(400 225)">
+    <circle r="150" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 10" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- fixed puzzle blocks -->
+  <g stroke="#111111" stroke-width="3">
+    <rect x="250" y="120" width="110" height="110" fill="#FFFDF5"/>
+    <rect x="360" y="120" width="110" height="110" fill="#FFFDF5"/>
+    <rect x="250" y="230" width="110" height="110" fill="#FFFDF5"/>
+    <rect x="360" y="230" width="110" height="110" fill="#FFFDF5"/>
+  </g>
+
+  <!-- connector tabs between blocks -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <circle cx="360" cy="175" r="14"/>
+    <circle cx="305" cy="230" r="14"/>
+    <circle cx="415" cy="230" r="14"/>
+    <circle cx="360" cy="285" r="14"/>
+  </g>
+
+  <!-- the loose orange block: slides in, pauses, slides out -->
+  <g>
+    <rect x="470" y="175" width="110" height="110" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="470;470;360;360;470;470" keyTimes="0;0.15;0.4;0.6;0.85;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="470" y="175" width="110" height="110" fill="none" stroke="#111111" stroke-width="3" opacity="0.25">
+      <animate attributeName="x" values="478;478;368;368;478;478" keyTimes="0;0.15;0.4;0.6;0.85;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="183;183;183;183;183;183" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- status dots pulsing slowly -->
+  <g>
+    <circle cx="290" cy="160" r="7" fill="#111111">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="160" r="7" fill="#111111">
+      <animate attributeName="opacity" values="0.25;1;0.25" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="290" cy="270" r="7" fill="#111111">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="270" r="7" fill="#111111">
+      <animate attributeName="opacity" values="0.25;1;0.25" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- drifting dashed connector line -->
+  <path d="M 120 380 L 680 380" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 10" opacity="0.4">
+    <animate attributeName="stroke-dashoffset" from="0" to="-160" dur="16s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="120" cy="380" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+  <circle cx="680" cy="380" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+</svg>

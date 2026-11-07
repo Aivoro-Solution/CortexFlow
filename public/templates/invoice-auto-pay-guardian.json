@@ -1,0 +1,1537 @@
+{
+  "name": "Invoice Auto-Pay Guardian — 3-Way Match, Caps & Audit Trail",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🛡️ INVOICE AUTO-PAY GUARDIAN\n**What it does:** Supplier invoices arrive by email → AI does a line-by-line 3-way match (invoice vs PO vs receiving record) → ONLY exact matches within your caps are auto-paid. New suppliers, changed bank details, duplicates, mismatches or cap breaches go to a human review queue. Every step is logged with a full audit trail.\n\n**You'll need:**\n- Gmail account receiving supplier invoices (OAuth2)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- Payment provider account with API access (Stripe / Wise / Melio) — TEST MODE first\n\n**Status flow in Sheets:** `RECEIVED` → `MATCHING` → `APPROVED` → `QUEUED_FOR_PAYMENT` → `PAID` / `REVIEW` / `BLOCKED` / `REJECTED`\n\n**Safety:** autopay PAUSES automatically if a duplicate payment or an unsettled payment is found in the log (kill-switch). Never auto-pay without caps.",
+        "height": 220,
+        "width": 6400,
+        "color": 5
+      },
+      "id": "02aedcbc-f348-40e7-9c7f-4bd0bf7d053a",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Invoice intake\nGmail Trigger (subject:invoice + attachment) → download PDF → extract text → parse invoice number, supplier, PO number, amount, currency, due date, bank last-4.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "a54a2d62-96da-42aa-a8a8-fcfbdf536b32",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Log, dedupe + kill-switch\nAppend row as `RECEIVED` → read the log → duplicate invoice? (same invoice no. + supplier already logged) or kill-switch active? (any `BLOCKED` row or `PAID` row with settlement lost) → `BLOCKED` + alert, autopay paused.",
+        "height": 420,
+        "width": 960,
+        "color": 4
+      },
+      "id": "4b1d5d00-54ea-4a6d-90b3-8d369625c918",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Supplier check\nKnown supplier on the allowlist? Bank details unchanged vs the stored record? New supplier or changed bank details → `REVIEW` queue.",
+        "height": 420,
+        "width": 720,
+        "color": 4
+      },
+      "id": "a0d84f92-9ee6-4007-9473-2db7096fb529",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — 3-way match (AI)\nAI Agent compares invoice vs PO vs receiving record line by line (shorts, subs, price changes, credit memos) via Structured Output Parser.",
+        "height": 420,
+        "width": 960,
+        "color": 4
+      },
+      "id": "6a5d0c0b-200b-4645-9369-b90980a8f0e0",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Caps & approval gate\nExact match AND amount ≤ per-payment cap AND daily total ≤ daily cap → `APPROVED`. Anything else → `REVIEW` queue with a Telegram approval form.",
+        "height": 420,
+        "width": 720,
+        "color": 4
+      },
+      "id": "c96b1c70-b89b-47ef-a55f-3a8be8d5e8ec",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Payment + audit\nIdempotency-Key header on every payment call (retries can never pay twice) → verify settlement → sheet flips to `PAID` with payment reference + policy version → Telegram summary.",
+        "height": 420,
+        "width": 1200,
+        "color": 4
+      },
+      "id": "9baa9fdf-eeda-4a90-8a21-70cd1bc24407",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4560,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 7 — Review queue & alerts\n`REVIEW` items get a Telegram message with an approve/reject form. Approved → payment runs. Rejected → `REJECTED`. `BLOCKED` duplicates alert immediately.",
+        "height": 420,
+        "width": 1440,
+        "color": 4
+      },
+      "id": "9d22bb88-31cf-4641-95e7-43183b5762dd",
+      "name": "STICKY — STEP 7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "subject:invoice has:attachment"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail"
+        }
+      },
+      "id": "55066858-eba9-47b7-8476-99c745eea8b8",
+      "name": "Gmail Trigger: Invoice Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d62d57ae-6a47-42ce-8648-b79f289d0746",
+              "name": "per_payment_cap",
+              "type": "string",
+              "value": "5000"
+            },
+            {
+              "id": "cded2179-ede3-4003-9f34-3058001cf8bb",
+              "name": "daily_cap",
+              "type": "string",
+              "value": "20000"
+            },
+            {
+              "id": "751bd08c-e815-4944-bd4b-7bb80ab14faa",
+              "name": "currency",
+              "type": "string",
+              "value": "USD"
+            },
+            {
+              "id": "b4960519-d669-4092-90bc-5700c4faac8a",
+              "name": "policy_version",
+              "type": "string",
+              "value": "v1.2"
+            },
+            {
+              "id": "48b80bac-5979-41ff-a472-2bb81f6dbde4",
+              "name": "match_tolerance_percent",
+              "type": "string",
+              "value": "0"
+            },
+            {
+              "id": "6cae4420-7174-4974-9dba-9e34497d5309",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "6409444c-45d0-42ad-a6db-747519471322",
+              "name": "suppliers_sheet",
+              "type": "string",
+              "value": "Suppliers"
+            },
+            {
+              "id": "d141dc22-9bfd-4437-8b74-20cb722a5722",
+              "name": "po_sheet",
+              "type": "string",
+              "value": "PurchaseOrders"
+            },
+            {
+              "id": "cc0f537c-4ff5-4f59-808e-99e9e6a00a4b",
+              "name": "receipts_sheet",
+              "type": "string",
+              "value": "Receiving"
+            },
+            {
+              "id": "e2f36b13-6876-43d3-8fe7-0d66d35f8934",
+              "name": "log_sheet",
+              "type": "string",
+              "value": "PayablesLog"
+            },
+            {
+              "id": "12eea52c-d937-4016-8930-15fb1ce1bc36",
+              "name": "payment_provider_base_url",
+              "type": "string",
+              "value": "PASTE_YOUR_PAYMENT_PROVIDER_BASE_URL"
+            },
+            {
+              "id": "a8d9db79-0077-4331-9a8b-e3fae7aef7f3",
+              "name": "payment_api_key",
+              "type": "string",
+              "value": "PASTE_YOUR_PAYMENT_API_KEY"
+            },
+            {
+              "id": "37b1b9c0-8787-4363-a725-09fae4254b41",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            },
+            {
+              "id": "f12ee1a6-61fc-40e3-95ae-973ff3463128",
+              "name": "finance_email",
+              "type": "string",
+              "value": "PASTE_YOUR_FINANCE_EMAIL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e1a115a-c259-45b9-9ca9-5b2ea1b74f25",
+      "name": "CONFIG — Policy & Caps",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAttachment",
+        "messageId": "={{ $('Gmail Trigger: Invoice Email').item.json.id }}",
+        "attachmentId": "={{ $json.payload.parts[0].body.attachmentId }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail"
+        }
+      },
+      "id": "df76351a-412e-448c-b16c-0fda1ca60671",
+      "name": "Gmail: Download Attachment",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data",
+        "options": {}
+      },
+      "id": "bd0822e2-bda8-480e-8bbb-6c5e00855078",
+      "name": "Extract from File — Invoice PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the extracted invoice text into structured fields\nconst text = ($json.text || '').toString();\nconst pick = (re) => { const m = text.match(re); return m ? m[1].trim() : ''; };\nconst amountRaw = pick(/(?:total|amount due|balance due|grand total)[\\s\\S]{0,40}?\\$?\\s?([\\d,]+\\.\\d{2})/i) || pick(/\\$?\\s?([\\d,]+\\.\\d{2})/);\nconst amount = parseFloat((amountRaw || '0').replace(/,/g, '')) || 0;\nconst invoice_number = pick(/invoice\\s*(?:no\\.?|number|#)\\s*[:#]?\\s*([A-Za-z0-9\\-\\/]+)/i);\nconst po_number = pick(/(?:p\\.?o\\.?|purchase order)\\s*(?:no\\.?|number|#)\\s*[:#]?\\s*([A-Za-z0-9\\-\\/]+)/i);\nconst supplier = pick(/(?:from|vendor|supplier|billed by)\\s*[:\\-]?\\s*([A-Za-z0-9 .&',\\-]+)/i) || 'UNKNOWN_SUPPLIER';\nconst bank_last4 = pick(/(?:account|acct)[\\s\\S]{0,30}?(?:ending|last 4|\\*{2,})(\\d{4})/i) || '';\nconst due_date = pick(/due\\s*date\\s*[:\\-]?\\s*(\\d{4}-\\d{2}-\\d{2}|\\d{2}\\/\\d{2}\\/\\d{4})/i);\nconst currency = (text.match(/\\b(USD|EUR|GBP|INR|AUD|CAD)\\b/) || ['USD'])[0];\nconst idempotency_key = [invoice_number, supplier, amount.toFixed(2)].join('::');\nreturn [{ json: {\n  invoice_number, supplier, po_number, amount, currency, due_date,\n  bank_account_last4: bank_last4,\n  invoice_text: text.slice(0, 6000),\n  idempotency_key,\n  date_received: new Date().toISOString().slice(0, 10),\n  status: 'RECEIVED',\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "bae11b0a-d287-4b9f-b011-b4f1311245f8",
+      "name": "Code — Normalize Invoice Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date Received": "={{ $json.date_received }}",
+            "Invoice Number": "={{ $json.invoice_number }}",
+            "Supplier": "={{ $json.supplier }}",
+            "PO Number": "={{ $json.po_number }}",
+            "Amount": "={{ $json.amount }}",
+            "Currency": "={{ $json.currency }}",
+            "Due Date": "={{ $json.due_date }}",
+            "Status": "={{ $json.status }}",
+            "Idempotency Key": "={{ $json.idempotency_key }}",
+            "Payment Reference": "",
+            "Settlement Status": "",
+            "Review Reason": "",
+            "Match Verdict": "",
+            "Policy Version": "={{ $('CONFIG \\u2014 Policy & Caps').first().json.policy_version }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fb242663-7ed4-48e0-ab4f-253c88832982",
+      "name": "Google Sheets — Log Invoice RECEIVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f2e06366-ecea-4436-a995-bc608164153b",
+      "name": "Google Sheets — Read Payables Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Duplicate = this invoice number + supplier already logged before this run\n// (the row we just appended counts once, so 2+ matches = duplicate).\n// Kill-switch = any BLOCKED row, or a PAID row whose settlement status was lost.\nconst inv = $('Code \\u2014 Normalize Invoice Fields').first().json;\nconst log = $input.all().map(i => i.json);\nconst norm = (s) => (s || '').toString().trim().toLowerCase();\nconst matches = log.filter(r => norm(r['Invoice Number']) === norm(inv.invoice_number)\n  && norm(r['Supplier']) === norm(inv.supplier) && norm(inv.invoice_number) !== '');\nconst prior = matches.find(r => norm(r['Status']) !== 'received');\nconst duplicate = matches.length >= 2 || !!prior;\nconst blocked = log.find(r => norm(r['Status']) === 'blocked');\nconst unsettled = log.find(r => norm(r['Status']) === 'paid' && norm(r['Settlement Status']) !== 'settled');\nconst today = new Date().toISOString().slice(0, 10);\nconst daily_total = log.filter(r => (r['Date Received'] || '').slice(0, 10) === today\n  && ['approved', 'queued_for_payment', 'paid'].includes(norm(r['Status'])))\n  .reduce((s, r) => s + (Number(r['Amount']) || 0), 0);\nreturn [{ json: {\n  ...inv,\n  duplicate,\n  duplicate_reason: duplicate ? `Invoice ${inv.invoice_number} from ${inv.supplier} is already in the PayablesLog` : '',\n  kill_switch: !!(blocked || unsettled),\n  kill_switch_reason: blocked ? 'A BLOCKED row exists in PayablesLog — autopay paused'\n    : (unsettled ? `Unsettled payment ${unsettled['Invoice Number']} — settlement status lost` : ''),\n  daily_total,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "76f40098-353a-4125-8320-df3dfd9ff375",
+      "name": "Code — Dedupe + Kill-Switch Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "7b453461-269f-483c-9cef-213e934f1b4c",
+              "leftValue": "={{ $json.duplicate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            },
+            {
+              "id": "b2ff50df-10f3-4da0-ae18-0ee5e552a40a",
+              "leftValue": "={{ $json.kill_switch }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "e3d6e4af-44a0-43cf-82c2-1e5ad64fbb43",
+      "name": "IF — Duplicate or Kill-Switch?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Suppliers"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "4891c0f9-ba53-45a8-b4b6-de202f4c1939",
+      "name": "Google Sheets — Read Suppliers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Allowlist check: known supplier? Bank details unchanged vs stored record?\nconst inv = $('Code \\u2014 Dedupe + Kill-Switch Check').first().json;\nconst suppliers = $input.all().map(i => i.json);\nconst norm = (s) => (s || '').toString().trim().toLowerCase();\nconst row = suppliers.find(r => norm(r['Supplier']) === norm(inv.supplier));\nlet supplier_status = 'KNOWN', supplier_reason = '';\nif (!row) {\n  supplier_status = 'NEW_SUPPLIER';\n  supplier_reason = `Supplier ${inv.supplier} is not on the allowlist`;\n} else if (inv.bank_account_last4 && row['Bank Account Last 4']\n    && String(row['Bank Account Last 4']).slice(-4) !== String(inv.bank_account_last4).slice(-4)) {\n  supplier_status = 'BANK_CHANGED';\n  supplier_reason = `Bank details for ${inv.supplier} changed (last-4 mismatch vs stored record)`;\n} else if (norm(row['Status']) === 'blocked') {\n  supplier_status = 'SUPPLIER_BLOCKED';\n  supplier_reason = `Supplier ${inv.supplier} is marked blocked in the Suppliers sheet`;\n}\nreturn [{ json: { ...inv, supplier_status, supplier_reason } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "890034f9-828f-4ca3-aa07-a00306c43c34",
+      "name": "Code — Supplier Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b1ea8fec-a774-443e-9b26-06bc60ec8cf6",
+              "leftValue": "={{ $json.supplier_status }}",
+              "rightValue": "KNOWN",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "4885abe6-b968-427a-b8ea-4f17c343ca37",
+      "name": "IF — Supplier OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PurchaseOrders"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "32741ab0-a631-45c2-a817-f1a6ec89eda9",
+      "name": "Google Sheets — Read Purchase Orders",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Receiving"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "fa28308a-0d0c-488b-add9-6bbb9fa33a6d",
+      "name": "Google Sheets — Read Receiving Records",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a strict accounts-payable auditor. Do a line-by-line 3-way match: invoice vs purchase order vs receiving record. Flag short quantities, substitutions, price changes, missing lines and credit memos. Quote the exact evidence (numbers) for every verdict. Recommend AUTO_APPROVE only on a perfect line-by-line match with zero variance. Output ONLY via the structured output parser."
+        },
+        "text": "=Invoice to verify:\nInvoice #: {{ $json.invoice_number }}\nSupplier: {{ $json.supplier }}\nPO #: {{ $json.po_number }}\nAmount: {{ $json.amount }} {{ $json.currency }}\nDue date: {{ $json.due_date }}\nBank account last-4: {{ $json.bank_account_last4 }}\n\nInvoice text:\n{{ $json.invoice_text }}\n\nPurchase order lines:\n{{ $('Google Sheets \\u2014 Read Purchase Orders').all().map(i => JSON.stringify(i.json)).join('\\n') }}\n\nReceiving records:\n{{ $('Google Sheets \\u2014 Read Receiving Records').all().map(i => JSON.stringify(i.json)).join('\\n') }}"
+      },
+      "id": "ce1aee7b-195c-4bda-a778-7f17becaba62",
+      "name": "AI Agent — 3-Way Match Verdict",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "b23ab1ee-c2cf-4adb-b2dd-3211764cb6de",
+      "name": "OpenAI Chat Model — 3-Way Match",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3360,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"match_verdict\": \"EXACT_MATCH / PARTIAL_MATCH / MISMATCH\",\n  \"line_verdicts\": [{\"po_line\": \"line description\", \"invoice_qty\": 0, \"received_qty\": 0, \"invoice_amount\": 0, \"po_amount\": 0, \"verdict\": \"MATCH / SHORT / SUBSTITUTED / PRICE_CHANGE / MISSING\", \"evidence\": \"quote the numbers from invoice / PO / receiving record\"}],\n  \"total_variance\": 0,\n  \"credit_memos_noted\": \"any credit memos found, or none\",\n  \"recommended_action\": \"AUTO_APPROVE / REVIEW\",\n  \"reasoning\": \"one paragraph explaining the verdict\"\n}"
+      },
+      "id": "c95a6b37-b16a-443a-bca3-140ca4c80c48",
+      "name": "Structured Output Parser — Match Verdict",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3600,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Auto-approve ONLY on exact match + supplier OK + within both caps\nconst inv = $('Code \\u2014 Supplier Check').first().json;\nconst cfg = $('CONFIG \\u2014 Policy & Caps').first().json;\nconst out = $json.output || {};\nconst cap = Number(cfg.per_payment_cap) || 5000;\nconst dailyCap = Number(cfg.daily_cap) || 20000;\nconst dailyTotal = Number(inv.daily_total) || 0;\nconst amount = Number(inv.amount) || 0;\nlet decision = 'REVIEW', reason = '';\nif (out.match_verdict === 'EXACT_MATCH' && out.recommended_action === 'AUTO_APPROVE') {\n  if (amount > cap) reason = `Amount ${amount} exceeds per-payment cap ${cap}`;\n  else if (dailyTotal + amount > dailyCap) reason = `Daily cap ${dailyCap} would be exceeded (today ${dailyTotal} + ${amount})`;\n  else { decision = 'AUTO_APPROVE'; reason = 'Exact 3-way match within caps'; }\n} else {\n  reason = `Match verdict ${out.match_verdict || 'UNKNOWN'}: ${out.reasoning || 'see agent output'}`;\n}\nreturn [{ json: {\n  ...inv,\n  status: 'MATCHING',\n  match_verdict: out.match_verdict || 'UNKNOWN',\n  line_verdicts: out.line_verdicts || [],\n  total_variance: (out.total_variance === undefined || out.total_variance === null) ? '' : out.total_variance,\n  credit_memos_noted: out.credit_memos_noted || '',\n  decision, decision_reason: reason,\n  per_payment_cap: cap, daily_cap: dailyCap,\n  policy_version: cfg.policy_version,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e8d163cf-9639-429f-b48d-50332430617a",
+      "name": "Code — Build Match Decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "caaa5728-e786-4816-8cd5-a65fdf279e5d",
+              "leftValue": "={{ $json.decision }}",
+              "rightValue": "AUTO_APPROVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "a8d506a3-76fb-450a-9f05-84e67d424d1e",
+      "name": "IF — Auto-Approve?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "4459befd-02d1-451b-98f4-5f91ac27d7ab",
+      "name": "Merge — Approved Payments",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One idempotency key per invoice (invoice no. + supplier + amount):\n// a retried execution can never pay the same invoice twice.\nconst j = $input.first().json;\nconst today = new Date().toISOString().slice(0, 10).replace(/-/g, '');\nconst payment_reference = `PAY-${j.invoice_number}-${today}`;\nreturn [{ json: { ...j, payment_reference, status: 'QUEUED_FOR_PAYMENT' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "98f6fda1-f0c9-44cb-82db-db7fd4ceb41e",
+      "name": "Code — Prepare Payment Batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('CONFIG \\u2014 Policy & Caps').first().json.payment_provider_base_url }}/v1/payments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('CONFIG \\u2014 Policy & Caps').first().json.payment_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "= {{ JSON.stringify({ payee: $json.supplier, amount: $json.amount, currency: $json.currency, reference: $json.payment_reference, idempotency_key: $json.idempotency_key, bank_account_last4: $json.bank_account_last4 }) }}",
+        "options": {}
+      },
+      "id": "fece8d2f-4cff-446e-9001-0bbb971ec1fd",
+      "name": "HTTP Request — Release Payment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Settlement lost = kill-switch trigger on the next run. Never mark PAID blindly.\nconst res = $input.first().json;\nconst ok = !!(res && (res.status === 'succeeded' || res.status === 'settled' || res.status === 'paid' || res.success === true));\nconst j = $('Code \\u2014 Prepare Payment Batch').first().json;\nreturn [{ json: {\n  ...j,\n  status: ok ? 'PAID' : 'QUEUED_FOR_PAYMENT',\n  settlement_status: ok ? 'SETTLED' : 'UNSETTLED',\n  provider_response: JSON.stringify(res).slice(0, 500),\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "2d029919-3043-44c1-b5f2-1fe851e4cb47",
+      "name": "Code — Verify Settlement",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice Number": "={{ $json.invoice_number }}",
+            "Status": "={{ $json.status }}",
+            "Payment Reference": "={{ $json.payment_reference }}",
+            "Settlement Status": "={{ $json.settlement_status }}",
+            "Match Verdict": "={{ $json.match_verdict }}",
+            "Policy Version": "={{ $json.policy_version }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "7519baee-5dc7-49d3-9a74-6c7f45f53402",
+      "name": "Google Sheets — Update Log PAID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Telegram summary for the paid batch\nconst items = $input.all().map(i => i.json);\nconst total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);\nconst currency = items[0] ? items[0].currency : 'USD';\nconst lines = items.map(i => `\\u2022 ${i.invoice_number} \\u2014 ${i.supplier}: ${i.amount} ${i.currency} (ref ${i.payment_reference}, ${i.settlement_status})`);\nconst summary = [`\\u2705 *Invoice Auto-Pay \\u2014 ${new Date().toISOString().slice(0, 10)}*`, ``,\n  `${items.length} invoice(s) paid \\u2014 total ${total.toFixed(2)} ${currency}`, ``,\n  ...lines, ``,\n  `Policy ${items[0] ? items[0].policy_version : ''} \\u00b7 Full audit trail in PayablesLog`].join('\\n');\nreturn [{ json: { summary } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "8f6f08dd-c459-4e60-92ee-c3cdb711b34f",
+      "name": "Code — Build Payment Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Policy & Caps').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d21d3098-db69-42e7-9401-65cc62063bd2",
+      "name": "Telegram — Send Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nreturn [{ json: {\n  ...j,\n  status: 'BLOCKED',\n  review_reason: j.duplicate ? j.duplicate_reason : j.kill_switch_reason,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "6986726e-76bf-4065-b829-802b4c5024f8",
+      "name": "Code — Flag BLOCKED",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice Number": "={{ $json.invoice_number }}",
+            "Status": "BLOCKED",
+            "Review Reason": "={{ $json.review_reason }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "897faee9-20ea-4a55-9cf6-04149c04f09f",
+      "name": "Google Sheets — Update Log BLOCKED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Policy & Caps').first().json.telegram_chat_id }}",
+        "text": "=\\U0001F6A8 *Auto-pay BLOCKED*\\n\\nInvoice: {{ $json.invoice_number }}\\nSupplier: {{ $json.supplier }}\\nAmount: {{ $json.amount }} {{ $json.currency }}\\nReason: {{ $json.review_reason }}\\n\\nAutopay is paused until the log is cleared. Nothing was paid.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "0bc78aa2-3dd2-4aae-a1fb-06efa7679738",
+      "name": "Telegram — BLOCKED Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nconst reason = j.supplier_reason || j.decision_reason || 'Manual review required';\nreturn [{ json: { ...j, status: 'REVIEW', review_reason: reason } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ce4d3b3b-6185-4b39-b4fd-385a6898ad1e",
+      "name": "Code — Set Review Reason",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice Number": "={{ $json.invoice_number }}",
+            "Status": "REVIEW",
+            "Review Reason": "={{ $json.review_reason }}",
+            "Match Verdict": "={{ $json.match_verdict }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "154d2842-e47e-4ec3-8584-3d00b4598054",
+      "name": "Google Sheets — Update Log REVIEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG \\u2014 Policy & Caps').first().json.telegram_chat_id }}",
+        "text": "=\\u26A0\\uFE0F *Payment review needed*\\n\\nInvoice: {{ $json.invoice_number }}\\nSupplier: {{ $json.supplier }}\\nAmount: {{ $json.amount }} {{ $json.currency }}\\nPO: {{ $json.po_number }}\\nMatch verdict: {{ $json.match_verdict }}\\nReason: {{ $json.review_reason }}\\n\\nApprove or reject here:\\n{{ $execution.resumeUrl }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "8c192d02-bc86-45c7-aee8-5a6db43d65bc",
+      "name": "Telegram — Review Request",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "onFormSubmission",
+        "options": {
+          "formTitle": "Approve this invoice payment?",
+          "formDescription": "Review the invoice, PO and receiving record, then approve or reject the payment.",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Decision",
+                "fieldType": "dropdown",
+                "requiredField": true,
+                "fieldOptions": {
+                  "values": [
+                    {
+                      "option": "Approve"
+                    },
+                    {
+                      "option": "Reject"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "responseType": "allEntries"
+        }
+      },
+      "id": "69b0a6d8-da16-4601-add1-6a542bd0db70",
+      "name": "Wait — Human Approval",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3360,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "5ec93e01-fc6b-464f-9f0e-750830eed966",
+              "leftValue": "={{ $json.Decision }}",
+              "rightValue": "Approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.string.equals"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "5a143d52-f391-4eaf-8e41-203c7a520898",
+      "name": "IF — Human Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3600,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "PayablesLog"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Invoice Number": "={{ $json.invoice_number }}",
+            "Status": "REJECTED",
+            "Review Reason": "={{ $json.review_reason }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "40873b9b-d258-42d8-a015-89104cc28a4f",
+      "name": "Google Sheets — Update Log REJECTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3600,
+        940
+      ]
+    }
+  ],
+  "connections": {
+    "Gmail Trigger: Invoice Email": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Policy & Caps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Policy & Caps": {
+      "main": [
+        [
+          {
+            "node": "Gmail: Download Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail: Download Attachment": {
+      "main": [
+        [
+          {
+            "node": "Extract from File — Invoice PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File — Invoice PDF": {
+      "main": [
+        [
+          {
+            "node": "Code — Normalize Invoice Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Normalize Invoice Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Log Invoice RECEIVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Log Invoice RECEIVED": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Read Payables Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Read Payables Log": {
+      "main": [
+        [
+          {
+            "node": "Code — Dedupe + Kill-Switch Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Dedupe + Kill-Switch Check": {
+      "main": [
+        [
+          {
+            "node": "IF — Duplicate or Kill-Switch?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Duplicate or Kill-Switch?": {
+      "main": [
+        [
+          {
+            "node": "Code — Flag BLOCKED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets — Read Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Flag BLOCKED": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Update Log BLOCKED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Update Log BLOCKED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — BLOCKED Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Read Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Code — Supplier Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Supplier Check": {
+      "main": [
+        [
+          {
+            "node": "IF — Supplier OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Supplier OK?": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Read Purchase Orders",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code — Set Review Reason",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Read Purchase Orders": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Read Receiving Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Read Receiving Records": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — 3-Way Match Verdict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — 3-Way Match Verdict": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Match Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Match Decision": {
+      "main": [
+        [
+          {
+            "node": "IF — Auto-Approve?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Auto-Approve?": {
+      "main": [
+        [
+          {
+            "node": "Merge — Approved Payments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code — Set Review Reason",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Set Review Reason": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Update Log REVIEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Update Log REVIEW": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Review Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Review Request": {
+      "main": [
+        [
+          {
+            "node": "Wait — Human Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait — Human Approval": {
+      "main": [
+        [
+          {
+            "node": "IF — Human Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Human Approved?": {
+      "main": [
+        [
+          {
+            "node": "Merge — Approved Payments",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets — Update Log REJECTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Approved Payments": {
+      "main": [
+        [
+          {
+            "node": "Code — Prepare Payment Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Prepare Payment Batch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request — Release Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request — Release Payment": {
+      "main": [
+        [
+          {
+            "node": "Code — Verify Settlement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Verify Settlement": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Update Log PAID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Update Log PAID": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Payment Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Payment Summary": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — 3-Way Match": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — 3-Way Match Verdict",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Match Verdict": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — 3-Way Match Verdict",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cortexflow-invoice-auto-pay-guardian-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  },
+  "pinData": {},
+  "tags": [
+    {
+      "name": "cortexflow-template"
+    }
+  ]
+}

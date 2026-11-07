@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a workflow draft becoming the published version">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- old published version (faded, bottom layer) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5" stroke-opacity="0.45">
+    <rect x="90" y="300" width="180" height="64" rx="4"/>
+    <rect x="330" y="300" width="180" height="64" rx="4"/>
+    <rect x="570" y="300" width="140" height="64" rx="4"/>
+    <line x1="270" y1="332" x2="330" y2="332"/>
+    <line x1="510" y1="332" x2="570" y2="332"/>
+  </g>
+  <g fill="#111111" fill-opacity="0.35">
+    <circle cx="120" cy="332" r="10"/>
+    <circle cx="360" cy="332" r="10"/>
+    <circle cx="600" cy="332" r="10"/>
+  </g>
+
+  <!-- draft version (top layer, slides in) -->
+  <g id="draft">
+    <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+      <rect x="90" y="90" width="180" height="64" rx="4"/>
+      <rect x="330" y="90" width="180" height="64" rx="4"/>
+      <rect x="570" y="90" width="140" height="64" rx="4"/>
+      <line x1="270" y1="122" x2="330" y2="122"/>
+      <line x1="510" y1="122" x2="570" y2="122"/>
+    </g>
+    <g fill="#FF4D00">
+      <circle cx="120" cy="122" r="10"/>
+      <circle cx="360" cy="122" r="10"/>
+      <circle cx="600" cy="122" r="10"/>
+    </g>
+    <animateTransform attributeName="transform" type="translate" values="0 -14; 0 0; 0 -14" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- publish button pressing down between the two versions -->
+  <g id="press">
+    <rect x="330" y="196" width="180" height="56" rx="6" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="330" y="196" width="180" height="56" rx="6" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="360" y="216" width="120" height="14" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="6s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- dotted path from draft down to published version -->
+  <line x1="420" y1="154" x2="420" y2="196" stroke="#111111" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round">
+    <animate attributeName="stroke-dashoffset" values="0; -48" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="420" y1="252" x2="420" y2="300" stroke="#111111" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round">
+    <animate attributeName="stroke-dashoffset" values="0; -48" dur="8s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- version pointer orbiting slowly -->
+  <g>
+    <circle cx="420" cy="225" r="46" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 8"/>
+    <circle cx="420" cy="179" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="rotate" values="0 420 225; 360 420 225" dur="40s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- corner registration marks -->
+  <g stroke="#111111" stroke-width="2">
+    <line x1="24" y1="24" x2="44" y2="24"/><line x1="24" y1="24" x2="24" y2="44"/>
+    <line x1="776" y1="24" x2="756" y2="24"/><line x1="776" y1="24" x2="776" y2="44"/>
+    <line x1="24" y1="426" x2="44" y2="426"/><line x1="24" y1="426" x2="24" y2="406"/>
+    <line x1="776" y1="426" x2="756" y2="426"/><line x1="776" y1="426" x2="776" y2="406"/>
+  </g>
+</svg>

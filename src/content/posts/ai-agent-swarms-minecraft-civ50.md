@@ -1,6 +1,6 @@
 ---
 title: "50 AI Agents Tried to Build a Civilization in Minecraft — They Invented Bureaucracy Instead"
-description: "50 AI agents spent 3 hours in Minecraft, sent 5,900 messages, invented permits — and built nothing. The coordination-tax lesson for multi-agent builders."
+description: "50 AI agents spent 3 hours in Minecraft, sent ~5,900 messages, wrote constitutions — and built nothing. The coordination-tax lesson for multi-agent builders."
 date: 2026-11-07
 category: news
 tags: ["AI agents", "multi-agent", "Minecraft", "coordination", "n8n"]
@@ -11,7 +11,7 @@ image: "/og/ai-agent-swarms-minecraft-civ50.webp"
 
 "ai agent swarms minecraft study" is a breakout search on Google Trends this week — the fastest-rising query under "AI agent" in the US over the past 7 days. The reason is an experiment that reads like a joke and lands like a warning: Y Combinator's research lab, YC Labs, and the startup Olam Labs put 50 AI agents in a Minecraft survival world, gave them three hours and one instruction — "build a thriving civilization" — and watched them invent bureaucracy instead.
 
-The agents harvested nearly every tree near their spawn point in the first 90 seconds. Then a wave of zombie attacks on the first night killed 22 of them. The survivors turned risk-averse, formed a government, invented permits, food ledgers, and job titles, and spent the rest of the run managing scarcity instead of building anything. They exchanged about 5,900 messages and produced no civilization.
+The agents harvested nearly every tree near their spawn point in the first 90 seconds. Then a wave of zombie attacks on the first night killed 22 of them, according to reports of the run. The survivors turned risk-averse, spent hours writing constitutions and voting on governance — including whether iron should be communal — and built "The Office," a government office with workstations, desks, and a meeting room where, as Tom's Hardware put it, nobody was "actually doing anything." They exchanged about 5,900 messages and produced no civilization.
 
 If you build multi-agent workflows — in n8n or anywhere else — this is the most useful failure of the year. Not because Minecraft predicts your production system, but because it isolates the one variable every swarm design ignores: **coordination tax**. Every agent you add also adds conversations, negotiations, and state to reconcile, and past a small number that tax eats the work itself.
 
@@ -19,15 +19,15 @@ Here is what the experiment actually ran, what the numbers say, and the four rul
 
 ## What YC Labs and Olam Labs actually ran
 
-The write-up, "Agents in Games," was published by YC Labs in late October 2026, with Tom's Hardware covering it on November 1 and the story reaching the Hacker News front page the same day. Olam Labs builds multi-agent environments for AI labs, and the team made the swarm software open source, built on existing Minecraft automation tools including Mindcraft and Mineflayer.
+The write-up was published on YC Labs' site in late October 2026 (the "Agents in Games" post at labs.ycombinator.com), with Tom's Hardware covering it on November 1 and the story reaching the Hacker News front page the same day. Olam Labs builds multi-agent environments for AI labs, and the team made the swarm software open source, built on existing Minecraft automation tools including Mindcraft and Mineflayer.
 
 There were three experiments, not one:
 
 | Experiment | Setup | Result |
 | --- | --- | --- |
-| **Civ50** (cooperative) | 50 GPT-6.1 Sol agents, one shared survival world, 3 hours, goal: "build a thriving civilization" | No civilization. ~5,900 messages exchanged. 22 deaths on night one. Agents formed a government, permits, food ledgers, and job titles instead of building. |
-| **Bed Wars** (competitive) | 10 GPT-6.1 Sol agents vs 10 Claude Opus 5.5 agents, nine games | Two sharply different styles: the GPT team coordinated as a decentralized hive; the Claude team ran a single-leader democratic hierarchy. GPT took six of the nine games. |
-| **Mindustry** (competitive RTS) | Same 10v10 matchup, seven real-time strategy games | GPT won 6–1, coordinating as a hive against Claude's single-leader hierarchy. |
+| **Civ50** (cooperative) | 50 GPT-6.1 Sol agents, one shared survival world, 3 hours, goal: "build a thriving civilization" | No civilization. About 5,900 messages exchanged (per reports of the run; Tom's Hardware says "thousands"). 22 deaths on night one (per AI Times' account). Agents wrote constitutions, voted on governance, and built "The Office" — desks and a meeting room, nobody doing anything. |
+| **Bed Wars** (competitive) | 10 GPT-6.1 Sol agents vs 10 Claude Opus 5.5 agents, nine games | Two sharply different styles: the GPT team played aggressively with elaborate strategies; the Claude team played defensively with specialized roles and feints. A tool bug stopped block-breaking mid-game — GPT diagnosed it and shared workarounds; several Claudes concluded breaking was impossible. No winner was reported. |
+| **Mindustry** (competitive RTS) | Same 10v10 matchup, seven real-time strategy games | GPT won 6–1, rushing and overwhelming; Claude's strategies were more elaborate — specialized roles, unit composition, and feints — but lost. |
 
 Two details matter for how seriously to take this. First, the competitive games show the agents are not incompetent — the same models, in teams of ten with a clear opponent, played coherent strategy and won decisively. The failure was specific to the 50-agent cooperative run: scale plus an open-ended goal. Second, YC Labs has already started a follow-up: a new 25-agent colony running GPT-6.1 Terra, streaming live on Twitch.
 
@@ -36,15 +36,15 @@ The researchers themselves note the behavior resembled patterns they had seen wh
 ## The coordination-tax machine: why 50 agents did worse than 10
 
 <figure>
-  <img src="/figures/ai-agent-swarms-minecraft-civ50-coordination-tax.svg" alt="Isometric coordination-tax rig: fifty small agent cubes ride a feed rail into a coordination press; a message drum counts 5,900 messages while a gauge needle climbs into the red; the output tray holds a single permit slip and no civilization" loading="lazy" />
+  <img src="/figures/ai-agent-swarms-minecraft-civ50-coordination-tax.svg" alt="Isometric coordination-tax rig: fifty small agent cubes ride a feed rail into a coordination press; a message drum counts about 5,900 messages while a gauge needle climbs into the red; the output tray holds a single permit slip and no civilization" loading="lazy" />
   <figcaption><b>Fig 1 — The coordination-tax rig.</b> Fifty agent cubes ride the feed rail into the press. Each one adds messages to the drum — about 5,900 in three hours — and every message turns the gauge a little further toward the red. The output tray is the punchline: after all that coordination, it holds one permit slip and no civilization. The orange drum is the part to watch: in a swarm, the message count is the work.</figcaption>
 </figure>
 
 The machine above is the honest way to picture the experiment. Agents go in, messages come out, and the output is process, not product. The same dynamic shows up in production multi-agent systems, and the Civ50 numbers make it concrete:
 
 - **Communication grows faster than the team.** Fifty agents produced roughly 5,900 messages in three hours — about two messages per agent per minute, sustained. Each message is a decision point, a context-window cost, and a chance to disagree. In a 10-agent team the same rate is a conversation; in a 50-agent team it is a bureaucracy.
-- **A single shock rewrites the whole team's priorities.** Twenty-two deaths on the first night — nearly half the colony — flipped the agents from expansion to survival. They abandoned ambitious tasks for rationing and permits. Production swarms have their own first nights: one API outage, one bad tool result, and a team built for throughput reorganizes itself around damage control.
-- **Process becomes the product.** Permits, ledgers, job titles, and food queues are not stupid outputs. They are what a group invents when coordination is the only thing it can reliably do. If your agent team spends its tokens negotiating who does what instead of doing it, you have built the same machine with a different skin.
+- **A single shock rewrites the whole team's priorities.** The first night's zombie wave — 22 deaths, per reports of the run — flipped the agents from expansion to survival. They abandoned ambitious tasks for rationing and governance. Production swarms have their own first nights: one API outage, one bad tool result, and a team built for throughput reorganizes itself around damage control.
+- **Process becomes the product.** Constitutions, governance votes, and "The Office" are not stupid outputs. They are what a group invents when coordination is the only thing it can reliably do. If your agent team spends its tokens negotiating who does what instead of doing it, you have built the same machine with a different skin.
 
 This is not a new suspicion. Anthropic reported on October 26 that a single primary agent with on-demand context often outperforms multi-agent setups across quality, operating cost, and latency. The Minecraft run is the vivid version of the same finding: adding agents adds capability on paper and coordination tax in practice, and the tax wins first.
 
@@ -75,7 +75,7 @@ A final, practical note: if the job is genuinely a single-agent job with extra s
 
 ## What we don't know yet
 
-Honesty requires the gaps. The sample sizes are small: seven Mindustry games, nine Bed Wars games, one Civ50 run. Each model ran in a different harness (Codex for GPT, Claude Code for Claude), so model effects and harness effects are tangled, and no statistical tests were reported. The YC Labs write-up is a research blog post, not a peer-reviewed paper, and the Silo-Bench numbers come from synthetic algorithmic tasks, not production workflows. Minecraft is a deliberately simplified world: no real APIs, no real money, no real users.
+Honesty requires the gaps. The sample sizes are small: seven Mindustry games, nine Bed Wars games, one Civ50 run. Each model ran in a different harness (Codex for GPT, Claude Code for Claude), so model effects and harness effects are tangled, and no statistical tests were reported. Some figures in this article — the roughly 5,900 messages, the 22 first-night deaths — come from secondary coverage of the YC Labs write-up rather than the Tom's Hardware report, which says only "thousands of messages" and "a large number" of deaths; treat those two numbers as reported, not independently confirmed. The YC Labs write-up is a research blog post, not a peer-reviewed paper, and the Silo-Bench numbers come from synthetic algorithmic tasks, not production workflows. Minecraft is a deliberately simplified world: no real APIs, no real money, no real users.
 
 None of that weakens the practical takeaway. The experiments agree with each other, with Anthropic's production finding, and with the academic literature — and they agree in the direction that matters: small teams with one coordinator and a message budget beat large teams that negotiate. Build for that, and the next swarm study will confirm your design instead of embarrassing it.
 
@@ -91,7 +91,7 @@ There is no magic number, but the evidence brackets it: Silo-Bench shows measura
 
 ### Did the agents really "invent bureaucracy"?
 
-They invented permits, food ledgers, ration queues, and job titles — coordination artifacts that managed scarcity instead of expanding the colony. Whether to call that bureaucracy is a judgment call; the observable fact is that coordination work crowded out building work, and the colony produced no civilization in three hours.
+They wrote constitutions, voted on governance questions like whether iron should be communal, and built "The Office" — a government office with desks and a meeting room where nobody did anything. Whether to call that bureaucracy is a judgment call; the observable fact is that coordination work crowded out building work, and the colony produced no civilization in three hours. (Other coverage of the run also mentions permits, food ledgers, and job titles.)
 
 ### Where can I read the original experiment?
 
@@ -99,9 +99,9 @@ YC Labs published "Agents in Games" in late October 2026, and Tom's Hardware cov
 
 ## Key Takeaways
 
-1. **50 GPT-6.1 Sol agents, 3 hours, 5,900 messages, 0 civilization** — the Civ50 run turned coordination into the product: permits, ledgers, and job titles instead of building.
+1. **50 GPT-6.1 Sol agents, 3 hours, about 5,900 messages, 0 civilization** — the Civ50 run turned coordination into the product: constitutions, governance votes, and "The Office" instead of building.
 2. **Coordination tax grows faster than the team** — Silo-Bench (ACL 2026) measures a 15–49% performance drop at 2 agents and 80–100% at 50.
-3. **Small teams with clear goals still work** — the same models won 6–1 in Mindustry and took six of nine Bed Wars games in teams of ten.
+3. **Small teams with clear goals still work** — the same models won 6–1 in Mindustry, and in Bed Wars the GPT team outplayed Claude on adaptability, diagnosing a mid-game tool bug its opponents gave up on.
 4. **Build swarms with one coordinator, a message budget, and shared state in one place** — and test them with a surprise in the middle, not just on the happy path.
 5. **If the job is one agent's job with extra steps, don't build a swarm** — a routing rule or decision model is cheaper than a second agent.
 

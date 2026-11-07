@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a database cylinder is upgraded to a taller version along a stepped arrow">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- old database cylinder (v16) -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <path d="M 150 250 L 150 330 A 70 22 0 0 0 290 330 L 290 250" fill="#FFFDF5"/>
+    <ellipse cx="220" cy="250" rx="70" ry="22" fill="#FFFDF5"/>
+    <path d="M 150 278 A 70 22 0 0 0 290 278" fill="none"/>
+    <path d="M 150 304 A 70 22 0 0 0 290 304" fill="none"/>
+  </g>
+  <circle cx="220" cy="261" r="7" fill="#FF4D00">
+    <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- new database cylinder (v17/18), taller -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <path d="M 510 170 L 510 330 A 70 22 0 0 0 650 330 L 650 170" fill="#FFFDF5"/>
+    <ellipse cx="580" cy="170" rx="70" ry="22" fill="#FFFDF5"/>
+    <path d="M 510 210 A 70 22 0 0 0 650 210" fill="none"/>
+    <path d="M 510 250 A 70 22 0 0 0 650 250" fill="none"/>
+    <path d="M 510 290 A 70 22 0 0 0 650 290" fill="none"/>
+  </g>
+  <circle cx="580" cy="181" r="7" fill="#FF4D00">
+    <animate attributeName="opacity" values="0.25;1;0.25" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow rotating dashed ring around the new cylinder -->
+  <g>
+    <ellipse cx="580" cy="250" rx="110" ry="105" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="14 10"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 580 250" to="360 580 250" dur="40s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- stepped upgrade arrow travelling from old to new -->
+  <g>
+    <path d="M 300 290 L 350 290 L 350 250 L 400 250 L 400 210 L 470 210" fill="none" stroke="#111111" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M 470 210 L 448 196 L 448 224 Z" fill="#FF4D00" stroke="#111111" stroke-width="4" stroke-linejoin="round"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 12 -6; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- warning triangle, slow pulse -->
+  <g>
+    <path d="M 400 380 L 430 330 L 460 380 Z" fill="#FF4D00" stroke="#111111" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="430" cy="368" r="4" fill="#111111"/>
+    <rect x="427" y="344" width="6" height="14" fill="#111111"/>
+    <animate attributeName="opacity" values="1;0.35;1" dur="7s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting data dots along the bottom -->
+  <g fill="#111111">
+    <circle cx="80" cy="400" r="5">
+      <animate attributeName="cx" values="80;140;80" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="400" r="5">
+      <animate attributeName="cx" values="700;640;700" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="120" cy="80" r="5" fill="#FF4D00">
+      <animate attributeName="cy" values="80;110;80" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

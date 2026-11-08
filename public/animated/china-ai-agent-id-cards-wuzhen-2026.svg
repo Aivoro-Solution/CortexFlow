@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: an agent ID card slides into a stamping press, the press stamps a verification seal, and a signal travels to a registry box">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 H 0 V 40" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="30" y="30" width="740" height="390" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- Registry box, right side -->
+  <g>
+    <rect x="596" y="150" width="140" height="150" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="606" y="160" width="140" height="150" fill="none" stroke="#111111" stroke-width="2" opacity="0.35"/>
+    <line x1="616" y1="180" x2="716" y2="180" stroke="#111111" stroke-width="2"/>
+    <line x1="616" y1="205" x2="716" y2="205" stroke="#111111" stroke-width="2"/>
+    <line x1="616" y1="230" x2="686" y2="230" stroke="#111111" stroke-width="2"/>
+    <line x1="616" y1="255" x2="716" y2="255" stroke="#111111" stroke-width="2"/>
+    <circle cx="726" cy="282" r="7" fill="#FF4D00">
+      <animate attributeName="opacity" values="0.25;1;0.25" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Signal travelling from the card to the registry -->
+  <path id="signalPath" d="M 520 250 L 596 225" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 6"/>
+  <circle r="6" fill="#FF4D00">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 520 250 L 596 225"/>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="12s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- The ID card, sliding slowly on its rail -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="-24 0; 24 0; -24 0" keyTimes="0;0.5;1" dur="18s" repeatCount="indefinite"/>
+    <line x1="180" y1="330" x2="540" y2="330" stroke="#111111" stroke-width="3"/>
+    <line x1="180" y1="342" x2="540" y2="342" stroke="#111111" stroke-width="2" opacity="0.4"/>
+    <g>
+      <rect x="260" y="180" width="240" height="140" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <rect x="268" y="188" width="240" height="140" fill="none" stroke="#111111" stroke-width="2" opacity="0.3"/>
+      <rect x="282" y="204" width="52" height="52" fill="none" stroke="#111111" stroke-width="2"/>
+      <circle cx="308" cy="222" r="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <path d="M 292 248 L 308 236 L 324 248" fill="none" stroke="#111111" stroke-width="2"/>
+      <line x1="352" y1="212" x2="468" y2="212" stroke="#111111" stroke-width="2"/>
+      <line x1="352" y1="234" x2="468" y2="234" stroke="#111111" stroke-width="2"/>
+      <line x1="352" y1="256" x2="420" y2="256" stroke="#111111" stroke-width="2"/>
+      <!-- Verification seal, appears when the press lands -->
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.35;0.45;0.85;1" dur="8s" repeatCount="indefinite"/>
+        <circle cx="452" cy="292" r="26" fill="none" stroke="#FF4D00" stroke-width="3"/>
+        <path d="M 440 292 L 449 301 L 466 283" fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- The stamping press, descending slowly -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 62; 0 62; 0 0" keyTimes="0;0.35;0.6;1" dur="8s" repeatCount="indefinite"/>
+    <rect x="352" y="58" width="76" height="26" fill="#111111"/>
+    <rect x="368" y="84" width="44" height="34" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="344" y="118" width="92" height="26" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  </g>
+  <!-- Press frame -->
+  <line x1="330" y1="52" x2="330" y2="170" stroke="#111111" stroke-width="3"/>
+  <line x1="450" y1="52" x2="450" y2="170" stroke="#111111" stroke-width="3"/>
+  <line x1="318" y1="52" x2="462" y2="52" stroke="#111111" stroke-width="3"/>
+
+  <!-- Three slow identity dials -->
+  <g>
+    <circle cx="120" cy="120" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 120 120" to="360 120 120" dur="48s" repeatCount="indefinite"/>
+      <line x1="120" y1="120" x2="120" y2="94" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <circle cx="120" cy="120" r="4" fill="#FF4D00"/>
+  </g>
+  <g>
+    <circle cx="120" cy="230" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="360 120 230" to="0 120 230" dur="60s" repeatCount="indefinite"/>
+      <line x1="120" y1="230" x2="120" y2="204" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <circle cx="120" cy="230" r="4" fill="#FF4D00"/>
+  </g>
+  <g>
+    <circle cx="660" cy="90" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 660 90" to="360 660 90" dur="36s" repeatCount="indefinite"/>
+      <line x1="660" y1="90" x2="660" y2="70" stroke="#FF4D00" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <circle cx="660" cy="90" r="4" fill="#111111"/>
+  </g>
+
+  <!-- Corner screws -->
+  <circle cx="52" cy="52" r="4" fill="none" stroke="#111111" stroke-width="2"/>
+  <circle cx="748" cy="398" r="4" fill="none" stroke="#111111" stroke-width="2"/>
+</svg>

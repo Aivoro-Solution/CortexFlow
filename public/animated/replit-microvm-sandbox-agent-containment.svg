@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of stacked microVM sandbox cells, each with its own kernel core, separated by a hardware isolation boundary">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <pattern id="gridFine" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#111111" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#gridFine)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- vertical spine -->
+  <line x1="400" y1="60" x2="400" y2="390" stroke="#111111" stroke-width="2" stroke-dasharray="6 6" opacity="0.5"/>
+
+  <!-- sandbox cell 1 (top) -->
+  <g>
+    <rect x="280" y="55" width="240" height="90" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="292" y="67" width="216" height="66" rx="6" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="340" cy="100" r="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="340" cy="100" r="8" fill="#FF4D00">
+      <animate attributeName="r" values="8;11;8" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.65;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="340" cy="100" r="26" fill="none" stroke="#FF4D00" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.7">
+      <animateTransform attributeName="transform" type="rotate" from="0 340 100" to="360 340 100" dur="40s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="380" y1="88" x2="470" y2="88" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="100" x2="450" y2="100" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="112" x2="470" y2="112" stroke="#111111" stroke-width="2"/>
+  </g>
+
+  <!-- sandbox cell 2 (middle) -->
+  <g>
+    <rect x="280" y="180" width="240" height="90" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="292" y="192" width="216" height="66" rx="6" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="340" cy="225" r="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="340" cy="225" r="8" fill="#111111">
+      <animate attributeName="r" values="8;11;8" dur="9s" begin="1s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.6;1" dur="9s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="380" y1="213" x2="470" y2="213" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="225" x2="450" y2="225" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="237" x2="470" y2="237" stroke="#111111" stroke-width="2"/>
+  </g>
+
+  <!-- sandbox cell 3 (bottom) -->
+  <g>
+    <rect x="280" y="305" width="240" height="90" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="292" y="317" width="216" height="66" rx="6" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="340" cy="350" r="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="340" cy="350" r="8" fill="#111111">
+      <animate attributeName="r" values="8;11;8" dur="10s" begin="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.6;1" dur="10s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="380" y1="338" x2="470" y2="338" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="350" x2="450" y2="350" stroke="#111111" stroke-width="2"/>
+    <line x1="380" y1="362" x2="470" y2="362" stroke="#111111" stroke-width="2"/>
+  </g>
+
+  <!-- hardware isolation boundary: orange bracket sweeping slowly down the left side -->
+  <g>
+    <path d="M 250 55 L 236 55 L 236 395 L 250 395" fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="236" cy="100" r="7" fill="#FF4D00">
+      <animate attributeName="cy" values="70;380;70" dur="14s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- agent dot travelling down the spine, pausing at each cell -->
+  <circle cx="400" cy="60" r="6" fill="#FF4D00">
+    <animateMotion dur="18s" repeatCount="indefinite" path="M 400 60 L 400 145 L 400 145 L 400 225 L 400 225 L 400 350 L 400 350 L 400 390 L 400 390 L 400 60" keyPoints="0;0.12;0.28;0.4;0.56;0.68;0.84;0.9;1" keyTimes="0;0.12;0.28;0.4;0.56;0.68;0.84;0.9;1" calcMode="linear"/>
+  </circle>
+
+  <!-- corner ticks -->
+  <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <line x1="10" y1="34" x2="34" y2="34"/>
+    <line x1="34" y1="10" x2="34" y2="34"/>
+    <line x1="766" y1="10" x2="766" y2="34"/>
+    <line x1="766" y1="34" x2="790" y2="34"/>
+    <line x1="10" y1="416" x2="34" y2="416"/>
+    <line x1="34" y1="416" x2="34" y2="440"/>
+    <line x1="766" y1="416" x2="766" y2="440"/>
+    <line x1="766" y1="416" x2="790" y2="416"/>
+  </g>
+</svg>

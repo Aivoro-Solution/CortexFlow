@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a locked mailbox envelope opening as a key turns and a connection line completes">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- dashed connection line, top: server to mailbox -->
+  <line x1="120" y1="90" x2="680" y2="90" stroke="#111111" stroke-width="3" stroke-dasharray="14 10">
+    <animate attributeName="stroke-dashoffset" from="0" to="-96" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- orange signal dot travelling along the line -->
+  <circle cx="120" cy="90" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 120 90 L 680 90"/>
+  </circle>
+
+  <!-- left: server stack -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="70" y="130" width="110" height="34"/>
+    <rect x="70" y="172" width="110" height="34"/>
+    <rect x="70" y="214" width="110" height="34"/>
+  </g>
+  <circle cx="92" cy="147" r="5" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="92" cy="189" r="5" fill="#111111"/>
+  <circle cx="92" cy="231" r="5" fill="#111111"/>
+  <line x1="112" y1="147" x2="164" y2="147" stroke="#111111" stroke-width="3"/>
+  <line x1="112" y1="189" x2="164" y2="189" stroke="#111111" stroke-width="3"/>
+  <line x1="112" y1="231" x2="164" y2="231" stroke="#111111" stroke-width="3"/>
+
+  <!-- centre: envelope (mailbox) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -10; 0 0" dur="9s" repeatCount="indefinite"/>
+    <rect x="310" y="180" width="180" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <polyline points="310,180 400,255 490,180" fill="none" stroke="#111111" stroke-width="4"/>
+    <!-- flap opening -->
+    <polyline points="310,180 400,255 490,180" fill="none" stroke="#111111" stroke-width="4">
+      <animate attributeName="points" values="310,180 400,255 490,180; 310,180 400,205 490,180; 310,180 400,255 490,180" dur="9s" repeatCount="indefinite"/>
+    </polyline>
+    <!-- letter sliding out -->
+    <rect x="340" y="200" width="120" height="70" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="y" values="200; 168; 200" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="356" y1="222" x2="444" y2="222" stroke="#FFFDF5" stroke-width="4">
+      <animate attributeName="y1" values="222; 190; 222" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="222; 190; 222" dur="9s" repeatCount="indefinite"/>
+    </line>
+    <line x1="356" y1="240" x2="424" y2="240" stroke="#FFFDF5" stroke-width="4">
+      <animate attributeName="y1" values="240; 208; 240" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="240; 208; 240" dur="9s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- right: key turning slowly -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 640 240" to="360 640 240" dur="40s" repeatCount="indefinite"/>
+    <circle cx="640" cy="240" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="640" cy="240" r="12" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <line x1="640" y1="274" x2="640" y2="330" stroke="#111111" stroke-width="8" stroke-linecap="round"/>
+    <line x1="640" y1="308" x2="664" y2="308" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
+    <line x1="640" y1="324" x2="658" y2="324" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- bottom: connection plug joining -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="330" y="350" width="60" height="26" rx="4"/>
+    <rect x="410" y="350" width="60" height="26" rx="4"/>
+  </g>
+  <g stroke="#111111" stroke-width="3">
+    <line x1="390" y1="358" x2="410" y2="358">
+      <animate attributeName="x2" values="410; 398; 410" dur="7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="390" y1="368" x2="410" y2="368">
+      <animate attributeName="x2" values="410; 398; 410" dur="7s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <circle cx="400" cy="363" r="6" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="0.25;1;0.25" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- corner registration marks -->
+  <g stroke="#111111" stroke-width="3">
+    <line x1="30" y1="30" x2="46" y2="30"/>
+    <line x1="30" y1="30" x2="30" y2="46"/>
+    <line x1="770" y1="30" x2="754" y2="30"/>
+    <line x1="770" y1="30" x2="770" y2="46"/>
+    <line x1="30" y1="420" x2="46" y2="420"/>
+    <line x1="30" y1="420" x2="30" y2="404"/>
+    <line x1="770" y1="420" x2="754" y2="420"/>
+    <line x1="770" y1="420" x2="770" y2="404"/>
+  </g>
+</svg>

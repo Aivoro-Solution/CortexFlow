@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a key sliding toward a locked gate, an orange checkmark stamping approval">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="16" y="16" width="768" height="418" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- locked gate: two panels + keyhole cloud -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <rect x="430" y="90" width="240" height="270" fill="#FFFDF5" stroke-width="5"/>
+    <line x1="550" y1="90" x2="550" y2="360"/>
+    <line x1="470" y1="140" x2="630" y2="140"/>
+    <line x1="470" y1="310" x2="630" y2="310"/>
+    <!-- keyhole -->
+    <circle cx="550" cy="215" r="26" fill="#FFFDF5" stroke-width="5"/>
+    <path d="M 540 232 L 560 232 L 566 268 L 534 268 Z" fill="#FFFDF5" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- orange lock light: pulses slowly -->
+  <circle cx="550" cy="215" r="10" fill="#FF4D00">
+    <animate attributeName="opacity" values="1;0.25;1" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- key sliding toward the gate, slow loop -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="-40 0; 60 0; 60 0; -40 0" keyTimes="0; 0.45; 0.55; 1" dur="12s" repeatCount="indefinite"/>
+    <g stroke="#111111" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="180" cy="225" r="42" fill="#FFFDF5"/>
+      <circle cx="180" cy="225" r="18" fill="none" stroke-width="4"/>
+      <line x1="222" y1="225" x2="330" y2="225"/>
+      <line x1="300" y1="225" x2="300" y2="252"/>
+      <line x1="322" y1="225" x2="322" y2="246"/>
+    </g>
+    <rect x="326" y="214" width="14" height="22" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- scope checklist: three rows, checkmarks draw in sequence -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <rect x="80" y="90" width="220" height="34" fill="#FFFDF5"/>
+    <rect x="80" y="140" width="220" height="34" fill="#FFFDF5"/>
+    <rect x="80" y="190" width="220" height="34" fill="#FFFDF5"/>
+    <line x1="100" y1="107" x2="280" y2="107" stroke-width="2" stroke-opacity="0.35"/>
+    <line x1="100" y1="157" x2="280" y2="157" stroke-width="2" stroke-opacity="0.35"/>
+    <line x1="100" y1="207" x2="280" y2="207" stroke-width="2" stroke-opacity="0.35"/>
+  </g>
+  <g stroke="#FF4D00" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 92 107 l 10 10 l 18 -20" stroke-dasharray="48" stroke-dashoffset="48">
+      <animate attributeName="stroke-dashoffset" values="48; 0; 0; 48" keyTimes="0; 0.2; 0.7; 1" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 92 157 l 10 10 l 18 -20" stroke-dasharray="48" stroke-dashoffset="48">
+      <animate attributeName="stroke-dashoffset" values="48; 48; 0; 0; 48" keyTimes="0; 0.25; 0.45; 0.7; 1" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 92 207 l 10 10 l 18 -20" stroke-dasharray="48" stroke-dashoffset="48">
+      <animate attributeName="stroke-dashoffset" values="48; 48; 48; 0; 0; 48" keyTimes="0; 0.45; 0.5; 0.7; 0.75; 1" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- gate panels slowly open once the key arrives -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 0; -46 0; 0 0" keyTimes="0; 0.55; 0.75; 1" dur="12s" repeatCount="indefinite"/>
+    <rect x="430" y="90" width="120" height="270" fill="#FFFDF5" fill-opacity="0.9" stroke="#111111" stroke-width="4"/>
+  </g>
+
+  <!-- rotating dashed ring around the keyhole, very slow -->
+  <circle cx="550" cy="225" r="86" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 10" opacity="0.5">
+    <animateTransform attributeName="transform" type="rotate" from="0 550 225" to="360 550 225" dur="60s" repeatCount="indefinite"/>
+  </circle>
+</svg>

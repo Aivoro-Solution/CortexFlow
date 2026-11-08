@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a database cylinder warming up while a waiting container's clock ticks, then the connection pipe lights up">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- Postgres database cylinder (left) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M 130 150 L 130 300 A 90 28 0 0 0 310 300 L 310 150" fill="#FFFDF5"/>
+    <ellipse cx="220" cy="150" rx="90" ry="28" fill="#FFFDF5"/>
+    <ellipse cx="220" cy="150" rx="90" ry="28" fill="none"/>
+    <path d="M 130 205 A 90 28 0 0 0 310 205" fill="none"/>
+    <path d="M 130 252 A 90 28 0 0 0 310 252" fill="none"/>
+  </g>
+  <!-- filling level inside the cylinder, rising slowly -->
+  <g>
+    <rect x="132" y="252" width="176" height="46" fill="#FF4D00" opacity="0.85">
+      <animate attributeName="y" values="298;252;252;298" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="height" values="0;46;46;0" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="132" y="252" width="176" height="46" fill="none" stroke="#111111" stroke-width="0"/>
+  </g>
+  <!-- cylinder rim highlight -->
+  <ellipse cx="220" cy="150" rx="90" ry="28" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- connection pipe from database to container -->
+  <path d="M 310 225 L 470 225" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 8"/>
+  <!-- orange pulse travelling along the pipe -->
+  <circle cx="310" cy="225" r="7" fill="#FF4D00">
+    <animate attributeName="cx" values="310;470;310" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- n8n container box (right) with clock -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="470" y="130" width="200" height="190" fill="#FFFDF5"/>
+    <rect x="486" y="146" width="168" height="30" fill="none"/>
+    <rect x="486" y="188" width="168" height="30" fill="none"/>
+    <rect x="486" y="230" width="168" height="30" fill="none"/>
+  </g>
+  <!-- clock face on the container -->
+  <g>
+    <circle cx="570" cy="290" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="570" y1="290" x2="570" y2="272" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+    <line x1="570" y1="290" x2="586" y2="290" stroke="#FF4D00" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 570 290" to="360 570 290" dur="30s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="570" cy="290" r="3" fill="#111111"/>
+  </g>
+
+  <!-- status lamp: red while waiting, flips orange when ready -->
+  <g>
+    <circle cx="640" cy="162" r="9" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="640" cy="162" r="9" fill="none" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- slow drifting gear / cog outline in the background -->
+  <g fill="none" stroke="#111111" stroke-width="2" stroke-opacity="0.35">
+    <circle cx="120" cy="380" r="26"/>
+    <circle cx="120" cy="380" r="10"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 120 380" to="360 120 380" dur="60s" repeatCount="indefinite"/>
+      <path d="M 120 346 L 120 354 M 120 406 L 120 414 M 86 380 L 94 380 M 146 380 L 154 380 M 96 356 L 102 362 M 138 398 L 144 404 M 144 356 L 138 362 M 102 398 L 96 404"/>
+    </g>
+  </g>
+
+  <!-- small orbiting dot around the database -->
+  <circle cx="220" cy="90" r="5" fill="#FF4D00">
+    <animateTransform attributeName="transform" type="rotate" from="0 220 190" to="360 220 190" dur="30s" repeatCount="indefinite"/>
+  </circle>
+</svg>

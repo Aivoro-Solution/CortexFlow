@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of an MCP tool call travelling from a main instance through a Redis queue to a worker, with a 120-second timeout clock and a duplicated message">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- Main instance -->
+  <g>
+    <rect x="70" y="150" width="150" height="150" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="82" y="162" width="126" height="20" fill="#111111"/>
+    <rect x="82" y="196" width="126" height="8" fill="#111111" opacity="0.25"/>
+    <rect x="82" y="214" width="90" height="8" fill="#111111" opacity="0.25"/>
+    <rect x="82" y="232" width="110" height="8" fill="#111111" opacity="0.25"/>
+    <circle cx="200" cy="278" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="r" values="7;10;7" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Queue: three envelope slots travelling main -> worker -->
+  <g>
+    <line x1="220" y1="225" x2="470" y2="225" stroke="#111111" stroke-width="3" stroke-dasharray="10 8"/>
+    <g>
+      <rect x="-22" y="-14" width="44" height="28" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+      <path d="M -22 -14 L 0 4 L 22 -14" fill="none" stroke="#111111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="translate" values="250 225; 440 225; 250 225" dur="12s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="-22" y="-14" width="44" height="28" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+      <path d="M -22 -14 L 0 4 L 22 -14" fill="none" stroke="#111111" stroke-width="2"/>
+      <animateTransform attributeName="transform" type="translate" values="440 225; 250 225; 440 225" dur="12s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- Worker instance -->
+  <g>
+    <rect x="580" y="150" width="150" height="150" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="592" y="162" width="126" height="20" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <rect x="592" y="196" width="126" height="8" fill="#111111" opacity="0.25"/>
+    <rect x="592" y="214" width="90" height="8" fill="#111111" opacity="0.25"/>
+    <rect x="592" y="232" width="110" height="8" fill="#111111" opacity="0.25"/>
+    <circle cx="710" cy="278" r="7" fill="#111111">
+      <animate attributeName="r" values="7;10;7" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Timeout clock: hand rotates slowly, 120s wait -->
+  <g transform="translate(400 90)">
+    <circle r="42" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="0" y1="0" x2="0" y2="-30" stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </line>
+    <line x1="0" y1="0" x2="20" y2="0" stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="360s" repeatCount="indefinite"/>
+    </line>
+    <circle r="5" fill="#111111"/>
+  </g>
+
+  <!-- Duplicate envelope: the retry that writes twice -->
+  <g opacity="0.9">
+    <rect x="-22" y="-14" width="44" height="28" fill="#FFFDF5" stroke="#FF4D00" stroke-width="2.5"/>
+    <path d="M -22 -14 L 0 4 L 22 -14" fill="none" stroke="#FF4D00" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="translate" values="655 360; 655 335; 655 360" dur="8s" repeatCount="indefinite"/>
+  </g>
+  <g opacity="0.9">
+    <rect x="-22" y="-14" width="44" height="28" fill="#FFFDF5" stroke="#FF4D00" stroke-width="2.5"/>
+    <path d="M -22 -14 L 0 4 L 22 -14" fill="none" stroke="#FF4D00" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="translate" values="655 395; 655 370; 655 395" dur="8s" begin="1s" repeatCount="indefinite"/>
+  </g>
+</svg>

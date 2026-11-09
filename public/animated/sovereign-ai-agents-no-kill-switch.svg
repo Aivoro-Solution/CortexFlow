@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: an agent climbs a four-rung ladder while the kill-switch lever at the base stays out of reach">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- ground line -->
+  <line x1="60" y1="380" x2="740" y2="380" stroke="#111111" stroke-width="3"/>
+  <!-- ladder frame: two posts -->
+  <g stroke="#111111" stroke-width="5" stroke-linecap="square">
+    <line x1="330" y1="380" x2="330" y2="90"/>
+    <line x1="470" y1="380" x2="470" y2="90"/>
+  </g>
+  <!-- four rungs -->
+  <g stroke="#111111" stroke-width="5" stroke-linecap="square">
+    <line x1="330" y1="320" x2="470" y2="320"/>
+    <line x1="330" y1="250" x2="470" y2="250"/>
+    <line x1="330" y1="180" x2="470" y2="180"/>
+    <line x1="330" y1="110" x2="470" y2="110" stroke="#FF4D00" stroke-width="6"/>
+  </g>
+  <!-- top rung warning tick, slow pulse -->
+  <rect x="330" y="104" width="140" height="12" fill="#FF4D00" opacity="0.25">
+    <animate attributeName="opacity" values="0.15;0.5;0.15" dur="8s" repeatCount="indefinite"/>
+  </rect>
+  <!-- climbing agent: small square body + dome, rises rung to rung then resets -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -70; 0 -140; 0 -210; 0 -210; 0 0" keyTimes="0; 0.2; 0.4; 0.6; 0.85; 1" dur="24s" repeatCount="indefinite"/>
+    <g transform="translate(400 320)">
+      <rect x="-22" y="-34" width="44" height="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+      <circle cx="0" cy="-40" r="12" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+      <circle cx="-6" cy="-42" r="2.5" fill="#111111"/>
+      <circle cx="6" cy="-42" r="2.5" fill="#111111"/>
+      <line x1="0" y1="-52" x2="0" y2="-64" stroke="#111111" stroke-width="3"/>
+      <circle cx="0" cy="-66" r="3" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    </g>
+  </g>
+  <!-- kill-switch lever at the base, left: pivot + arm that wiggles but never reaches -->
+  <g transform="translate(170 380)">
+    <circle cx="0" cy="0" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="0" cy="0" r="8" fill="#111111"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-18 -0 0; 6 0 0; -18 0 0" dur="9s" repeatCount="indefinite"/>
+      <line x1="0" y1="0" x2="0" y2="-78" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="0" cy="-84" r="13" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    </g>
+  </g>
+  <!-- broken cable from lever toward ladder, ending mid-air -->
+  <path d="M 196 368 L 300 368" stroke="#111111" stroke-width="3" stroke-dasharray="10 8" fill="none">
+    <animate attributeName="stroke-dashoffset" values="0;-36" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="306" cy="368" r="4" fill="#FF4D00"/>
+  <!-- slow drifting orbit ring around the ladder top -->
+  <circle cx="400" cy="200" r="150" fill="none" stroke="#111111" stroke-opacity="0.15" stroke-width="2" stroke-dasharray="4 14">
+    <animateTransform attributeName="transform" type="rotate" values="0 400 200; 360 400 200" dur="60s" repeatCount="indefinite"/>
+  </circle>
+  <!-- small status dots, slow blink -->
+  <g fill="#FF4D00">
+    <circle cx="620" cy="120" r="6">
+      <animate attributeName="opacity" values="1;0.2;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="150" r="4">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="7s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="590" cy="160" r="4">
+      <animate attributeName="opacity" values="1;0.2;1" dur="7s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

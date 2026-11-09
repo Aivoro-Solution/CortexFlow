@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of a loop of items with one parcel dropping out through a gap">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- outer frame -->
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="4"/>
+
+  <!-- loop track: rounded rectangle conveyor -->
+  <rect x="150" y="110" width="500" height="220" rx="110" fill="none" stroke="#111111" stroke-width="5"/>
+  <rect x="170" y="130" width="460" height="180" rx="90" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" from="0" to="-72" dur="12s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- gap in the track (bottom edge) where the parcel drops out -->
+  <rect x="360" y="316" width="80" height="18" fill="#FFFDF5"/>
+  <line x1="360" y1="330" x2="400" y2="330" stroke="#FF4D00" stroke-width="5"/>
+  <line x1="400" y1="330" x2="440" y2="330" stroke="#FF4D00" stroke-width="5"/>
+
+  <!-- parcels travelling around the loop -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 220" to="360 400 220" dur="48s" repeatCount="indefinite"/>
+    <g>
+      <rect x="385" y="128" width="30" height="30" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="385" y1="143" x2="415" y2="143" stroke="#111111" stroke-width="2"/>
+    </g>
+    <g>
+      <rect x="385" y="292" width="30" height="30" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    </g>
+    <g>
+      <rect x="128" y="205" width="30" height="30" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="128" y1="220" x2="158" y2="220" stroke="#111111" stroke-width="2"/>
+    </g>
+    <g>
+      <rect x="642" y="205" width="30" height="30" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="642" y1="220" x2="672" y2="220" stroke="#111111" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- the dropped parcel: falls through the gap, then fades back up -->
+  <g>
+    <rect x="385" y="330" width="30" height="30" fill="#FFFDF5" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="y" values="330;330;392;392;330" keyTimes="0;0.35;0.6;0.8;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;1;1;0;0" keyTimes="0;0.55;0.75;0.85;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <animateTransform attributeName="transform" type="rotate" values="0 400 345;0 400 345;12 400 345;12 400 345;0 400 345" keyTimes="0;0.35;0.6;0.8;1" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- waiting queue behind the gap: three parcels inching forward -->
+  <g>
+    <rect x="470" y="292" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="470;470;452;452;470" keyTimes="0;0.4;0.55;0.85;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="508" y="292" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="508;508;490;490;508" keyTimes="0;0.4;0.55;0.85;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="546" y="292" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="546;546;528;528;546" keyTimes="0;0.4;0.55;0.85;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- signal beacon: slow pulse over the gap -->
+  <circle cx="400" cy="330" r="10" fill="none" stroke="#FF4D00" stroke-width="3">
+    <animate attributeName="r" values="8;22;8" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.9;0.1;0.9" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="330" r="4" fill="#FF4D00">
+    <animate attributeName="opacity" values="1;0.4;1" dur="8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

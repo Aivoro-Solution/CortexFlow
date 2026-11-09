@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a small agent waits before a bank gate; the approval lever is pulled and the gate bar lifts to let it through">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- ground line -->
+  <line x1="60" y1="380" x2="740" y2="380" stroke="#111111" stroke-width="3"/>
+  <!-- bank facade: three columns, left -->
+  <g stroke="#111111" stroke-width="5" stroke-linecap="square">
+    <line x1="110" y1="380" x2="110" y2="140"/>
+    <line x1="160" y1="380" x2="160" y2="140"/>
+    <line x1="210" y1="380" x2="210" y2="140"/>
+    <line x1="90" y1="140" x2="230" y2="140"/>
+    <line x1="90" y1="120" x2="230" y2="120"/>
+  </g>
+  <!-- column capitals -->
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="4">
+    <rect x="98" y="150" width="24" height="12"/>
+    <rect x="148" y="150" width="24" height="12"/>
+    <rect x="198" y="150" width="24" height="12"/>
+  </g>
+  <!-- gate frame: two posts + lintel, centre-right -->
+  <g stroke="#111111" stroke-width="5" stroke-linecap="square">
+    <line x1="420" y1="380" x2="420" y2="110"/>
+    <line x1="660" y1="380" x2="660" y2="110"/>
+    <line x1="400" y1="110" x2="680" y2="110"/>
+  </g>
+  <!-- gate bars: rise slowly once authorized, then lower again -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -150; 0 -150; 0 0" keyTimes="0; 0.3; 0.7; 1" dur="16s" repeatCount="indefinite"/>
+    <g stroke="#111111" stroke-width="6" stroke-linecap="square">
+      <line x1="430" y1="350" x2="650" y2="350"/>
+      <line x1="430" y1="300" x2="650" y2="300"/>
+      <line x1="430" y1="250" x2="650" y2="250"/>
+      <line x1="430" y1="200" x2="650" y2="200"/>
+    </g>
+    <g stroke="#111111" stroke-width="4">
+      <line x1="470" y1="360" x2="470" y2="190"/>
+      <line x1="540" y1="360" x2="540" y2="190"/>
+      <line x1="610" y1="360" x2="610" y2="190"/>
+    </g>
+  </g>
+  <!-- keyhole on the gate post: slow orange pulse -->
+  <g>
+    <circle cx="660" cy="230" r="18" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="opacity" values="1;0.45;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="660" cy="226" r="6" fill="#FFFDF5"/>
+    <path d="M 656 230 L 664 230 L 667 244 L 653 244 Z" fill="#FFFDF5"/>
+  </g>
+  <!-- approval lever at the base, left of the gate: rocks slowly -->
+  <g transform="translate(330 380)">
+    <circle cx="0" cy="0" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="0" cy="0" r="8" fill="#111111"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-24 0 0; 10 0 0; -24 0 0" dur="12s" repeatCount="indefinite"/>
+      <line x1="0" y1="0" x2="0" y2="-78" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="0" cy="-84" r="13" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    </g>
+  </g>
+  <!-- cable from lever toward the gate post -->
+  <path d="M 356 368 L 414 368" stroke="#111111" stroke-width="3" stroke-dasharray="10 8" fill="none">
+    <animate attributeName="stroke-dashoffset" values="0;-36" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="420" cy="368" r="4" fill="#FF4D00"/>
+  <!-- waiting agent: small square body + dome, gentle bob -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="6s" repeatCount="indefinite"/>
+    <g transform="translate(540 340)">
+      <rect x="-22" y="-34" width="44" height="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+      <circle cx="0" cy="-40" r="12" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+      <circle cx="-6" cy="-42" r="2.5" fill="#111111"/>
+      <circle cx="6" cy="-42" r="2.5" fill="#111111"/>
+      <line x1="0" y1="-52" x2="0" y2="-64" stroke="#111111" stroke-width="3"/>
+      <circle cx="0" cy="-66" r="3" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    </g>
+  </g>
+  <!-- slow drifting orbit ring around the gate -->
+  <circle cx="540" cy="240" r="150" fill="none" stroke="#111111" stroke-opacity="0.15" stroke-width="2" stroke-dasharray="4 14">
+    <animateTransform attributeName="transform" type="rotate" values="0 540 240; 360 540 240" dur="60s" repeatCount="indefinite"/>
+  </circle>
+  <!-- small status dots, slow blink -->
+  <g fill="#FF4D00">
+    <circle cx="120" cy="90" r="6">
+      <animate attributeName="opacity" values="1;0.2;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="70" r="4">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="7s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="90" r="4">
+      <animate attributeName="opacity" values="1;0.2;1" dur="7s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

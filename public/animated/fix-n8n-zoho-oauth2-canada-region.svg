@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: a key approaching a mismatched socket, then a forked path leading to the correct doorway">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="6" y="6" width="788" height="438" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- forked path: one route blocked, one open -->
+  <g fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round">
+    <path d="M 60 350 L 300 350 L 380 260" />
+    <path d="M 380 260 L 470 170" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" values="0;-72" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 380 260 L 470 350" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" values="0;-72" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- wrong doorway (China route): round socket, square plug cannot enter -->
+  <g>
+    <rect x="520" y="110" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="580" cy="170" r="26" fill="none" stroke="#111111" stroke-width="4"/>
+    <line x1="540" y1="130" x2="620" y2="210" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <line x1="620" y1="130" x2="540" y2="210" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- square plug bouncing gently off the round socket -->
+  <g>
+    <rect x="660" y="150" width="44" height="44" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <line x1="660" y1="162" x2="640" y2="162" stroke="#111111" stroke-width="4"/>
+    <line x1="660" y1="182" x2="640" y2="182" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; -18 0; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- correct doorway (Canada route): matching square socket, key sliding in -->
+  <g>
+    <rect x="520" y="300" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="554" y="344" width="52" height="52" fill="none" stroke="#111111" stroke-width="4"/>
+    <rect x="570" y="360" width="20" height="20" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="0.35;1;0.35" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- key travelling along the lower path toward the correct socket -->
+  <g>
+    <g>
+      <circle cx="0" cy="0" r="14" fill="none" stroke="#111111" stroke-width="4"/>
+      <circle cx="0" cy="0" r="5" fill="#FF4D00"/>
+      <rect x="12" y="-4" width="34" height="8" fill="#111111"/>
+      <rect x="36" y="-4" width="6" height="14" fill="#111111"/>
+      <rect x="44" y="-4" width="6" height="10" fill="#111111"/>
+    </g>
+    <animateMotion dur="18s" repeatCount="indefinite" path="M 80 350 L 300 350 L 380 260 L 470 350 L 505 350" keyPoints="0;0.35;0.55;0.8;1" keyTimes="0;0.35;0.55;0.8;1" calcMode="linear"/>
+  </g>
+
+  <!-- slow rotating gear / compass accent -->
+  <g transform="translate(150 120)">
+    <circle r="46" fill="none" stroke="#111111" stroke-width="4"/>
+    <circle r="34" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 6"/>
+    <line x1="0" y1="-46" x2="0" y2="-30" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="30" x2="0" y2="46" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-46" y1="0" x2="-30" y2="0" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <line x1="30" y1="0" x2="46" y2="0" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 150 120" to="360 150 120" dur="60s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting dots along the upper path -->
+  <circle cx="0" cy="0" r="6" fill="#FF4D00">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M 60 350 L 300 350 L 380 260 L 470 170"/>
+  </circle>
+  <circle cx="0" cy="0" r="4" fill="#111111">
+    <animateMotion dur="14s" begin="7s" repeatCount="indefinite" path="M 60 350 L 300 350 L 380 260 L 470 170"/>
+  </circle>
+</svg>

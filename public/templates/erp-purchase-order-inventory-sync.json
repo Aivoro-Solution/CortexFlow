@@ -1,0 +1,1442 @@
+{
+  "name": "ERP Purchase Order & Inventory Sync Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📦 ERP PURCHASE ORDER & INVENTORY SYNC AUTOMATOR\n**What it does:** Pulls new/updated purchase orders from your ERP REST API every morning → dedupes by PO number → logs them to Google Sheets → AI reviews each PO for anomalies → big or flagged POs wait for your Telegram approval (decision written back to the ERP) → approved POs sync inventory quantities → low-stock items trigger a reorder alert → one Telegram run summary.\n\n**You'll need:**\n- An ERP with a REST API that exposes purchase orders (Odoo, ERPNext, or a custom ERP)\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `PENDING_APPROVAL` → `APPROVED` / `REJECTED` → `SYNCED` (auto-approved POs skip straight to `APPROVED`)",
+        "height": 220,
+        "width": 7460,
+        "color": 5
+      },
+      "id": "f68e4ad6-e9d5-4f1b-a53b-793621d6916d",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Pull purchase orders from the ERP API\nDaily schedule trigger → HTTP GET on your ERP purchase-orders endpoint (paginated: page + per_page) → normalize into PO number / supplier / total / currency / lines.",
+        "height": 420,
+        "width": 1160,
+        "color": 4
+      },
+      "id": "87168968-d2fd-4af7-9b3a-b99cb717d264",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Dedupe + log to Google Sheets\nRead PO numbers already in the sheet → keep only new POs → append rows with status `NEW`. Re-runs never double-process a PO.",
+        "height": 420,
+        "width": 980,
+        "color": 4
+      },
+      "id": "e5e79fe6-f485-411b-8599-cddf3e6395a9",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI anomaly review\nAI Agent reviews each PO with a Structured Output Parser (risk flag, risk level, one-line summary) → sheet gets the AI verdict.",
+        "height": 420,
+        "width": 700,
+        "color": 4
+      },
+      "id": "4944ad5a-af56-4b4a-b102-940fda9a0e63",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Approval routing\nPO total ≥ threshold OR AI flagged → status `PENDING_APPROVAL` → Telegram 'Send and Wait' approval message → Approve writes the decision back to the ERP API and flips the sheet to `APPROVED`; Reject flips it to `REJECTED` and stops that PO cleanly. Low-risk POs auto-approve.",
+        "height": 560,
+        "width": 1460,
+        "color": 4
+      },
+      "id": "d65bf41e-e9c3-4520-918d-09a990c137c3",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Inventory sync + low-stock alerts\nApproved POs: split into line items → update the Inventory sheet (Quantity On Order per SKU) → PO flips to `SYNCED` → read inventory levels → any SKU below its reorder level triggers a Telegram low-stock alert.",
+        "height": 420,
+        "width": 2180,
+        "color": 4
+      },
+      "id": "123f038f-e95f-454f-8b71-d2863345d355",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4060,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Run summary notification\nBoth sync branches merge → one Telegram summary: POs pulled, new POs, AI-flagged, low-stock items.",
+        "height": 420,
+        "width": 1000,
+        "color": 4
+      },
+      "id": "ac042f1b-dd00-4a3f-ac9b-05e9ec69a41d",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6220,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "0f5594d5-e271-41cf-91f0-a20e8a99ef8e",
+      "name": "Daily 9AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d7adb22-6160-41b1-8e9f-254d38a8d90f",
+              "name": "erp_api_base_url",
+              "type": "string",
+              "value": "PASTE_YOUR_ERP_API_BASE_URL"
+            },
+            {
+              "id": "18135969-6080-46d2-a522-d20df61298d1",
+              "name": "erp_api_key",
+              "type": "string",
+              "value": "PASTE_YOUR_ERP_API_KEY"
+            },
+            {
+              "id": "eda2400d-6f21-48d2-b5fa-723109e2f241",
+              "name": "po_endpoint",
+              "type": "string",
+              "value": "/api/v1/purchase-orders"
+            },
+            {
+              "id": "504ed381-08e2-45b1-a8f3-78e5b291b331",
+              "name": "page_size",
+              "type": "string",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "52933c8e-68fe-4584-9af2-3ded23493ab4",
+      "name": "CONFIG — ERP API",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.erp_api_base_url }}{{ $json.po_endpoint }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "updated"
+            },
+            {
+              "name": "page",
+              "value": "1"
+            },
+            {
+              "name": "per_page",
+              "value": "={{ $json.page_size }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.erp_api_key }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c456eb2d-1f08-4d8a-9d29-27b0088b5f9e",
+      "name": "Fetch Purchase Orders — ERP API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the ERP response into a clean PO list.\n// Expected ERP shape: { \"purchase_orders\": [ { po_number, supplier, total_amount,\n// currency, order_date, status, lines: [ { sku, description, quantity_ordered,\n// unit_price } ] } ], \"next_page\": null } — a bare array also works.\nconst cfg = $('CONFIG — ERP API').first().json;\nconst pageSize = parseInt(cfg.page_size || '50', 10);\nconst body = $input.first().json;\nconst raw = Array.isArray(body) ? body : (body.purchase_orders || body.data || body.results || []);\nconst pos = (Array.isArray(raw) ? raw : []).slice(0, pageSize);\nreturn pos.map(p => ({ json: {\n  po_number: p.po_number || p.id || p.number || '',\n  supplier: p.supplier || p.vendor || p.supplier_name || '',\n  total_amount: Number(p.total_amount || p.total || 0),\n  currency: p.currency || 'USD',\n  order_date: p.order_date || p.date || new Date().toISOString().slice(0, 10),\n  erp_status: p.status || '',\n  lines: (p.lines || p.items || []).map(l => ({\n    sku: l.sku || l.product_code || '',\n    description: l.description || l.name || '',\n    quantity_ordered: Number(l.quantity_ordered || l.quantity || 0),\n    unit_price: Number(l.unit_price || l.price || 0),\n  })),\n  date_found: new Date().toISOString().slice(0, 10),\n  status: 'NEW',\n}}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "6dc5379f-f9b8-4726-adb0-fd02806f5492",
+      "name": "Normalize Purchase Orders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "76115218-4aad-4633-b49b-d363449c7916",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "30a2eca5-bbf0-42b9-9ca9-40df587d13bc",
+              "name": "po_sheet_name",
+              "type": "string",
+              "value": "Purchase Orders"
+            },
+            {
+              "id": "4662c2af-74f7-45db-814b-2fb8e2e535ce",
+              "name": "inventory_sheet_name",
+              "type": "string",
+              "value": "Inventory"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e6cd0136-e442-40df-8a76-803edc98fd07",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "4e98a607-47a9-462b-b58c-064b821f9604",
+      "name": "Read Seen PO Numbers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop POs whose number is already in the sheet (idempotent by PO number)\nconst seen = new Set(\n  $('Read Seen PO Numbers').all().map(i => (i.json['PO Number'] || i.json.po_number || '').trim()).filter(Boolean)\n);\nconst fresh = $('Normalize Purchase Orders').all()\n  .map(i => i.json)\n  .filter(p => p.po_number && !seen.has(p.po_number.trim()));\nreturn fresh.map(p => ({ json: p }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e17389c5-3455-48a1-9644-05761b40cd6a",
+      "name": "Filter New POs Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $json.po_number }}",
+            "Order Date": "={{ $json.order_date }}",
+            "Supplier": "={{ $json.supplier }}",
+            "Total Amount": "={{ $json.total_amount }}",
+            "Currency": "={{ $json.currency }}",
+            "Status": "NEW",
+            "Risk Flag": "",
+            "AI Summary": ""
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c28ca718-3560-413e-a7a5-1606f448ac2e",
+      "name": "Log New POs — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89f35b19-67e4-4092-8cb8-2fb6d5b0e11d",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "9dc098a0-0ec5-4d11-a589-c8f8e4d52983",
+              "name": "approval_threshold",
+              "type": "string",
+              "value": "5000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "173ac123-0a77-4698-bde5-122f37df44c6",
+      "name": "CONFIG — AI Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an expert procurement analyst. Review this purchase order for anomalies: an unusual or brand-new supplier, a unit price far above typical, duplicate line items, missing fields, or a total that looks wrong for the items listed.\n\nApproval threshold: {{ $('CONFIG — AI Review').first().json.approval_threshold }} (currency units). Flag risk_flag=true for anything that deserves a human look, even if the total is small. Be strict but fair. Output ONLY via the structured output parser.",
+          "text": "=PO Number: {{ $json.po_number }}\nSupplier: {{ $json.supplier }}\nTotal: {{ $json.currency }} {{ $json.total_amount }}\nOrder Date: {{ $json.order_date }}\n\nLine Items:\n{{ JSON.stringify($json.lines) }}"
+        }
+      },
+      "id": "6b50d19b-15c8-41b3-9ab2-35025f215f3b",
+      "name": "AI Agent — Review Purchase Order",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "2dead0bc-16d8-4fa5-8bd8-b7cf823cff28",
+      "name": "OpenAI Chat Model — PO Review",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"risk_flag\": false,\n  \"risk_level\": \"LOW / MEDIUM / HIGH\",\n  \"risk_reasons\": \"comma-separated list of what looks off, empty if nothing\",\n  \"one_line_summary\": \"single plain-English sentence summarising the PO\"\n}"
+      },
+      "id": "f0193728-f426-4b6f-b6a5-f58948ead13b",
+      "name": "Structured Output Parser — PO Review",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "if-amount",
+              "leftValue": "={{ $json.total_amount }}",
+              "rightValue": "={{ $('CONFIG — AI Review').first().json.approval_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            },
+            {
+              "id": "if-flagged",
+              "leftValue": "={{ $json.output.risk_flag }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "c509315f-d413-4378-8453-4d92f5766e15",
+      "name": "IF — Needs Approval",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "PO Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $json.po_number }}",
+            "Risk Flag": "={{ $json.output.risk_flag }}",
+            "AI Summary": "={{ $json.output.one_line_summary }}",
+            "Status": "PENDING_APPROVAL"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "b7fa1e7e-1731-4a28-8f72-876bf99cf9b7",
+      "name": "Update Sheet — Status PENDING_APPROVAL",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "message": "=📋 *Purchase Order Approval Needed*\n\nPO: {{ $('IF — Needs Approval').item.json.po_number }}\nSupplier: {{ $('IF — Needs Approval').item.json.supplier }}\nTotal: {{ $('IF — Needs Approval').item.json.currency }} {{ $('IF — Needs Approval').item.json.total_amount }}\nRisk: {{ $('IF — Needs Approval').item.json.output.risk_level }} — {{ $('IF — Needs Approval').item.json.output.risk_reasons }}\nAI review: {{ $('IF — Needs Approval').item.json.output.one_line_summary }}\n\nApprove to write the decision back to the ERP and sync inventory. Reject to skip this PO.",
+        "options": {
+          "responseType": "approval",
+          "approveButtonText": "✅ Approve",
+          "disapproveButtonText": "❌ Reject"
+        },
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "377680c9-b1d0-4bb9-967f-e62265ba038a",
+      "name": "Telegram — Send and Wait for Approval",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-approved",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "8540b1ae-7094-43d4-bd41-028a3a4bd91b",
+      "name": "IF — Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3360,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $('CONFIG — ERP API').first().json.erp_api_base_url }}{{ $('CONFIG — ERP API').first().json.po_endpoint }}/{{ $('IF — Needs Approval').item.json.po_number }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('CONFIG — ERP API').first().json.erp_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"status\": \"approved\", \"po_number\": \"{{ $('IF — Needs Approval').item.json.po_number }}\", \"approved_via\": \"n8n\", \"approved_at\": \"{{ new Date().toISOString() }}\"}",
+        "options": {}
+      },
+      "id": "4b978b1c-85a9-453a-bd73-2be1e37084bb",
+      "name": "Update ERP — Write Approval Decision",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3600,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "PO Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $('IF — Needs Approval').item.json.po_number }}",
+            "Status": "APPROVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "02164cac-2fec-4c6b-ba76-fc65b327612c",
+      "name": "Update Sheet — Status APPROVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3840,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "PO Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $('IF — Needs Approval').item.json.po_number }}",
+            "Status": "REJECTED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f3679412-e602-4bcb-b990-4e71b3b5b805",
+      "name": "Update Sheet — Status REJECTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "PO Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $json.po_number }}",
+            "Risk Flag": "={{ $json.output.risk_flag }}",
+            "AI Summary": "={{ $json.output.one_line_summary }}",
+            "Status": "APPROVED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "1c6ddc6c-aae7-42bc-9c7a-c88d2e9e44fd",
+      "name": "Update Sheet — Status APPROVED (Auto)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "86536c14-0968-4ee6-9bac-9f37c586e44c",
+      "name": "Merge — Combine Approval Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split each approved PO into one item per line item for the inventory sync.\n// NOTE: after the approval branch, $json is the Sheets/ERP response, so PO fields\n// are recovered through the paired item on the IF node.\nconst today = new Date().toISOString().slice(0, 10);\nconst out = [];\nfor (const item of $input.all()) {\n  const po = item.json.po_number ? item.json : ($('IF — Needs Approval').item.json || item.json);\n  const lines = Array.isArray(po.lines) ? po.lines : [];\n  for (const l of lines) {\n    out.push({ json: {\n      po_number: po.po_number || '',\n      sku: l.sku || '',\n      description: l.description || '',\n      quantity_ordered: Number(l.quantity_ordered || 0),\n      unit_price: Number(l.unit_price || 0),\n      sync_date: today,\n    }});\n  }\n  // POs with no line items still count as synced\n  if (!lines.length && po.po_number) out.push({ json: { po_number: po.po_number, sku: '', description: '', quantity_ordered: 0, unit_price: 0, sync_date: today } });\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "5948c00a-5d23-45ec-85de-285c5470f00e",
+      "name": "Split PO Lines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Inventory"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "SKU"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "SKU": "={{ $json.sku }}",
+            "Quantity On Order": "={{ $json.quantity_ordered }}",
+            "Last PO Number": "={{ $json.po_number }}",
+            "Last Sync Date": "={{ $json.sync_date }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5bb6dffd-cd21-4d0c-8bc9-a83bcf19675d",
+      "name": "Update Inventory — Sync Quantities",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collapse per-line items back to one item per PO (grouped by Last PO Number,\n// which the Inventory update wrote from the line items).\nconst seen = new Map();\nfor (const item of $input.all()) {\n  const po = item.json['Last PO Number'] || item.json.po_number || '';\n  if (po && !seen.has(po)) seen.set(po, { po_number: po });\n}\nreturn [...seen.values()].map(j => ({ json: j }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "92dea58d-9721-4e23-8ae7-8ffc2ff560ca",
+      "name": "Rebuild PO Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Purchase Orders"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "PO Number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "PO Number": "={{ $json.po_number }}",
+            "Status": "SYNCED"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d6e25556-cf8e-4968-846d-e3ebc5fd2920",
+      "name": "Update Sheet — Status SYNCED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Inventory"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "499ea87e-ac59-47ef-9641-8c9b052a307a",
+      "name": "Read Inventory Levels",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flag inventory rows where on-hand stock is below the reorder level.\n// Returns one aggregate item so the IF node can branch on the count.\nconst rows = $input.all().map(i => i.json);\nconst low = rows.filter(r => {\n  const onHand = Number(r['Quantity On Hand'] || 0);\n  const reorder = Number(r['Reorder Level'] || 0);\n  return reorder > 0 && onHand < reorder;\n});\nconst lines = low.map(r => `${r.SKU || ''} — ${r['Item Name'] || ''} (on hand ${r['Quantity On Hand']}, reorder at ${r['Reorder Level']})`);\nreturn [{ json: { low_stock_count: low.length, low_stock_lines: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "74c2215d-32b0-45b1-a0ea-0d5cf86c0f29",
+      "name": "Flag Low Stock Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-low-stock",
+              "leftValue": "={{ $json.low_stock_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "a80ba08d-4bb6-487f-a9da-2648a69f9b18",
+      "name": "IF — Low Stock Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5760,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "=⚠️ *Low Stock Alert*\n\nThe following items are below their reorder level in the Inventory sheet:\n\n{{ $('Flag Low Stock Items').first().json.low_stock_lines }}\n\nReorder soon — these were checked after today's PO sync.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "55f4532e-506b-43ec-9660-52fe6d808507",
+      "name": "Telegram — Low Stock Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6000,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "c1e0863e-1cf1-4876-9b0e-ef1f111801ff",
+      "name": "Merge — Combine Sync Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        6240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram summary from the run. Counts are read from the earlier\n// nodes directly, because the items reaching this node are sheet/API responses.\nconst pulled = $('Normalize Purchase Orders').all().length;\nconst fresh = $('Filter New POs Only').all().length;\nconst reviewed = $('AI Agent — Review Purchase Order').all();\nconst flagged = reviewed.filter(i => i.json.output && i.json.output.risk_flag).length;\nconst rejected = $('Update Sheet — Status REJECTED').all().length;\nconst lowStock = $('Flag Low Stock Items').first().json.low_stock_count || 0;\nconst lowStockLines = $('Flag Low Stock Items').first().json.low_stock_lines || '';\nlet lines = [`\\U0001F4E6 *ERP PO & Inventory Sync \\u2014 ${new Date().toISOString().slice(0,10)}*`, ``, `\\u2022 ${pulled} POs pulled from ERP`, `\\u2022 ${fresh} new POs processed`, `\\u2022 ${flagged} flagged by AI for review`, `\\u2022 ${rejected} rejected in approval`];\nif (lowStock > 0) {\n  lines.push(`\\u2022 \\u26A0\\uFE0F ${lowStock} items below reorder level:`, ``, lowStockLines);\n} else {\n  lines.push(`\\u2022 No low-stock items`);\n}\nlines.push(``, `Full detail in the Purchase Orders sheet.`);\nreturn [{ json: { summary: lines.join('\\n'), pulled, fresh, flagged, rejected, low_stock_count: lowStock } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d47adaab-e3f2-47e4-86b2-7f7adb029b83",
+      "name": "Build Run Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ba8f8d-ce89-49fc-bbd2-28e05d7ab24e",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4c8f106d-d198-4d07-8dc8-d91513e3f61a",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "377219fe-dad7-471c-a65e-af5a8aa2cf57",
+      "name": "Telegram — Send Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6960,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 9AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — ERP API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — ERP API": {
+      "main": [
+        [
+          {
+            "node": "Fetch Purchase Orders — ERP API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Purchase Orders — ERP API": {
+      "main": [
+        [
+          {
+            "node": "Normalize Purchase Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Purchase Orders": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Seen PO Numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Seen PO Numbers": {
+      "main": [
+        [
+          {
+            "node": "Filter New POs Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New POs Only": {
+      "main": [
+        [
+          {
+            "node": "Log New POs — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log New POs — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI Review": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Review Purchase Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Review Purchase Order": {
+      "main": [
+        [
+          {
+            "node": "IF — Needs Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Needs Approval": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status PENDING_APPROVAL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status APPROVED (Auto)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status PENDING_APPROVAL": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send and Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send and Wait for Approval": {
+      "main": [
+        [
+          {
+            "node": "IF — Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Approved?": {
+      "main": [
+        [
+          {
+            "node": "Update ERP — Write Approval Decision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status REJECTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update ERP — Write Approval Decision": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status APPROVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status APPROVED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Approval Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status APPROVED (Auto)": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Approval Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Approval Branches": {
+      "main": [
+        [
+          {
+            "node": "Split PO Lines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split PO Lines": {
+      "main": [
+        [
+          {
+            "node": "Update Inventory — Sync Quantities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Inventory — Sync Quantities": {
+      "main": [
+        [
+          {
+            "node": "Rebuild PO Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rebuild PO Items": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SYNCED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status SYNCED": {
+      "main": [
+        [
+          {
+            "node": "Read Inventory Levels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Inventory Levels": {
+      "main": [
+        [
+          {
+            "node": "Flag Low Stock Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag Low Stock Items": {
+      "main": [
+        [
+          {
+            "node": "IF — Low Stock Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Low Stock Found": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Low Stock Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge — Combine Sync Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Telegram — Low Stock Alert": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Sync Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Sync Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Run Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — PO Review": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Review Purchase Order",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — PO Review": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Review Purchase Order",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: an over-long node-id tag cannot pass the 36-character publish gate, while a short tag passes through">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- conveyor line -->
+  <line x1="40" y1="300" x2="760" y2="300" stroke="#111111" stroke-width="3"/>
+  <line x1="40" y1="330" x2="760" y2="330" stroke="#111111" stroke-width="3"/>
+  <g stroke="#111111" stroke-width="2">
+    <line x1="90" y1="300" x2="90" y2="330"/><line x1="150" y1="300" x2="150" y2="330"/>
+    <line x1="210" y1="300" x2="210" y2="330"/><line x1="270" y1="300" x2="270" y2="330"/>
+    <line x1="560" y1="300" x2="560" y2="330"/><line x1="620" y1="300" x2="620" y2="330"/>
+    <line x1="680" y1="300" x2="680" y2="330"/><line x1="740" y1="300" x2="740" y2="330"/>
+  </g>
+
+  <!-- publish gate: two pillars with a narrow slot -->
+  <rect x="380" y="120" width="26" height="210" fill="#111111"/>
+  <rect x="394" y="120" width="26" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <rect x="420" y="240" width="90" height="18" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  <rect x="420" y="120" width="26" height="120" fill="#111111"/>
+  <!-- gate slot marker: 36-unit gauge -->
+  <g stroke="#111111" stroke-width="2">
+    <line x1="420" y1="200" x2="420" y2="240"/>
+    <line x1="446" y1="200" x2="446" y2="240"/>
+  </g>
+  <circle cx="433" cy="190" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- long tag: approaches the gate, cannot fit, slides back (8s loop) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 150 0; 150 0; 0 0" keyTimes="0; 0.45; 0.6; 1" dur="10s" repeatCount="indefinite"/>
+    <rect x="60" y="252" width="220" height="36" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="76" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="102" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="128" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="154" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="180" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="206" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="232" y="264" width="18" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <rect x="258" y="264" width="12" height="12" fill="#111111"/>
+  </g>
+
+  <!-- short tag: passes through the gate and continues (12s loop) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 420 0" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;1;1;0" keyTimes="0;0.8;0.9;1" dur="12s" repeatCount="indefinite"/>
+    <rect x="40" y="180" width="72" height="36" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="54" y="192" width="14" height="12" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <rect x="76" y="192" width="14" height="12" fill="#111111"/>
+  </g>
+
+  <!-- outbox retry loop: dashed circle with slow rotation -->
+  <g transform="translate(660 110)">
+    <circle cx="0" cy="0" r="46" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 8">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="r" values="8;11;8" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- old-version block waiting past the gate -->
+  <g>
+    <animate attributeName="opacity" values="1;0.55;1" dur="8s" repeatCount="indefinite"/>
+    <rect x="600" y="252" width="90" height="36" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="614" y="264" width="14" height="12" fill="#111111"/>
+    <rect x="636" y="264" width="14" height="12" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <rect x="658" y="264" width="14" height="12" fill="#111111"/>
+  </g>
+</svg>

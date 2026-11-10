@@ -97,6 +97,32 @@ are never invented.
 - "openai api" +180% / "n2n" Breakout — generic / typo noise.
 - "walmart cyberpowerpc price error" / "juan atkins died" — outside the niche.
 
+## 2026-11-10 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): top 25 were NBA (bills, lakers vs hawks, spurs vs suns, cavaliers vs hornets…), celebrities (james gunn, toukie smith, rochelle fleming), politics (thomas massie). **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 3–10, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (03:20–03:22 UTC). No CAPTCHA appeared, no panel failed. Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 5, 1:30 PM; next 97 Nov 3, 1:30 PM), n8n 3 (peak 9, Nov 3 2:30 PM and Nov 7 3:30 PM), AI automation 8 (peak 39 Nov 5, 1:30 PM), MCP server 5 (peak 17, Nov 3 and Nov 5, 1:30 PM). All four terms peaked around 1:30 PM, joint peak Nov 5, 1:30 PM. Top subregions for "AI agent": Kansas 100, Washington 33, New York 31, California 31, Virginia 29.
+
+### Rising / breakout queries found
+- **"AI agent"** (1–5 of 5): "chinese ai agent industry status" — Breakout; "ai agent self preservation risks" — Breakout; "fable 5.2" — +2,400%; "accenture warning ai agent banking strategy" — +2,350%; "wells fargo ai agent revocation" — +600%.
+- **"n8n"** (1–5 of 19): **"digitalocean" — Breakout**; "n8n pronunciation" — +300%; "open webui" — +250%; "composio" — +190%; "pinecone" — +160%.
+- **"AI automation"** (1–5 of 14): "what are ai guardrails in software development" — Breakout; "what is sovereign ai strategy" — Breakout; rest noise ("history of nintendo starting as a playing card company in 1889", "what is phantom vibration syndrome", "why alaska can be typed on one row of a qwerty keyboard").
+- **"MCP server"** (only 4 shown): "devops practices" — Breakout; "python web framework" — +3,100%; "node.js backend" — +2,550%; "c# mcp server" — +1,000%.
+
+### PICKED — PUBLISHED 2026-11-10 (morning run)
+- **"digitalocean" (Breakout, #1 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `digitalocean-cuttlefish-iphone-agent-approval.md` — "DigitalOcean Cuttlefish: Approve Your AI Agent's Next Move From Your iPhone — What n8n Builders Should Steal". Verified via DigitalOcean's official blog "Introducing DigitalOcean Cuttlefish" + Business Wire press release (Nov 5, 2026, 09:00 EST, BoxWorks): Cuttlefish = native iPhone app for Managed Agents (public preview) — follow live sessions, approve/deny tool calls showing full command/file path/diff, Face ID/passcode for high-risk calls, steer mid-run (pause/resume/stop, queued messages), view results + checkpoints + fork/rollback; 7 harnesses (Claude Code, Codex CLI, OpenCode, OpenHands, Hermes, LangGraph, CrewAI) + 20,000+ tools; sessions in DigitalOcean-hosted microVMs persisting independently of device; Box Mount private preview (Box folder synced into agent workspace under Box permissions/version history/audit trail; agent can edit/delete, deletions sync back); name = cuttlefish camouflage metaphor. Builder angle: the approval-gate pattern ported to n8n (Telegram approval node, full action in the message, harder approvals for riskier calls, steering + audit log). New angle vs blog's Oct 2 DigitalOcean Agent Droplets article ($50/mo) — that was the platform launch; this is the Nov 5 supervision-app launch. Live: https://cortexflow.tech/blog/digitalocean-cuttlefish-iphone-agent-approval/ — Telegram 'Published Blog' sent. Hero webp + animated SMIL SVG + Anatomy figure (approval-gate.svg, Fig 1, phone press + approve/deny levers + Face ID lock dial, readout "7 harnesses · 20,000+ tools · Face ID on high-risk calls") shipped; no license-verified in-article stock images — 2 image-search queries returned no free-license sources, skipped per standing rule. One build retry — description >160 chars fixed. Figure subagent took ~17 min (one placement bug fixed + re-verified).
+
+### Skipped (notable)
+- "chinese ai agent industry status" / "ai agent self preservation risks" / "accenture warning ai agent banking strategy" / "wells fargo ai agent revocation" — all published in the last 72h (Nov 8 morning / Nov 9 morning / Nov 9 evening / Nov 7 morning).
+- "fable 5.2" +2,400% — video game, off-niche.
+- "composio" +190% — no fresh November event: Composio Instant (agent wallet) launched Oct 20, second on Product Hunt daily board; rise is residual, not a news hook.
+- "open webui" +250% / "pinecone" +160% — vague pairings, no dated event behind the rise.
+- "n8n pronunciation" +300% — definitional/noise.
+- "what are ai guardrails in software development" — Breakout, but definitional; blog covered n8n 2.43 agent guardrails (Oct 8).
+- "what is sovereign ai strategy" — Breakout, definitional; overlaps Nov 9 morning CNAS sovereign-agents article.
+- "c# mcp server" +1,000% — niche dev-tooling, no fresh dated November event verified.
+- "devops practices" / "python web framework" / "node.js backend" (MCP server rising) — generic dev queries, no agent-specific hook.
+
 ## 2026-11-09 — MORNING run (~08:50 IST / 03:20 UTC)
 
 ### Checked

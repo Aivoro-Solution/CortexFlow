@@ -97,6 +97,31 @@ are never invented.
 - "openai api" +180% / "n2n" Breakout — generic / typo noise.
 - "walmart cyberpowerpc price error" / "juan atkins died" — outside the niche.
 
+## 2026-11-10 — EVENING run (~16:50 IST / 11:22 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:21 UTC): top 25 were NBA (bills, lakers vs hawks, spurs vs suns, cavaliers vs hornets…), celebrities (rochelle fleming, james gunn, toukie smith), politics (thomas massie). **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 3–10, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch would hit HTTP 429 (past runs); data read via live browser on the same URL (11:21–11:22 UTC). No CAPTCHA, no unusual-traffic check. Interest-over-time panel FAILED on first load ("Oops! Something went wrong") — loaded after one reload. Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 5, 1:30 PM), n8n 3 (peak 9 Nov 7, 1:30 PM), AI automation 8 (peak 37 Nov 5, 1:30 PM), MCP server 5 (peak 18 Nov 5, 1:30 PM). Rising lists shifted between the pre-reload and post-reload loads (pre-reload "AI agent": self preservation +1,550%, wells fargo +170%, no accenture entry) — final values below are the post-reload load. Top subregions for "AI agent": New Mexico, District of Columbia, Hawaii, North Dakota, Vermont (no numeric values shown).
+
+### Rising / breakout queries found
+- **"AI agent"** (only 3 shown): "chinese ai agent industry status" — Breakout; "accenture warning ai agent banking strategy" — +3,300%; "ai agent self preservation risks" — +1,750%.
+- **"n8n"** (1–5 of 14): **"asana" — Breakout**; "google cloud console" — Breakout; **"vapi ai" — Breakout**; "claude desktop" — Breakout; "hacker news" — +4,850%.
+- **"AI automation"** (1–5 of 14, all Breakout): "how agentic ai systems work in automation" — Breakout; rest noise ("first vcr size compared to a piano", "origin of the png image file name pronunciation", "what is sovereign ai strategy", "why gps costs $2 million a day to operate").
+- **"MCP server"** (only 1 shown): "node.js backend" — +3,200%.
+
+### PICKED — PUBLISHED 2026-11-10 (evening run)
+- **"vapi ai" (Breakout, #3 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `vapi-n8n-voice-agents-vapicon-2026.md` — "Vapi + n8n Voice Agents: The Wiring Pattern Behind the Breakout — VapiCon Starts Tomorrow". Verified via Vapi's own blog (Sep 16 + Aug 12, 2026) + audioXpress + TipRanks (Oct 28) + neuradynamics.ai + ecorpit.com (Oct 22) + mmintelligence.ai + getaab.com + n8nlab.io: VapiCon 2026 runs Nov 11–12 at Festival Pavilion, Fort Mason, San Francisco — second edition (2025 inaugural: Oct 2, 850+ people), 1,200+ attendees, 50+ speakers, 20+ sponsors, Builder + Operator tracks; CEO Jordan Dearsley opens with a product/company update; sessions include Deepgram CEO Scott Stephenson, Soniox, Gradium, Cartesia, Daily, Twilio VP Andy O'Dower, Justin Uberti speech-to-speech discussion, Andre Natal agent-building workshop, Kwindla Hultman Kramer + Vitali Korezki model-selection session, pyannoteAI "Building Voice Models for Real Conversations" panel Nov 12; Nov 9 pre-event hackathon with Exa, Deepgram, Manus AI, TypeSafe AI (Jev). Vapi = voice-agent orchestration platform: $0.05/min hosting fee + STT/LLM/TTS providers at cost, $5 free credit, 4 concurrent calls on no-package accounts (was 10 before Sep 2026 Success Packages repackage), $50M Series B May 2026 ($72M total), Workflows retired Aug 18, 2026 (Squads replace them), MCP server + weekly changelog at docs.vapi.ai/whats-new. Vapi + n8n wiring pattern (verified across three independent tutorials): Vapi assistant answers the call → mid-call tool calls hit an n8n Webhook node → n8n runs business logic (calendar/CRM) and returns the result → end-of-call webhook carries transcript + recording URL to n8n; outbound: n8n HTTP Request node calls Vapi's outbound-call endpoint. Compliance note kept: FCC Feb 2024 ruling — AI voices count as "artificial" under TCPA, most outbound AI calls need prior express consent. Builder angle: the exact wiring pattern + the four failure modes (webhook latency, tool-call timeouts, consent, cost per minute). New angle — blog has never covered Vapi (voice-agent coverage so far: ElevenLabs, VoiceStudio, Microsoft MAI Voice). Live: https://cortexflow.tech/blog/vapi-n8n-voice-agents-vapicon-2026/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "chinese ai agent industry status" / "accenture warning ai agent banking strategy" / "ai agent self preservation risks" — all published in the last 72h (Nov 8 morning / Nov 9 evening / Nov 9 morning).
+- "asana" (n8n Breakout) — checked: no fresh November event. Asana MCP server GA since Feb 2026, V1 shut down Aug 5; CData's n8n+Asana guide is undated. Kept as a future how-to candidate.
+- "google cloud console" (n8n Breakout) — vague pairing (likely self-hosting n8n on GCP), no dated event behind the rise.
+- "claude desktop" (n8n Breakout) — generic tool noise, no fresh event.
+- "hacker news" +4,850% — noise.
+- "how agentic ai systems work in automation" — definitional; blog already covers agentic AI extensively.
+- "what is sovereign ai strategy" — definitional; overlaps Nov 9 morning CNAS sovereign-agents article.
+- "node.js backend" +3,200% (MCP server) — generic dev query, no agent-specific hook.
+
 ## 2026-11-10 — MORNING run (~08:50 IST / 03:20 UTC)
 
 ### Checked

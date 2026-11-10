@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of a Vapi voice agent switchboard: sound waves travel from a telephone handset into a socket grid while patch cords pulse">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- switchboard console, left -->
+  <g stroke="#111111" stroke-width="3" fill="none" stroke-linejoin="round">
+    <rect x="60" y="120" width="210" height="210" fill="#FFFDF5"/>
+    <circle cx="130" cy="180" r="34"/>
+    <circle cx="130" cy="180" r="10"/>
+    <circle cx="200" cy="180" r="34"/>
+    <circle cx="200" cy="180" r="10"/>
+    <rect x="90" y="250" width="150" height="50" fill="#FFFDF5"/>
+    <line x1="110" y1="265" x2="220" y2="265"/>
+    <line x1="110" y1="280" x2="200" y2="280"/>
+    <line x1="110" y1="295" x2="180" y2="295"/>
+  </g>
+  <!-- handset -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5" stroke-linejoin="round">
+    <path d="M 285 150 q 55 20 45 90 q -6 45 -30 55 l -12 -18 q 18 -8 22 -38 q 6 -55 -28 -70 z"/>
+    <circle cx="300" cy="150" r="16"/>
+    <circle cx="295" cy="295" r="16"/>
+  </g>
+  <path d="M 300 310 q 30 45 80 40" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- travelling sound waves -->
+  <g fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+    <path d="M 360 225 q 18 -55 36 0 q 18 55 36 0 q 18 -55 36 0 q 18 55 36 0 q 18 -55 36 0">
+      <animate attributeName="opacity" values="0.35;1;0.35" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 360 260 q 18 -40 36 0 q 18 40 36 0 q 18 -40 36 0 q 18 40 36 0 q 18 -40 36 0">
+      <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 360 190 q 18 -40 36 0 q 18 40 36 0 q 18 -40 36 0 q 18 40 36 0 q 18 -40 36 0">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- socket grid, right -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="560" y="110" width="180" height="180"/>
+    <line x1="620" y1="110" x2="620" y2="290"/>
+    <line x1="680" y1="110" x2="680" y2="290"/>
+    <line x1="560" y1="170" x2="740" y2="170"/>
+    <line x1="560" y1="230" x2="740" y2="230"/>
+  </g>
+  <g fill="none" stroke="#FF4D00" stroke-width="3">
+    <circle cx="590" cy="140" r="12"><animate attributeName="r" values="12;16;12" dur="6s" repeatCount="indefinite"/></circle>
+    <circle cx="650" cy="140" r="12"/>
+    <circle cx="710" cy="140" r="12"/>
+    <circle cx="590" cy="200" r="12"/>
+    <circle cx="650" cy="200" r="12"><animate attributeName="stroke-width" values="3;6;3" dur="6s" repeatCount="indefinite"/></circle>
+    <circle cx="710" cy="200" r="12"/>
+    <circle cx="590" cy="260" r="12"/>
+    <circle cx="650" cy="260" r="12"/>
+    <circle cx="710" cy="260" r="12"/>
+  </g>
+
+  <!-- patch cords from board down to workflow blocks -->
+  <g fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <path d="M 620 290 q 0 60 -60 60 l -40 0">
+      <animate attributeName="stroke-dashoffset" values="0;-120" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="8 6"/>
+    </path>
+    <path d="M 680 290 q 0 40 50 50 l 30 10">
+      <animate attributeName="stroke-dashoffset" values="0;-100" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dasharray" values="8 6"/>
+    </path>
+  </g>
+
+  <!-- workflow blocks, bottom -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="420" y="350" width="110" height="44"/>
+    <rect x="560" y="350" width="110" height="44"/>
+    <rect x="690" y="350" width="80" height="44"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <path d="M 530 372 h 30"/>
+    <path d="M 670 372 h 20"/>
+  </g>
+  <!-- lit tool-call lamp -->
+  <circle cx="560" cy="372" r="8" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <!-- slowly rotating dial -->
+  <g transform="translate(720 60)">
+    <circle r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="0" y1="0" x2="0" y2="-20" stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="30s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

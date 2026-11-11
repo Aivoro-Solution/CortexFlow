@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a browser window bound to an agent by a cable, with a test-runner dial turning slowly">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- browser window -->
+  <g>
+    <rect x="90" y="110" width="300" height="210" fill="#FFFFFF" stroke="#111111" stroke-width="4"/>
+    <rect x="90" y="110" width="300" height="36" fill="#111111"/>
+    <circle cx="112" cy="128" r="6" fill="#FF4D00"/>
+    <circle cx="132" cy="128" r="6" fill="#FFFDF5"/>
+    <circle cx="152" cy="128" r="6" fill="#FFFDF5"/>
+    <rect x="110" y="168" width="180" height="12" fill="#111111"/>
+    <rect x="110" y="196" width="240" height="12" fill="#111111" opacity="0.55"/>
+    <rect x="110" y="224" width="150" height="12" fill="#111111" opacity="0.35"/>
+    <!-- blinking cursor -->
+    <rect x="292" y="166" width="10" height="16" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0;1" dur="1.6s" repeatCount="indefinite"/>
+    </rect>
+    <!-- play button that pulses -->
+    <g>
+      <circle cx="240" cy="272" r="26" fill="#FF4D00" stroke="#111111" stroke-width="3">
+        <animate attributeName="r" values="26;30;26" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <polygon points="232,260 232,284 254,272" fill="#FFFDF5"/>
+    </g>
+  </g>
+
+  <!-- binding cable -->
+  <path d="M 390 215 C 470 160, 470 270, 550 215" fill="none" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
+  <circle r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M 390 215 C 470 160, 470 270, 550 215"/>
+  </circle>
+
+  <!-- agent / MCP socket block -->
+  <g>
+    <rect x="550" y="110" width="170" height="210" fill="#FFFFFF" stroke="#111111" stroke-width="4"/>
+    <rect x="574" y="134" width="122" height="18" fill="#111111"/>
+    <rect x="574" y="164" width="80" height="12" fill="#111111" opacity="0.55"/>
+    <rect x="574" y="186" width="100" height="12" fill="#111111" opacity="0.35"/>
+    <!-- socket pins -->
+    <rect x="586" y="228" width="26" height="52" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="622" y="228" width="26" height="52" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="658" y="228" width="26" height="52" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <!-- slow rotating dial -->
+    <g>
+      <circle cx="635" cy="150" r="0" fill="none"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 635 150" to="360 635 150" dur="30s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- rotating gear, slow -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 700 360" to="360 700 360" dur="40s" repeatCount="indefinite"/>
+    <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+      <circle cx="700" cy="360" r="34"/>
+      <rect x="694" y="316" width="12" height="14"/>
+      <rect x="694" y="390" width="12" height="14"/>
+      <rect x="656" y="354" width="14" height="12"/>
+      <rect x="730" y="354" width="14" height="12"/>
+    </g>
+    <circle cx="700" cy="360" r="12" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- drifting test-check dots -->
+  <g fill="#FF4D00">
+    <circle cx="120" cy="370" r="6">
+      <animate attributeName="cy" values="370;352;370" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="370" r="6">
+      <animate attributeName="cy" values="370;352;370" dur="7s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="370" r="6">
+      <animate attributeName="cy" values="370;352;370" dur="7s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <rect x="100" y="392" width="120" height="10" fill="#111111" opacity="0.6"/>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animation of a database listener going quiet and a heartbeat pulse keeping it alive">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- database cylinder -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M 250 150 L 250 300 A 90 28 0 0 0 430 300 L 430 150 Z"/>
+    <ellipse cx="340" cy="150" rx="90" ry="28"/>
+    <path d="M 250 200 A 90 28 0 0 0 430 200" fill="none"/>
+    <path d="M 250 250 A 90 28 0 0 0 430 250" fill="none"/>
+  </g>
+  <!-- rows inside the cylinder, pulsing orange -->
+  <g fill="#FF4D00">
+    <circle cx="300" cy="215" r="7">
+      <animate attributeName="opacity" values="1;0.15;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="340" cy="265" r="7">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="380" cy="215" r="7">
+      <animate attributeName="opacity" values="1;0.15;1" dur="6s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- listening ear / receiver dish -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 520 190 A 70 70 0 0 1 520 330"/>
+    <path d="M 560 220 A 40 40 0 0 1 560 300"/>
+    <path d="M 600 250 A 12 12 0 0 1 600 272"/>
+  </g>
+  <circle cx="600" cy="261" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="r" values="9;13;9" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- sound waves travelling from database to ear, fading out -->
+  <g stroke="#111111" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M 452 210 Q 472 225 452 240 Q 472 255 452 270 Q 472 285 452 300">
+      <animate attributeName="opacity" values="1;0.1;1" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 470 190 Q 492 225 470 260 Q 492 295 470 320" stroke="#FF4D00">
+      <animate attributeName="opacity" values="0.1;1;0.1" dur="8s" begin="2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- heartbeat line across the bottom, flat then pulsing -->
+  <g stroke="#111111" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M 60 390 L 300 390 L 320 350 L 345 410 L 365 390 L 740 390"/>
+  </g>
+  <circle cx="320" cy="350" r="6" fill="#FF4D00">
+    <animate attributeName="cx" values="60;740" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="390;390;350;410;390;390" dur="12s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow rotating dashed ring around the ear -->
+  <g fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="6 10" opacity="0.5">
+    <circle cx="560" cy="260" r="105">
+      <animateTransform attributeName="transform" type="rotate" from="0 560 260" to="360 560 260" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

@@ -5,6 +5,31 @@ Each run logs: date/time, what was checked, top rising/breakout queries found
 pages are blocked/unreadable, the fallback used is noted here — trend numbers
 are never invented.
 
+## 2026-11-11 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): top 25 were NBA/college basketball (celtics vs 76ers, bucks vs knicks, duke…), NFL (kirk cousins trade, cfp rankings), celebrities (stacy keach, harry shum jr), veterans day freebies. **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 4–11, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (03:20–03:21 UTC). Interest-over-time averages (index 0–100): AI agent 23 (peak 100 Nov 5, 1:30 PM; next 87 Nov 9, 85 Nov 4), n8n 3 (peak 8 Nov 7/9), AI automation 7 (peak 38 Nov 5), MCP server 5 (peak 18 Nov 5). All four terms peaked at the same hour, Nov 5, 1:30 PM. Top subregions for "AI agent": Hawaii, Vermont, North Dakota, District of Columbia, Maine (no numeric values shown). Only one panel failed: "AI automation — Interest by subregion" ("Oops! Something went wrong").
+
+### Rising / breakout queries found
+- **"AI agent"** (only 2 shown): "chinese ai agent industry status" — Breakout; "fable 5.2" — +700%.
+- **"n8n"** (1–5 of 14): "asana" — Breakout; "vapi ai" — Breakout; **"whop" — +3,200%**; "composio" — +350%; "n8n pronunciation" — +250%.
+- **"AI automation"** (1–5 of 14, all Breakout): all noise ("why gps costs $2 million a day to operate", "first vcr size compared to a piano", "why alaska can be typed on one row of a qwerty keyboard", "what is micro-drama short form content", "why compact discs read from the inside out").
+- **"MCP server"** (1–5): "walmart near me" — Breakout; **"linear mcp server" — Breakout**; **"claude duet" — Breakout**; "node.js backend" — Breakout; "swagger api" — +190%.
+
+### PICKED — PUBLISHED 2026-11-11 (morning run)
+- **"whop" (+3,200%, #3 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `whop-moonpay-paybox-agent-commerce.md` — "Your AI Agent Can Now Shop at 300,000 Stores: Whop Joins MoonPay PayBox — and the Approval Pattern n8n Builders Must Copy". Verified via MoonPay's own newsroom (Oct 29, 2026) + press release (Nov 3) + The Paypers (Oct 30) + Blockster (Oct 29) + Stablecoin Insider PayBox guide: Whop joined PayBox Markets Oct 29, 2026 — any PayBox agent can search Whop's ~300,000 businesses, prepare an order, and pay, with the buyer controlling purchase approvals; Whop is the largest storefront network to join PayBox Markets; $7B+ on-platform transactions across 185 countries; $200M Series D at $5.1B valuation (Sequoia + Shopify Ventures); PayBox launched Jul 29, 2026, connects Claude/ChatGPT/Grok via custom connector; buyer sees item/total/payment method/recipient before approval, approves via passkey; modes Always Ask vs Autonomous (docs say plugin money tools always pause for approval even under autonomous grant — discrepancy flagged honestly); keys behind threshold cryptography + secure enclaves, no single party holds a full key; x402 USDC payments (EIP-3009) supported but release doesn't say which rail a Whop order settles on — flagged; BCG Oct 2026: ~70% of retailers expect agentic commerce significant/transformational within 2 years; PayBox is an unregulated service (unregulated MoonPay entity) + wallet payments irreversible — caveats kept. Builder angle: 5-part approval pattern to copy in n8n (scoped grant, Always Ask default, spend cap as a node, four-field approval message, passkey-grade approval + audit log); honest note that there is no n8n PayBox node — PayBox is a Claude/ChatGPT/Grok custom connector. Live: https://cortexflow.tech/blog/whop-moonpay-paybox-agent-commerce/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "chinese ai agent industry status" — published Nov 8 morning.
+- "vapi ai" — published Nov 10 evening (VapiCon article).
+- "asana" (n8n Breakout) — checked Nov 10 evening: no fresh November event; Asana MCP GA since Feb 2026.
+- "composio" +350% — checked Nov 10 morning: Composio Instant launched Oct 20, residual rise, no fresh event.
+- "linear mcp server" (MCP server Breakout) — Linear's MCP server launched May 2025, latest changelog Oct 22, 2026; Composio published a Linear MCP toolkit Nov 6, but that is a third-party listing, not a Linear launch — no fresh hook.
+- "claude duet" (MCP server Breakout) — Anthropic's proactive agent launched Oct 21, 2026 as a US-only waitlist research preview (Pro/Max/Ultra, Opus 5.5); rise is residual/waitlist-wave driven, launch is 3 weeks old — kept as a watch item, not today's pick.
+- "fable 5.2" +700% — video game, off-niche. "n8n pronunciation" +250% / "node.js backend" / "swagger api" / "walmart near me" — generic/typo noise.
+
+
 ## 2026-11-08 — MORNING run (~08:50 IST / 03:20 UTC)
 
 ### Checked

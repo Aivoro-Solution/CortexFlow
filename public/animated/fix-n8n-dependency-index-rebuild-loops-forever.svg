@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: index cards circling in an endless loop, broken by a single orange card">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- server rack, left -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="70" y="110" width="150" height="230" fill="#FFFDF5"/>
+    <rect x="88" y="132" width="114" height="34"/>
+    <rect x="88" y="182" width="114" height="34"/>
+    <rect x="88" y="232" width="114" height="34"/>
+    <rect x="88" y="282" width="114" height="34"/>
+  </g>
+  <g fill="#FF4D00">
+    <circle cx="100" cy="149" r="5">
+      <animate attributeName="opacity" values="1;0.15;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="199" r="5">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="249" r="5">
+      <animate attributeName="opacity" values="1;0.15;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="299" r="5">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <g stroke="#111111" stroke-width="3">
+    <line x1="122" y1="149" x2="186" y2="149"/>
+    <line x1="122" y1="199" x2="186" y2="199"/>
+    <line x1="122" y1="249" x2="186" y2="249"/>
+    <line x1="122" y1="299" x2="186" y2="299"/>
+  </g>
+
+  <!-- looping index cards, right: three cards orbiting -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 560 225" to="360 560 225" dur="36s" repeatCount="indefinite"/>
+    <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+      <rect x="520" y="105" width="80" height="54"/>
+      <rect x="600" y="280" width="80" height="54"/>
+      <rect x="440" y="280" width="80" height="54"/>
+    </g>
+    <g stroke="#111111" stroke-width="2">
+      <line x1="532" y1="122" x2="588" y2="122"/>
+      <line x1="532" y1="136" x2="588" y2="136"/>
+      <line x1="612" y1="297" x2="668" y2="297"/>
+      <line x1="612" y1="311" x2="668" y2="311"/>
+      <line x1="452" y1="297" x2="508" y2="297"/>
+      <line x1="452" y1="311" x2="508" y2="311"/>
+    </g>
+    <!-- orbit path -->
+    <circle cx="560" cy="225" r="118" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="10 8"/>
+  </g>
+
+  <!-- the single orange card that breaks the loop -->
+  <g>
+    <rect x="520" y="198" width="80" height="54" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="y" values="198;186;198" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <g stroke="#111111" stroke-width="2">
+      <line x1="532" y1="215" x2="588" y2="215">
+        <animate attributeName="y1" values="215;203;215" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="215;203;215" dur="6s" repeatCount="indefinite"/>
+      </line>
+      <line x1="532" y1="229" x2="588" y2="229">
+        <animate attributeName="y1" values="229;217;229" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="229;217;229" dur="6s" repeatCount="indefinite"/>
+      </line>
+    </g>
+  </g>
+
+  <!-- spark / break marker -->
+  <g stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+    <line x1="640" y1="120" x2="660" y2="140">
+      <animate attributeName="opacity" values="0;1;0" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="660" y1="120" x2="640" y2="140">
+      <animate attributeName="opacity" values="0;1;0" dur="6s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- flow arrow from rack to loop -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 230 225 L 400 225" stroke-dasharray="12 8">
+      <animate attributeName="stroke-dashoffset" values="0;-40" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 388 213 L 404 225 L 388 237" fill="none"/>
+  </g>
+</svg>

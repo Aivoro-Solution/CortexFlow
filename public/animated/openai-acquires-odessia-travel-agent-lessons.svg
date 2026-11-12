@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: a globe with an orbiting ticket and a chat bubble, evoking an AI travel concierge">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- ground line -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="2.5"/>
+
+  <!-- globe -->
+  <g>
+    <circle cx="400" cy="225" r="118" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <ellipse cx="400" cy="225" rx="118" ry="46" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <ellipse cx="400" cy="225" rx="46" ry="118" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <line x1="282" y1="225" x2="518" y2="225" stroke="#111111" stroke-width="2.5"/>
+    <path d="M 320 130 Q 400 175 480 130" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <path d="M 320 320 Q 400 275 480 320" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <!-- slow spin of the whole globe -->
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- orbiting ticket -->
+  <g>
+    <g>
+      <rect x="-52" y="-20" width="104" height="40" rx="6" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <line x1="-14" y1="-20" x2="-14" y2="20" stroke="#111111" stroke-width="2" stroke-dasharray="4 4"/>
+      <circle cx="34" cy="0" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+      <rect x="-42" y="-9" width="20" height="5" fill="#111111"/>
+      <rect x="-42" y="2" width="20" height="5" fill="#111111"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="30s" repeatCount="indefinite"/>
+    </g>
+    <!-- orbit path: ticket circles the globe -->
+    <animateMotion dur="8s" repeatCount="indefinite" path="M 400 67 A 158 158 0 1 1 399.9 67"/>
+  </g>
+
+  <!-- chat bubble -->
+  <g>
+    <rect x="560" y="70" width="150" height="86" rx="14" fill="#FFFDF5" stroke="#111111" stroke-width="3.5"/>
+    <path d="M 590 156 L 578 182 L 612 156 Z" fill="#FFFDF5" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="596" cy="113" r="8" fill="#FF4D00" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="8;11;8" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="635" cy="113" r="8" fill="#111111">
+      <animate attributeName="r" values="8;11;8" dur="6s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="674" cy="113" r="8" fill="#FF4D00" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="8;11;8" dur="6s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="6s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- paper plane drifting across -->
+  <g>
+    <path d="M 0 0 L 46 12 L 0 24 L 10 12 Z" fill="#FF4D00" stroke="#111111" stroke-width="2.5" stroke-linejoin="round"/>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 60 330 L 740 300"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- small accent stars -->
+  <g stroke="#111111" stroke-width="2.5" fill="#FF4D00">
+    <path d="M 150 120 l 0 18 M 141 129 l 18 0"/>
+    <path d="M 660 300 l 0 18 M 651 309 l 18 0"/>
+    <animate attributeName="opacity" values="1;0.3;1" dur="6s" repeatCount="indefinite"/>
+  </g>
+  <circle cx="150" cy="300" r="5" fill="#111111">
+    <animate attributeName="r" values="5;8;5" dur="6s" begin="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="655" cy="130" r="5" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="r" values="5;8;5" dur="6s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+</svg>

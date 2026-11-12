@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: a tiny decimal value travelling along a pipe is sorted into the wrong bin, while an orange lens highlights the misroute">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="12" y="12" width="776" height="426" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- source pipe, left: value enters -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 70 225 L 300 225"/>
+    <path d="M 300 225 L 300 120"/>
+    <path d="M 300 225 L 300 330"/>
+  </g>
+  <!-- junction -->
+  <circle cx="300" cy="225" r="10" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+
+  <!-- travelling value dot: goes up the wrong branch, loops back, then down the right branch -->
+  <circle cx="0" cy="0" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="18s" repeatCount="indefinite"
+      path="M 70 225 L 300 225 L 300 120 L 560 120 L 560 190 L 560 120 L 300 120 L 300 225 L 300 330 L 560 330 L 560 260"/>
+  </circle>
+
+  <!-- wrong bin (top right): integer bin, marked with a cross -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="520" y="120" width="120" height="70"/>
+    <line x1="520" y1="120" x2="640" y2="190"/>
+    <line x1="640" y1="120" x2="520" y2="190"/>
+  </g>
+  <!-- wrong-bin warning flash -->
+  <rect x="520" y="120" width="120" height="70" fill="#FF4D00" opacity="0">
+    <animate attributeName="opacity" values="0;0.25;0" dur="9s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- right bin (bottom right): double bin, open top -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M 520 260 L 520 340 L 640 340 L 640 260"/>
+    <line x1="520" y1="260" x2="640" y2="260" stroke-dasharray="8 6"/>
+  </g>
+  <!-- settled value dot resting in the right bin -->
+  <circle cx="580" cy="315" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="0;0;1;1;0" dur="18s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- magnifier lens slowly circling the junction -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0 300 225" to="360 300 225" dur="36s" repeatCount="indefinite"/>
+    <g>
+      <circle cx="380" cy="225" r="34" fill="none" stroke="#FF4D00" stroke-width="4"/>
+      <line x1="404" y1="249" x2="432" y2="277" stroke="#FF4D00" stroke-width="4"/>
+    </g>
+  </g>
+
+  <!-- slow pulsing dashes on the two branches -->
+  <g stroke="#111111" stroke-width="2" stroke-dasharray="6 8">
+    <line x1="300" y1="120" x2="520" y2="120">
+      <animate attributeName="stroke-dashoffset" from="0" to="-56" dur="7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="300" y1="330" x2="520" y2="330">
+      <animate attributeName="stroke-dashoffset" from="0" to="-56" dur="7s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

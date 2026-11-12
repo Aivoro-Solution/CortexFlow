@@ -254,3 +254,59 @@ are never invented.
 - "what is sovereign ai strategy" (first load only) — definitional; overlaps today's morning CNAS sovereign-agents article.
 - "nvidia" (Trending Now, 500K+) — broad query, no agent/automation-specific hook; blog already covers NVIDIA's agent-safety work.
 
+
+## 2026-11-12 — EVENING run (~16:50 IST / 11:21 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:21 UTC): top 25 were NBA (warriors vs rockets, cavaliers vs knicks, lakers vs bucks, spurs vs bulls, celtics vs raptors, nuggets vs grizzlies, wizards vs pacers), celebrities (kimberly powell, rochelle fleming, frankie muniz, ayesha curry), news (building collapse nyc, ss united states sinking). **No AI/automation niche entry.** ("airexplore" 50K+ — no niche hook identified.)
+- **Explore, US, past 7 days** (Nov 5–12, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): data read via live browser on the same URL (11:21–11:22 UTC). No CAPTCHA, no panel failed, no reload needed. Interest-over-time averages (index 0–100): AI agent 26 (peak 100 Nov 10, 1:30 PM; next 99 Nov 12, 1:30 PM), n8n 4 (peak 10, Nov 7 1:30 PM and Nov 8 3:30 PM), AI automation 8 (peak 39 Nov 7, 1:30 PM), MCP server 6 (peak 17 Nov 10, 1:30 PM). Top subregions for "AI agent": Kansas 100, Washington 28, New York 27, California 26, Delaware 25.
+
+### Rising / breakout queries found
+- **"AI agent"** (only 3 shown): "chinese ai agent industry status" — Breakout; "fable 5.2" — Breakout; "odessia" — +3,350%.
+- **"n8n"** (1–10 of 13): **"openai agent kit" — Breakout**; "ai agent whatsapp" — Breakout; "n8n mcp" — +700%; "n8n alternatives" — +250%; "n8n telegram bot" — +180%; "composio" — +300%; "n8n logo" — +200%; "muse" — +160%; "node-red" — +150%; "whop" — +110%.
+- **"AI automation"** (1–10 of 16): "aicorvus" — Breakout; "aicorvus com" — Breakout; "ai automation whatsapp" — Breakout; "automate whatsapp ai" — Breakout; "ai automation agency" — +200%; rest trivia noise ("why gps costs $2 million a day to operate", "meaning of the african word ubuntu", "what is micro-drama short form content", "why google uses goats for lawn maintenance", "how video game surgeons make fewer errors").
+- **"MCP server"** (all 6): "walmart near me" — Breakout; "python web framework" — Breakout; "api design principles" — Breakout; "proxmox mcp server" — +150%; "supabase mcp server" — +140%; "claude desktop" — +50%.
+
+### PICKED — PUBLISHED 2026-11-12 (evening run)
+- **"openai agent kit" (Breakout, #1 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `openai-agentkit-shutdown-nov-30-migration.md` — "OpenAI Is Killing Agent Builder in 18 Days — Where Your Visual Workflows Go (and Why n8n Is the Obvious Home)". Verified via OpenAI's own deprecations page (developers.openai.com, read via search snippet) + Osher Digital migration guide (Nov 2026, read directly) + Codesprint + twitterapi.io guide: AgentKit launched Oct 6, 2025 (Agent Builder visual canvas + ChatKit + Guardrails + Evals); June 3, 2026 OpenAI deprecated Agent Builder, Evals platform and reusable prompts (v1/prompts); Evals went read-only Oct 31, 2026; **all three shut down Nov 30, 2026** — 18 days from today; ChatKit and the Agents SDK stay; Assistants API already shut down Aug 26, 2026; migration paths — export workflow → Code → Agents SDK (TypeScript/Python; OpenAI warns export "does not convert your workflow graph or guarantee that every behavior transfers unchanged", run side-by-side and compare outputs), ChatGPT Workspace Agents (needs Business/Enterprise/Edu; deterministic workflows "may not migrate faithfully"), or move off OpenAI entirely; ChatKit survives only via the advanced integration (own server + ChatKit Python SDK + Agents SDK agent); Evals replacement is Promptfoo. Builder angle: the n8n rebuild pattern — canvas → workflow canvas, tools → nodes/MCP Client, guardrails → IF/Switch + approval gates, handoffs → sub-workflows — plus the lesson that a hosted canvas can be withdrawn while code and self-hosted workflows cannot. Live: https://cortexflow.tech/blog/openai-agentkit-shutdown-nov-30-migration/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "odessia" +3,350% — published this morning (OpenAI acquisition article).
+- "chinese ai agent industry status" — published Nov 8 morning.
+- "fable 5.2" — Breakout, video game, off-niche.
+- "aicorvus" / "aicorvus com" — Breakout, but the spike is infoCorvus ROAD 26.10 (Nov 11 press release, EINPresswire): enterprise Data Lifecycle Management platform with an AI assistant for legal/compliance teams. Enterprise data-governance product, no n8n/builder hook — off-niche for CortexFlow.
+- "ai agent whatsapp" / "ai automation whatsapp" / "automate whatsapp ai" — Breakout, definitional; blog already covers WhatsApp chatbots with n8n (Oct 18) and WhatsApp pricing (Oct 2).
+- "n8n mcp" +700% — generic pairing; blog covers MCP + n8n extensively (how-to-connect-mcp-server-n8n, mcp-n8n-troubleshooting).
+- "n8n alternatives" +250% / "node-red" +150% — comparison queries, no fresh event; blog already has head-to-head comparisons.
+- "n8n telegram bot" +180% — definitional; blog covers Telegram bots with n8n extensively.
+- "composio" +300% — same as Nov 10–11: Composio Instant launched Oct 20, residual rise, no fresh event.
+- "muse" +160% — ambiguous pairing (Anthropic's Muse vs other), no dated event.
+- "agent substrate" +500% (morning runner-up) — no longer in this evening's top-3 "AI agent" list; AgentKit (Breakout, #1 for n8n, hard Nov 30 deadline) is the stronger pick. Substrate stays a watch item.
+- "proxmox mcp server" +150% / "supabase mcp server" +140% — tooling pairings, no fresh dated November event verified.
+- "ai automation agency" +200% — definitional/commercial query, no news hook.
+
+## 2026-11-12 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): top 25 were NBA (cavaliers vs knicks, spurs vs bulls, lakers vs bucks, warriors vs rockets, celtics vs raptors, nuggets vs grizzlies, wizards vs pacers), NFL (rex ryan), celebrities (kimberly powell, yella beezy, frankie muniz, ayesha curry), news (building collapse nyc, ss united states sinking), veterans day (olive garden veterans day 500K+). **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 5–12, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (03:20–03:24 UTC). Page first hit Google's unusual-traffic ("sorry") check — cleared via reCAPTCHA checkbox + motorcycle image grid, then a blank load + ERR_CONNECTION_CLOSED on reload, then Trends loaded fully. No panel failed on the final load. Interest-over-time averages (index 0–100): AI agent 23 (peak 100 Nov 5, 1:30 PM; next 87 Nov 10, 86 Nov 9), n8n 3 (peak 9 Nov 5, 1:30 PM), AI automation 7 (peak 40 Nov 5, 1:30 PM), MCP server 5 (peak 17 Nov 5, 1:30 PM). All four terms peaked together Nov 5, 1:30 PM again. Top subregions for "AI agent": Hawaii, Maine, Rhode Island, District of Columbia, Delaware (no numeric values shown).
+
+### Rising / breakout queries found
+- **"AI agent"** (only 3 shown): "chinese ai agent industry status" — Breakout; **"odessia" — +3,800%**; **"agent substrate" — +500%**.
+- **"n8n"** (1–5 of 21): "n8n nod" — Breakout; "walmart near me" — Breakout; **"langflow vs n8n" — +3,700%**; **"vapi ai" — +3,650%**; "grok bot" — +250%.
+- **"AI automation"** (1–5 of 14, all Breakout): all noise ("why gps costs $2 million a day to operate", "origin of the png image file name pronunciation", "what is phantom vibration syndrome", "first vcr size compared to a piano", "meaning of the african word ubuntu").
+- **"MCP server"** (only 3 shown): "walmart near me" — Breakout; **"dataverse mcp server" — Breakout**; "alpha vantage mcp server" — +250%.
+
+### PICKED — PUBLISHED 2026-11-12 (morning run)
+- **"odessia" (+3,800%, #2 rising related query for "AI agent", Google Trends Explore US past 7 days)** → article `openai-acquires-odessia-travel-agent-lessons.md` — "OpenAI Just Bought an AI Travel Agent — and Shut It Down the Same Day: What Odessia Teaches n8n Builders". Verified via TechCrunch (Nov 10, 21:08 UTC) + Unite.AI + YoMake blog (citing Skift): OpenAI acquired Odessia Nov 10, 2026, founder Francis Davidson joins OpenAI "to focus on the future of travel", service shut down the same day; $6M pre-seed led by Sequoia, team of 8 in SF, public launch Oct 14 (27 days before acquisition), tens of thousands of early adopters, $60M+ annualized planned travel (volume, not revenue), built on GPT-5.5/Codex, hundreds of options in ~1 min, daily price re-checks, Gmail-confirmation memory, IATA accreditation (private rates, ticket issuing), 12-dimension hotel guides, perks at 2,000 hotels; Davidson's agent-run operating model (MCP/CLI agents across strategy/partnerships/design/marketing/support/legal/finance, 40h→2h tasks, human review as bottleneck); same-day Businesses in ChatGPT launch; OpenAI confirmed the hire only, no travel product announced, terms undisclosed (TechCrunch: apparent acqui-hire); Skift's read — partnerships don't give OpenAI accreditation + own hotel content. Builder angle: 5-part pattern to copy in n8n (own the un-generatable asset, memory from real sources, watch-and-recheck loops, approval gate before money moves, agents run ops + humans review). Live: https://cortexflow.tech/blog/openai-acquires-odessia-travel-agent-lessons/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "chinese ai agent industry status" — published Nov 8 morning.
+- "agent substrate" +500% — strong runner-up: Google Agent Substrate 1.0 + CNCF donation (gVisor, OpenRL) announced Nov 5–6, 2026 (KubeCon); <500 ms restore, 10x density, 500+ suspend/resume per second, 90–95% idle time. Verified via Google Cloud blog + 3 secondary writeups. Kept as a watch item — Odessia was fresher (Nov 10) and the bigger spike (+3,800% vs +500%); substrate is a candidate for a later run if it stays rising.
+- "vapi ai" +3,650% — published Nov 10 evening (VapiCon article); rise is VapiCon-driven (Nov 11–12 event), no new angle beyond the existing article.
+- "langflow vs n8n" +3,700% — comparison query with no fresh event; comparisons already exist (hostadvice ~19 days ago, indexagentica Oct 28). Blog already covers Langflow CVEs. Future evergreen-comparison candidate, not a trend article.
+- "dataverse mcp server" (MCP server Breakout) — Microsoft Nov 2 announcement: Dataverse plugin reaches Copilot Cowork + native n8n node; 10 days old, enterprise-angled, weaker hook than Odessia.
+- "grok bot" +250% — unclear xAI pairing, no dated event identified in this run.
+- "n8n nod" — Breakout, likely typo/noise ("node"?); no verifiable product behind it.
+- "alpha vantage mcp server" +250% — finance-data MCP tooling, niche, no fresh dated November event verified.
+- "walmart near me" / "why gps costs $2 million a day" / trivia queries — noise.

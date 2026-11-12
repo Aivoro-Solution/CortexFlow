@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: a workflow canvas being lifted away by a press, passing through a conversion gear, and landing rebuilt on a second canvas">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- ground line -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="2.5"/>
+
+  <!-- left canvas: Agent Builder, being lifted away -->
+  <g>
+    <rect x="70" y="150" width="200" height="150" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="3.5"/>
+    <circle cx="120" cy="200" r="22" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="190" cy="180" r="22" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <circle cx="220" cy="250" r="22" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="142" y1="200" x2="168" y2="180" stroke="#111111" stroke-width="2.5"/>
+    <line x1="212" y1="180" x2="220" y2="228" stroke="#111111" stroke-width="2.5"/>
+    <line x1="142" y1="200" x2="198" y2="250" stroke="#111111" stroke-width="2.5"/>
+    <!-- slow lift: canvas drifts up and fades, then returns -->
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -34; 0 0" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0.45;1" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- press above the left canvas -->
+  <g>
+    <rect x="90" y="86" width="160" height="26" fill="#111111"/>
+    <rect x="150" y="112" width="40" height="26" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- conversion gear in the middle -->
+  <g>
+    <g>
+      <circle cx="400" cy="225" r="52" fill="#FFFDF5" stroke="#111111" stroke-width="3.5"/>
+      <circle cx="400" cy="225" r="20" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+      <g stroke="#111111" stroke-width="3.5">
+        <line x1="400" y1="161" x2="400" y2="173"/>
+        <line x1="400" y1="277" x2="400" y2="289"/>
+        <line x1="336" y1="225" x2="348" y2="225"/>
+        <line x1="452" y1="225" x2="464" y2="225"/>
+        <line x1="355" y1="180" x2="364" y2="189"/>
+        <line x1="436" y1="261" x2="445" y2="270"/>
+        <line x1="445" y1="180" x2="436" y2="189"/>
+        <line x1="364" y1="261" x2="355" y2="270"/>
+      </g>
+      <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="60s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- right canvas: n8n, receiving the rebuilt workflow -->
+  <g>
+    <rect x="530" y="150" width="200" height="150" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="3.5"/>
+    <rect x="560" y="180" width="44" height="30" rx="4" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="630" y="180" width="44" height="30" rx="4" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="595" y="240" width="44" height="30" rx="4" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="604" y1="195" x2="630" y2="195" stroke="#111111" stroke-width="2.5"/>
+    <line x1="652" y1="210" x2="639" y2="240" stroke="#111111" stroke-width="2.5"/>
+    <line x1="582" y1="210" x2="595" y2="240" stroke="#111111" stroke-width="2.5"/>
+    <!-- gentle settle: canvas bobs as the workflow lands -->
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="12s" begin="6s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- approval lever on the right canvas, pulsing lit -->
+  <g>
+    <line x1="700" y1="150" x2="700" y2="110" stroke="#111111" stroke-width="3.5"/>
+    <circle cx="700" cy="104" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- calendar dial: the deadline -->
+  <g>
+    <circle cx="400" cy="392" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="392" x2="400" y2="372" stroke="#FF4D00" stroke-width="3.5"/>
+    <line x1="400" y1="392" x2="414" y2="402" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 392" to="360 400 392" dur="45s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting node travelling left to right -->
+  <g>
+    <circle cx="0" cy="0" r="9" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 270 225 L 530 225"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- small accent stars -->
+  <g stroke="#111111" stroke-width="2.5" fill="#FF4D00">
+    <path d="M 120 90 l 0 18 M 111 99 l 18 0"/>
+    <path d="M 690 320 l 0 18 M 681 329 l 18 0"/>
+    <animate attributeName="opacity" values="1;0.3;1" dur="6s" repeatCount="indefinite"/>
+  </g>
+  <circle cx="90" cy="330" r="5" fill="#111111">
+    <animate attributeName="r" values="5;8;5" dur="6s" begin="3s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,1852 @@
+{
+  "name": "Marketing Attribution & Lead Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎯 MARKETING ATTRIBUTION & LEAD ENGINE\n**What it does:** Webhook lead intake → normalize + dedupe by phone/email → AI scores every lead 0–100 (Hot/Warm/Cold) → round-robin rep assignment → WhatsApp outreach to Hot leads → every touch logged to Google Sheets. A second daily branch pulls Meta/TikTok/LinkedIn/YouTube ad spend, computes CPL, CPLPV, CPP and ROAS per channel, and alerts on Telegram when a channel's CPL blows past your cap.\n\n**You'll need:**\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credentials\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n- Meta/TikTok/LinkedIn/YouTube ad-account access + tokens (for the attribution branch)\n- A WhatsApp HTTP API endpoint (e.g. WAHA) for Hot-lead outreach\n\n**Status flow in Sheets:** `NEW` → `SCORED` → `ASSIGNED` → `CONTACTED` (returning leads flip to `TOUCHED`; low scores go to `NURTURE`)",
+        "height": 220,
+        "width": 5600,
+        "color": 5
+      },
+      "id": "2a8db2e6-08d1-4fe0-95e1-395bff499ac5",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Webhook lead intake + normalize\nForm/landing page POSTs name, email, phone, UTM tags and message → config (rep roster, thresholds, WhatsApp URL) → normalize email/phone/UTM.",
+        "height": 420,
+        "width": 940,
+        "color": 4
+      },
+      "id": "eb650e23-63ad-4e5b-8f68-6a46e480eaf5",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Dedupe + log to Google Sheets\nRead the Leads sheet → match on phone or email. Returning lead: flip status to `TOUCHED` + log a Journey touchpoint. New lead: append with status `NEW`.",
+        "height": 420,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "dd7061b7-ccd6-4a04-801e-c70daeb3ef93",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI lead scoring\nAI Agent (gpt-4o-mini + Structured Output Parser) scores 0–100 and assigns a tier: Hot / Warm / Cold. Sheet flips to `SCORED`.",
+        "height": 420,
+        "width": 760,
+        "color": 4
+      },
+      "id": "a19cf870-5832-4b1f-9fd6-34a26871598a",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Round-robin assignment + WhatsApp\nHot leads go to the senior rep (first in the roster) + instant WhatsApp. Warm leads rotate round-robin across reps. Cold leads go to `NURTURE`. Every touch is logged to the Journey sheet.",
+        "height": 420,
+        "width": 1500,
+        "color": 4
+      },
+      "id": "af052265-bbf4-4deb-ac8c-13d797ed5dd2",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2920,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Lead alert\nAll branches merge → one Telegram alert with score, tier, channel, campaign and assigned rep.",
+        "height": 420,
+        "width": 860,
+        "color": 4
+      },
+      "id": "d4b667f9-7769-4b16-863b-5efd33d37f61",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Daily attribution branch (08:00)\nSchedule trigger → fetch Meta/TikTok/LinkedIn/YouTube spend → join with Leads/Journey sheets → compute CPL, CPLPV, CPP, ROAS per channel → append a daily snapshot → Telegram alert for any channel over the CPL cap. Ad-fetch nodes have Continue On Fail ON: an unconfigured channel reports spend 0 instead of killing the run.",
+        "height": 560,
+        "width": 3120,
+        "color": 4
+      },
+      "id": "ad136270-8597-4e35-a514-df962716e059",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marketing-lead",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "91264d19-4354-4357-b671-e3a116568273",
+      "name": "Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a1b86d5-ba93-4b90-8246-4e2447fc89df",
+              "name": "hot_threshold",
+              "type": "string",
+              "value": "70"
+            },
+            {
+              "id": "0f535dea-55f0-4d90-a9b6-0a0dca9ddacd",
+              "name": "warm_threshold",
+              "type": "string",
+              "value": "40"
+            },
+            {
+              "id": "fd1ab81f-8f75-4e68-a249-53d74167c8c4",
+              "name": "rep_roster",
+              "type": "string",
+              "value": "Rep One:PASTE_REP_1_EMAIL,Rep Two:PASTE_REP_2_EMAIL,Rep Three:PASTE_REP_3_EMAIL"
+            },
+            {
+              "id": "bc27830b-2210-4b7c-92b2-63648360922f",
+              "name": "whatsapp_api_url",
+              "type": "string",
+              "value": "PASTE_YOUR_WHATSAPP_API_URL"
+            },
+            {
+              "id": "ef982a60-c4dd-4d6b-b399-67e169c7bf6c",
+              "name": "whatsapp_enabled",
+              "type": "string",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "94badb0f-ccbf-400a-ab52-79c3eb507c21",
+      "name": "CONFIG — Lead Engine",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize a raw lead submission: lowercase/trim email, digits-only phone, parsed UTM\nconst b = ($input.first().json.body && typeof $input.first().json.body === 'object')\n  ? $input.first().json.body\n  : $input.first().json;\nconst norm = (v) => String(v || '').trim().toLowerCase();\nconst phone = String(b.phone || '').replace(/[^+\\d]/g, '');\nreturn [{ json: {\n  name: String(b.name || '').trim(),\n  email: norm(b.email),\n  phone,\n  message: String(b.message || '').trim(),\n  utm_source: norm(b.utm_source || b.utmSource || 'direct'),\n  utm_medium: norm(b.utm_medium || b.utmMedium || ''),\n  utm_campaign: String(b.utm_campaign || b.utmCampaign || '').trim().toLowerCase(),\n  date_received: new Date().toISOString().slice(0, 10),\n  status: 'NEW',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e817760e-31d0-4992-b83e-6c75c27a0f5b",
+      "name": "Normalize Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a716e5c5-a8a1-4736-8d47-fe7db8dcf672",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "2c5ab56b-4b48-4a8d-bc93-b6ab8e6ee0ac",
+              "name": "leads_sheet",
+              "type": "string",
+              "value": "Leads"
+            },
+            {
+              "id": "6831b64a-02fe-4b78-ac7d-5335d05b150a",
+              "name": "journey_sheet",
+              "type": "string",
+              "value": "Journey"
+            },
+            {
+              "id": "1d4ba522-5a3e-49b6-bb6c-c5ed329dd58c",
+              "name": "attribution_sheet",
+              "type": "string",
+              "value": "Attribution"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "804228a6-ff8c-4fc8-9779-451d39539584",
+      "name": "CONFIG — Google Sheets",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "95965605-77fe-43ed-914f-c1874ccd5e3f",
+      "name": "Read Leads Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Match the normalized lead against existing Leads rows by phone or email\nconst lead = $('Normalize Lead').first().json;\nconst rows = $input.all().map(i => i.json);\nconst normEmail = (v) => String(v || '').trim().toLowerCase();\nconst normPhone = (v) => String(v || '').replace(/[^+\\d]/g, '');\nconst match = rows.find(r => {\n  const e = normEmail(r['Email']);\n  const p = normPhone(r['Phone']);\n  return (lead.email && e === lead.email) || (lead.phone && p === lead.phone);\n});\nreturn [{ json: {\n  ...lead,\n  is_duplicate: !!match,\n  existing_rep: match ? (match['Assigned Rep'] || '') : '',\n}}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "f2a5b7dd-7015-490e-813f-7c1fbdbf9027",
+      "name": "Check Dedup",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "58dfcaef-3e4e-4e11-91f2-38723163f27b",
+              "leftValue": "={{ $json.is_duplicate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "bba7b4c8-2ca6-421b-b938-b41f62b6c9e3",
+      "name": "IF — Duplicate Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Status": "TOUCHED",
+            "Last Touch Date": "={{ $json.date_received }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "34ef6258-bc5a-4f41-bc4b-1719526dd081",
+      "name": "Update Lead — Status TOUCHED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Journey"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.date_received }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Channel": "={{ $json.utm_source }}",
+            "Campaign": "={{ $json.utm_campaign }}",
+            "Touch Type": "Returning lead — repeat submission",
+            "Rep": "={{ $json.existing_rep }}",
+            "Notes": "Duplicate detected by phone/email; routed to existing rep"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "57389927-b5c2-4de8-8a6b-520c3bd7ef7b",
+      "name": "Log Journey — Returning Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date Received": "={{ $json.date_received }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $json.message }}",
+            "UTM Source": "={{ $json.utm_source }}",
+            "UTM Medium": "={{ $json.utm_medium }}",
+            "UTM Campaign": "={{ $json.utm_campaign }}",
+            "Status": "={{ $json.status }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "928ae33a-86f1-401d-9d8d-264b75d9ec66",
+      "name": "Log New Lead — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ce748b5-dc18-4690-a146-717b3d899033",
+              "name": "openai_model",
+              "type": "string",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "id": "102b796d-5ba1-456f-91aa-59fd6edfbb23",
+              "name": "business_context",
+              "type": "string",
+              "value": "PASTE_YOUR_BUSINESS_CONTEXT (what you sell, who your ideal customer is, 2-3 sentences)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a636d408-0fd1-49c5-991b-4b84512a5248",
+      "name": "CONFIG — AI Scoring",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a senior sales-qualification analyst. Score this inbound lead 0-100 for buying intent and fit.\n\nBUSINESS CONTEXT:\n{{ $('CONFIG — AI Scoring').first().json.business_context }}\n\nScoring guidance: a real name + business email + specific message about a real need scores high; vague one-liners, free-mail throwaways, gibberish or obvious spam score low. Hot = 70+, Warm = 40-69, Cold = below 40. Output ONLY via the structured output parser."
+        },
+        "text": "=Name: {{ $json.name }}\nEmail: {{ $json.email }}\nPhone: {{ $json.phone }}\nChannel: {{ $json.utm_source }} / {{ $json.utm_medium }} / {{ $json.utm_campaign }}\nMessage:\n{{ $json.message }}"
+      },
+      "id": "67f1eeec-a113-43a3-992f-183e50b58bc0",
+      "name": "AI Agent — Score Lead",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "3df199d5-3703-4faf-aa01-009984be3374",
+      "name": "OpenAI Chat Model — Scoring",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"lead_score\": 0,\n  \"tier\": \"Hot / Warm / Cold\",\n  \"reason\": \"one sentence explaining the score\",\n  \"intent\": \"buying intent in 3-5 words\",\n  \"spam_risk\": \"low / medium / high\"\n}"
+      },
+      "id": "d5db747d-3980-4c31-ab34-b54b9e8b1c1c",
+      "name": "Structured Output Parser — Lead Score",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Lead Score": "={{ $json.output.lead_score }}",
+            "Tier": "={{ $json.output.tier }}",
+            "Score Reason": "={{ $json.output.reason }}",
+            "Status": "SCORED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "baaaeebe-f295-4649-b9fc-e7d24192d583",
+      "name": "Update Sheet — Status SCORED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "7a338047-8e86-48ca-829a-6f6d48212286",
+              "leftValue": "={{ $json.output.lead_score }}",
+              "rightValue": "={{ $('CONFIG — Lead Engine').first().json.hot_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "997da76f-cea8-4811-b27a-12fa1ae7bf34",
+      "name": "IF — Hot Lead",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Round-robin rep assignment — Hot leads go to the senior rep (first in the roster)\nconst cfg = $('CONFIG — Lead Engine').first().json;\nconst roster = String(cfg.rep_roster || '').split(',').map(s => s.trim()).filter(Boolean).map(s => {\n  const parts = s.split(':').map(x => (x || '').trim());\n  return { name: parts[0] || 'Unassigned', email: parts[1] || '' };\n});\nconst lead = $input.first().json;\nconst rep = roster.length ? roster[0] : { name: 'Unassigned', email: '' };\nreturn [{ json: { ...lead, lead_tier: 'Hot', assigned_rep: rep.name, assigned_rep_email: rep.email } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "349e7684-11fd-4c68-a471-97be993c5af0",
+      "name": "Assign Rep — Round-Robin (Hot)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Assigned Rep": "={{ $json.assigned_rep }}",
+            "Status": "ASSIGNED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "d27e88c0-70a4-4a13-adf0-8bb6ef9b07cf",
+      "name": "Update Sheet — Status ASSIGNED (Hot)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('CONFIG — Lead Engine').first().json.whatsapp_api_url }}",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chatId: $json.phone + '@c.us', text: 'Hi ' + $json.name + ' — thanks for reaching out about ' + ($json.utm_campaign || 'our services') + '. A specialist will call you shortly.' }) }}"
+      },
+      "id": "65224c9b-5f88-4a90-94ad-eb4e60c0ff6c",
+      "name": "Send WhatsApp — Hot Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3360,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $('Assign Rep — Round-Robin (Hot)').first().json.email }}",
+            "Status": "CONTACTED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "3d503d9c-a08c-42fc-8cb5-754dd5a00532",
+      "name": "Update Sheet — Status CONTACTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3600,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Journey"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $('Normalize Lead').first().json.date_received }}",
+            "Email": "={{ $('Assign Rep — Round-Robin (Hot)').first().json.email }}",
+            "Phone": "={{ $('Normalize Lead').first().json.phone }}",
+            "Channel": "={{ $('Normalize Lead').first().json.utm_source }}",
+            "Campaign": "={{ $('Normalize Lead').first().json.utm_campaign }}",
+            "Touch Type": "Assigned — Hot lead",
+            "Rep": "={{ $('Assign Rep — Round-Robin (Hot)').first().json.assigned_rep }}",
+            "Notes": "WhatsApp sent to hot lead"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "16308926-6c93-4e99-95e0-213ac44bdb99",
+      "name": "Log Journey — Hot Assigned",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3840,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "89a4036f-40b1-4151-a1ef-e458b9da749c",
+              "leftValue": "={{ $json.output.lead_score }}",
+              "rightValue": "={{ $('CONFIG — Lead Engine').first().json.warm_threshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual",
+                "name": "filter.operator.number.largerEqual"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "bd00b6fa-363c-4fd8-b7cf-05d88ca4d798",
+      "name": "IF — Warm Lead",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Round-robin rep assignment — rotate by the number of leads already in the sheet\nconst cfg = $('CONFIG — Lead Engine').first().json;\nconst roster = String(cfg.rep_roster || '').split(',').map(s => s.trim()).filter(Boolean).map(s => {\n  const parts = s.split(':').map(x => (x || '').trim());\n  return { name: parts[0] || 'Unassigned', email: parts[1] || '' };\n});\nconst leadCount = $('Read Leads Sheet').all().length;\nconst lead = $input.first().json;\nconst rep = roster.length ? roster[leadCount % roster.length] : { name: 'Unassigned', email: '' };\nreturn [{ json: { ...lead, lead_tier: 'Warm', assigned_rep: rep.name, assigned_rep_email: rep.email } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "348c66e4-a119-407a-8a33-03de3baca64b",
+      "name": "Assign Rep — Round-Robin (Warm)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Assigned Rep": "={{ $json.assigned_rep }}",
+            "Status": "ASSIGNED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e65579e1-fe13-4ebb-a6b9-1fdcca79cde5",
+      "name": "Update Sheet — Status ASSIGNED (Warm)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3360,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Journey"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $('Normalize Lead').first().json.date_received }}",
+            "Email": "={{ $('Assign Rep — Round-Robin (Warm)').first().json.email }}",
+            "Phone": "={{ $('Normalize Lead').first().json.phone }}",
+            "Channel": "={{ $('Normalize Lead').first().json.utm_source }}",
+            "Campaign": "={{ $('Normalize Lead').first().json.utm_campaign }}",
+            "Touch Type": "Assigned — Warm lead",
+            "Rep": "={{ $('Assign Rep — Round-Robin (Warm)').first().json.assigned_rep }}",
+            "Notes": "Warm lead assigned round-robin; no WhatsApp sent"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "99f29f02-c10a-48ce-9e48-ed71268895fd",
+      "name": "Log Journey — Warm Assigned",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3600,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Status": "NURTURE"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "ad28bfae-d76d-4be5-ab6d-920961d84d93",
+      "name": "Update Sheet — Status NURTURE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "82832779-83c1-4609-97c8-e78d5e670acd",
+      "name": "Merge — Lead Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram alert from whichever lead branch ran\nconst items = $input.all().map(i => i.json);\nconst j = items[0] || {};\nconst val = (...keys) => { for (const k of keys) { if (j[k] !== undefined && j[k] !== null && j[k] !== '') return j[k]; } return ''; };\nconst score = j.output ? j.output.lead_score : val('Lead Score', 'lead_score');\nconst tier = j.output ? j.output.tier : val('Tier', 'lead_tier', 'tier');\nconst lines = [\n  `🎯 *New lead — ${tier || '—'} (${score ?? '?'}/100)*`,\n  ``,\n  `👤 ${val('name', 'Name')}`,\n  `📧 ${val('email', 'Email')}`,\n  `📱 ${val('phone', 'Phone')}`,\n  `📣 ${val('utm_source', 'Channel') || 'direct'} / ${val('utm_campaign', 'Campaign')}`,\n  `🧑‍💼 Rep: ${val('assigned_rep', 'Assigned Rep', 'Rep') || '—'}`,\n  `📌 Status: ${val('status', 'Status') || ''}`,\n];\nreturn [{ json: { alert: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "6a3a4a44-9d31-4cdd-8ff4-06a1fe7edc60",
+      "name": "Build Lead Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be29ba85-3d6d-4a97-a266-a16e2d6666d0",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "429ba9c0-7cbb-4c7f-ae85-47267861de73",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4800,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.alert }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "c4bc5656-10fb-4d99-b841-cd9dcfd3a0f2",
+      "name": "Telegram — Send Lead Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "839abb48-12e3-410a-be0a-c0b6cc4e7ad0",
+      "name": "Daily 8AM Attribution Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ef0a4bf-0476-4213-bb04-c284ad2ca23e",
+              "name": "meta_ad_account_id",
+              "type": "string",
+              "value": "PASTE_YOUR_META_AD_ACCOUNT_ID"
+            },
+            {
+              "id": "9061fe90-4e08-4121-ade3-034a45447038",
+              "name": "meta_access_token",
+              "type": "string",
+              "value": "PASTE_YOUR_META_ACCESS_TOKEN"
+            },
+            {
+              "id": "a2a7b931-ed2d-49f9-8061-fbebc7f7114a",
+              "name": "tiktok_insights_url",
+              "type": "string",
+              "value": "PASTE_YOUR_TIKTOK_INSIGHTS_URL"
+            },
+            {
+              "id": "b3cfb148-fcbd-4e3c-a879-6532c9e45e10",
+              "name": "linkedin_insights_url",
+              "type": "string",
+              "value": "PASTE_YOUR_LINKEDIN_INSIGHTS_URL"
+            },
+            {
+              "id": "7d4864be-5d09-42eb-b0ea-1236eb10b643",
+              "name": "youtube_analytics_url",
+              "type": "string",
+              "value": "PASTE_YOUR_YOUTUBE_ANALYTICS_URL"
+            },
+            {
+              "id": "b5a0bad4-584f-4cce-8e74-abe2e78a4dfa",
+              "name": "cpl_cap",
+              "type": "string",
+              "value": "50"
+            },
+            {
+              "id": "04959603-9ce5-4b8b-bbbf-9ed1fd48174c",
+              "name": "avg_deal_value",
+              "type": "string",
+              "value": "100"
+            },
+            {
+              "id": "ff8f953d-7878-4ef4-acbe-3a1e339f7919",
+              "name": "currency",
+              "type": "string",
+              "value": "USD"
+            },
+            {
+              "id": "582aeb58-268f-446d-8572-5a6f2a3a1944",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1653fd6c-55a2-4b43-9db4-0539a6a25705",
+      "name": "CONFIG — Attribution",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://graph.facebook.com/v21.0/act_={{ $('CONFIG — Attribution').first().json.meta_ad_account_id }}/insights",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "spend,impressions,clicks,actions"
+            },
+            {
+              "name": "date_preset",
+              "value": "yesterday"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $('CONFIG — Attribution').first().json.meta_access_token }}"
+            }
+          ]
+        }
+      },
+      "id": "1ac851dd-0317-4a08-a562-b59491a1918e",
+      "name": "Fetch Meta Insights",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        1000
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('CONFIG — Attribution').first().json.tiktok_insights_url }}",
+        "options": {}
+      },
+      "id": "c7358434-04f8-4c6b-bac1-274e34b20c0e",
+      "name": "Fetch TikTok Insights",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        1000
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('CONFIG — Attribution').first().json.linkedin_insights_url }}",
+        "options": {}
+      },
+      "id": "21184414-187a-4d2d-b321-e17e2a025c63",
+      "name": "Fetch LinkedIn Insights",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        1000
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('CONFIG — Attribution').first().json.youtube_analytics_url }}",
+        "options": {}
+      },
+      "id": "27b0d013-13f2-440e-a399-829553f47de8",
+      "name": "Fetch YouTube Analytics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        1000
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Leads"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "508a4760-9be0-4da4-a1dc-7bd148fddc8d",
+      "name": "Read Leads Sheet — Attribution",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Per-channel CPL / CPLPV / CPP / ROAS from ad spend + Leads sheet counts\nconst cfg = $('CONFIG — Attribution').first().json;\nconst cap = parseFloat(cfg.cpl_cap || '50');\nconst adv = parseFloat(cfg.avg_deal_value || '100');\nconst leads = $('Read Leads Sheet — Attribution').all().map(i => i.json);\nconst countBy = (src) => leads.filter(r => String(r['UTM Source'] || '').toLowerCase() === src).length;\nconst convBy = (src) => leads.filter(r => String(r['UTM Source'] || '').toLowerCase() === src && String(r['Status'] || '').toUpperCase() === 'CONTACTED').length;\nconst spendOf = (node) => {\n  try {\n    const d = $(node).first().json;\n    const arr = d.data || [];\n    if (!Array.isArray(arr)) return 0;\n    return arr.reduce((a, x) => a + parseFloat(x.spend || 0), 0);\n  } catch (e) { return 0; }\n};\nconst channels = [\n  { channel: 'Meta', spend: spendOf('Fetch Meta Insights') },\n  { channel: 'TikTok', spend: spendOf('Fetch TikTok Insights') },\n  { channel: 'LinkedIn', spend: spendOf('Fetch LinkedIn Insights') },\n  { channel: 'YouTube', spend: spendOf('Fetch YouTube Analytics') },\n];\nconst today = new Date().toISOString().slice(0, 10);\nreturn channels.map(c => {\n  const n = countBy(c.channel.toLowerCase());\n  const conv = convBy(c.channel.toLowerCase());\n  const cpl = n ? c.spend / n : 0;\n  const cpp = conv ? c.spend / conv : 0;\n  const revenue = conv * adv;\n  const roas = c.spend ? revenue / c.spend : 0;\n  return { json: {\n    date: today, channel: c.channel,\n    spend: +c.spend.toFixed(2), leads: n, conversions: conv,\n    cpl: +cpl.toFixed(2), cplpv: +cpl.toFixed(2), cpp: +cpp.toFixed(2),\n    roas: +roas.toFixed(2), cpl_cap: cap, over_cap: cpl > cap,\n  } };\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "7cfc6371-37fe-47f2-923f-88b0c2c1d26e",
+      "name": "Compute Attribution Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Attribution"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Channel": "={{ $json.channel }}",
+            "Spend": "={{ $json.spend }}",
+            "Leads": "={{ $json.leads }}",
+            "Conversions": "={{ $json.conversions }}",
+            "CPL": "={{ $json.cpl }}",
+            "CPLPV": "={{ $json.cplpv }}",
+            "CPP": "={{ $json.cpp }}",
+            "ROAS": "={{ $json.roas }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0eeebc71-7182-47b2-99ed-986ef2e7bf5c",
+      "name": "Log Attribution Snapshot",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "821127c7-fb9c-4c59-a203-16d3c94cfbf6",
+              "leftValue": "={{ $json.cpl }}",
+              "rightValue": "={{ $json.cpl_cap }}",
+              "operator": {
+                "type": "number",
+                "operation": "larger",
+                "name": "filter.operator.number.larger"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "4c3c780f-1e1d-4c61-95ce-ff85c14d5115",
+      "name": "IF — CPL Over Cap",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alert listing every channel whose CPL is over the configured cap\nconst items = $input.all().map(i => i.json);\nconst lines = [`⚠️ *CPL over cap — ${new Date().toISOString().slice(0, 10)}*`, ``];\nfor (const c of items) {\n  lines.push(`• *${c.channel}* — CPL $${c.cpl} (cap $${c.cpl_cap}), spend $${c.spend}, ${c.leads} leads, ROAS ${c.roas}x`);\n}\nlines.push(``, `Check the Attribution sheet and pause or reallocate budget.`);\nreturn [{ json: { alert: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "28f38f4d-1736-4d32-bb02-ae5767fac1b4",
+      "name": "Build CPL Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Attribution').first().json.telegram_chat_id }}",
+        "text": "={{ $json.alert }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "db9a788f-3b55-47f2-933e-8e57b18de255",
+      "name": "Telegram — CPL Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        840
+      ]
+    }
+  ],
+  "connections": {
+    "Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Lead Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Lead Engine": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lead": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Read Leads Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Leads Sheet": {
+      "main": [
+        [
+          {
+            "node": "Check Dedup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Dedup": {
+      "main": [
+        [
+          {
+            "node": "IF — Duplicate Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Duplicate Lead?": {
+      "main": [
+        [
+          {
+            "node": "Update Lead — Status TOUCHED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log New Lead — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead — Status TOUCHED": {
+      "main": [
+        [
+          {
+            "node": "Log Journey — Returning Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Journey — Returning Lead": {
+      "main": [
+        [
+          {
+            "node": "Merge — Lead Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Log New Lead — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — AI Scoring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — AI Scoring": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Score Lead": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status SCORED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status SCORED": {
+      "main": [
+        [
+          {
+            "node": "IF — Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Assign Rep — Round-Robin (Hot)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF — Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Rep — Round-Robin (Hot)": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status ASSIGNED (Hot)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status ASSIGNED (Hot)": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp — Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp — Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status CONTACTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status CONTACTED": {
+      "main": [
+        [
+          {
+            "node": "Log Journey — Hot Assigned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Journey — Hot Assigned": {
+      "main": [
+        [
+          {
+            "node": "Merge — Lead Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Warm Lead": {
+      "main": [
+        [
+          {
+            "node": "Assign Rep — Round-Robin (Warm)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet — Status NURTURE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Rep — Round-Robin (Warm)": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status ASSIGNED (Warm)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status ASSIGNED (Warm)": {
+      "main": [
+        [
+          {
+            "node": "Log Journey — Warm Assigned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Journey — Warm Assigned": {
+      "main": [
+        [
+          {
+            "node": "Merge — Lead Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status NURTURE": {
+      "main": [
+        [
+          {
+            "node": "Merge — Lead Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Lead Branches": {
+      "main": [
+        [
+          {
+            "node": "Build Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lead Alert": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Scoring": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Score Lead",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Lead Score": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Score Lead",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8AM Attribution Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Attribution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Attribution": {
+      "main": [
+        [
+          {
+            "node": "Fetch Meta Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Meta Insights": {
+      "main": [
+        [
+          {
+            "node": "Fetch TikTok Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch TikTok Insights": {
+      "main": [
+        [
+          {
+            "node": "Fetch LinkedIn Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch LinkedIn Insights": {
+      "main": [
+        [
+          {
+            "node": "Fetch YouTube Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch YouTube Analytics": {
+      "main": [
+        [
+          {
+            "node": "Read Leads Sheet — Attribution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Leads Sheet — Attribution": {
+      "main": [
+        [
+          {
+            "node": "Compute Attribution Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Attribution Metrics": {
+      "main": [
+        [
+          {
+            "node": "Log Attribution Snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Attribution Snapshot": {
+      "main": [
+        [
+          {
+            "node": "IF — CPL Over Cap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — CPL Over Cap": {
+      "main": [
+        [
+          {
+            "node": "Build CPL Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Build CPL Alert": {
+      "main": [
+        [
+          {
+            "node": "Telegram — CPL Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

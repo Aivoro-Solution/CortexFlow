@@ -1,3 +1,29 @@
+## 2026-11-13 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): **#1 "microsoft outage" — 5M+ searches, 9h ago.** Rest: sports (commanders vs giants, raptors vs 76ers, pistons vs wizards, mavericks vs timberwolves, italy vs france, czechia vs spain, england vs croatia, hornets vs suns, canadiens vs bruins, memphis vs south florida), celebrities (dan hicks, mark mcguinn, aspyn ovard, morgan wallen tour 2027, phil collins, tommy mcmillen), news (dc shooting, chris van hollen, streamer awards), "jensen huang third affair", "microsoft stock" 20K+. **Microsoft outage is the only AI/automation-niche entry — and the #1 trend overall.**
+- **Explore, US, past 7 days** (Nov 6–13, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (08:51–08:53 IST). **Interest-over-time panel FAILED on every load** ("Oops! Something went wrong" — initial load, immediate reload, and a second reload after a 30-second wait) — no averages/peaks available this run; no numbers invented. **Rising lists were volatile between the two loads** — both snapshots below. No CAPTCHA / unusual-traffic check appeared.
+
+### Rising / breakout queries found
+- **"AI agent"** — first load: Rising NOT selectable (greyed out); Top 5 only ("best ai agent" 100, "what is ai agent" 96…). Second load (only 2 shown): "fable 5.2" — Breakout; **"what is the purpose of an orchestrator agent" — +3,200%**.
+- **"n8n"** — first load (1–5): "nod" — Breakout; "n8n nod" — Breakout; "n2n" — Breakout; "librechat" — Breakout; "n8n demo" — Breakout. Second load (1–5 of 11): "n8n nod" — Breakout; "nod" — Breakout; **"jev ai" — Breakout**; "n8n demo" — Breakout; **"composio" — +600%**.
+- **"AI automation"** — first load (all Breakout): "why alaska was sold to the united states", "what is sovereign ai strategy", "first vcr size compared to a piano", "history of nintendo entertainment system 1996-1997", "what is phantom vibration syndrome". Second load: panel FAILED ("Oops! Something went wrong").
+- **"MCP server"** — first load: "walmart near me" — Breakout; "node.js backend" — Breakout; "google cloud console" — Breakout; "python web framework" — +2,850%; "power bi modeling mcp server" — +350%. Second load (only 4): "walmart near me" — Breakout; **"claude duet" — Breakout**; "api design principles" — +3,700%; "composio" — +170%.
+- Top subregions for "AI agent" (first load): Kansas 100, Washington 27, California 26, New York 26, Delaware 25.
+
+### PICKED — PUBLISHED 2026-11-13 (morning run)
+- **"microsoft outage" (Trending Now US #1, 5M+ searches, past 24h)** → article `microsoft-365-outage-ai-connectors-down.md` — "Microsoft 365 Went Down for 5 Hours — and Took Your AI Agent's Tools With It". Verified via SecurityAffairs (Nov 12) + BusinessToday (Nov 13, 06:29 IST) + Reuters syndication (Business Times/Korea Times/Telegraph India) + CNET via cinchops.com + astig.ph: Exchange Online incident EX1550543 began 16:17 UTC Nov 12; wider advisory MO1550821 at 1:26 p.m. ET (Exchange Online, Teams, SharePoint Online, Microsoft 365 Copilot, Defender XDR); Downdetector peak ~138,058 Outlook reports ~1 p.m. ET, combined five services 19,650 reports/min at 18:25 UTC (vs <15/min normal), 74 countries/territories; cause — servers unexpectedly failed automated health checks and dropped offline, remaining infra overloaded in a domino effect; Microsoft identified "a specific component that's responsible for processing server health", testing a config change, froze all deployments, rerouted traffic; NOT a cyberattack; separate Teams incident TM1550488 9:45–10:53 a.m. ET (resolved); by 5 p.m. ET actions "have not provided the anticipated relief"; 6:57 p.m. ET partial recovery, gradual restoration into Nov 13; **agent hook: OpenAI Microsoft connectors — new connections may be broken, tools not working as expected; Anthropic Microsoft 365 connector — mail, calendar and search tools "failing for most requests"; Copilot unable to access inboxes; Microsoft's own status dashboard briefly went offline; Salesforce Agentforce Coworker runs inside Teams (widened blast radius)**. Builder angle: 6-part connector-dependency resilience pattern for n8n (probe before acting, fail loudly, queue + idempotent retry, fallback channel outside M365 auth, drain the queue with approval when service returns, verify tool execution). Live: https://cortexflow.tech/blog/microsoft-365-outage-ai-connectors-down/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "what is the purpose of an orchestrator agent" +3,200% — definitional query, no news event identified behind the spike; watch item.
+- "librechat" (n8n Breakout) — open-source chat UI; no dated November event verified in this run; watch item, not today's pick.
+- "jev ai" (n8n Breakout, 2nd load) — checked Nov 11: no fresh November event (Jev 1.14 Oct 14; blog covered Jev Oct 4).
+- "composio" +600% / +170% — same as Nov 10–12: Composio Instant launched Oct 20, residual rise, no fresh event.
+- "claude duet" (MCP server Breakout, 2nd load) — launch Oct 21, 3 weeks old; only doc tweaks since; watch item.
+- "api design principles" +3,700% / "python web framework" +2,850% / "power bi modeling mcp server" +350% — generic/niche dev tooling, no agent-specific hook or dated event.
+- "fable 5.2" — video game, off-niche. "nod" / "n8n nod" / "n2n" — typo/noise. "n8n demo" — navigational. "what is sovereign ai strategy" — definitional; overlaps Nov 9 CNAS article. "walmart near me" / "node.js backend" / "google cloud console" — noise/generic pairings.
+- "agent substrate" +500% (Nov 12 morning runner-up) — no longer in today's rising lists; Google Agent Substrate 1.0 + CNCF donation (Nov 5–6) remains a watch item.
+
 ## 2026-11-11 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked

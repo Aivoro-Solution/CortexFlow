@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: server towers tipping like dominoes while a health-check dial sweeps and a load gauge rises">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111111" stroke-width="2"/>
+
+  <!-- floor -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="3"/>
+
+  <!-- shared load beam -->
+  <line x1="120" y1="330" x2="560" y2="330" stroke="#111111" stroke-width="3"/>
+
+  <!-- data flow dashes above the towers, drifting slowly -->
+  <line x1="120" y1="120" x2="560" y2="120" stroke="#FF4D00" stroke-width="2" stroke-dasharray="14 10" opacity="0.55">
+    <animate attributeName="stroke-dashoffset" values="0;-96" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.55;0.15;0.55" dur="8s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- server tower 1: already fallen, lying on the floor -->
+  <g>
+    <rect x="110" y="330" width="90" height="26" rx="3" fill="#111111"/>
+    <rect x="118" y="336" width="30" height="4" fill="#FFFDF5"/>
+    <rect x="118" y="343" width="30" height="4" fill="#FFFDF5"/>
+    <circle cx="188" cy="343" r="5" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- server tower 2: tipping -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 230 330; 14 230 330; 0 230 330" dur="9s" repeatCount="indefinite"/>
+    <rect x="215" y="230" width="34" height="100" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="223" y1="250" x2="241" y2="250" stroke="#111111" stroke-width="2"/>
+    <line x1="223" y1="262" x2="241" y2="262" stroke="#111111" stroke-width="2"/>
+    <line x1="223" y1="274" x2="241" y2="274" stroke="#111111" stroke-width="2"/>
+    <circle cx="232" cy="300" r="5" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- server tower 3: tipping, later -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 320 330; 10 320 330; 0 320 330" dur="9s" begin="2s" repeatCount="indefinite"/>
+    <rect x="305" y="230" width="34" height="100" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="313" y1="250" x2="331" y2="250" stroke="#111111" stroke-width="2"/>
+    <line x1="313" y1="262" x2="331" y2="262" stroke="#111111" stroke-width="2"/>
+    <line x1="313" y1="274" x2="331" y2="274" stroke="#111111" stroke-width="2"/>
+    <circle cx="322" cy="300" r="5" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- server tower 4: upright, swaying slightly -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 410 330; 4 410 330; 0 410 330" dur="9s" begin="4s" repeatCount="indefinite"/>
+    <rect x="395" y="230" width="34" height="100" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="403" y1="250" x2="421" y2="250" stroke="#111111" stroke-width="2"/>
+    <line x1="403" y1="262" x2="421" y2="262" stroke="#111111" stroke-width="2"/>
+    <line x1="403" y1="274" x2="421" y2="274" stroke="#111111" stroke-width="2"/>
+    <circle cx="412" cy="300" r="5" fill="#111111"/>
+  </g>
+
+  <!-- server tower 5: upright, steady -->
+  <g>
+    <rect x="485" y="230" width="34" height="100" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="493" y1="250" x2="511" y2="250" stroke="#111111" stroke-width="2"/>
+    <line x1="493" y1="262" x2="511" y2="262" stroke="#111111" stroke-width="2"/>
+    <line x1="493" y1="274" x2="511" y2="274" stroke="#111111" stroke-width="2"/>
+    <circle cx="502" cy="300" r="5" fill="#111111"/>
+  </g>
+
+  <!-- health-check dial (left): needle sweeping slowly -->
+  <g>
+    <circle cx="660" cy="150" r="52" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="660" y1="150" x2="660" y2="108" stroke="#111111" stroke-width="2"/>
+    <line x1="660" y1="150" x2="622" y2="178" stroke="#111111" stroke-width="2"/>
+    <line x1="660" y1="150" x2="698" y2="178" stroke="#111111" stroke-width="2"/>
+    <line x1="660" y1="150" x2="660" y2="112" stroke="#FF4D00" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="-55 660 150; 55 660 150; -55 660 150" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="660" cy="150" r="6" fill="#111111"/>
+    <animateTransform attributeName="transform" type="rotate" values="0 660 150; 0 660 150" dur="60s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- load gauge (right): bar rising and falling slowly -->
+  <g>
+    <rect x="620" y="240" width="80" height="90" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="632" y="318" width="56" height="0" fill="#FF4D00">
+      <animate attributeName="height" values="0;66;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="318;252;318" dur="10s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="632" y1="270" x2="688" y2="270" stroke="#111111" stroke-width="2" stroke-dasharray="4 4"/>
+  </g>
+
+  <!-- slow rotating gear ring around the dial -->
+  <g fill="none" stroke="#111111" stroke-width="2" opacity="0.5">
+    <circle cx="660" cy="150" r="66" stroke-dasharray="6 10">
+      <animateTransform attributeName="transform" type="rotate" values="0 660 150; 360 660 150" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- falling domino motion hint: small arc -->
+  <path d="M 250 210 A 60 60 0 0 1 300 170" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="5 6" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.1;0.6" dur="9s" repeatCount="indefinite"/>
+  </path>
+</svg>

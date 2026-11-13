@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation: a clean character stream splitting into a scrambled path">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- source pipe (left): incoming clean character stream -->
+  <rect x="60" y="205" width="150" height="40" fill="#FFFFFF" stroke="#111111" stroke-width="3"/>
+  <g fill="#111111">
+    <rect x="80" y="219" width="14" height="12"/>
+    <rect x="104" y="219" width="14" height="12"/>
+    <rect x="128" y="219" width="14" height="12"/>
+    <rect x="152" y="219" width="14" height="12"/>
+    <rect x="176" y="219" width="14" height="12"/>
+  </g>
+  <!-- travelling pulse on the incoming stream -->
+  <rect x="80" y="219" width="14" height="12" fill="#FF4D00">
+    <animate attributeName="x" values="80;176;80" dur="9s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- junction box -->
+  <rect x="250" y="185" width="80" height="80" fill="#FFFFFF" stroke="#111111" stroke-width="3"/>
+  <circle cx="290" cy="225" r="18" fill="none" stroke="#111111" stroke-width="3">
+    <animateTransform attributeName="transform" type="rotate" from="0 290 225" to="360 290 225" dur="36s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="290" cy="225" r="6" fill="#FF4D00"/>
+
+  <!-- upper pipe: clean path -->
+  <path d="M 330 205 L 560 205 L 560 130 L 700 130" fill="none" stroke="#111111" stroke-width="3"/>
+  <g fill="#111111">
+    <rect x="380" y="199" width="14" height="12"/>
+    <rect x="420" y="199" width="14" height="12"/>
+    <rect x="460" y="199" width="14" height="12"/>
+    <rect x="500" y="199" width="14" height="12"/>
+  </g>
+  <rect x="380" y="199" width="14" height="12" fill="#FF4D00">
+    <animate attributeName="x" values="380;500;380" dur="9s" repeatCount="indefinite"/>
+  </rect>
+  <!-- clean output box -->
+  <rect x="700" y="105" width="60" height="50" fill="#FFFFFF" stroke="#111111" stroke-width="3"/>
+  <rect x="714" y="124" width="32" height="12" fill="#111111"/>
+
+  <!-- lower pipe: scrambled path -->
+  <path d="M 330 245 L 560 245 L 560 320 L 700 320" fill="none" stroke="#111111" stroke-width="3"/>
+  <!-- scrambled glyphs: jittering, rotated blocks -->
+  <g fill="#111111">
+    <rect x="380" y="239" width="12" height="12">
+      <animateTransform attributeName="transform" type="rotate" values="0 386 245; 25 386 245; -15 386 245; 0 386 245" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="420" y="239" width="12" height="12">
+      <animateTransform attributeName="transform" type="rotate" values="0 426 245; -20 426 245; 18 426 245; 0 426 245" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="460" y="239" width="12" height="12">
+      <animateTransform attributeName="transform" type="rotate" values="0 466 245; 30 466 245; -25 466 245; 0 466 245" dur="6.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="500" y="239" width="12" height="12">
+      <animateTransform attributeName="transform" type="rotate" values="0 506 245; -28 506 245; 12 506 245; 0 506 245" dur="7.5s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- scrambled output box: tangled, orange -->
+  <rect x="700" y="295" width="60" height="50" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  <g fill="#111111">
+    <rect x="712" y="308" width="10" height="10">
+      <animateTransform attributeName="transform" type="rotate" values="0 717 313; 45 717 313; 0 717 313" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="728" y="318" width="10" height="10">
+      <animateTransform attributeName="transform" type="rotate" values="0 733 323; -45 733 323; 0 733 323" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="744" y="308" width="10" height="10">
+      <animateTransform attributeName="transform" type="rotate" values="0 749 313; 30 749 313; 0 749 313" dur="8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- slow drifting accent ring -->
+  <circle cx="120" cy="90" r="26" fill="none" stroke="#FF4D00" stroke-width="3">
+    <animate attributeName="cy" values="90;110;90" dur="12s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="680" cy="380" r="18" fill="none" stroke="#111111" stroke-width="3">
+    <animate attributeName="cy" values="380;362;380" dur="14s" repeatCount="indefinite"/>
+  </circle>
+</svg>

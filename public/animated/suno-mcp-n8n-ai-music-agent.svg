@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a press stamping a vinyl song disc while sound waves ripple outward">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <!-- fine grid -->
+  <g stroke="#111111" stroke-opacity="0.06" stroke-width="1">
+    <path d="M40 0V450M80 0V450M120 0V450M160 0V450M200 0V450M240 0V450M280 0V450M320 0V450M360 0V450M400 0V450M440 0V450M480 0V450M520 0V450M560 0V450M600 0V450M640 0V450M680 0V450M720 0V450M760 0V450"/>
+    <path d="M0 40H800M0 80H800M0 120H800M0 160H800M0 200H800M0 240H800M0 280H800M0 320H800M0 360H800M0 400H800"/>
+  </g>
+
+  <!-- press frame -->
+  <g stroke="#111111" stroke-width="5" fill="none" stroke-linejoin="round">
+    <path d="M300 60 H500 V390 H460 V110 H340 V390 H300 Z" fill="#FFFDF5"/>
+    <path d="M340 110 H460" stroke-width="4"/>
+  </g>
+  <!-- press die: slow vertical stamp -->
+  <g>
+    <rect x="360" y="150" width="80" height="46" fill="#111111" stroke="#111111" stroke-width="5"/>
+    <rect x="372" y="196" width="56" height="26" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 34; 0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- vinyl disc: slow rotation -->
+  <g>
+    <g transform="translate(400 330)">
+      <g>
+        <circle r="72" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+        <circle r="58" fill="none" stroke="#111111" stroke-width="2"/>
+        <circle r="46" fill="none" stroke="#111111" stroke-width="2"/>
+        <circle r="34" fill="none" stroke="#111111" stroke-width="2"/>
+        <circle r="16" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+        <circle r="4" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+        <!-- tone-arm marker so rotation is visible -->
+        <rect x="-2" y="-72" width="4" height="22" fill="#111111"/>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- sound waves rippling out, left and right -->
+  <g fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round">
+    <path d="M180 330 a 60 60 0 0 1 0 -140" opacity="0.9">
+      <animate attributeName="opacity" values="0.9; 0.15; 0.9" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M150 330 a 90 90 0 0 1 0 -200" opacity="0.6">
+      <animate attributeName="opacity" values="0.6; 0.1; 0.6" dur="6s" begin="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M120 330 a 120 120 0 0 1 0 -260" opacity="0.35">
+      <animate attributeName="opacity" values="0.35; 0.08; 0.35" dur="6s" begin="2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M620 330 a 60 60 0 0 0 0 -140" stroke="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9; 0.15; 0.9" dur="6s" begin="0.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M650 330 a 90 90 0 0 0 0 -200" opacity="0.6">
+      <animate attributeName="opacity" values="0.6; 0.1; 0.6" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M680 330 a 120 120 0 0 0 0 -260" opacity="0.35">
+      <animate attributeName="opacity" values="0.35; 0.08; 0.35" dur="6s" begin="2.5s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- music note drifting up into the press -->
+  <g>
+    <g stroke="#111111" stroke-width="4" fill="#FF4D00" stroke-linejoin="round">
+      <path d="M250 210 v-52 h28 v40" fill="none"/>
+      <ellipse cx="242" cy="212" rx="10" ry="8"/>
+      <ellipse cx="272" cy="200" rx="10" ry="8"/>
+    </g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- base line -->
+  <path d="M60 410 H740" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
+</svg>

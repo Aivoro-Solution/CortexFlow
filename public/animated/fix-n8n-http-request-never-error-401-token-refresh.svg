@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of an HTTP request being refreshed and retried">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="4"/>
+
+  <!-- left: the request packet travelling toward the gate -->
+  <g>
+    <rect x="90" y="180" width="90" height="60" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <line x1="108" y1="200" x2="162" y2="200" stroke="#111111" stroke-width="4"/>
+    <line x1="108" y1="216" x2="150" y2="216" stroke="#111111" stroke-width="4"/>
+    <line x1="108" y1="232" x2="162" y2="232" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 120 0; 120 0; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- middle: the gate (barrier) that bounces the expired request -->
+  <g>
+    <rect x="330" y="110" width="26" height="230" fill="#111111"/>
+    <rect x="370" y="110" width="26" height="230" fill="#111111"/>
+    <rect x="410" y="110" width="26" height="230" fill="#111111"/>
+    <circle cx="383" cy="90" r="18" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="r" values="18; 22; 18" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- right: the refreshed key, rising slowly -->
+  <g>
+    <circle cx="600" cy="230" r="34" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <circle cx="600" cy="230" r="12" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="628" y="218" width="70" height="24" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <rect x="668" y="242" width="14" height="18" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <rect x="690" y="242" width="14" height="18" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -18; 0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- refresh loop arrow around the key -->
+  <g fill="none" stroke="#111111" stroke-width="4">
+    <path d="M 600 150 A 80 80 0 1 1 520 230" stroke-dasharray="10 8">
+      <animateTransform attributeName="transform" type="rotate" values="0 600 230; 360 600 230" dur="30s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <polygon points="520,214 520,246 496,230" fill="#111111">
+    <animateTransform attributeName="transform" type="rotate" values="0 600 230; 360 600 230" dur="30s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- hourglass: sand draining, then refilling (two alternating fills) -->
+  <g>
+    <path d="M 110 330 L 170 330 L 140 370 L 110 410 L 170 410 L 140 370 Z" fill="none" stroke="#111111" stroke-width="4"/>
+    <path d="M 118 338 L 162 338 L 140 366 L 118 402 L 162 402 L 140 366 Z" fill="#FF4D00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9; 0.15; 0.9" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- status dots: red 401 then green 200, alternating slowly -->
+  <g>
+    <circle cx="700" cy="380" r="14" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="opacity" values="1; 0.15; 1" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="740" cy="380" r="14" fill="#FFFDF5" stroke="#111111" stroke-width="4">
+      <animate attributeName="fill" values="#FFFDF5; #FF4D00; #FFFDF5" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

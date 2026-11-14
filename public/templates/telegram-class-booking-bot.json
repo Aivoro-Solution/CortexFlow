@@ -1,0 +1,2857 @@
+{
+  "name": "Telegram Class Booking Bot for Fitness Studios",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🏋️ TELEGRAM CLASS BOOKING BOT FOR FITNESS STUDIOS\n**What it does:** FLOW A — a Telegram message arrives → staff role check → AI classifies the booking intent (view_schedule / book / reschedule / cancel / other) → class timetable + double-booking guard (room AND trainer) in Google Sheets → Telegram reply, every step logged. Admins manage classes with /addclass and /cancelclass. FLOW B — every morning at 8 AM, members with a class in the next 24h get a Telegram reminder → sheet flips to `REMINDER_SENT` → admin digest.\n\n**You'll need:**\n- Telegram bot token (@BotFather → /newbot) + your admin chat ID\n- OpenAI API key (platform.openai.com)\n- Google Sheets OAuth2 credentials\n\n**Status flow (Bookings tab):** `RECEIVED` → `CONFIRMED` / `PENDING_SLOT` / `CANCELLED` / `RESCHEDULED` / `REMINDER_SENT` / `HANDLED`\n**Sheets tabs:** `Classes` (weekly timetable) · `Bookings` (ledger) · `Staff` (admin/trainer roles)",
+        "height": 220,
+        "width": 5840,
+        "color": 5
+      },
+      "id": "1e757909-4bec-4f25-9728-632ffe4df23a",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Telegram trigger + CONFIG + role check + AI intent\nTelegram message → CONFIG — Studio → log a row with status `RECEIVED` → look the sender up in the Staff tab → staff go to the admin branch (STEP 4), everyone else goes to the AI Agent, which classifies intent and extracts class/date/time/room via a Structured Output Parser.",
+        "height": 420,
+        "width": 1400,
+        "color": 4
+      },
+      "id": "19803f80-c8bf-46af-b9fe-93e987d9d622",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Switch routes by intent\nview_schedule → read the Classes timetable → Telegram reply with upcoming classes + free spots. book / reschedule → slot check (STEP 3). cancel → find the member's booking → mark CANCELLED. other → friendly fallback reply listing the commands.",
+        "height": 940,
+        "width": 1240,
+        "color": 4
+      },
+      "id": "819c32f0-4aff-4c45-bbca-b45b86a4c618",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — Double-booking guard + confirm\nbook/reschedule → read Classes + Bookings → Code checks for an overlapping CONFIRMED booking on the same date + time using the SAME room or the SAME trainer, and enforces capacity (Booked < Capacity). Free → append booking (`CONFIRMED` / `RESCHEDULED`) → Telegram confirmation. Busy/full → suggest 3 alternative slots → sheet `PENDING_SLOT`.",
+        "height": 1100,
+        "width": 1940,
+        "color": 4
+      },
+      "id": "eab7203b-9950-4033-8b62-8fabca6412da",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Admin branch (staff only)\n`/addclass Class | Day | Time | Room | Trainer | Capacity` appends a row to Classes. `/cancelclass Class | Day | Time` marks that class CANCELLED. Anything else gets the admin help reply. Only Telegram user IDs listed in the Staff tab reach this branch.",
+        "height": 560,
+        "width": 1240,
+        "color": 4
+      },
+      "id": "0b1b0e53-924b-45e8-a35a-23b6ea44bdd1",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Daily 8 AM reminder sweep\nSchedule trigger → read Bookings → keep CONFIRMED bookings in the next 24h with an empty Reminder Sent → Telegram reminder per member → sheet `REMINDER_SENT` + Reminder Sent = YES → Telegram digest to the admin chat ID.",
+        "height": 420,
+        "width": 2400,
+        "color": 4
+      },
+      "id": "9a27bf18-5f16-4952-a7a7-c28aa419f5c4",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1780
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 6 — Sheets logging + Telegram digest\nEvery booking branch merges → one booking summary is built → Telegram digest to the admin chat ID (CONFIG — Notifications). The reminder sweep builds its own digest.",
+        "height": 700,
+        "width": 1100,
+        "color": 4
+      },
+      "id": "eac3cc5e-2415-4dc5-baad-d324bb72ac94",
+      "name": "STICKY — STEP 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4460,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "additionalFields": {},
+        "updates": [
+          "message",
+          "callback_query"
+        ]
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "7afc3926-7ee0-43ff-9f24-ff63c1171568",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f266abca-ad2d-4c38-91f5-8e9db0ad67ce",
+              "name": "studio_name",
+              "type": "string",
+              "value": "PASTE_YOUR_STUDIO_NAME"
+            },
+            {
+              "id": "b79a3436-b9be-4cb1-924e-00be3765242b",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "c06aea27-4736-4aa8-900d-fc9e17187134",
+              "name": "classes_sheet",
+              "type": "string",
+              "value": "Classes"
+            },
+            {
+              "id": "e36cf329-41a4-4e65-901d-c095e70e5800",
+              "name": "bookings_sheet",
+              "type": "string",
+              "value": "Bookings"
+            },
+            {
+              "id": "6a2d7cd5-7cee-4682-8516-dcf2062d390e",
+              "name": "staff_sheet",
+              "type": "string",
+              "value": "Staff"
+            },
+            {
+              "id": "fffba5ae-c4a9-4920-8efa-d84e6c3890bb",
+              "name": "admin_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_ADMIN_CHAT_ID"
+            },
+            {
+              "id": "6ecfa787-eb66-484f-aae6-13cd88aed651",
+              "name": "timezone",
+              "type": "string",
+              "value": "Asia/Calcutta"
+            },
+            {
+              "id": "4de5cec6-6636-4bad-89b1-36fb9a5c54e2",
+              "name": "reminder_hours",
+              "type": "string",
+              "value": "24"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b575d62-ca65-43c1-b0c2-8d2a8d3bad10",
+      "name": "CONFIG — Studio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Customer Name": "={{ $('Telegram Trigger').first().json.message.from.first_name }}",
+            "Phone": "",
+            "Message": "={{ $('Telegram Trigger').first().json.message.text }}",
+            "Class": "",
+            "Class Date": "",
+            "Class Time": "",
+            "Room": "",
+            "Trainer": "",
+            "Intent": "",
+            "Status": "RECEIVED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "58d3ead6-c8be-444c-8fdf-fe56bf53c3a5",
+      "name": "Log Message — RECEIVED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.staff_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "b3e95cd2-f572-458c-a47b-fb48c395fc15",
+      "name": "Read Staff",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Look the sender up in the Staff tab: Telegram User ID | Name | Role\nconst senderId = String($('Telegram Trigger').first().json.message.from.id || '');\nconst msg = $('Telegram Trigger').first().json.message || {};\nconst staff = $('Read Staff').all().map(i => i.json);\nconst hit = staff.find(r => String(r['Telegram User ID'] || '').trim() === senderId);\nreturn [{ json: {\n  sender_id: senderId,\n  chat_id: String(msg.chat ? msg.chat.id : ''),\n  message_text: msg.text || '',\n  is_staff: !!hit,\n  role: hit ? (hit.Role || 'staff') : 'member',\n  staff_name: hit ? (hit.Name || '') : '',\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d6599d9d-38b4-46f7-8141-28ff18b62c20",
+      "name": "Code — Check Staff Role",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-staff",
+              "leftValue": "={{ $json.is_staff }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "18fe1c00-148f-45d4-a941-6616e12030d1",
+      "name": "IF — Is Staff?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "fallbackOutput": "extra"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f51ddf62-8ba2-4484-9c2a-779af8d7d18d",
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/addclass",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith",
+                      "name": "filter.operator.string.startsWith"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "addclass",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "8905da23-3aaa-4a51-a35f-63d2d3e75896",
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/cancelclass",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith",
+                      "name": "filter.operator.string.startsWith"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "cancelclass",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "id": "3df077d2-37ae-4ff6-9ddc-8362cecc493d",
+      "name": "Switch — Admin Command",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1440,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format: /addclass Class Name | Day | Time | Room | Trainer | Capacity\n// Day is a weekday (Mon..Sun) or an exact date (YYYY-MM-DD). Time is HH:MM (24h).\nconst text = ($('Code — Check Staff Role').first().json.message_text || '').trim();\nconst parts = text.replace(/^\\/addclass\\s*/i, '').split('|').map(s => s.trim());\nconst [class_name, day, time, room, trainer, capacity] = parts;\nreturn [{ json: {\n  class_name: class_name || '', day: day || '', time: time || '',\n  room: room || '', trainer: trainer || '',\n  capacity: parseInt(capacity || '0', 10) || 0,\n  valid: !!(class_name && day && time && room),\n  raw: text,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "c7df4299-9441-495e-8e36-565bb9449977",
+      "name": "Code — Parse Add Class",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.classes_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Class": "={{ $json.class_name }}",
+            "Day": "={{ $json.day }}",
+            "Time": "={{ $json.time }}",
+            "Room": "={{ $json.room }}",
+            "Trainer": "={{ $json.trainer }}",
+            "Capacity": "={{ $json.capacity }}",
+            "Booked": "0",
+            "Status": "ACTIVE"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "bdbbc5dd-0780-4b92-9716-9fa1f2aece59",
+      "name": "Append Class — Classes Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=✅ Class added: *{{ $('Code — Parse Add Class').first().json.class_name }}* — {{ $('Code — Parse Add Class').first().json.day }} {{ $('Code — Parse Add Class').first().json.time }} · {{ $('Code — Parse Add Class').first().json.room }} · Trainer: {{ $('Code — Parse Add Class').first().json.trainer }} · Capacity {{ $('Code — Parse Add Class').first().json.capacity }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "a3379a3e-fbf1-4bec-a2cc-5edb070911ce",
+      "name": "Telegram — Admin Class Added",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format: /cancelclass Class Name | Day | Time\nconst text = ($('Code — Check Staff Role').first().json.message_text || '').trim();\nconst parts = text.replace(/^\\/cancelclass\\s*/i, '').split('|').map(s => s.trim());\nconst [class_name, day, time] = parts;\nreturn [{ json: {\n  class_name: class_name || '', day: day || '', time: time || '',\n  valid: !!(class_name && day && time),\n  raw: text,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "a7271e59-f62d-42a3-9bfd-9c27b8f931ac",
+      "name": "Code — Parse Cancel Class",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.classes_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Class",
+            "Day",
+            "Time"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Class": "={{ $json.class_name }}",
+            "Day": "={{ $json.day }}",
+            "Time": "={{ $json.time }}",
+            "Status": "CANCELLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "5a4a3fc0-b3ac-462d-89fe-058b25cec1cd",
+      "name": "Update Class — CANCELLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=❌ Class cancelled: *{{ $('Code — Parse Cancel Class').first().json.class_name }}* — {{ $('Code — Parse Cancel Class').first().json.day }} {{ $('Code — Parse Cancel Class').first().json.time }}. Members with bookings for it will need a new slot.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "aaabb854-4f0d-405c-a41c-1744544a8dd1",
+      "name": "Telegram — Admin Class Cancelled",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=👋 Admin commands for {{ $('CONFIG — Studio').first().json.studio_name }}:\n\n/addclass Class | Day | Time | Room | Trainer | Capacity — add a class (Day = Mon..Sun or YYYY-MM-DD, Time = HH:MM)\n/cancelclass Class | Day | Time — cancel a class\n\nExample:\n/addclass Morning Yoga | Mon | 07:00 | Room A | Priya | 20",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "6a90ea3c-49ac-4830-bd09-1377d7e5e2fa",
+      "name": "Telegram — Admin Help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        1540
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are the friendly booking assistant for {{ $('CONFIG — Studio').first().json.studio_name }}, a fitness studio. A member just wrote on Telegram. Extract their class-booking intent precisely:\n- 'view_schedule' = they want to see class schedules / available slots / timings\n- 'book' = they want to BOOK a class (with or without a date/time)\n- 'reschedule' = they want to MOVE an existing booking to another day/time\n- 'cancel' = they want to CANCEL an existing booking\n- 'other' = anything else (prices, greetings, questions, membership)\n\nToday is {{ $now.toFormat('yyyy-MM-dd') }} and the studio timezone is {{ $('CONFIG — Studio').first().json.timezone }}. Convert any mentioned date/time into YYYY-MM-DD and 24-hour HH:MM in that timezone (assume upcoming dates when ambiguous; 'tomorrow' means the next calendar day). Leave fields empty when not mentioned. Output ONLY via the structured output parser."
+        },
+        "text": "=Incoming Telegram message:\n\n{{ $('Telegram Trigger').first().json.message.text }}"
+      },
+      "id": "d5327df9-7990-4a0c-a7fe-1d6fac963f0f",
+      "name": "AI Agent — Understand Booking Intent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1440,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "c98a1b27-8ac3-4583-83bd-f3d049105414",
+      "name": "OpenAI Chat Model — Intent",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"intent\": \"one of: view_schedule | book | reschedule | cancel | other\",\n  \"class_name\": \"class name, or empty string if not given\",\n  \"date\": \"YYYY-MM-DD date of the class, or empty string if no date mentioned\",\n  \"time\": \"HH:MM 24-hour time, or empty string if no time mentioned\",\n  \"room\": \"room name if mentioned, or empty string\",\n  \"customer_name\": \"member's name, or empty string if not given\",\n  \"phone\": \"phone number if given, or empty string\",\n  \"notes\": \"any other relevant detail from the message, or empty string\"\n}"
+      },
+      "id": "df8e9aa9-eb70-48df-a1f0-bf425be5fecb",
+      "name": "Structured Output Parser — Intent",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "fallbackOutput": "extra"
+        },
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "5eef783e-1548-4669-a0bc-205649791750",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "view_schedule",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "view_schedule",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "d3ecdf60-4aba-44d3-be25-659acfca5d31",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "book",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "book",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "3df38bce-0764-4dcf-8db0-92401ebef48c",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "reschedule",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "reschedule",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "bb9729f1-ac03-44ea-910c-020aa54fe0d4",
+                    "leftValue": "={{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+                    "rightValue": "cancel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.string.equals"
+                    }
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "cancel",
+              "renameOutput": true
+            }
+          ]
+        }
+      },
+      "id": "bd3ca874-caad-4c01-ac91-83ecc9f9bc70",
+      "name": "Switch — Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1680,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.classes_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "4b3f842b-22e3-412c-a2f0-033a6da047ff",
+      "name": "Read Classes — Schedule",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the schedule reply from the weekly timetable.\n// Classes rows: Class | Day | Time | Room | Trainer | Capacity | Booked | Status\n// Day is a weekday (Mon..Sun) or an exact date (YYYY-MM-DD).\nconst DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];\nconst studio = $('CONFIG — Studio').first().json.studio_name;\nconst rows = $('Read Classes — Schedule').all().map(i => i.json)\n  .filter(r => !r.Status || String(r.Status).toUpperCase() === 'ACTIVE');\nfunction rowWeekday(r) {\n  const d = (r.Day || '').trim();\n  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(d)) {\n    const t = new Date(d + 'T00:00:00');\n    return isNaN(t.getTime()) ? -1 : t.getDay();\n  }\n  return DAYS.indexOf(d);\n}\nconst todayIdx = new Date().getDay();\nconst order = Array.from({ length: 7 }, (_, k) => (todayIdx + k) % 7);\nconst lines = ['\\U0001F3CB\\uFE0F *Class schedule \\u2014 ' + studio + '*', ''];\nlet shown = 0;\nfor (const d of order) {\n  const dayRows = rows.filter(r => rowWeekday(r) === d)\n    .sort((a, b) => String(a.Time || '').localeCompare(String(b.Time || '')));\n  if (!dayRows.length) continue;\n  lines.push('*' + DAYS[d] + '*');\n  for (const r of dayRows) {\n    const cap = parseInt(r.Capacity || '0', 10);\n    const booked = parseInt(r.Booked || '0', 10);\n    const free = cap ? Math.max(cap - booked, 0) : '?';\n    lines.push('\\u2022 *' + (r.Class || '') + '* \\u2014 ' + (r.Time || '') + ' \\u00b7 ' + (r.Room || '') + ' \\u00b7 with ' + (r.Trainer || '') + ' \\u00b7 ' + free + ' spots left');\n    shown++;\n  }\n  lines.push('');\n}\nif (!shown) lines.push('No classes scheduled this week yet. Reply BOOK and tell me which class you want!');\nelse lines.push('To book, reply e.g. \\u201cBook Morning Yoga tomorrow 7am\\u201d.');\nreturn [{ json: { reply_text: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "7fd745bb-6a0d-439a-b19f-85da74a0e5b8",
+      "name": "Code — Build Schedule Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.reply_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "7d8ee749-1622-49a6-b903-fd51f0277d93",
+      "name": "Telegram — Send Schedule",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.classes_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c5528b45-9b26-4c7e-bf79-194fbf41eba2",
+      "name": "Read Classes — Book",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "9b5d4786-1843-4b0c-96c8-7d10347a3105",
+      "name": "Read Bookings — Book",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Double-booking guard for the BOOK branch.\n// Match the requested class in the timetable, then check for an overlapping\n// CONFIRMED/RESCHEDULED booking on the same date + time using the SAME room\n// or the SAME trainer. Also enforces capacity (Booked < Capacity).\n// If the slot is taken, propose up to 3 alternative slots for the same class.\nconst DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];\nconst out = ($('AI Agent — Understand Booking Intent').first().json.output) || {};\nconst className = (out.class_name || '').trim();\nconst date = (out.date || '').trim();\nconst time = (out.time || '').trim();\nconst wantedRoom = (out.room || '').trim();\nconst classes = $('Read Classes — Book').all().map(i => i.json);\nconst bookings = $('Read Bookings — Book').all().map(i => i.json);\nconst studio = $('CONFIG — Studio').first().json.studio_name;\nfunction nextDateFor(dayStr) {\n  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(dayStr)) return dayStr;\n  const idx = DAYS.indexOf(dayStr);\n  if (idx < 0) return '';\n  const d = new Date();\n  d.setDate(d.getDate() + ((idx - d.getDay() + 7) % 7));\n  return d.toISOString().slice(0, 10);\n}\nfunction hasClash(d, t, room, trainer) {\n  return bookings.some(b => {\n    const st = (b.Status || '').toUpperCase();\n    if (st !== 'CONFIRMED' && st !== 'RESCHEDULED') return false;\n    if ((b['Class Date'] || '').trim() !== d) return false;\n    if ((b['Class Time'] || '').trim() !== t) return false;\n    return (room && (b.Room || '').trim() === room) || (trainer && (b.Trainer || '').trim() === trainer);\n  });\n}\nconst weekday = date ? DAYS[new Date(date + 'T00:00:00').getDay()] : '';\nfunction rowMatches(r, cls, dt, tm) {\n  if (!cls || (r.Class || '').toLowerCase() !== cls.toLowerCase()) return false;\n  if (r.Status && String(r.Status).toUpperCase() !== 'ACTIVE') return false;\n  const d = (r.Day || '').trim();\n  if (dt && d !== weekday && d !== dt) return false;\n  if (tm && (r.Time || '').trim() !== tm) return false;\n  return true;\n}\nlet slot = classes.find(r => rowMatches(r, className, date, time)) || null;\nif (!slot && className) slot = classes.find(r => (r.Class || '').toLowerCase() === className.toLowerCase() && (!r.Status || String(r.Status).toUpperCase() === 'ACTIVE')) || null;\nlet slot_free = false, conflict_reason = '', alternatives = [];\nlet room = '', trainer = '';\nif (!className || !date || !time) {\n  conflict_reason = 'missing_details';\n} else if (!slot) {\n  conflict_reason = 'no_such_class';\n} else {\n  room = wantedRoom || (slot.Room || '');\n  trainer = slot.Trainer || '';\n  const cap = parseInt(slot.Capacity || '0', 10);\n  const booked = parseInt(slot.Booked || '0', 10);\n  if (hasClash(date, time, room, trainer)) conflict_reason = 'double_booking';\n  else if (cap && booked >= cap) conflict_reason = 'class_full';\n  else slot_free = true;\n  if (!slot_free) {\n    for (const r of classes) {\n      if (alternatives.length >= 3) break;\n      if ((r.Class || '').toLowerCase() !== className.toLowerCase()) continue;\n      if (r === slot) continue;\n      if (r.Status && String(r.Status).toUpperCase() !== 'ACTIVE') continue;\n      const c2 = parseInt(r.Capacity || '0', 10), b2 = parseInt(r.Booked || '0', 10);\n      if (c2 && b2 >= c2) continue;\n      const altDate = nextDateFor((r.Day || '').trim());\n      if (!altDate || hasClash(altDate, (r.Time || '').trim(), (r.Room || '').trim(), (r.Trainer || '').trim())) continue;\n      alternatives.push({ class_name: r.Class, date: altDate, time: r.Time, room: r.Room, trainer: r.Trainer });\n    }\n  }\n}\nlet confirm_text = '', reply_text = '';\nconst who = out.customer_name ? ' ' + out.customer_name : '';\nif (slot_free) {\n  confirm_text = '\\u2705 Booking confirmed at ' + studio + '!' + '\\n\\n\\U0001F3CB\\uFE0F *' + className + '*\\n\\U0001F4C5 ' + date + ' \\u00b7 ' + time + '\\n\\U0001F4CD ' + room + (trainer ? ' \\u00b7 Trainer: ' + trainer : '') + '\\n\\nReply CANCEL to cancel or RESCHEDULE to move it. See you there!' + (who ? '\\n\\u2014 booked for' + who : '');\n} else if (conflict_reason === 'missing_details') {\n  reply_text = 'Thanks for reaching out to ' + studio + '! \\U0001F60A To book a class, please reply with the class, date and time \\u2014 e.g. \\u201cBook Morning Yoga tomorrow 7am\\u201d.';\n} else if (conflict_reason === 'no_such_class') {\n  reply_text = 'Sorry, I could not find a class called \\u201c' + className + '\\u201d in the timetable. \\U0001F615 Reply SCHEDULE to see all classes and times.';\n} else {\n  reply_text = 'Sorry, ' + className + ' on ' + date + ' at ' + time + ' is ' + (conflict_reason === 'class_full' ? 'fully booked' : 'already booked for that room/trainer') + '. \\U0001F615\\n\\nHere are some alternatives:\\n'\n    + alternatives.map(a => '\\u2022 ' + a.class_name + ' \\u2014 ' + a.date + ' ' + a.time + ' \\u00b7 ' + a.room + ' \\u00b7 ' + a.trainer).join('\\n')\n    + (alternatives.length ? '\\n\\nReply with the one you prefer, or suggest another time.' : '\\n\\nNo free slots for this class this week \\u2014 reply SCHEDULE to browse everything.');\n}\nreturn [{ json: {\n  class_name: className, date, time, room, trainer,\n  customer_name: (out.customer_name || '').trim(),\n  phone: (out.phone || '').trim(),\n  slot_free, conflict_reason, alternatives, confirm_text, reply_text,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "8eb9b647-cfb5-4056-8320-58789e96159f",
+      "name": "Code — Check Slot & Find Alternatives",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-slot",
+              "leftValue": "={{ $json.slot_free }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "c0ef6e2b-9994-4c07-ac14-030229d7a9bb",
+      "name": "IF — Slot Free?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Customer Name": "={{ $json.customer_name || $('Telegram Trigger').first().json.message.from.first_name }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $('Telegram Trigger').first().json.message.text }}",
+            "Class": "={{ $json.class_name }}",
+            "Class Date": "={{ $json.date }}",
+            "Class Time": "={{ $json.time }}",
+            "Room": "={{ $json.room }}",
+            "Trainer": "={{ $json.trainer }}",
+            "Intent": "book",
+            "Status": "CONFIRMED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "25f38872-48e0-4bc7-995c-c0a5d49f490b",
+      "name": "Append Booking — CONFIRMED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $('Code — Check Slot & Find Alternatives').first().json.confirm_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "29c8a529-5a1e-49bf-9bd0-64ebd206ed63",
+      "name": "Telegram — Confirm Booking",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.reply_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "772e97ef-5eef-40a0-9b1b-fa353d3818f7",
+      "name": "Telegram — Suggest Alternatives",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Class": "={{ $('Code — Check Slot & Find Alternatives').first().json.class_name }}",
+            "Intent": "book",
+            "Status": "PENDING_SLOT"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "7410a59d-ccf8-4070-af45-0a1e636549a4",
+      "name": "Update Sheet — PENDING_SLOT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "304dc983-c885-43b8-afde-6152cec2f7e4",
+      "name": "Read Bookings — Reschedule",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the member's upcoming CONFIRMED booking by Telegram chat id.\n// Prefer the class the AI extracted; otherwise take the earliest upcoming one.\nconst chatId = String($('Telegram Trigger').first().json.message.chat.id || '');\nconst out = ($('AI Agent — Understand Booking Intent').first().json.output) || {};\nconst rows = $('Read Bookings — Reschedule').all().map(i => i.json)\n  .filter(b => String(b['Chat ID'] || '').trim() === chatId && (b.Status || '').toUpperCase() === 'CONFIRMED');\nlet hit = null;\nif (out.class_name) hit = rows.find(b => (b.Class || '').toLowerCase() === out.class_name.toLowerCase()) || null;\nif (!hit) hit = rows.sort((a, b) => String(a['Class Date'] || '').localeCompare(String(b['Class Date'] || '')))[0] || null;\nreturn [{ json: {\n  found: !!hit,\n  old_class: hit ? (hit.Class || '') : '',\n  old_date: hit ? (hit['Class Date'] || '') : '',\n  old_time: hit ? (hit['Class Time'] || '') : '',\n  old_room: hit ? (hit.Room || '') : '',\n  old_trainer: hit ? (hit.Trainer || '') : '',\n  new_class: (out.class_name || '').trim(),\n  new_date: (out.date || '').trim(),\n  new_time: (out.time || '').trim(),\n  new_room: (out.room || '').trim(),\n  customer_name: (out.customer_name || '').trim(),\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "929d961f-4f68-44c9-ad94-6fb279507edf",
+      "name": "Code — Find Customer Booking",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-found-reschedule",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "585b6e7a-bb7b-453c-9dcf-a481d6c324e1",
+      "name": "IF — Booking Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Class",
+            "Class Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Class": "={{ $json.old_class }}",
+            "Class Date": "={{ $json.old_date }}",
+            "Status": "CANCELLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "e8311826-ec9b-4340-ad75-5a861bc9c8b2",
+      "name": "Update Sheet — Cancel Old Booking",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.classes_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0d09fb65-4ad2-4765-9fa8-94082d4993da",
+      "name": "Read Classes — Reschedule",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "410ef9b1-6283-4021-ad8e-88dd36b67128",
+      "name": "Read Bookings — Reschedule Check",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Double-booking guard for the BOOK branch.\n// Match the requested class in the timetable, then check for an overlapping\n// CONFIRMED/RESCHEDULED booking on the same date + time using the SAME room\n// or the SAME trainer. Also enforces capacity (Booked < Capacity).\n// If the slot is taken, propose up to 3 alternative slots for the same class.\nconst DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];\nconst found = $('Code — Find Customer Booking').first().json;\nconst out = { class_name: found.new_class, date: found.new_date, time: found.new_time, room: found.new_room, customer_name: found.customer_name, phone: '' };\nconst className = (out.class_name || '').trim();\nconst date = (out.date || '').trim();\nconst time = (out.time || '').trim();\nconst wantedRoom = (out.room || '').trim();\nconst classes = $('Read Classes — Reschedule').all().map(i => i.json);\nconst bookings = $('Read Bookings — Reschedule Check').all().map(i => i.json);\nconst studio = $('CONFIG — Studio').first().json.studio_name;\nfunction nextDateFor(dayStr) {\n  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(dayStr)) return dayStr;\n  const idx = DAYS.indexOf(dayStr);\n  if (idx < 0) return '';\n  const d = new Date();\n  d.setDate(d.getDate() + ((idx - d.getDay() + 7) % 7));\n  return d.toISOString().slice(0, 10);\n}\nfunction hasClash(d, t, room, trainer) {\n  return bookings.some(b => {\n    const st = (b.Status || '').toUpperCase();\n    if (st !== 'CONFIRMED' && st !== 'RESCHEDULED') return false;\n    if ((b['Class Date'] || '').trim() !== d) return false;\n    if ((b['Class Time'] || '').trim() !== t) return false;\n    return (room && (b.Room || '').trim() === room) || (trainer && (b.Trainer || '').trim() === trainer);\n  });\n}\nconst weekday = date ? DAYS[new Date(date + 'T00:00:00').getDay()] : '';\nfunction rowMatches(r, cls, dt, tm) {\n  if (!cls || (r.Class || '').toLowerCase() !== cls.toLowerCase()) return false;\n  if (r.Status && String(r.Status).toUpperCase() !== 'ACTIVE') return false;\n  const d = (r.Day || '').trim();\n  if (dt && d !== weekday && d !== dt) return false;\n  if (tm && (r.Time || '').trim() !== tm) return false;\n  return true;\n}\nlet slot = classes.find(r => rowMatches(r, className, date, time)) || null;\nif (!slot && className) slot = classes.find(r => (r.Class || '').toLowerCase() === className.toLowerCase() && (!r.Status || String(r.Status).toUpperCase() === 'ACTIVE')) || null;\nlet slot_free = false, conflict_reason = '', alternatives = [];\nlet room = '', trainer = '';\nif (!className || !date || !time) {\n  conflict_reason = 'missing_details';\n} else if (!slot) {\n  conflict_reason = 'no_such_class';\n} else {\n  room = wantedRoom || (slot.Room || '');\n  trainer = slot.Trainer || '';\n  const cap = parseInt(slot.Capacity || '0', 10);\n  const booked = parseInt(slot.Booked || '0', 10);\n  if (hasClash(date, time, room, trainer)) conflict_reason = 'double_booking';\n  else if (cap && booked >= cap) conflict_reason = 'class_full';\n  else slot_free = true;\n  if (!slot_free) {\n    for (const r of classes) {\n      if (alternatives.length >= 3) break;\n      if ((r.Class || '').toLowerCase() !== className.toLowerCase()) continue;\n      if (r === slot) continue;\n      if (r.Status && String(r.Status).toUpperCase() !== 'ACTIVE') continue;\n      const c2 = parseInt(r.Capacity || '0', 10), b2 = parseInt(r.Booked || '0', 10);\n      if (c2 && b2 >= c2) continue;\n      const altDate = nextDateFor((r.Day || '').trim());\n      if (!altDate || hasClash(altDate, (r.Time || '').trim(), (r.Room || '').trim(), (r.Trainer || '').trim())) continue;\n      alternatives.push({ class_name: r.Class, date: altDate, time: r.Time, room: r.Room, trainer: r.Trainer });\n    }\n  }\n}\nlet confirm_text = '', reply_text = '';\nconst who = out.customer_name ? ' ' + out.customer_name : '';\nif (slot_free) {\n  confirm_text = '\\u2705 Booking moved to ' + studio + '!' + '\\n\\n\\U0001F3CB\\uFE0F *' + className + '*\\n\\U0001F4C5 ' + date + ' \\u00b7 ' + time + '\\n\\U0001F4CD ' + room + (trainer ? ' \\u00b7 Trainer: ' + trainer : '') + '\\n\\nReply CANCEL to cancel or RESCHEDULE to move it. See you there!' + (who ? '\\n\\u2014 booked for' + who : '');\n} else if (conflict_reason === 'missing_details') {\n  reply_text = 'Thanks for reaching out to ' + studio + '! \\U0001F60A To move your booking, please reply with the new class, date and time \\u2014 e.g. \\u201cBook Morning Yoga tomorrow 7am\\u201d.';\n} else if (conflict_reason === 'no_such_class') {\n  reply_text = 'Sorry, I could not find a class called \\u201c' + className + '\\u201d in the timetable. \\U0001F615 Reply SCHEDULE to see all classes and times.';\n} else {\n  reply_text = 'Sorry, ' + className + ' on ' + date + ' at ' + time + ' is ' + (conflict_reason === 'class_full' ? 'fully booked' : 'already booked for that room/trainer') + '. \\U0001F615\\n\\nHere are some alternatives:\\n'\n    + alternatives.map(a => '\\u2022 ' + a.class_name + ' \\u2014 ' + a.date + ' ' + a.time + ' \\u00b7 ' + a.room + ' \\u00b7 ' + a.trainer).join('\\n')\n    + (alternatives.length ? '\\n\\nReply with the one you prefer, or suggest another time.' : '\\n\\nNo free slots for this class this week \\u2014 reply SCHEDULE to browse everything.');\n}\nreturn [{ json: {\n  class_name: className, date, time, room, trainer,\n  customer_name: (out.customer_name || '').trim(),\n  phone: (out.phone || '').trim(),\n  slot_free, conflict_reason, alternatives, confirm_text, reply_text,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "2bbf73ac-e77d-4a20-b523-512ad0ea390d",
+      "name": "Code — Check New Slot & Alternatives",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-new-slot",
+              "leftValue": "={{ $json.slot_free }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "1448fced-bca9-431c-9d62-1d7d078875df",
+      "name": "IF — New Slot Free?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3600,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Customer Name": "={{ $json.customer_name || $('Telegram Trigger').first().json.message.from.first_name }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $('Telegram Trigger').first().json.message.text }}",
+            "Class": "={{ $json.class_name }}",
+            "Class Date": "={{ $json.date }}",
+            "Class Time": "={{ $json.time }}",
+            "Room": "={{ $json.room }}",
+            "Trainer": "={{ $json.trainer }}",
+            "Intent": "reschedule",
+            "Status": "RESCHEDULED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "0dee9a49-0c9b-490d-aeb4-5b3ec1091802",
+      "name": "Append Booking — RESCHEDULED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3840,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $('Code — Check New Slot & Alternatives').first().json.confirm_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "072b55d2-9162-4a84-adbe-4680e6dd7293",
+      "name": "Telegram — Confirm Reschedule",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4080,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.reply_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "351b4004-8302-4d5b-80ec-7a1086fd49a3",
+      "name": "Telegram — Suggest Alternatives (Reschedule)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3840,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Class": "={{ $('Code — Check New Slot & Alternatives').first().json.class_name }}",
+            "Intent": "reschedule",
+            "Status": "PENDING_SLOT"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8c42e045-0dd0-4f72-82c9-e8ac9ef4dcde",
+      "name": "Update Sheet — PENDING_SLOT (Reschedule)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        4080,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=I couldn't find an upcoming booking for you. 😕 Please reply with the class and date you'd like to move (e.g. “reschedule my Yoga class to Friday 7am”).",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "d3f02937-9289-4f28-abf0-de910decdac2",
+      "name": "Telegram — No Booking Found",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "reschedule",
+            "Status": "HANDLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "05d5f159-f294-4a3b-ab88-3af98009b352",
+      "name": "Update Sheet — HANDLED (Reschedule)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "c2b99c64-764b-405d-98df-a79e07d65753",
+      "name": "Read Bookings — Cancel",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the member's CONFIRMED booking by Telegram chat id, preferring the\n// class/date the AI extracted; otherwise take the earliest upcoming one.\nconst chatId = String($('Telegram Trigger').first().json.message.chat.id || '');\nconst out = ($('AI Agent — Understand Booking Intent').first().json.output) || {};\nconst rows = $('Read Bookings — Cancel').all().map(i => i.json)\n  .filter(b => String(b['Chat ID'] || '').trim() === chatId && (b.Status || '').toUpperCase() === 'CONFIRMED');\nlet hit = null;\nif (out.class_name) {\n  hit = rows.find(b => (b.Class || '').toLowerCase() === out.class_name.toLowerCase()\n    && (!out.date || (b['Class Date'] || '').trim() === out.date)) || null;\n}\nif (!hit) hit = rows.sort((a, b) => String(a['Class Date'] || '').localeCompare(String(b['Class Date'] || '')))[0] || null;\nreturn [{ json: {\n  found: !!hit,\n  old_class: hit ? (hit.Class || '') : '',\n  old_date: hit ? (hit['Class Date'] || '') : '',\n  old_time: hit ? (hit['Class Time'] || '') : '',\n  old_room: hit ? (hit.Room || '') : '',\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "7c416b51-5dda-427d-bf88-038308093171",
+      "name": "Code — Find Booking to Cancel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "if-found-cancel",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.boolean.true"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "id": "010c4ed0-08b1-46a1-bc73-573014cf3796",
+      "name": "IF — Booking Found? (Cancel)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Class",
+            "Class Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Class": "={{ $json.old_class }}",
+            "Class Date": "={{ $json.old_date }}",
+            "Status": "CANCELLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "acf9e24f-75d4-4926-a90b-743dfe8f42ca",
+      "name": "Update Sheet — CANCELLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2640,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=❌ Done — your *{{ $('Code — Find Booking to Cancel').first().json.old_class }}* class on {{ $('Code — Find Booking to Cancel').first().json.old_date }} at {{ $('Code — Find Booking to Cancel').first().json.old_time }} is cancelled. Reply BOOK anytime to grab a new slot. 🙏",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "487745b1-839b-4a3b-b10f-229e9dc7a6c2",
+      "name": "Telegram — Confirm Cancellation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=I couldn't find an upcoming booking for this chat. 😕 Please reply with the class and date you'd like to cancel (e.g. “cancel my Yoga class tomorrow 7am”).",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "a6c629ba-b452-4f21-9d70-d2527e33b38d",
+      "name": "Telegram — No Booking Found (Cancel)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "cancel",
+            "Status": "HANDLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "16003a8f-c761-4cf8-bf96-b7c410bd3115",
+      "name": "Update Sheet — HANDLED (Cancel)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2880,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Hello from {{ $('CONFIG — Studio').first().json.studio_name }}! 👋\n\nI can help you:\n• SCHEDULE — see class timings and free slots\n• BOOK — book a class (e.g. “Book Morning Yoga tomorrow 7am”)\n• RESCHEDULE — move an existing booking\n• CANCEL — cancel an existing booking\n\nJust reply with what you'd like to do!",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "c8626dae-9586-4291-9bce-ded4b7e87a41",
+      "name": "Telegram — Fallback Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Studio').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Studio').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Intent": "= {{ $('AI Agent — Understand Booking Intent').first().json.output.intent }}",
+            "Status": "HANDLED"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "8ddc1134-b3e5-4742-b995-83e719e66298",
+      "name": "Update Sheet — HANDLED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "e8c7bfd3-7e2e-46ba-a57e-ec135df9f585",
+      "name": "Merge — Booking Branches",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4320,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build one Telegram digest line for this booking-flow run.\nfunction ran(name) { try { return $(name).all().length > 0; } catch (e) { return false; } }\nconst biz = $('CONFIG — Studio').first().json.studio_name;\nconst trigger = $('Telegram Trigger').first().json.message || {};\nconst intent = (($('AI Agent — Understand Booking Intent').first().json.output) || {}).intent || 'unknown';\nconst status = ran('Append Booking — CONFIRMED') ? 'CONFIRMED \\u2705'\n  : ran('Append Booking — RESCHEDULED') ? 'RESCHEDULED \\u2705'\n  : ran('Update Sheet — PENDING_SLOT') ? 'PENDING_SLOT \\u23f3 (alternatives suggested)'\n  : ran('Update Sheet — CANCELLED') ? 'CANCELLED \\u274c'\n  : 'HANDLED \\U0001F4AC';\nconst lines = [\n  '\\U0001F3CB\\uFE0F *Booking Activity \\u2014 ' + biz + '*', '',\n  '\\U0001F464 ' + (trigger.chat ? trigger.chat.id : ''),\n  '\\U0001F4AC \\u201c' + String(trigger.text || '').slice(0, 140) + '\\u201d',\n  '\\U0001F9ED Intent: ' + intent,\n  '\\U0001F4CC Status: ' + status,\n];\nreturn [{ json: { digest: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "d693e324-0423-4ce5-90ac-357bb2f8bcd8",
+      "name": "Code — Build Booking Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4560,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e0342e6a-3d22-4705-8c3a-d62659f5a5fc",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c5a15f11-a6fc-4336-882e-1663f986d237",
+      "name": "CONFIG — Notifications",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4800,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Notifications').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "54905d64-711f-41a4-9f15-dddb942bc06f",
+      "name": "Telegram — Booking Activity Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5040,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "6759fbb0-02e3-44bd-94f9-7042ff130acc",
+      "name": "Daily 8AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e57aaef-f94d-4589-aaf6-6234cd351b6b",
+              "name": "studio_name",
+              "type": "string",
+              "value": "PASTE_YOUR_STUDIO_NAME"
+            },
+            {
+              "id": "92e408ac-894a-4144-a4f1-d7cfa9210d48",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "d5792d0e-c04b-4163-9f14-1c7859bc1470",
+              "name": "bookings_sheet",
+              "type": "string",
+              "value": "Bookings"
+            },
+            {
+              "id": "a956168a-d313-415e-a6ec-a2a14bd537b7",
+              "name": "admin_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_ADMIN_CHAT_ID"
+            },
+            {
+              "id": "4e353f8d-2e42-475a-adb9-f8a9ee84d42e",
+              "name": "reminder_hours",
+              "type": "string",
+              "value": "24"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1b66c70-3a25-4d90-a3ad-6f0a21e5d914",
+      "name": "CONFIG — Reminders",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Reminders').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Reminders').first().json.bookings_sheet }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "f1ac569c-473c-4927-b577-253b59f63fb6",
+      "name": "Read Bookings — Reminders",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep CONFIRMED bookings in the next reminder_hours whose Reminder Sent is empty.\n// Class Date + Class Time define when the class starts.\nconst hours = parseInt($('CONFIG — Reminders').first().json.reminder_hours || '24', 10);\nconst studio = $('CONFIG — Reminders').first().json.studio_name;\nconst now = Date.now(), horizon = now + hours * 3600 * 1000;\nconst rows = $('Read Bookings — Reminders').all().map(i => i.json);\nconst due = rows.filter(b => {\n  if ((b.Status || '').toUpperCase() !== 'CONFIRMED') return false;\n  if ((b['Reminder Sent'] || '').trim() !== '') return false;\n  const dt = new Date(((b['Class Date'] || '').trim()) + 'T' + ((b['Class Time'] || '00:00').trim()) + ':00');\n  const t = dt.getTime();\n  return !isNaN(t) && t > now && t <= horizon;\n});\nreturn due.map(b => ({ json: {\n  'Chat ID': b['Chat ID'],\n  'Customer Name': b['Customer Name'] || '',\n  Class: b.Class || '',\n  'Class Date': b['Class Date'] || '',\n  'Class Time': b['Class Time'] || '',\n  Room: b.Room || '',\n  Trainer: b.Trainer || '',\n  reminder_text: '\\u23F0 Reminder from ' + studio + '!\\n\\n\\U0001F3CB\\uFE0F Your *' + (b.Class || 'class') + '* is coming up:\\n\\U0001F4C5 ' + (b['Class Date'] || '') + ' \\u00b7 ' + (b['Class Time'] || '') + '\\n\\U0001F4CD ' + (b.Room || '') + (b.Trainer ? ' \\u00b7 Trainer: ' + b.Trainer : '') + '\\n\\nSee you there! Reply CANCEL if you can\\u2019t make it.',\n} }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "5988e0cc-b0f4-4378-978d-f7c6b7da5695",
+      "name": "Code — Filter Due Reminders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json['Chat ID'] }}",
+        "text": "={{ $json.reminder_text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "e9eb3bcd-b682-4a14-b425-6d3471d418d4",
+      "name": "Telegram — Send Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('CONFIG — Reminders').first().json.spreadsheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "={{ $('CONFIG — Reminders').first().json.bookings_sheet }}"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Chat ID",
+            "Class",
+            "Class Date"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "Chat ID": "={{ $json['Chat ID'] }}",
+            "Class": "={{ $json.Class }}",
+            "Class Date": "={{ $json['Class Date'] }}",
+            "Reminder Sent": "YES",
+            "Status": "REMINDER_SENT"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "939811b9-7ece-4bae-a12a-c1bc8e469402",
+      "name": "Update Sheet — REMINDER_SENT",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Count the reminder run for the Telegram digest.\nconst sent = $('Telegram — Send Reminder').all().length;\nconst items = $('Code — Filter Due Reminders').all().map(i => i.json);\nconst lines = [\n  '\\u23F0 *Class Reminders \\u2014 ' + new Date().toISOString().slice(0, 10) + '*', '',\n  '\\U0001F4AC ' + sent + ' reminder(s) sent for classes in the next 24h',\n];\nif (items.length) {\n  lines.push('', items.slice(0, 10).map(b => '\\u2022 ' + (b['Customer Name'] || b['Chat ID']) + ' \\u2014 ' + b.Class + ' ' + b['Class Date'] + ' ' + b['Class Time']).join('\\n'));\n}\nlines.push('', 'Sheet status \\u2192 REMINDER_SENT.');\nreturn [{ json: { digest: lines.join('\\n') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "cad1b700-7c78-48b4-8baa-cc4bc6b196d9",
+      "name": "Code — Build Reminder Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Reminders').first().json.admin_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "b051c9ec-6266-47cd-aa87-76a2ea91be4b",
+      "name": "Telegram — Send Reminder Digest",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        1900
+      ]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Studio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Studio": {
+      "main": [
+        [
+          {
+            "node": "Log Message — RECEIVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Message — RECEIVED": {
+      "main": [
+        [
+          {
+            "node": "Read Staff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Staff": {
+      "main": [
+        [
+          {
+            "node": "Code — Check Staff Role",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Check Staff Role": {
+      "main": [
+        [
+          {
+            "node": "IF — Is Staff?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Is Staff?": {
+      "main": [
+        [
+          {
+            "node": "Switch — Admin Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Admin Command": {
+      "main": [
+        [
+          {
+            "node": "Code — Parse Add Class",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code — Parse Cancel Class",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Admin Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Parse Add Class": {
+      "main": [
+        [
+          {
+            "node": "Append Class — Classes Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Class — Classes Sheet": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Admin Class Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Parse Cancel Class": {
+      "main": [
+        [
+          {
+            "node": "Update Class — CANCELLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Class — CANCELLED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Admin Class Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Understand Booking Intent": {
+      "main": [
+        [
+          {
+            "node": "Switch — Route by Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch — Route by Intent": {
+      "main": [
+        [
+          {
+            "node": "Read Classes — Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Classes — Book",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Bookings — Reschedule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Bookings — Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Fallback Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Classes — Schedule": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Schedule Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Schedule Reply": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send Schedule": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Classes — Book": {
+      "main": [
+        [
+          {
+            "node": "Read Bookings — Book",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Bookings — Book": {
+      "main": [
+        [
+          {
+            "node": "Code — Check Slot & Find Alternatives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Check Slot & Find Alternatives": {
+      "main": [
+        [
+          {
+            "node": "IF — Slot Free?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Slot Free?": {
+      "main": [
+        [
+          {
+            "node": "Append Booking — CONFIRMED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Suggest Alternatives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Booking — CONFIRMED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Confirm Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Confirm Booking": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Telegram — Suggest Alternatives": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — PENDING_SLOT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — PENDING_SLOT": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Read Bookings — Reschedule": {
+      "main": [
+        [
+          {
+            "node": "Code — Find Customer Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Find Customer Booking": {
+      "main": [
+        [
+          {
+            "node": "IF — Booking Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Booking Found?": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Cancel Old Booking",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — No Booking Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Cancel Old Booking": {
+      "main": [
+        [
+          {
+            "node": "Read Classes — Reschedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Classes — Reschedule": {
+      "main": [
+        [
+          {
+            "node": "Read Bookings — Reschedule Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Bookings — Reschedule Check": {
+      "main": [
+        [
+          {
+            "node": "Code — Check New Slot & Alternatives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Check New Slot & Alternatives": {
+      "main": [
+        [
+          {
+            "node": "IF — New Slot Free?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — New Slot Free?": {
+      "main": [
+        [
+          {
+            "node": "Append Booking — RESCHEDULED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Suggest Alternatives (Reschedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Booking — RESCHEDULED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Confirm Reschedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Confirm Reschedule": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Telegram — Suggest Alternatives (Reschedule)": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — PENDING_SLOT (Reschedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — PENDING_SLOT (Reschedule)": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Telegram — No Booking Found": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — HANDLED (Reschedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — HANDLED (Reschedule)": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Read Bookings — Cancel": {
+      "main": [
+        [
+          {
+            "node": "Code — Find Booking to Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Find Booking to Cancel": {
+      "main": [
+        [
+          {
+            "node": "IF — Booking Found? (Cancel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Booking Found? (Cancel)": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — CANCELLED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — No Booking Found (Cancel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — CANCELLED": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Confirm Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Confirm Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Telegram — No Booking Found (Cancel)": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — HANDLED (Cancel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — HANDLED (Cancel)": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Telegram — Fallback Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — HANDLED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — HANDLED": {
+      "main": [
+        [
+          {
+            "node": "Merge — Booking Branches",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Merge — Booking Branches": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Booking Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Booking Summary": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Notifications": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Booking Activity Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Intent": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Intent": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Understand Booking Intent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Reminders": {
+      "main": [
+        [
+          {
+            "node": "Read Bookings — Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Bookings — Reminders": {
+      "main": [
+        [
+          {
+            "node": "Code — Filter Due Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Filter Due Reminders": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — REMINDER_SENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — REMINDER_SENT": {
+      "main": [
+        [
+          {
+            "node": "Code — Build Reminder Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Build Reminder Digest": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Reminder Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

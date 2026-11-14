@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: a switch lever flips from a dark failed model cell to a lit backup cell while queued requests slide along a track">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="430" fill="none" stroke="#111111" stroke-width="2"/>
+
+  <!-- floor -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="3"/>
+
+  <!-- data flow dashes above the cells, drifting slowly -->
+  <line x1="120" y1="80" x2="680" y2="80" stroke="#FF4D00" stroke-width="2" stroke-dasharray="14 10" opacity="0.55">
+    <animate attributeName="stroke-dashoffset" values="0;-96" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.55;0.15;0.55" dur="8s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- left cell: the failed model, dark and unlit -->
+  <g>
+    <rect x="110" y="150" width="150" height="180" rx="6" fill="#111111"/>
+    <rect x="126" y="166" width="118" height="14" fill="#FFFDF5" opacity="0.25"/>
+    <rect x="126" y="190" width="118" height="14" fill="#FFFDF5" opacity="0.18"/>
+    <rect x="126" y="214" width="118" height="14" fill="#FFFDF5" opacity="0.12"/>
+    <circle cx="185" cy="280" r="10" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.15;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="150" y1="300" x2="220" y2="300" stroke="#FFFDF5" stroke-width="3" opacity="0.5"/>
+  </g>
+
+  <!-- centre: the switch lever, flipping slowly between the two cells -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="-16 400 330; 16 400 330; -16 400 330" dur="12s" repeatCount="indefinite"/>
+    <line x1="400" y1="330" x2="400" y2="190" stroke="#111111" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="400" cy="180" r="16" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  </g>
+  <circle cx="400" cy="330" r="20" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <circle cx="400" cy="330" r="7" fill="#FF4D00"/>
+
+  <!-- right cell: the backup model, lit -->
+  <g>
+    <rect x="540" y="150" width="150" height="180" rx="6" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="556" y="166" width="118" height="14" fill="#FFFDF5"/>
+    <rect x="556" y="190" width="118" height="14" fill="#FFFDF5" opacity="0.85"/>
+    <rect x="556" y="214" width="118" height="14" fill="#FFFDF5" opacity="0.7"/>
+    <circle cx="615" cy="280" r="10" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="1;0.4;1" dur="6s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="580" y1="300" x2="650" y2="300" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- slow status dial above the lever -->
+  <g>
+    <circle cx="400" cy="110" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="400" y1="110" x2="400" y2="90" stroke="#FF4D00" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="-60 400 110; 60 400 110; -60 400 110" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="400" cy="110" r="4" fill="#111111"/>
+  </g>
+
+  <!-- queue blocks sliding along the track toward the backup cell -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 120 0; 0 0" dur="9s" repeatCount="indefinite"/>
+    <rect x="120" y="392" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="160" y="392" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="200" y="392" width="26" height="26" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="240" y="392" width="26" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  </g>
+  <line x1="100" y1="425" x2="700" y2="425" stroke="#111111" stroke-width="2" stroke-dasharray="8 8" opacity="0.4"/>
+
+  <!-- slow rotating ring around the backup cell -->
+  <circle cx="615" cy="240" r="118" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="4 14" opacity="0.5">
+    <animateTransform attributeName="transform" type="rotate" values="0 615 240; 360 615 240" dur="40s" repeatCount="indefinite"/>
+  </circle>
+</svg>

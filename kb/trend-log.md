@@ -1,3 +1,54 @@
+## 2026-11-14 — EVENING run (~16:50 IST / 11:21 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:20 UTC): **#1 "faa ground stop" — 10M+ searches, 14h ago.** Rest: sports (warriors vs spurs, knicks vs pacers, college football), celebrities (sam hartman, avril lavigne), news (new orleans boat crash, peoria bomb threat), "spacex" 100K+ (+400%), "workday outage" 50K+. **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 7–14, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (11:21–11:23 UTC). **No CAPTCHA / unusual-traffic check; no panel failed; URL kept all four q= terms.** Interest-over-time averages (index 0–100): AI agent 26 (peak 100 Nov 9, 1:30 PM; next 97 Nov 10, 94 Nov 12), n8n 4 (peak 9, Nov 8/9/12/13/14), AI automation 8 (peak 36 Nov 9), MCP server 5 (peak 17 Nov 10). Top subregions for "AI agent": Vermont, Hawaii, District of Columbia, Maine, New Mexico (no numeric values shown).
+
+### Rising / breakout queries found
+- **"AI agent"** (only 3 shown): "fable 5.2" — Breakout; **"agent substrate" — +250%**; "microsoft ai agent" — +80%.
+- **"n8n"** (1–5 of 12): "nod n8n" — Breakout; "nod" — Breakout; **"librechat" — Breakout**; **"n8n v3" — Breakout**; "what is n8n agent workflow" — Breakout.
+- **"AI automation"** (only 1 shown): "what is purpose of an orchestrator agent" — +2,000%.
+- **"MCP server"** (only 4 shown): **"suno mcp" — Breakout**; "claude status" — Breakout; "claude duet" — +650%; "blender mcp server" — +40%.
+
+### PICKED — PUBLISHED 2026-11-14 (evening run)
+- **"suno mcp" (Breakout, #1 rising related query for "MCP server", Google Trends Explore US past 7 days)** → article `suno-mcp-n8n-ai-music-agent.md` — "Suno's MCP Server Lets Your n8n Agent Write Songs — Setup, Tools, and the Nov 6 Edit Update". Verified via Suno's own page (suno.com/mcp, read directly in the live browser Nov 14, 11:23–11:24 UTC) + mlllm.io + songaifarm.com + interspacemusic.com + Music Business Worldwide via aimagusa.com: **Suno MCP launched Oct 28, 2026** — official remote MCP server at https://api.suno.com/mcp, sign in with a Suno account (no API key), early-access gated via a form; works with Claude, ChatGPT (Plus/Pro only — connectors not on free ChatGPT), Gemini, Claude Code, Cursor, any custom-MCP client; create songs from text prompts, voice memos → full tracks, covers/mashups/extensions, saved Suno Voices, songs save to the Suno library, generations consume the plan's credits. **Nov 6 update (single source — minssam.com, Nov 8 note):** edit tools added — replace a single lyric line, regenerate sections, remove instruments, stem separation, songs from MIDI scores; tool count in Claude Code 35 → 41; Suno's own page lists no tool inventory, so the Nov 6 tools are flagged in the article as reported, not independently confirmed. **n8n hook verified:** n8n's MCP Client Tool node connects to remote MCP servers over HTTP Streamable with MCP OAuth2 + Dynamic Client Registration (Permit Linear-gateway guide + Picsart's official n8n guide — same pattern: hosted MCP, OAuth, no API key); MCP Client Tool is a sub-node of the AI Agent node only. Builder angle: wire Suno as a tool on an n8n AI Agent (approval gate before generation — every song spends credits), with the early-access gate and the OAuth handshake as the steps to watch. Live: https://cortexflow.tech/blog/suno-mcp-n8n-ai-music-agent/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "claude status" — published this morning (claude-outage-nov-13-n8n-fallback.md); same story, no new angle.
+- "nod" / "nod n8n" — published Nov 13 evening (Nod article).
+- "n8n v3" — n8n 3.2.0 still a pre-release (Nov 10); no stable 3.x release yet; watch item for the stable release.
+- "agent substrate" +250% — Google Agent Substrate 1.0 + CNCF donation Nov 5–6 (KubeCon Nov 9–12); watch item since Nov 12; 8–9 days old, no fresh November development beyond the announcement; Suno MCP is the fresher Breakout.
+- "claude duet" +650% — Oct 21 launch, 3+ weeks old, already skipped repeatedly; watch item.
+- "librechat" (n8n Breakout) — open-source chat UI; no dated November event verified; watch item.
+- "what is purpose of an orchestrator agent" +2,000% — definitional, skipped repeatedly; watch item.
+- "microsoft ai agent" +80% — vague, no dated event. "fable 5.2" — video game, off-niche. "blender mcp server" +40% — 3D tool, off-niche. "what is n8n agent workflow" — definitional. "faa ground stop" / "workday outage" / "spacex" — outside the niche.
+
+## 2026-11-14 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): **#1 "faa ground stop" — 10M+ searches, 6h ago.** Rest: sports (knicks vs pacers, warriors vs spurs, college football), celebrities (sam hartman, avril lavigne), news (new orleans boat crash). Tech-adjacent: "spacex" 100K+ (+400%), "workday outage" 20K+. **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 7–14, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (08:51–08:53 IST). **No CAPTCHA / unusual-traffic check.** Interest-over-time averages (index 0–100): AI agent 26 (peak 100 Nov 9, 1:30 PM; daily peaks 94 Nov 7, 87 Nov 8, 96 Nov 10, 90 Nov 11, 93 Nov 12, 81 Nov 13), n8n 4 (peak 9, Nov 7/11/12), AI automation 8 (peak 37, Nov 7/9), MCP server 6 (peak 18 Nov 10, 1:30 PM). **"AI agent" Related queries panel FAILED on first load** ("Oops! Something went wrong") — rendered after one reload. **Rising lists were volatile between the two loads** — post-reload values below; first-load variants noted separately. Top subregions for "AI agent" (list view, with values): Kansas 100, Washington 27, New York 26, Delaware 26, Virginia 26.
+
+### Rising / breakout queries found (post-reload)
+- **"AI agent"** (only 1 shown): "microsoft ai agent" — +70%.
+- **"n8n"** (1–5 of 11): "nod" — Breakout; "nod n8n" — Breakout; "ifttt" — Breakout; "n8n v3" — Breakout; "notebooklm" — Breakout.
+- **"AI automation"** (only 3 shown): "what is the purpose of an orchestrator agent" — Breakout; "key circle" — +4,700%; "social commerce trends" — +200%.
+- **"MCP server"** (only 4 shown): "claude duet" — Breakout; "claude status" — Breakout; "python web framework" — +4,550%; "devops practices" — +4,400%.
+- First-load variants (differed): n8n began "n8n nod / nod / librechat / gohighlevel / n8n demo" (all Breakout, of 13); MCP server began "claude duet / is claude down" with "python web framework +3,550%"; AI automation included "bitcoin price analysis +2,950%" and "upskilling 2026 +400%".
+
+### PICKED — PUBLISHED 2026-11-14 (morning run)
+- **"claude status" (Breakout, #2 rising related query for "MCP server", Google Trends Explore US past 7 days; "is claude down" in the first load)** → article `claude-outage-nov-13-n8n-fallback.md` — "Claude Went Down Twice on Friday the 13th — Your n8n Agent Needs a Backup Model". Verified via Anthropic's own status page (status.claude.com, read directly Nov 14, 03:24 UTC) + PulsAPI + madrobot.blog + nacionale.com + Jagran Josh + Clarin: **two separate Nov 13 incidents** — (1) auth incident 09:58–11:58 UTC (claude.ai + Claude Code sign-in, fix deployed 11:05 UTC, resolved 11:58 UTC; API NOT on the affected list); (2) elevated-errors incident 13:09–15:38 UTC (claude.ai, Claude API, Claude Code, connectors incl. Docs/Sheets, Claude Security, Managed Agents; monitoring 15:33 UTC — new-connector adds temporarily unavailable, scheduled tasks >2h late or skipped); **Microsoft 365 connector incident separate** — impact Nov 12 16:03 UTC → Nov 13 16:40 UTC (>24h), caused by the Microsoft 365 outage, resolved Nov 13 21:49 UTC; Anthropic has disclosed no cause for either Nov 13 incident; Downdetector spike ~3,000 reports (Clarin). **Fresh Nov 14 footnote:** a third incident opened 02:54 UTC Nov 14 — elevated purchasing errors on claude.ai (monitoring 03:09 UTC, core functionality unaffected, claude.ai Degraded Performance, API Operational). Builder angle: 5-part model-fallback pattern for n8n (status page before debugging, retry-with-backoff on the Anthropic node, second-model fallback via sub-workflow + Error Trigger, queue + idempotent re-run for schedules, alert on a non-Claude channel). No license-verified in-article stock images — 2 image-search queries returned no free-license sources, skipped per standing rule; AI hero + animated SVG + Anatomy figure (model-switch.svg, Fig 1, tripped Claude cell breaker + knife-switch lever thrown to lit backup cell + status dial + queue drum, line-ends 0, readout "2 outages · API down 2h 29m · auth down 2h · scheduled tasks 2h+ late") shipped. Live: https://cortexflow.tech/blog/claude-outage-nov-13-n8n-fallback/ — Telegram 'Published Blog' sent (msg 543).
+
+### Skipped (notable)
+- "nod" / "nod n8n" — published Nov 13 evening (Nod article).
+- "n8n v3" — n8n 3.2.0 is a Nov 10 pre-release (bug fixes + credential redaction in logs/telemetry + wider outbound IP blocking + 2 breaking-change reverts); no stable 3.x release yet; blog already covered n8n 3.0 (kill list Oct 9, breaking changes). Watch item for the stable 3.2.0.
+- "ifttt" — IFTTT.ai + AI Agent launched Oct 28 (17 days old, Product Hunt Oct 29); no fresh November event behind today's rise; watch item / future comparison candidate.
+- "notebooklm" — Nov 6 flashcards/quizzes mobile rollout + Nov 9 notes-now-ground-answers change (Gemini Notebook); study tool, thin n8n builder hook; watch item.
+- "claude duet" — Oct 21 launch, 3 weeks old, already skipped repeatedly; watch item.
+- "microsoft ai agent" +70% — vague, no dated event.
+- "what is the purpose of an orchestrator agent" — definitional, skipped repeatedly; watch item.
+- "key circle" +4,700% / "social commerce trends" / "python web framework" / "devops practices" / "faa ground stop" / "spacex" / "workday outage" — noise, generic dev queries, or outside the niche.
+
 ## 2026-11-13 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked

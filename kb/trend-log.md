@@ -1,3 +1,30 @@
+## 2026-11-15 — EVENING run (~16:50 IST / 11:21 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:20 UTC): top 25 all sports (ufc 1M+, lsu football 500K+, college football, NBA) + "richard sterban" 100K+ and "texas roadhouse new pasta dish" 50K+. **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 8–15, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): read via live browser 11:21–11:23 UTC. **URL lost its q= terms on load** (became explore?date=now 7-d&geo=US, empty comparison); one reload still dropped them; the four terms were re-entered in the Explore search boxes on the same page — final 4-term comparison loaded, all values below from that final view. **No CAPTCHA / unusual-traffic check; no panel failed** ("Classic Explore is expiring soon" banner only). Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 10, 1:30 PM; next 98 Nov 9, 93 Nov 12, 92 Nov 15), n8n 3 (peak 9 Nov 11/12), AI automation 7 (peak 36 Nov 9), MCP server 5 (peak 16 Nov 10). Top subregions for "AI agent": Kansas 100, Washington 33, California 31, New York 31, Virginia 31.
+
+### Rising / breakout queries found (final 4-term load)
+- **"AI agent"** (1–5 of 6): **"odessia" — +4,300%**; **"faa ai agent" — +2,400%**; "agent substrate" — +350%; "microsoft ai agent" — +80%; "what is an ai agent" — +40%.
+- **"n8n"** (1–5 of 9): "nod" — Breakout; "nod n8n" — Breakout; "jev ai" — Breakout; "n2n" — Breakout; **"vapi ai" — +3,500%**.
+- **"AI automation"** (only 2 shown): **"kling ai" — +4,950%**; "why is it important to use ai as a tool rather than fully allow it to make all investing decisions?" — +3,950%.
+- **"MCP server"** (only 3 shown): **"google ai studio" — +4,150%**; "power bi modeling mcp server" — +450%; "higgsfield ai" — +400%.
+
+### PICKED — PUBLISHED 2026-11-15 (evening run)
+- **"google ai studio" (+4,150%, #1 rising related query for "MCP server", Google Trends Explore US past 7 days)** → article `gemini-decisions-api-n8n-agent-routing.md` — "Google's Decisions API Gives Your n8n Agent a 200ms Yes/No Brain — the Wiring Pattern". Verified via Google's own DeepMind blog (Nov 11, 2026, read directly) + 2 independent write-ups (teamorouter, apidog, Nov 12): **Gemini Decisions API launched Nov 11, 2026** — new model gemini-decision-1, via Gemini API in Google AI Studio (v1beta, google-genai SDK 3.2+); scores up to 1,000 closed-set questions in ONE forward pass over one shared multimodal input (up to 256K tokens: text, images, audio, video, PDFs) — no token-by-token decoding; three question types (noul yes/no, choice 2–255 options, score ordered rubric), every answer with a confidence score 0–1; **150–250 ms end-to-end (50–100 ms model compute), nearly flat 1→100 questions**; **$0.10 per 1M input tokens, $0 output tokens** (input billed once per request no matter the question count); Google claims ~5x cheaper than Gemini 3.5 Flash-Lite + Interactions API across its benchmark suite; REST endpoint `POST https://generativelanguage.googleapis.com/v1beta/decisions` with `x-goog-api-key` header (NOT generateContent — a model-ID swap does not work); free tier reported 200 RPM / 50,000 TPM / 10,000 req/day (secondary sources, flagged as reported); **NOT supported: Batch API, context caching, Flex/Priority; Vertex AI support "coming soon"** (Developer API only today); Google's own uses: model routing in Gemini Notebook (up to 40% lower latency), Stitch rapid canvas, emoji selection in CC (200+ options), **safety layer for MCP tools in Search** (adversarial detection); integrations rolling out: OpenRouter, LangChain, Vercel, LiteLLM, Pydantic AI, Pipecat, LiveKit, OpenCode. **Same-week second driver for the surge:** Google Maps Platform inside AI Studio (Nov 9, Google Developers Blog) — describe a location app, Gemini configures Maps + demo key (100 calls/API/day, no credit card). Builder angle: 5-part n8n pattern — Decisions API as the deterministic router/guardrail/approval-check node (HTTP Request node → confidence-threshold IF → Switch on choice winner), replacing LLM-judge structured-output calls; batch up to 1,000 policy checks in one request; approval gate before money moves. Live: https://cortexflow.tech/blog/gemini-decisions-api-n8n-agent-routing/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "odessia" +4,300% — published Nov 12 morning (OpenAI acquires Odessia); same story, no new angle.
+- "faa ai agent" +2,400% — published this morning (FAA SMART article); same story.
+- "nod" / "nod n8n" — published Nov 13 evening (Nod article).
+- "vapi ai" +3,500% — published Nov 10 evening (VapiCon article); VapiCon ended Nov 12, no fresh post-event launch verified in this run; watch item.
+- "kling ai" +4,950% — Kling 4.0 Flash GA Nov 4, Kling 4.0 Oct 15; video-gen tool, MCP/CLI support exists but the n8n builder hook is thinner than the Decisions API; watch item.
+- "agent substrate" +350% — Google Agent Substrate 1.0 + CNCF donation Nov 5–6; 9–10 days old, skipped repeatedly; watch item.
+- "jev ai" — no fresh November event verified; watch item.
+- "power bi modeling mcp server" +450% — no dated launch verified in this run; possible Microsoft Power BI MCP server — watch item, verify next run.
+- "higgsfield ai" +400% — video-gen, off-niche for the automation builder audience.
+- "microsoft ai agent" +80% — vague, no dated event. "what is an ai agent" +40% — definitional. "n2n" — typo/noise. "why is it important to use ai as a tool…" — definitional/investing, off-niche. "fable 5.2" (3-term intermediate load) — video game, off-niche.
+
 ## 2026-11-15 — MORNING run (~08:50 IST / 03:20 UTC)
 
 ### Checked

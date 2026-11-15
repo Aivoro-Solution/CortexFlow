@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated decision press: one input track splits into three routes through a switch lever">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- input track from the left -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <line x1="40" y1="225" x2="250" y2="225"/>
+    <line x1="40" y1="205" x2="250" y2="205"/>
+    <line x1="40" y1="245" x2="250" y2="245"/>
+  </g>
+  <!-- input drum rolling along the track -->
+  <g>
+    <circle cx="150" cy="225" r="26" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="150" cy="225" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 60 0; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- decision press housing -->
+  <g>
+    <rect x="280" y="120" width="180" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="296" y="136" width="148" height="34" fill="none" stroke="#111111" stroke-width="3"/>
+    <!-- three question-type dials -->
+    <circle cx="330" cy="225" r="24" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="330" y1="225" x2="330" y2="205" stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 330 225" to="360 330 225" dur="30s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="370" cy="225" r="24" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="370" y1="225" x2="370" y2="205" stroke="#111111" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 370 225" to="-360 370 225" dur="36s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="410" cy="225" r="24" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="410" y1="225" x2="410" y2="205" stroke="#FF4D00" stroke-width="4" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 410 225" to="360 410 225" dur="42s" repeatCount="indefinite"/>
+    </line>
+    <!-- confidence gauge -->
+    <rect x="306" y="268" width="128" height="16" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="309" y="271" width="60" height="10" fill="#FF4D00">
+      <animate attributeName="width" values="60; 108; 84; 108; 60" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <!-- press stamp -->
+    <rect x="330" y="296" width="80" height="18" fill="#111111">
+      <animate attributeName="y" values="296; 304; 296" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- switch lever -->
+  <g>
+    <line x1="480" y1="225" x2="540" y2="150" stroke="#111111" stroke-width="5" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0 480 225; -14 480 225; 0 480 225" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="480" cy="225" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- three diverging routes -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M 460 225 L 560 225 L 740 225"/>
+    <path d="M 460 225 L 560 225 L 640 130 L 740 130"/>
+    <path d="M 460 225 L 560 225 L 640 320 L 740 320"/>
+  </g>
+  <!-- lit output cell on the chosen route -->
+  <g>
+    <rect x="700" y="205" width="40" height="40" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <animate attributeName="opacity" values="1; 0.55; 1" dur="6s" repeatCount="indefinite"/>
+  </g>
+  <rect x="700" y="110" width="40" height="40" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <rect x="700" y="300" width="40" height="40" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+
+  <!-- travelling pulse along the chosen route -->
+  <circle cx="560" cy="225" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="cx" values="560; 700; 560" dur="8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

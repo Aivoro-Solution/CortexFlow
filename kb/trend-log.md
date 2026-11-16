@@ -216,7 +216,7 @@
 
 ### Checked
 - **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:21 UTC): top 25 all sports (NFL Sunday games, NBA) + "metlife stadium fire" 100K+ and "ao3" (from the morning read). **No AI/automation niche entry.**
-- **Explore, US, past 7 days** (Nov 9–16, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data delegated to the live browser on the same URL. **The browser task ran 10+ minutes without returning a result** (still running at publish time; a wrap-up instruction was sent). No evening Explore numbers are available for this run — none invented. **Fallback (per task body): web search for rising niche topics** — the pick below rests on the MORNING run's verified Trends signal (read directly 03:20 UTC) plus fresh verification searches this run.
+- **Explore, US, past 7 days** (Nov 9–16, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data delegated to the live browser on the same URL. **The browser task ran 12+ minutes without returning a result and was closed** (wrap-up instruction sent, no answer). No evening Explore numbers are available for this run — none invented. **Fallback (per task body): web search for rising niche topics** — the pick below rests on the MORNING run's verified Trends signal (read directly 03:20 UTC) plus fresh verification searches this run.
 - Morning's signal, still valid today: **"devin ai" — Breakout** (#4 rising related query for "n8n") and **"fable 5.2" — +2,150%** (#3 rising related query for "AI agent").
 
 ### PICKED — PUBLISHED 2026-11-16 (evening run)
@@ -231,7 +231,7 @@
 - "proxmox mcp server" +300% — no dated November launch verified in this run; watch item.
 - "elevenlabs" +250% — no dated November event verified in this run; watch item.
 - "what is the purpose of an orchestrator agent" — definitional, skipped repeatedly; watch item.
-- Evening Explore read: no fresh evening numbers (browser task still running at publish time) — if it later returns a stronger distinct trend, it will be appended here, not used to re-pick this run.
+- Evening Explore read: no fresh evening numbers (browser task ran 12+ min and was closed without returning a result) — if a later run returns a stronger distinct trend, it will be logged then, not used to re-pick this run.
 
 # Trend Log — Google Trends scans (CortexFlow trend-article engine)
 

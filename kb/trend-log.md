@@ -1,3 +1,33 @@
+## 2026-11-16 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): top 25 all sports (NFL Sunday games, NBA) + "ao3" 500K+ and "metlife stadium fire" 50K+. **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 9–16, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (03:20–03:21 UTC). **No CAPTCHA / unusual-traffic check; no panel failed.** Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 9, 1:30 PM; next 96 Nov 10, 91 Nov 12, 88 Nov 15 — recurring early-afternoon spike), n8n 3 (peak 8, Nov 10/12/14), AI automation 7 (peak 35 Nov 9), MCP server 5 (peak 17 Nov 10). Top subregions for "AI agent": Wyoming, South Dakota, Vermont, District of Columbia, Hawaii (rank only, no numeric values shown).
+
+### Rising / breakout queries found
+- **"AI agent"** (1–5 of 6): "odessia" — Breakout; **"meet your users where they are with muse connector platform" — +2,650%**; "fable 5.2" — +2,150%; "faa ai agent" — +800%; "muse — your personal ai agent" — +300%.
+- **"n8n"** (1–5 of 11): "n8n nod" — Breakout; "what is n8n and how does it work" — Breakout; "n2n" — Breakout; **"devin ai" — Breakout**; **"airbyte" — Breakout**.
+- **"AI automation"** (only 2 shown): "what is the purpose of an orchestrator agent" — Breakout; "new york times" — +750%.
+- **"MCP server"** (1–5 of 6): "google ai studio" — Breakout; **"claude status" — +750%**; "proxmox mcp server" — +300%; "is claude down" — +300%; "elevenlabs" — +250%.
+
+### PICKED — PUBLISHED 2026-11-16 (morning run)
+- **"airbyte" (Breakout, #5 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `airbyte-mcp-n8n-semantic-search-data-warehouse.md` — "Your n8n Agent Can Now Ask Your Data Warehouse Questions in Plain English — Airbyte's MCP Server, Explained". Verified via Airbyte's own Business Wire press release (Nov 10, 2026, read directly) + Computer Weekly (Nov 6, read directly) + Destination CRM (Nov 11) + notatechguy (Nov 8): **Airbyte MCP server launched Nov 6, 2026** — open-source MCP server, works with Claude, ChatGPT, Cursor, VS Code; hosted MCP at mcp.airbyte.com/mcp with OAuth for Cloud users (reported by secondary coverage, flagged as reported); self-managed runs a local setup; MCP was the most-requested feature in Airbyte's 5+ year history (CEO Michel Tricot); governance built in — deleting sources/destinations needs confirmation, never elevates privileges, audit log of all MCP-originated actions. **Semantic search in the context layer announced Nov 10, 2026** (official Business Wire release): hybrid semantic + keyword search combined with SQL over Snowflake/BigQuery destinations (50+ source connectors); 9 text sources — Confluence, Gmail, Google Drive, Gong, Jira, Outreach, Pylon, Salesforce, Zendesk Chat; Airbyte runs the embedding model on its own infra (no third-party embedding API); example questions incl. "Why did refunds increase last week, and which account plans were affected?"; same release — rebuilt BigQuery connector reads 1 TB in under an hour, MySQL source 4–10x faster (170.68 GB benchmark 95 → 22 min, CPU/mem −25%), certified connectors added: Ashby, Gmail, MySQL, Pipedrive, Reddit Ads; scale: 700+ connectors, 25,000+ companies incl. 20% of Fortune 500, 2M syncs/day; semantic search available in Airbyte Cloud + Enterprise Flex only (not self-hosted); 14-day free trial. Builder angle: 5-part n8n pattern — MCP Client Tool node (HTTP Streamable + MCP OAuth2, sub-node of AI Agent node only, verified on this blog Nov 14) → plain-language questions → approval gate before corrective actions → read-only by default → freshness check + audit log. No license-verified in-article stock images — image-search returned only commercial/blog sources, skipped per standing rule; AI hero + animated SVG + Anatomy figure (context-press.svg, Fig 1, 78 solids, audit 0, line-ends 0/413, readout "NOV 6 MCP · NOV 10 SEMANTIC SEARCH · 700+ CONNECTORS · 2M SYNCS/DAY · 9 TEXT SOURCES") shipped. Live: https://cortexflow.tech/blog/airbyte-mcp-n8n-semantic-search-data-warehouse/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "odessia" — published Nov 12 morning; same story, no new angle.
+- "faa ai agent" +800% — published Nov 15 morning; same story, no new angle.
+- "n8n nod" — published Nov 13 evening; same story, no new angle.
+- "google ai studio" — published Nov 15 evening (Decisions API); same story, no new angle.
+- "meet your users where they are with muse connector platform" +2,650% — the phrase is a ReFiBuy press-release quote (Nov 4, Meta Muse support); underlying drivers are Nov 9–10 (Expedia live in Muse, Muse on Apple Watch, 10M users in 6 weeks) — no fresh Nov 15–16 event; Muse itself never covered on the blog, watch item for a future Muse explainer.
+- "muse — your personal ai agent" +300% — same Muse wave, no fresh event; watch item.
+- "devin ai" (n8n Breakout) — drivers are SWE-2 Flash (Nov 4, 12 days old) + hierarchical budgets (Nov 2) + Claude Fable 5.2 in Devin (Nov 9–10); nothing dated Nov 15–16; Airbyte's Nov 10 launch is fresher with a direct n8n wiring pattern. Watch item.
+- "claude status" +750% / "is claude down" +300% — NO new Claude incident: the only open incident is the Nov 14 "Sign in with Apple on Claude iOS app" major outage (started Nov 14 07:11 UTC, still open; new iOS sign-ups only, Google/email workaround); the +750% rise is residual from the Nov 13–14 outages already covered Nov 14 morning. Watch item.
+- "fable 5.2" +2,150% — ambiguous term: Claude Fable 5.2 (Anthropic model, launched Nov 9–10, #1 FrontierCode 2.0 at 49.1) vs the video game; no dated Nov 15–16 development; watch item.
+- "proxmox mcp server" +300% — no dated November launch verified in this run; watch item.
+- "elevenlabs" +250% — no dated November event verified in this run; watch item.
+- "what is the purpose of an orchestrator agent" — definitional, skipped repeatedly; watch item.
+- "n2n" — typo/noise. "what is n8n and how does it work" — definitional. "new york times" — noise.
+
 ## 2026-11-15 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked
@@ -181,6 +211,27 @@
 - "hugging face" / "render" (pre-reload, n8n) — vague pairings, no dated event. "supabase mcp server" +150% (pre-reload, MCP server) — no dated November launch verified.
 - "devops practices" +3,500% / "node.js backend" / "python web framework" / "kicad" — generic dev queries / electronics CAD, no agent-specific hook.
 - "how agentic ai systems work in automation" (pre-reload) — definitional; blog already covers agentic AI extensively.
+
+## 2026-11-16 — EVENING run (~16:50 IST / 11:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 11:21 UTC): top 25 all sports (NFL Sunday games, NBA) + "metlife stadium fire" 100K+ and "ao3" (from the morning read). **No AI/automation niche entry.**
+- **Explore, US, past 7 days** (Nov 9–16, 2026, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data delegated to the live browser on the same URL. **The browser task ran 10+ minutes without returning a result** (still running at publish time; a wrap-up instruction was sent). No evening Explore numbers are available for this run — none invented. **Fallback (per task body): web search for rising niche topics** — the pick below rests on the MORNING run's verified Trends signal (read directly 03:20 UTC) plus fresh verification searches this run.
+- Morning's signal, still valid today: **"devin ai" — Breakout** (#4 rising related query for "n8n") and **"fable 5.2" — +2,150%** (#3 rising related query for "AI agent").
+
+### PICKED — PUBLISHED 2026-11-16 (evening run)
+- **"devin ai" (Breakout, rising related query for "n8n") + "fable 5.2" (+2,150%, rising related query for "AI agent", Google Trends Explore US past 7 days, morning read)** → article `devin-fable-52-swe2-flash-n8n-cost-routing.md` — "Devin's Cheapest Week Ever: Fable 5.2, SWE-2 Flash, and Budgets That Kill Sessions — the Cost Pattern n8n Builders Should Steal". Verified via Devin's own docs (docs.devin.ai/desktop/models, read via search) + POSIX AI (Nov 3) + Pivot News (Nov 2) + Economic Times CIO (Nov 4) + Sulat AI (Nov 10) + multiple Fable 5.2 launch reports (Nov 9–10): **hierarchical budgets launched Nov 2, 2026** (Devin Enterprise; one root budget, child budgets up to 3 levels deep in ACUs; session STOPS if a budget runs out mid-task; soft-limit fallback to cheaper models still in development, no date); **SWE-2 Flash launched Nov 4, 2026** (Mixture-of-experts, 276B total / 12B active, adapted from Thinking Machines Lab's Inkling-Small base; Cognition's pitch ~3x faster at ~1/5 the price of SWE-2; Devin Desktop/CLI only, not cloud; Medium/High/Max variants; launch pricing ends Nov 18, 2026 18:00 UTC, then $0.10/1M in, $0.01/1M cache reads, $0.125/1M cache writes, $0.50/1M out; free until Dec 4, 2026 18:00 UTC per docs — the two dates do not reconcile, flagged in-article; weights gated, no standalone API); **Claude Fable 5.2 launched Nov 9, 2026** (Anthropic's most capable generally available model; Mythos 5.2 same model, vetted orgs only; $8/$40 per 1M tokens in/out, down from $10/$50; up to 30% faster claimed, unverified; model ID claude-fable-5-2; Claude paid plans, Claude Code 2.1.321+, Platform, AWS/GCP/Azure; Anthropic still recommends Opus 5.5 first); **Cognition put Fable 5.2 in Devin Desktop/CLI on launch day**, citing FrontierCode 2.0 #1 at 49.1% (vs Opus 5.5 45.5%, Fable 5.1 32.4% — Cognition's own benchmark, flagged as vendor claim). Builder angle: 5-part cost-routing pattern for n8n (route by task difficulty, per-team/project spend caps as a guard node, approval gate before expensive runs, cost per completed task, pause-and-queue instead of kill-on-budget). No license-verified in-article stock images — 2 image-search queries returned only commercial/blog sources, skipped per standing rule; AI hero + animated SVG + Anatomy figure (cost-press.svg, Fig 1) shipped. Live: https://cortexflow.tech/blog/devin-fable-52-swe2-flash-n8n-cost-routing/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "airbyte" — published this morning; same story, no new angle.
+- "odessia" — published Nov 12 morning; same story, no new angle.
+- "faa ai agent" — published Nov 15 morning; same story, no new angle.
+- "claude status" / "is claude down" — no new Claude incident: the Nov 14 "Sign in with Apple on Claude iOS app" incident was still the only open one per the morning log; no fresh Nov 16 event verified; watch item.
+- "meet your users where they are with muse connector platform" +2,650% — same as morning: ReFiBuy press-release quote, drivers Nov 9–10, no fresh Nov 15–16 event; watch item.
+- "proxmox mcp server" +300% — no dated November launch verified in this run; watch item.
+- "elevenlabs" +250% — no dated November event verified in this run; watch item.
+- "what is the purpose of an orchestrator agent" — definitional, skipped repeatedly; watch item.
+- Evening Explore read: no fresh evening numbers (browser task still running at publish time) — if it later returns a stronger distinct trend, it will be appended here, not used to re-pick this run.
 
 # Trend Log — Google Trends scans (CortexFlow trend-article engine)
 

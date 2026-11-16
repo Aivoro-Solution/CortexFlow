@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: coding tasks routed into three cost bins with a budget gauge">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- conveyor: three task cards sliding toward the router -->
+  <g stroke="#111111" stroke-width="2.5" fill="#FFFDF5">
+    <rect x="60" y="90" width="120" height="70" rx="4"/>
+    <rect x="60" y="90" width="120" height="70" rx="4" fill="none"/>
+    <line x1="78" y1="112" x2="162" y2="112"/>
+    <line x1="78" y1="128" x2="146" y2="128"/>
+    <line x1="78" y1="144" x2="154" y2="144"/>
+  </g>
+  <g stroke="#111111" stroke-width="2.5" fill="#FFFDF5">
+    <rect x="60" y="190" width="120" height="70" rx="4">
+      <animate attributeName="y" values="190;180;190" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="78" y1="212" x2="162" y2="212">
+      <animate attributeName="y1" values="212;202;212" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="212;202;212" dur="9s" repeatCount="indefinite"/>
+    </line>
+    <line x1="78" y1="228" x2="146" y2="228">
+      <animate attributeName="y1" values="228;218;228" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="228;218;228" dur="9s" repeatCount="indefinite"/>
+    </line>
+    <line x1="78" y1="244" x2="154" y2="244">
+      <animate attributeName="y1" values="244;234;244" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="244;234;244" dur="9s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <g stroke="#111111" stroke-width="2.5" fill="#FFFDF5">
+    <rect x="60" y="290" width="120" height="70" rx="4"/>
+    <line x1="78" y1="312" x2="162" y2="312"/>
+    <line x1="78" y1="328" x2="146" y2="328"/>
+    <line x1="78" y1="344" x2="154" y2="344"/>
+  </g>
+
+  <!-- router: rotating switch arm -->
+  <g>
+    <circle cx="330" cy="225" r="58" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="330" cy="225" r="10" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+    <g>
+      <line x1="330" y1="225" x2="330" y2="178" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 330 225" to="360 330 225" dur="36s" repeatCount="indefinite"/>
+    </g>
+    <circle cx="330" cy="178" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animateTransform attributeName="transform" type="rotate" from="0 330 225" to="360 330 225" dur="36s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- three routing pipes -->
+  <g stroke="#111111" stroke-width="2.5" fill="none">
+    <path d="M 388 200 L 470 120 L 520 120"/>
+    <path d="M 388 225 L 520 225"/>
+    <path d="M 388 250 L 470 330 L 520 330"/>
+  </g>
+
+  <!-- three cost bins -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M 540 100 L 700 100 L 690 160 L 550 160 Z"/>
+    <path d="M 540 205 L 700 205 L 690 265 L 550 265 Z"/>
+    <path d="M 540 310 L 700 310 L 690 370 L 550 370 Z"/>
+  </g>
+  <!-- fill levels rising slowly -->
+  <rect x="552" y="140" width="136" height="14" fill="#111111" opacity="0.85">
+    <animate attributeName="height" values="14;22;14" dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="140;132;140" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="552" y="245" width="136" height="14" fill="#111111" opacity="0.85">
+    <animate attributeName="height" values="14;20;14" dur="15s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="245;239;245" dur="15s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="552" y="350" width="136" height="14" fill="#FF4D00">
+    <animate attributeName="height" values="14;18;14" dur="18s" repeatCount="indefinite"/>
+    <animate attributeName="y" values="350;346;350" dur="18s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- budget gauge -->
+  <g>
+    <circle cx="620" cy="70" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <path d="M 596 52 A 30 30 0 0 1 644 52" fill="none" stroke="#FF4D00" stroke-width="4"/>
+    <line x1="620" y1="70" x2="620" y2="44" stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="-40 620 70;40 620 70;-40 620 70" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="620" cy="70" r="5" fill="#111111"/>
+  </g>
+
+  <!-- drifting task dots along the pipes -->
+  <circle cx="420" cy="180" r="5" fill="#FF4D00" stroke="#111111" stroke-width="1.5">
+    <animate attributeName="cx" values="400;510;400" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="195;120;195" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="450" cy="225" r="5" fill="#FF4D00" stroke="#111111" stroke-width="1.5">
+    <animate attributeName="cx" values="400;510;400" dur="11s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="420" cy="270" r="5" fill="#FF4D00" stroke="#111111" stroke-width="1.5">
+    <animate attributeName="cx" values="400;510;400" dur="14s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="255;330;255" dur="14s" repeatCount="indefinite"/>
+  </circle>
+</svg>

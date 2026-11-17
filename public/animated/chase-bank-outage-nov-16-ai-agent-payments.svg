@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of a payment rail stalling at a jammed gear">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- source bank block (left) -->
+  <rect x="60" y="150" width="120" height="150" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <rect x="60" y="150" width="120" height="34" fill="#111111"/>
+  <rect x="76" y="216" width="88" height="10" fill="none" stroke="#111111" stroke-width="2"/>
+  <rect x="76" y="236" width="88" height="10" fill="none" stroke="#111111" stroke-width="2"/>
+  <rect x="76" y="256" width="88" height="10" fill="none" stroke="#111111" stroke-width="2"/>
+
+  <!-- jammed gear above the rail -->
+  <g transform="translate(250 120)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+      <circle r="34" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <circle r="12" fill="none" stroke="#111111" stroke-width="3"/>
+      <g stroke="#111111" stroke-width="3">
+        <line x1="0" y1="-34" x2="0" y2="-46"/>
+        <line x1="0" y1="34" x2="0" y2="46"/>
+        <line x1="-34" y1="0" x2="-46" y2="0"/>
+        <line x1="34" y1="0" x2="46" y2="0"/>
+        <line x1="-24" y1="-24" x2="-33" y2="-33"/>
+        <line x1="24" y1="-24" x2="33" y2="-33"/>
+        <line x1="-24" y1="24" x2="-33" y2="33"/>
+        <line x1="24" y1="24" x2="33" y2="33"/>
+      </g>
+      <!-- one broken tooth, orange -->
+      <line x1="0" y1="-34" x2="0" y2="-46" stroke="#FF4D00" stroke-width="5"/>
+    </g>
+  </g>
+  <!-- crack mark under gear -->
+  <path d="M 250 170 L 242 186 L 252 196 L 244 210" fill="none" stroke="#FF4D00" stroke-width="3"/>
+
+  <!-- payment rail -->
+  <line x1="180" y1="225" x2="740" y2="225" stroke="#111111" stroke-width="4"/>
+  <line x1="180" y1="245" x2="740" y2="245" stroke="#111111" stroke-width="4"/>
+  <!-- broken gap in the rail -->
+  <rect x="330" y="218" width="46" height="34" fill="#FFFDF5"/>
+  <path d="M 330 225 L 338 245 M 376 225 L 368 245" stroke="#111111" stroke-width="3"/>
+
+  <!-- tokens travelling along the rail, slow -->
+  <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 190 235 L 330 235"/>
+  </circle>
+  <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="12s" begin="4s" repeatCount="indefinite" path="M 190 235 L 330 235"/>
+  </circle>
+  <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="12s" begin="8s" repeatCount="indefinite" path="M 190 235 L 330 235"/>
+  </circle>
+  <!-- token falling through the gap -->
+  <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animate attributeName="cy" values="235;235;330" keyTimes="0;0.55;1" dur="12s" begin="2s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="330;353;353" keyTimes="0;0.55;1" dur="12s" begin="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.9;1" dur="12s" begin="2s" repeatCount="indefinite"/>
+  </circle>
+  <!-- tokens resuming after the gap, slower -->
+  <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" path="M 376 235 L 730 235"/>
+  </circle>
+  <circle r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="14s" begin="7s" repeatCount="indefinite" path="M 376 235 L 730 235"/>
+  </circle>
+
+  <!-- destination bank cells -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="560" y="150" width="56" height="150"/>
+    <rect x="632" y="150" width="56" height="150"/>
+    <rect x="704" y="150" width="56" height="150"/>
+  </g>
+  <rect x="560" y="150" width="56" height="26" fill="#111111"/>
+  <rect x="632" y="150" width="56" height="26" fill="#111111"/>
+  <rect x="704" y="150" width="56" height="26" fill="#111111"/>
+  <!-- stalled dials on destination cells -->
+  <circle cx="588" cy="240" r="16" fill="none" stroke="#111111" stroke-width="2"/>
+  <line x1="588" y1="240" x2="588" y2="228" stroke="#FF4D00" stroke-width="3">
+    <animateTransform attributeName="transform" type="rotate" values="-40;40;-40" dur="9s" repeatCount="indefinite" additive="sum"/>
+  </line>
+  <circle cx="660" cy="240" r="16" fill="none" stroke="#111111" stroke-width="2"/>
+  <line x1="660" y1="240" x2="660" y2="228" stroke="#FF4D00" stroke-width="3">
+    <animateTransform attributeName="transform" type="rotate" values="40;-40;40" dur="11s" repeatCount="indefinite" additive="sum"/>
+  </line>
+  <circle cx="732" cy="240" r="16" fill="none" stroke="#111111" stroke-width="2"/>
+  <line x1="732" y1="240" x2="732" y2="228" stroke="#FF4D00" stroke-width="3">
+    <animateTransform attributeName="transform" type="rotate" values="-25;25;-25" dur="8s" repeatCount="indefinite" additive="sum"/>
+  </line>
+
+  <!-- queue drum below the gap -->
+  <ellipse cx="353" cy="360" rx="52" ry="16" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <path d="M 301 360 L 301 392 A 52 16 0 0 0 405 392 L 405 360" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <ellipse cx="353" cy="392" rx="52" ry="16" fill="none" stroke="#111111" stroke-width="3"/>
+  <line x1="353" y1="344" x2="353" y2="330" stroke="#111111" stroke-width="2"/>
+  <circle cx="353" cy="326" r="5" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <!-- slow falling token into the queue -->
+  <circle r="7" fill="#FFFDF5" stroke="#111111" stroke-width="2">
+    <animate attributeName="cy" values="250;250;344" keyTimes="0;0.5;1" dur="12s" begin="5s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="353;353;353" dur="12s" begin="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.55;1" dur="12s" begin="5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

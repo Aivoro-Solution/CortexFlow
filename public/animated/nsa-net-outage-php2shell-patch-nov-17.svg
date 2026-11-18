@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a press stamps a patch onto a server cell while a gauge needle rests in the orange zone">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- floor line -->
+  <line x1="60" y1="380" x2="740" y2="380" stroke="#111111" stroke-width="3"/>
+
+  <!-- ============ server cell (right) ============ -->
+  <g>
+    <rect x="480" y="150" width="180" height="230" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <!-- rack slots -->
+    <g stroke="#111111" stroke-width="2">
+      <line x1="496" y1="185" x2="644" y2="185"/>
+      <line x1="496" y1="215" x2="644" y2="215"/>
+      <line x1="496" y1="245" x2="644" y2="245"/>
+      <line x1="496" y1="275" x2="644" y2="275"/>
+      <line x1="496" y1="305" x2="644" y2="305"/>
+      <line x1="496" y1="335" x2="644" y2="335"/>
+    </g>
+    <!-- slot ticks -->
+    <g stroke="#111111" stroke-width="2">
+      <line x1="510" y1="172" x2="510" y2="182"/><line x1="530" y1="172" x2="530" y2="182"/>
+      <line x1="510" y1="202" x2="510" y2="212"/><line x1="530" y1="202" x2="530" y2="212"/>
+      <line x1="510" y1="232" x2="510" y2="242"/><line x1="530" y1="232" x2="530" y2="242"/>
+      <line x1="510" y1="262" x2="510" y2="272"/><line x1="530" y1="262" x2="530" y2="272"/>
+      <line x1="510" y1="292" x2="510" y2="302"/><line x1="530" y1="292" x2="530" y2="302"/>
+      <line x1="510" y1="322" x2="510" y2="332"/><line x1="530" y1="322" x2="530" y2="332"/>
+    </g>
+    <!-- dark status lamp: slowly blinking (cell is down) -->
+    <circle cx="628" cy="168" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="opacity" values="1;0.15;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <!-- orange patch plate on top of the cell -->
+    <rect x="492" y="132" width="156" height="18" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <circle cx="512" cy="141" r="3" fill="#FFFDF5" stroke="#111111" stroke-width="1.5"/>
+    <circle cx="628" cy="141" r="3" fill="#FFFDF5" stroke="#111111" stroke-width="1.5"/>
+  </g>
+
+  <!-- ============ press (top center, descends slowly) ============ -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 22; 0 0" dur="8s" repeatCount="indefinite"/>
+    <rect x="500" y="30" width="140" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="540" y="56" width="60" height="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="556" y="90" width="28" height="42" fill="#111111"/>
+    <line x1="500" y1="30" x2="470" y2="14" stroke="#111111" stroke-width="3"/>
+    <line x1="640" y1="30" x2="670" y2="14" stroke="#111111" stroke-width="3"/>
+  </g>
+  <!-- press guide rails -->
+  <line x1="470" y1="14" x2="470" y2="120" stroke="#111111" stroke-width="2" stroke-dasharray="6 6"/>
+  <line x1="670" y1="14" x2="670" y2="120" stroke="#111111" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <!-- ============ gauge (left-center) ============ -->
+  <g>
+    <circle cx="270" cy="280" r="72" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <!-- orange danger arc -->
+    <path d="M 270 208 A 72 72 0 0 1 332 318" fill="none" stroke="#FF4D00" stroke-width="14"/>
+    <!-- ticks -->
+    <g stroke="#111111" stroke-width="2">
+      <line x1="270" y1="216" x2="270" y2="230"/>
+      <line x1="214" y1="244" x2="226" y2="252"/>
+      <line x1="314" y1="244" x2="326" y2="252"/>
+      <line x1="206" y1="280" x2="220" y2="280"/>
+      <line x1="320" y1="280" x2="334" y2="280"/>
+      <line x1="214" y1="316" x2="226" y2="308"/>
+      <line x1="314" y1="316" x2="326" y2="308"/>
+    </g>
+    <!-- needle: slow sweep into the orange zone and back -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-40 270 280; 38 270 280; -40 270 280" dur="12s" repeatCount="indefinite"/>
+      <line x1="270" y1="280" x2="270" y2="226" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <circle cx="270" cy="280" r="9" fill="#111111"/>
+    <!-- gauge stand -->
+    <line x1="270" y1="352" x2="270" y2="380" stroke="#111111" stroke-width="4"/>
+    <line x1="238" y1="380" x2="302" y2="380" stroke="#111111" stroke-width="4"/>
+  </g>
+
+  <!-- ============ queue of delayed jobs (bottom left, inching forward) ============ -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 26 0; 0 0" dur="10s" repeatCount="indefinite"/>
+    <g fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <rect x="80" y="330" width="34" height="34"/>
+      <rect x="126" y="330" width="34" height="34"/>
+      <rect x="172" y="330" width="34" height="34"/>
+    </g>
+    <g stroke="#111111" stroke-width="2">
+      <line x1="92" y1="342" x2="102" y2="342"/><line x1="92" y1="352" x2="102" y2="352"/>
+      <line x1="138" y1="342" x2="148" y2="342"/><line x1="138" y1="352" x2="148" y2="352"/>
+      <line x1="184" y1="342" x2="194" y2="342"/><line x1="184" y1="352" x2="194" y2="352"/>
+    </g>
+  </g>
+  <!-- queue rail -->
+  <line x1="70" y1="368" x2="230" y2="368" stroke="#111111" stroke-width="2" stroke-dasharray="4 6"/>
+  <!-- one orange job at the head of the queue -->
+  <rect x="218" y="330" width="34" height="34" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ============ slow rotating gear (top left, 40s) ============ -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 110 90; 360 110 90" dur="40s" repeatCount="indefinite"/>
+    <circle cx="110" cy="90" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="110" cy="90" r="10" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <g stroke="#111111" stroke-width="4" stroke-linecap="round">
+      <line x1="110" y1="52" x2="110" y2="66"/>
+      <line x1="110" y1="114" x2="110" y2="128"/>
+      <line x1="72" y1="90" x2="86" y2="90"/>
+      <line x1="134" y1="90" x2="148" y2="90"/>
+      <line x1="83" y1="63" x2="93" y2="73"/>
+      <line x1="127" y1="107" x2="137" y2="117"/>
+      <line x1="137" y1="63" x2="127" y2="73"/>
+      <line x1="93" y1="107" x2="83" y2="117"/>
+    </g>
+  </g>
+
+  <!-- corner registration marks -->
+  <g stroke="#111111" stroke-width="2">
+    <line x1="20" y1="20" x2="40" y2="20"/><line x1="20" y1="20" x2="20" y2="40"/>
+    <line x1="780" y1="20" x2="760" y2="20"/><line x1="780" y1="20" x2="780" y2="40"/>
+    <line x1="20" y1="430" x2="40" y2="430"/><line x1="20" y1="430" x2="20" y2="410"/>
+    <line x1="780" y1="430" x2="760" y2="430"/><line x1="780" y1="430" x2="780" y2="410"/>
+  </g>
+</svg>

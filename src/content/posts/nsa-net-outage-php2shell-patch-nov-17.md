@@ -1,6 +1,6 @@
 ---
 title: "An AI Found a 14-Year-Old Bug in PHP. The Patch for It Just Took Down the NSA's Classified Network"
-description: "The patch for PHP2Shell, an AI-found PHP flaw, took down the NSA's classified network on Nov 17. What happened — and a 5-part patch-resilience pattern for n8n builders."
+description: "The patch for PHP2Shell, an AI-found PHP flaw, took down the NSA's classified network on Nov 17 — and a 5-part patch-resilience pattern for n8n builders."
 date: 2026-11-18
 category: news
 tags: ["AI agents", "PHP2Shell", "NSA", "n8n", "patching"]

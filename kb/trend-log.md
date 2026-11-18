@@ -1,3 +1,26 @@
+## 2026-11-18 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): #1 "argentina vs costa rica" 200K+; **"nsa" — 200K+ searches, 16h ago, still Active, +26 more related**; **"apple outage" — 200K+ searches, 10h ago, still Active, +43 more related**; "cyberattack" 100K+ (23h ago, +4 more); rest sports (pistons vs spurs, knicks vs raptors, usa vs haiti, cfp rankings), celebrities, "game awards" 200K+, "when does gta 6 come out" 200K+. **Two niche entries: "nsa" + "apple outage"** — both verified by news search (see PICKED).
+- **Explore, US, past 7 days** (Nov 11–18, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): direct fetch hit HTTP 429; data read via live browser on the same URL (03:20–03:25 UTC). **No CAPTCHA / unusual-traffic check; URL kept all four q= terms.** Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 16, 1:30 PM; next 94 Nov 15, 92 Nov 12), n8n 4 (peak 12 Nov 16, 1:30 PM), AI automation 7 (peak 29 Nov 13, 5:30 PM), MCP server 5 (peak 14, tied Nov 11 + Nov 16, 1:30 PM). Top subregions for "AI agent": Kansas 100, Virginia 38, Washington 37, California 36, New York 36.
+
+### Rising / breakout queries found
+- **"AI agent"**: panel FAILED — "Oops! Something went wrong. Please try again in a bit." No rising (or top) queries shown this run.
+- **"n8n"** (1–5 of 16, all Breakout): "nod by n8n" — Breakout; "claude duet" — Breakout; "is n8n free?" — Breakout; "what is n8n and how does it work" — Breakout; "flowise" — Breakout.
+- **"AI automation"**: Rising option greyed out/disabled — panel stayed on Top (ai and automation 100, what is ai automation 57, what is automation 51, ai automation tools 31, business automation ai 27). No rising percentages shown.
+- **"MCP server"**: Rising option greyed out/disabled — panel stayed on Top (what is mcp 100, what is mcp server 100, mcp server claude 95, ai mcp server 88, what is an mcp 43). No rising percentages shown.
+
+### PICKED — PUBLISHED 2026-11-18 (morning run)
+- **"nsa" (Trending Now US, 200K+ searches, past 24h, still Active)** → article `nsa-net-outage-php2shell-patch-nov-17.md` — "An AI Found a 14-Year-Old Bug in PHP. The Patch for It Just Took Down the NSA's Classified Network". [PUBLISH DETAILS TO BE ADDED AFTER DEPLOY]
+
+### Skipped (notable)
+- "nod by n8n" — published Nov 13 evening (Nod article); same story, no new angle.
+- "claude duet" (n8n Breakout) — Oct 21 launch, 4 weeks old, skipped repeatedly; watch item.
+- "is n8n free?" / "what is n8n and how does it work" — definitional, no dated event.
+- "flowise" (n8n Breakout) — open-source low-code LLM app builder; no dated November event verified in this run; watch item.
+- "apple outage" (Trending Now US, 200K+) — Apple services outage Nov 17 (internal update, not a cyberattack per Apple to Bloomberg; App Store, iCloud sign-in, Apple Pay, Apple Music; Apple Pay Downdetector reports peaked ~12:15 p.m. ET); folded into the NSA article as the 4th outage in the 6-day wave — the NSA story is the stronger pick (direct AI-found-bug hook + Congress briefing).
+- "cyberattack" (Trending Now US, 100K+) — generic term riding the same outage-wave news; no separate story.
+
 ## 2026-11-17 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked

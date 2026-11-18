@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: a bracketed database identifier passing a placeholder check">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- title bar -->
+  <rect x="40" y="36" width="330" height="10" fill="#111111"/>
+  <rect x="40" y="54" width="210" height="10" fill="#111111" opacity="0.35"/>
+
+  <!-- conveyor track -->
+  <line x1="60" y1="330" x2="740" y2="330" stroke="#111111" stroke-width="3"/>
+  <line x1="60" y1="346" x2="740" y2="346" stroke="#111111" stroke-width="1.5" opacity="0.4"/>
+  <g stroke="#111111" stroke-width="2">
+    <line x1="120" y1="330" x2="120" y2="346"/><line x1="220" y1="330" x2="220" y2="346"/>
+    <line x1="320" y1="330" x2="320" y2="346"/><line x1="420" y1="330" x2="420" y2="346"/>
+    <line x1="520" y1="330" x2="520" y2="346"/><line x1="620" y1="330" x2="620" y2="346"/>
+    <line x1="700" y1="330" x2="700" y2="346"/>
+  </g>
+
+  <!-- placeholder-check gate -->
+  <g>
+    <rect x="380" y="150" width="40" height="180" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="380" y="150" width="40" height="26" fill="#FF4D00"/>
+    <circle cx="400" cy="240" r="16" fill="none" stroke="#111111" stroke-width="3"/>
+    <line x1="392" y1="232" x2="408" y2="248" stroke="#111111" stroke-width="3"/>
+    <line x1="408" y1="232" x2="392" y2="248" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- travelling bracketed identifier block -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="-160 0; 640 0; -160 0" dur="24s" repeatCount="indefinite"/>
+    <!-- table block -->
+    <rect x="150" y="230" width="180" height="100" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="150" y1="263" x2="330" y2="263" stroke="#111111" stroke-width="2"/>
+    <line x1="150" y1="296" x2="330" y2="296" stroke="#111111" stroke-width="2"/>
+    <!-- brackets -->
+    <path d="M 168 240 L 158 240 L 158 320 L 168 320" fill="none" stroke="#111111" stroke-width="4"/>
+    <path d="M 312 240 L 322 240 L 322 320 L 312 320" fill="none" stroke="#111111" stroke-width="4"/>
+    <!-- dollar token inside brackets -->
+    <circle cx="240" cy="280" r="26" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="26; 30; 26" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M 240 262 L 240 298 M 232 268 Q 240 262 248 268 M 248 292 Q 240 298 232 292" fill="none" stroke="#FFFDF5" stroke-width="4" stroke-linecap="round"/>
+    <!-- small data rows -->
+    <rect x="272" y="246" width="34" height="8" fill="#111111" opacity="0.6"/>
+    <rect x="272" y="279" width="34" height="8" fill="#111111" opacity="0.6"/>
+    <rect x="272" y="312" width="34" height="8" fill="#111111" opacity="0.6"/>
+    <rect x="176" y="279" width="26" height="8" fill="#111111" opacity="0.6"/>
+    <rect x="176" y="312" width="26" height="8" fill="#111111" opacity="0.6"/>
+  </g>
+
+  <!-- passing signal: orange check travelling to the right end -->
+  <g>
+    <circle cx="660" cy="120" r="34" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <path d="M 646 120 L 657 131 L 676 109" fill="none" stroke="#FFFDF5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <animate attributeName="opacity" values="0.25; 1; 0.25" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- rotating gear accent -->
+  <g transform="translate(90 110)">
+    <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+      <circle r="26" fill="#FFFDF5"/>
+      <line x1="0" y1="-34" x2="0" y2="-18"/><line x1="0" y1="18" x2="0" y2="34"/>
+      <line x1="-34" y1="0" x2="-18" y2="0"/><line x1="18" y1="0" x2="34" y2="0"/>
+      <line x1="-24" y1="-24" x2="-13" y2="-13"/><line x1="13" y1="13" x2="24" y2="24"/>
+      <line x1="24" y1="-24" x2="13" y2="-13"/><line x1="-13" y1="13" x2="-24" y2="24"/>
+    </g>
+    <circle r="8" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 90 110" to="360 90 110" dur="48s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting dashes -->
+  <g stroke="#111111" stroke-width="2" opacity="0.5">
+    <line x1="470" y1="90" x2="540" y2="90">
+      <animate attributeName="x1" values="470; 500; 470" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="540; 570; 540" dur="8s" repeatCount="indefinite"/>
+    </line>
+    <line x1="560" y1="120" x2="610" y2="120">
+      <animate attributeName="x1" values="560; 580; 560" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="610; 630; 610" dur="11s" repeatCount="indefinite"/>
+    </line>
+  </g>
+</svg>

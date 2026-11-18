@@ -42,6 +42,11 @@ The binary data lookup immediately below it already uses the current item index 
 
 Two details from the issue narrow the blast radius. First, the separate **AWS S3 node** (`AwsS3V2`) already reads this parameter with the current item index — only the S3-compatible node is affected, so if your bucket is on AWS itself, switching nodes dodges the bug entirely. Second, the reporter verified the defect with a unit test using two items with different binary field names: the test fails without the fix and passes with it. The reporter opened [PR #44302](https://github.com/n8n-io/n8n/pull/44302) the same day — a one-line change plus a regression test in `nodes/S3/__tests__/S3.node.operation.test.ts` (all 10 tests pass with the fix). Until that fix ships in a release you run, the workarounds below are the way through.
 
+<figure class="shot">
+  <img src="/figures/fix-n8n-s3-upload-wrong-binary-field-selector-dial.svg" alt="Isometric index-0 selector dial machine: a stamping press whose rotary field-name selector is locked at 0, stamping item 1's label data onto both parcels on a conveyor; item 2's own attachment tag lies unread beside it, and a lit orange lever is the rename fix" loading="lazy" />
+  <figcaption>The index-0 selector dial, as a machine. The press's rotary selector is locked at <code>0</code> — the <code>getNodeParameter('binaryPropertyName', 0)</code> call in <code>S3.node.ts</code> — so it stamps item 1's label, <code>data</code>, onto both parcels, even though item 2's own tag reads <code>attachment</code> and lies unread beside it. <strong>Notice:</strong> the orange lever is the fix — rename every item's binary key to one fixed name (<code>attachment</code>) in a Code node before the S3 node, and the stuck-at-0 read no longer matters. The Download operation in the same file and the separate AWS S3 node already read the current item index, which is how you know only this upload read is broken (GH #44299).</figcaption>
+</figure>
+
 ## Step 1 - Confirm you have this exact bug
 
 Before changing anything, run the two-item test so you are not chasing a different upload problem (S3 upload errors have several unrelated causes, from endpoint and credential issues to bucket policies).

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract video persona console">
+  <defs>
+    <pattern id="finegrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111111" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#finegrid)"/>
+
+  <!-- Conversation timeline (lower third, dotted) -->
+  <line x1="60" y1="370" x2="740" y2="370" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 10"/>
+
+  <!-- LEFT: video persona screen -->
+  <rect x="120" y="100" width="260" height="200" rx="20" fill="#FFFFFF" stroke="#111111" stroke-width="3"/>
+  <!-- screen stand -->
+  <path d="M230 300 V318 M270 300 V318 M208 318 H292" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Abstract face: gently nodding (slow rotate about face centre) -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="-2 250 205; 2 250 205; -2 250 205" dur="12s" repeatCount="indefinite"/>
+    <!-- left eye: blinks (scaleY to ~0.1 briefly, 6s cycle) -->
+    <g transform="translate(210 195)">
+      <circle r="9" fill="#111111">
+        <animateTransform attributeName="transform" type="scale" values="1 1; 1 1; 1 0.12; 1 1; 1 1" keyTimes="0; 0.82; 0.88; 0.94; 1" dur="6s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <!-- right eye: blinks in sync -->
+    <g transform="translate(290 195)">
+      <circle r="9" fill="#111111">
+        <animateTransform attributeName="transform" type="scale" values="1 1; 1 1; 1 0.12; 1 1; 1 1" keyTimes="0; 0.82; 0.88; 0.94; 1" dur="6s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <!-- smile -->
+    <path d="M220 245 Q250 272 280 245" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Sound rings pulsing outward from the screen (ink ring) -->
+  <circle cx="400" cy="200" r="14" fill="none" stroke="#111111" stroke-width="2.5">
+    <animate attributeName="r" values="14; 92; 14" keyTimes="0; 0.5; 1" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0; 0.8; 0" keyTimes="0; 0.5; 1" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- RIGHT: reply-timing dial -->
+  <circle cx="630" cy="140" r="46" fill="#FFFFFF" stroke="#111111" stroke-width="2.5"/>
+  <path d="M630 102 V112 M594 140 H604 M666 140 H656 M604 114 L611 121 M656 114 L649 121" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round"/>
+  <line x1="630" y1="140" x2="630" y2="102" stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" values="-28 630 140; 28 630 140; -28 630 140" dur="10s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="630" cy="140" r="5" fill="#111111"/>
+
+  <!-- RIGHT: waveform bars rising and falling (bottom-anchored at y=310) -->
+  <g fill="#111111">
+    <rect x="470" y="292" width="16" height="18" rx="8">
+      <animate attributeName="height" values="18; 52; 26; 60; 18" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="292; 258; 284; 250; 292" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="508" y="282" width="16" height="28" rx="8">
+      <animate attributeName="height" values="28; 62; 20; 48; 28" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="282; 248; 290; 262; 282" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="546" y="272" width="16" height="38" rx="8">
+      <animate attributeName="height" values="38; 16; 58; 30; 38" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="272; 294; 252; 280; 272" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="584" y="288" width="16" height="22" rx="8">
+      <animate attributeName="height" values="22; 56; 34; 64; 22" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="288; 254; 276; 246; 288" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="622" y="276" width="16" height="34" rx="8">
+      <animate attributeName="height" values="34; 60; 18; 44; 34" dur="6.5s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="276; 250; 292; 266; 276" dur="6.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="660" y="290" width="16" height="20" rx="8">
+      <animate attributeName="height" values="20; 46; 66; 28; 20" dur="7.5s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="290; 264; 244; 282; 290" dur="7.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="698" y="284" width="16" height="26" rx="8">
+      <animate attributeName="height" values="26; 58; 24; 50; 26" dur="8.5s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="284; 252; 286; 260; 284" dur="8.5s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <line x1="460" y1="310" x2="730" y2="310" stroke="#111111" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- ONE orange accent group: staggered sound ring + travelling timeline dot -->
+  <g>
+    <circle cx="400" cy="200" r="14" fill="none" stroke="#FF4D00" stroke-width="2.5">
+      <animate attributeName="r" values="14; 92; 14" keyTimes="0; 0.5; 1" dur="8s" begin="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0; 0.8; 0" keyTimes="0; 0.5; 1" dur="8s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="7" fill="#FF4D00">
+      <animateMotion path="M 60 370 L 740 370" dur="24s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

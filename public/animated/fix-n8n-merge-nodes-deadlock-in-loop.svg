@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Two merge nodes locked in a loop">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- loop track -->
+  <g fill="none" stroke="#111111" stroke-width="3">
+    <path d="M 400 90 A 130 130 0 1 1 270 220" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="72" to="0" dur="12s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 400 90 A 130 130 0 1 1 270 220" stroke="#FF4D00" stroke-width="3" stroke-dasharray="0 420" opacity="0.9">
+      <animate attributeName="stroke-dashoffset" from="0" to="-420" dur="24s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- arrowhead travelling the loop -->
+  <g>
+    <polygon points="0,-8 16,0 0,8" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <animateMotion dur="24s" repeatCount="indefinite" rotate="auto"
+      path="M 400 90 A 130 130 0 1 1 270 220"/>
+  </g>
+
+  <!-- Merge node A -->
+  <g>
+    <rect x="300" y="170" width="120" height="64" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="308" y="178" width="104" height="48" fill="none" stroke="#111111" stroke-width="1.5"/>
+    <circle cx="330" cy="202" r="10" fill="#FF4D00" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="390" cy="202" r="10" fill="#FFFDF5" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="10;13;10" dur="6s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="340" y1="202" x2="380" y2="202" stroke="#111111" stroke-width="2.5"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- Merge node B -->
+  <g>
+    <rect x="480" y="170" width="120" height="64" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="488" y="178" width="104" height="48" fill="none" stroke="#111111" stroke-width="1.5"/>
+    <circle cx="510" cy="202" r="10" fill="#FFFDF5" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="10;13;10" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="570" cy="202" r="10" fill="#FF4D00" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="r" values="10;13;10" dur="6s" begin="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="520" y1="202" x2="560" y2="202" stroke="#111111" stroke-width="2.5"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 6; 0 0" dur="8s" begin="2s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- deadlock link between the two nodes -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <line x1="420" y1="202" x2="480" y2="202"/>
+    <line x1="420" y1="192" x2="432" y2="202" />
+    <line x1="480" y1="192" x2="468" y2="202" />
+  </g>
+  <g>
+    <circle cx="450" cy="202" r="14" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <line x1="442" y1="194" x2="458" y2="210" stroke="#111111" stroke-width="3"/>
+    <line x1="458" y1="194" x2="442" y2="210" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" values="0 450 202; 360 450 202" dur="30s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- waiting dots drifting along the loop -->
+  <g fill="#111111">
+    <circle cx="400" cy="330" r="5">
+      <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="430" cy="330" r="5">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="460" cy="330" r="5">
+      <animate attributeName="opacity" values="1;0.2;1" dur="6s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- sub-workflow escape route -->
+  <g>
+    <path d="M 600 330 L 700 330 L 700 380 L 640 380" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="8 6">
+      <animate attributeName="stroke-dashoffset" from="28" to="0" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <polygon points="640,372 640,388 624,380" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <rect x="660" y="316" width="72" height="28" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    <circle cx="696" cy="330" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+  </g>
+</svg>

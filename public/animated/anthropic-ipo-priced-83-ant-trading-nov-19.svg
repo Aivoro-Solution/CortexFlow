@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract opening-bell and price-gauge animation">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="orangeFade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#FF4D00" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#FF4D00" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- ticker tape band (top) -->
+  <rect x="14" y="14" width="772" height="46" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+  <g clip-path="url(#tapeClip)">
+    <clipPath id="tapeClip">
+      <rect x="16" y="16" width="768" height="42"/>
+    </clipPath>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; -240 0" dur="12s" repeatCount="indefinite"/>
+      <!-- repeating tape segments: abstract dash bars, no text -->
+      <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+        <line x1="30" y1="37" x2="70" y2="37"/>
+        <line x1="90" y1="30" x2="90" y2="44"/>
+        <line x1="110" y1="37" x2="150" y2="37"/>
+        <line x1="170" y1="30" x2="170" y2="44"/>
+        <line x1="190" y1="37" x2="230" y2="37"/>
+        <line x1="250" y1="30" x2="250" y2="44"/>
+        <line x1="270" y1="37" x2="310" y2="37"/>
+        <line x1="330" y1="30" x2="330" y2="44"/>
+        <line x1="350" y1="37" x2="390" y2="37"/>
+        <line x1="410" y1="30" x2="410" y2="44"/>
+        <line x1="430" y1="37" x2="470" y2="37"/>
+        <line x1="490" y1="30" x2="490" y2="44"/>
+        <line x1="510" y1="37" x2="550" y2="37"/>
+        <line x1="570" y1="30" x2="570" y2="44"/>
+        <line x1="590" y1="37" x2="630" y2="37"/>
+        <line x1="650" y1="30" x2="650" y2="44"/>
+        <line x1="670" y1="37" x2="710" y2="37"/>
+        <line x1="730" y1="30" x2="730" y2="44"/>
+        <line x1="750" y1="37" x2="790" y2="37"/>
+        <line x1="810" y1="30" x2="810" y2="44"/>
+        <line x1="830" y1="37" x2="870" y2="37"/>
+        <line x1="890" y1="30" x2="890" y2="44"/>
+        <line x1="910" y1="37" x2="950" y2="37"/>
+        <line x1="970" y1="30" x2="970" y2="44"/>
+        <line x1="990" y1="37" x2="1030" y2="37"/>
+      </g>
+      <g fill="#FF4D00">
+        <circle cx="80" cy="37" r="5"/>
+        <circle cx="320" cy="37" r="5"/>
+        <circle cx="560" cy="37" r="5"/>
+        <circle cx="800" cy="37" r="5"/>
+        <circle cx="1040" cy="37" r="5"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- opening bell, slowly swaying (left) -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="-2 215 250; 2 215 250; -2 215 250" dur="40s" repeatCount="indefinite"/>
+    <!-- hanger -->
+    <line x1="215" y1="92" x2="215" y2="118" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="215" cy="88" r="7" fill="none" stroke="#111111" stroke-width="3"/>
+    <!-- bell dome -->
+    <path d="M 135 250 C 135 175 165 132 215 132 C 265 132 295 175 295 250 L 295 258 L 135 258 Z" fill="none" stroke="#111111" stroke-width="4" stroke-linejoin="round"/>
+    <!-- bell rim -->
+    <rect x="122" y="258" width="186" height="16" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <!-- clapper -->
+    <line x1="215" y1="274" x2="215" y2="302" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="215" cy="312" r="12" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <!-- sound arcs -->
+    <path d="M 108 200 C 96 230 96 262 108 292" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="stroke-opacity" values="0.9; 0.25; 0.9" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 322 200 C 334 230 334 262 322 292" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="stroke-opacity" values="0.25; 0.9; 0.25" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 88 186 C 70 226 70 272 88 312" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="stroke-opacity" values="0.2; 0.8; 0.2" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 342 186 C 360 226 360 272 342 312" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="stroke-opacity" values="0.8; 0.2; 0.8" dur="9s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- price gauge (right) -->
+  <g>
+    <!-- gauge arc: lower range (ink) -->
+    <path d="M 470 330 A 130 130 0 0 1 700 200" fill="none" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
+    <!-- gauge arc: upper lit zone (orange) -->
+    <path d="M 700 200 A 130 130 0 0 1 730 330" fill="none" stroke="#FF4D00" stroke-width="7" stroke-linecap="round"/>
+    <!-- tick marks along the arc -->
+    <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <line x1="470" y1="330" x2="492" y2="330"/>
+      <line x1="496" y1="236" x2="516" y2="244"/>
+      <line x1="570" y1="172" x2="578" y2="192"/>
+      <line x1="652" y1="150" x2="652" y2="172"/>
+      <line x1="730" y1="172" x2="722" y2="192"/>
+    </g>
+    <!-- range marker: priced-above band -->
+    <path d="M 700 200 L 724 214" stroke="#FF4D00" stroke-width="4" stroke-linecap="round"/>
+    <!-- needle drifting upward into the orange zone -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-38 600 330; 8 600 330; -38 600 330" dur="36s" repeatCount="indefinite"/>
+      <line x1="600" y1="330" x2="600" y2="212" stroke="#FF4D00" stroke-width="5" stroke-linecap="round"/>
+      <polygon points="600,200 592,222 608,222" fill="#FF4D00" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+    <!-- gauge hub -->
+    <circle cx="600" cy="330" r="16" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="600" cy="330" r="6" fill="#FF4D00"/>
+    <!-- baseline -->
+    <line x1="470" y1="330" x2="730" y2="330" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- rising share-count bars (bottom centre) -->
+  <g stroke="#111111" stroke-width="3">
+    <rect x="330" y="330" width="26" height="58" fill="#FFFDF5">
+      <animate attributeName="height" values="58; 74; 58" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="330; 314; 330" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="366" y="308" width="26" height="80" fill="#FFFDF5">
+      <animate attributeName="height" values="80; 96; 80" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="308; 292; 308" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="402" y="282" width="26" height="106" fill="url(#orangeFade)">
+      <animate attributeName="height" values="106; 122; 106" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="282; 266; 282" dur="10s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="438" y="352" width="26" height="36" fill="#FFFDF5">
+      <animate attributeName="height" values="36; 52; 36" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="352; 336; 352" dur="8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- rising arrow above the bars -->
+  <path d="M 120 400 L 210 356 L 268 372 L 380 316 L 448 330 L 560 262 L 640 278 L 740 210" fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 14">
+    <animate attributeName="stroke-dashoffset" values="0; -90" dur="12s" repeatCount="indefinite"/>
+  </path>
+  <polygon points="740,210 716,212 732,232" fill="#FF4D00" stroke="#111111" stroke-width="2" stroke-linejoin="round">
+    <animate attributeName="opacity" values="1; 0.4; 1" dur="6s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- drifting spark dots -->
+  <circle cx="120" cy="120" r="5" fill="#FF4D00">
+    <animate attributeName="cy" values="120; 104; 120" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.35; 1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="760" cy="120" r="4" fill="#111111">
+    <animate attributeName="cy" values="120; 106; 120" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9; 0.3; 0.9" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="470" cy="120" r="4" fill="#FF4D00">
+    <animate attributeName="cx" values="470; 486; 470" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.3; 1" dur="9s" repeatCount="indefinite"/>
+  </circle>
+</svg>

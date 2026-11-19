@@ -1,3 +1,35 @@
+## 2026-11-19 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, fetched directly 03:20 UTC): #1 "is gta 6 out" 500K+; "ps5" 200K+; sports dominate (76ers vs magic, warriors vs mavericks, bucks vs heat, grizzlies vs cavaliers, rockets vs pacers, celtics vs nuggets, hawks vs thunder, bulls vs nets, jazz vs lakers, pistons vs pelicans); celebrities (stephen wilson jr, tim mcgraw, john madden, miranda lambert, brooks and dunn, tucker wetmore); "cmas" 100K+; "south florida floods" 100K+; "kfc closing stores" 50K+; "dijon" 50K+; "the comeback king" 20K+; **"anthropic ipo" — 100K+ searches, 14h ago, still Active, +9 more related**. **One niche entry: "anthropic ipo".**
+- **Explore, US, past 7 days** (Nov 12–19, 2026, hourly, multi-seed "AI agent, n8n, AI automation, MCP server"): data read via live browser on the same URL (03:20–03:22 UTC). **No CAPTCHA / unusual-traffic check; no panel failed; URL kept all four q= terms.** Interest-over-time averages (index 0–100): AI agent 24 (peak 100 Nov 16, 1:30 PM), n8n 3 (peak 10 Nov 16, 1:30 PM), AI automation 7 (peak 45 Nov 18, 3:30 PM), MCP server 5 (peak 17 Nov 18, 2:30 PM). Top subregions for "AI agent": Kansas 100, Virginia 37, Washington 36, California 35, New York 34.
+
+### Rising / breakout queries found
+- **"AI agent"** (1–5 of 8): "google ai agent cyber exploit report" — Breakout; **"jpmorgan ai agent financial transactions" — Breakout**; "faa ai agent" — +4,150%; "meet your users where they are with muse connector platform" — +3,600%; "muse — your personal ai agent" — +600%.
+- **"n8n"** (1–5 of 17): "nod by n8n" — Breakout; **"windmill vs n8n" — Breakout**; "openai api key" — Breakout; "n8n v3" — Breakout; "granola" — Breakout.
+- **"AI automation"** (only 2 shown): "what is the purpose of an orchestrator agent" — Breakout; "towards end-to-end automation of ai research" — +4,100%.
+- **"MCP server"** (1–5 of 5): "elevenlabs" — Breakout; "ui ux pro max skill" — Breakout; "claude status" — +500%; "is claude down" — +350%; "google ai studio" — +250%.
+
+### PICKED — PUBLISHED 2026-11-19 (morning run)
+- **"anthropic ipo" (Trending Now US, 100K+ searches, past 24h, still Active)** → article `anthropic-ipo-priced-83-ant-trading-nov-19.md` — "Claude's Maker Just Went Public at $83 — What Anthropic's Record IPO Means for n8n Builders". Verified via Bloomberg/Reuters/CNBC reporting + Anthropic's own Nov 18 announcement + S-1/A filings (Nov 10 + Nov 17) + IPO trackers: **Anthropic priced its IPO at $83.00 per Class A share on Nov 18, 2026, above the $70–$78 range set Nov 10**; offering enlarged to ~980M shares (from 825M) for ~$81.34bn raised — largest IPO on record per Reuters/Bloomberg; fully diluted valuation ~$1.5tn (vs ~$1.26–$1.4tn at range, $965bn Series H May 2026); **trading begins TODAY Nov 19, 2026 on Nasdaq, ticker ANT** (IPO Cross, not the 9:30 a.m. auction); orders reported ~6–7x the shares on offer; underwriters' 30-day option up to 147M more shares; revenue $33.24bn nine months to Sept 30, 2026 vs $2.55bn a year earlier; run-rate ~$81bn as of Oct 31, 2026; committed compute/infrastructure spending ~$900.9bn; $26bn concurrent private placement at IPO price (Google $10bn, Nvidia $10bn, AMD $2.5bn, Broadcom/Micron/Microsoft $1bn each, TSMC $0.5bn); post-IPO stakes Amazon ~14.7%, Google ~13.7%; up to 20% of the offering to individual investors via Schwab/Fidelity/Robinhood/Trade-PMR/SoFi/E*TRADE; lock-up ~180 days, up to ~315M shares tradeable day one (reported); leads Goldman Sachs + Morgan Stanley. **Genuinely new angle vs the Oct 6 article** (which covered the prospectus's existential-risk filing): pricing + first trading day + record size. Builder angle: 5-part pattern for n8n (track quarterly filings as your model's roadmap, keep the second-model fallback live given $900bn compute commitments, suppliers-as-shareholders dependency awareness, use the now-audited risk disclosures as a vendor-risk checklist, never let an agent trade on IPO headlines — approval gate before money moves). No license-verified in-article stock images — image-search returned only news/commercial sources, skipped per standing rule; AI hero + animated SVG + Anatomy figure (ipo-press.svg) shipped. Live: https://cortexflow.tech/blog/anthropic-ipo-priced-83-ant-trading-nov-19/ — Telegram 'Published Blog' sent.
+
+### Skipped (notable)
+- "google ai agent cyber exploit report" (AI agent Breakout) — published Nov 17 morning (GTIG exploit_agent article); same story, no new angle.
+- "faa ai agent" +4,150% — published Nov 15 morning (FAA SMART article); same story, no new angle.
+- "jpmorgan ai agent financial transactions" (AI agent Breakout, new) — runner-up: no dated November launch verified in this run; likely tracks JPMorgan's agent work in payments/financial transactions (possibly tied to the Chase-outage/agent-liability thread already covered Nov 16–17); Anthropic's pricing-day + first-trade-today signal is fresher and bigger. Watch item — verify next run.
+- "meet your users where they are with muse connector platform" +3,600% / "muse — your personal ai agent" +600% — same Muse wave as Nov 16 morning; no fresh Nov 18–19 event; watch item.
+- "nod by n8n" — published Nov 13 evening (Nod article); same story, no new angle.
+- "windmill vs n8n" (n8n Breakout) — comparison query, no dated November event verified; Windmill is an open-source workflow-automation alternative; watch item for a future comparison, not a trend article.
+- "openai api key" (n8n Breakout) — generic/developer query, no dated event.
+- "n8n v3" — n8n 3.2.0 still a pre-release (Nov 10); watch item for the stable 3.x release.
+- "granola" (n8n Breakout) — no dated November event verified; watch item.
+- "what is the purpose of an orchestrator agent" — definitional, skipped repeatedly.
+- "towards end-to-end automation of ai research" +4,100% — research-automation phrase, definitional, no dated event.
+- "elevenlabs" (MCP server Breakout) — no dated November event verified in this run; watch item.
+- "claude status" +500% / "is claude down" +350% — residual from the Nov 13–14 Claude outages already covered Nov 14 morning; no new Claude incident verified.
+- "google ai studio" +250% — published Nov 15 evening (Decisions API); same story.
+- "ui ux pro max skill" — noise, off-niche.
+
 ## 2026-11-18 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked

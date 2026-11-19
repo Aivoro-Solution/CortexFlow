@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: a workflow pipeline whose error branch fades into an empty void">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- sheet -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- main pipeline -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 70 225 L 300 225"/>
+    <path d="M 500 225 L 730 225"/>
+  </g>
+
+  <!-- source node -->
+  <g>
+    <rect x="70" y="185" width="90" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="78" y="193" width="90" height="80" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.25"/>
+    <circle cx="115" cy="225" r="18" fill="none" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="18;22;18" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- failing node -->
+  <g>
+    <rect x="300" y="165" width="200" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="308" y="173" width="200" height="120" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.25"/>
+    <path d="M 340 225 L 380 205 L 420 245 L 460 225" fill="none" stroke="#111111" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="400" cy="225" r="10" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- error branch splitting downward -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 400 285 L 400 360 L 560 360"/>
+  </g>
+
+  <!-- error output void: dashed ring that slowly rotates, fading -->
+  <g transform="translate(620 360)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+      <circle r="34" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="10 8"/>
+    </g>
+    <circle r="12" fill="#FF4D00">
+      <animate attributeName="opacity" values="0.9;0.15;0.9" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="12;7;12" dur="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- packet travelling the main line, pausing at the failing node -->
+  <g>
+    <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animateMotion dur="12s" repeatCount="indefinite" path="M 70 225 L 300 225 L 500 225 L 730 225" keyPoints="0;0.32;0.32;1" keyTimes="0;0.3;0.55;1" calcMode="linear"/>
+    </circle>
+  </g>
+
+  <!-- packet that tries the error branch and dissolves -->
+  <g opacity="0">
+    <circle r="8" fill="none" stroke="#111111" stroke-width="2.5">
+      <animate attributeName="opacity" values="0;1;1;0" dur="12s" repeatCount="indefinite" keyTimes="0;0.1;0.7;1"/>
+      <animateMotion dur="12s" repeatCount="indefinite" path="M 400 285 L 400 360 L 560 360 L 600 360" keyPoints="0;0.35;0.85;1" keyTimes="0;0.35;0.85;1" calcMode="linear"/>
+    </circle>
+  </g>
+
+  <!-- downstream node -->
+  <g>
+    <rect x="640" y="185" width="90" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="648" y="193" width="90" height="80" fill="none" stroke="#111111" stroke-width="1.5" opacity="0.25"/>
+    <path d="M 665 225 L 680 240 L 705 210" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- slow drifting accent ring around the failing node -->
+  <g transform="translate(400 225)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="60s" repeatCount="indefinite"/>
+      <circle r="86" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="4 14" opacity="0.55"/>
+    </g>
+  </g>
+</svg>

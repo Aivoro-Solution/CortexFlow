@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract agent-to-agent trade through a control box animation">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="orangeFade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#FF4D00" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#FF4D00" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- rail line between the two agents -->
+  <line x1="170" y1="225" x2="630" y2="225" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10">
+    <animate attributeName="stroke-dashoffset" values="0; -120" dur="12s" repeatCount="indefinite"/>
+  </line>
+  <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <line x1="170" y1="238" x2="630" y2="238"/>
+  </g>
+  <!-- rail sleepers -->
+  <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+    <line x1="200" y1="218" x2="200" y2="245"/>
+    <line x1="260" y1="218" x2="260" y2="245"/>
+    <line x1="540" y1="218" x2="540" y2="245"/>
+    <line x1="600" y1="218" x2="600" y2="245"/>
+  </g>
+
+  <!-- left agent node (client agent) -->
+  <g>
+    <line x1="140" y1="120" x2="140" y2="150" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="140" cy="112" r="8" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="95" y="150" width="90" height="110" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="125" cy="190" r="9" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="155" cy="190" r="9" fill="none" stroke="#111111" stroke-width="3"/>
+    <line x1="120" y1="222" x2="160" y2="222" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <rect x="110" y="240" width="60" height="8" fill="none" stroke="#111111" stroke-width="2"/>
+    <rect x="110" y="268" width="170" height="6" fill="none" stroke="#111111" stroke-width="2" stroke-opacity="0.5"/>
+  </g>
+
+  <!-- right agent node (bank agent) -->
+  <g>
+    <line x1="660" y1="120" x2="660" y2="150" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="660" cy="112" r="8" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="615" y="150" width="90" height="110" rx="10" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="645" cy="190" r="9" fill="none" stroke="#111111" stroke-width="3"/>
+    <circle cx="675" cy="190" r="9" fill="none" stroke="#111111" stroke-width="3"/>
+    <line x1="640" y1="222" x2="680" y2="222" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <rect x="630" y="240" width="60" height="8" fill="none" stroke="#111111" stroke-width="2"/>
+  </g>
+
+  <!-- central control box -->
+  <g>
+    <rect x="330" y="140" width="140" height="170" rx="8" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <!-- sealed round door -->
+    <circle cx="400" cy="205" r="34" fill="none" stroke="#111111" stroke-width="4"/>
+    <circle cx="400" cy="205" r="22" fill="none" stroke="#111111" stroke-width="2"/>
+    <circle cx="400" cy="205" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <!-- lit gate bar across the box at rail level -->
+    <rect x="336" y="252" width="128" height="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="1; 0.55; 1" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <!-- box feet -->
+    <rect x="348" y="310" width="14" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <rect x="438" y="310" width="14" height="12" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  </g>
+
+  <!-- trade token travelling left agent -> control box -> right agent -->
+  <circle cx="0" cy="0" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M 185 225 L 385 225 L 385 225 L 615 225" keyPoints="0; 0.42; 0.58; 1" keyTimes="0; 0.42; 0.58; 1" calcMode="linear"/>
+    <animate attributeName="opacity" values="1; 1; 0.35; 1" dur="14s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ceiling gauge (top right): needle drifting toward the limit -->
+  <g>
+    <path d="M 520 130 A 70 70 0 0 1 660 60" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 660 60 A 70 70 0 0 1 690 130" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <g stroke="#111111" stroke-width="3" stroke-linecap="round">
+      <line x1="520" y1="130" x2="536" y2="130"/>
+      <line x1="560" y1="76" x2="568" y2="90"/>
+      <line x1="620" y1="62" x2="620" y2="78"/>
+      <line x1="676" y1="84" x2="668" y2="96"/>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-30 605 130; 12 605 130; -30 605 130" dur="36s" repeatCount="indefinite"/>
+      <line x1="605" y1="130" x2="605" y2="76" stroke="#FF4D00" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="605,66 598,84 612,84" fill="#FF4D00" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+    <circle cx="605" cy="130" r="12" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="605" cy="130" r="5" fill="#FF4D00"/>
+    <line x1="520" y1="130" x2="690" y2="130" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- floor gauge (bottom left): needle holding above the floor -->
+  <g>
+    <path d="M 60 380 A 60 60 0 0 1 180 320" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 180 320 A 60 60 0 0 1 200 380" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="18 130 380; -14 130 380; 18 130 380" dur="30s" repeatCount="indefinite"/>
+      <line x1="130" y1="380" x2="130" y2="332" stroke="#FF4D00" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="130,324 123,340 137,340" fill="#FF4D00" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+    <circle cx="130" cy="380" r="11" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="130" cy="380" r="4" fill="#FF4D00"/>
+    <line x1="60" y1="380" x2="200" y2="380" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- rejected ticket dropping into the bin (bottom centre-right) -->
+  <g>
+    <rect x="520" y="360" width="90" height="34" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="536" y="352" width="58" height="20" rx="2" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+      <animate attributeName="y" values="352; 360; 352" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1; 0.4; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="565" cy="362" r="7" fill="none" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="opacity" values="1; 0.4; 1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- drifting spark dots -->
+  <circle cx="300" cy="110" r="5" fill="#FF4D00">
+    <animate attributeName="cy" values="110; 96; 110" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.35; 1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="500" cy="110" r="4" fill="#111111">
+    <animate attributeName="cy" values="110; 98; 110" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9; 0.3; 0.9" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="360" r="4" fill="#FF4D00">
+    <animate attributeName="cx" values="400; 416; 400" dur="9s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.3; 1" dur="9s" repeatCount="indefinite"/>
+  </circle>
+</svg>

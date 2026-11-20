@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Two calendar blocks with a broken timeline bridge between them">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- ground line -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="3"/>
+
+  <!-- left calendar block -->
+  <g>
+    <rect x="110" y="150" width="170" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="110" y="150" width="170" height="44" fill="#111111"/>
+    <line x1="140" y1="222" x2="250" y2="222" stroke="#111111" stroke-width="3"/>
+    <line x1="140" y1="252" x2="250" y2="252" stroke="#111111" stroke-width="3"/>
+    <line x1="140" y1="282" x2="215" y2="282" stroke="#111111" stroke-width="3"/>
+    <rect x="140" y="308" width="46" height="30" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- right calendar block -->
+  <g>
+    <rect x="520" y="150" width="170" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="520" y="150" width="170" height="44" fill="#111111"/>
+    <line x1="550" y1="222" x2="660" y2="222" stroke="#111111" stroke-width="3"/>
+    <line x1="550" y1="252" x2="660" y2="252" stroke="#111111" stroke-width="3"/>
+    <line x1="550" y1="282" x2="625" y2="282" stroke="#111111" stroke-width="3"/>
+    <rect x="550" y="308" width="46" height="30" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="9s" begin="1.5s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- broken timeline bridge: left segment -->
+  <line x1="280" y1="255" x2="368" y2="255" stroke="#111111" stroke-width="4"/>
+  <!-- broken timeline bridge: right segment -->
+  <line x1="432" y1="255" x2="520" y2="255" stroke="#111111" stroke-width="4"/>
+
+  <!-- the gap: falling orange fragment -->
+  <g>
+    <rect x="382" y="240" width="36" height="12" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 34; 0 0" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 0.35; 1" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- drifting hollow circle in the gap (the swallowed value) -->
+  <circle cx="400" cy="255" r="10" fill="none" stroke="#111111" stroke-width="3">
+    <animate attributeName="r" values="10; 16; 10" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.9; 0.25; 0.9" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- slow orbiting gear ring around left block -->
+  <g>
+    <circle cx="195" cy="255" r="118" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 10" stroke-opacity="0.5"/>
+    <circle cx="195" cy="137" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 195 255" to="360 195 255" dur="40s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- slow orbiting gear ring around right block -->
+  <g>
+    <circle cx="605" cy="255" r="118" fill="none" stroke="#111111" stroke-width="2" stroke-dasharray="4 10" stroke-opacity="0.5"/>
+    <circle cx="605" cy="137" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="rotate" from="360 605 255" to="0 605 255" dur="40s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- small tick marks under the gap -->
+  <line x1="380" y1="360" x2="380" y2="376" stroke="#FF4D00" stroke-width="4"/>
+  <line x1="400" y1="360" x2="400" y2="372" stroke="#111111" stroke-width="3"/>
+  <line x1="420" y1="360" x2="420" y2="376" stroke="#FF4D00" stroke-width="4"/>
+</svg>

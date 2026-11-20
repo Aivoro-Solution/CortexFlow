@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract code quality gate animation">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 H 0 V 20" fill="none" stroke="#111111" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FF4D00" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FF4D00" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FF4D00" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cream drawing sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="2"/>
+
+  <!-- Slow rotating dashed ring behind the gate -->
+  <g transform="translate(400 225)">
+    <circle r="150" fill="none" stroke="#111111" stroke-width="1.5" stroke-dasharray="4 10" stroke-opacity="0.35">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="118" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="2 8" stroke-opacity="0.25">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="90s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Conveyor track -->
+  <line x1="40" y1="300" x2="760" y2="300" stroke="#111111" stroke-width="2"/>
+  <line x1="40" y1="316" x2="760" y2="316" stroke="#111111" stroke-width="2"/>
+  <g stroke="#111111" stroke-width="1.5" stroke-opacity="0.5">
+    <line x1="80" y1="300" x2="80" y2="316"/>
+    <line x1="160" y1="300" x2="160" y2="316"/>
+    <line x1="240" y1="300" x2="240" y2="316"/>
+    <line x1="320" y1="300" x2="320" y2="316"/>
+    <line x1="480" y1="300" x2="480" y2="316"/>
+    <line x1="560" y1="300" x2="560" y2="316"/>
+    <line x1="640" y1="300" x2="640" y2="316"/>
+    <line x1="720" y1="300" x2="720" y2="316"/>
+  </g>
+
+  <!-- Flowing tape of code blocks (pattern repeats every 200px, so the 200px loop jump is seamless) -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" from="0 0" to="200 0" dur="24s" repeatCount="indefinite"/>
+    <!-- tile A -->
+    <g>
+      <g transform="translate(-160 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="92" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="70" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="104" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#FF4D00"/>
+      </g>
+      <g transform="translate(40 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="80" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="104" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="60" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#111111"/>
+      </g>
+    </g>
+    <!-- tile B (identical, offset 200px) -->
+    <g>
+      <g transform="translate(40 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="92" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="70" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="104" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#FF4D00"/>
+      </g>
+      <g transform="translate(240 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="80" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="104" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="60" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#111111"/>
+      </g>
+    </g>
+    <!-- tile C (identical, offset 400px) -->
+    <g>
+      <g transform="translate(240 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="92" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="70" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="104" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#FF4D00"/>
+      </g>
+      <g transform="translate(440 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="80" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="104" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="60" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#111111"/>
+      </g>
+    </g>
+    <!-- tile D (identical, offset 600px) -->
+    <g>
+      <g transform="translate(440 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="92" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="70" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="104" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#FF4D00"/>
+      </g>
+      <g transform="translate(640 0)">
+        <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+        <line x1="12" y1="254" x2="80" y2="254" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="266" x2="104" y2="266" stroke="#111111" stroke-width="3"/>
+        <line x1="12" y1="278" x2="60" y2="278" stroke="#111111" stroke-width="3"/>
+        <circle cx="106" cy="250" r="4" fill="#111111"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Scanning gate frame -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <line x1="372" y1="120" x2="372" y2="330"/>
+    <line x1="428" y1="120" x2="428" y2="330"/>
+    <line x1="356" y1="120" x2="444" y2="120"/>
+    <line x1="356" y1="138" x2="444" y2="138"/>
+  </g>
+  <rect x="356" y="120" width="88" height="18" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <!-- gate feet -->
+  <line x1="352" y1="330" x2="392" y2="330" stroke="#111111" stroke-width="3"/>
+  <line x1="408" y1="330" x2="448" y2="330" stroke="#111111" stroke-width="3"/>
+
+  <!-- Orange scanner beam sweeping slowly inside the gate -->
+  <rect x="376" y="150" width="48" height="26" fill="url(#beamGrad)">
+    <animate attributeName="y" values="150;268;150" keyTimes="0;0.5;1" dur="10s" repeatCount="indefinite"/>
+  </rect>
+  <line x1="376" y1="163" x2="424" y2="163" stroke="#FF4D00" stroke-width="3">
+    <animate attributeName="y1" values="163;281;163" keyTimes="0;0.5;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="y2" values="163;281;163" keyTimes="0;0.5;1" dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Pass indicator: gently pulsing orange lamp on the gate top -->
+  <circle cx="400" cy="110" r="9" fill="#FF4D00" stroke="#111111" stroke-width="2.5">
+    <animate attributeName="opacity" values="1;0.35;1" keyTimes="0;0.5;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="110" r="16" fill="none" stroke="#FF4D00" stroke-width="1.5">
+    <animate attributeName="opacity" values="0.7;0.1;0.7" keyTimes="0;0.5;1" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="14;20;14" keyTimes="0;0.5;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Gate lever rocking gently -->
+  <g transform="translate(444 129)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-14;10;-14" keyTimes="0;0.5;1" dur="12s" repeatCount="indefinite"/>
+      <line x1="0" y1="0" x2="52" y2="-18" stroke="#111111" stroke-width="3"/>
+      <circle cx="56" cy="-20" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+    </g>
+    <circle cx="0" cy="0" r="6" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+  </g>
+
+  <!-- Checked block emerging past the gate, with a small rising orange tick -->
+  <g transform="translate(520 0)">
+    <rect x="0" y="238" width="120" height="56" fill="#FFFDF5" stroke="#111111" stroke-width="2"/>
+    <line x1="12" y1="254" x2="92" y2="254" stroke="#111111" stroke-width="3"/>
+    <line x1="12" y1="266" x2="70" y2="266" stroke="#111111" stroke-width="3"/>
+    <line x1="12" y1="278" x2="104" y2="278" stroke="#111111" stroke-width="3"/>
+    <path d="M 96 282 l 8 8 l 14 -18" fill="none" stroke="#FF4D00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="opacity" values="0.35;1;0.35" keyTimes="0;0.5;1" dur="8s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Slow drifting signal dots above the tape -->
+  <circle cx="120" cy="180" r="4" fill="#FF4D00">
+    <animate attributeName="cy" values="180;164;180" keyTimes="0;0.5;1" dur="9s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="680" cy="180" r="4" fill="#111111">
+    <animate attributeName="cy" values="180;196;180" keyTimes="0;0.5;1" dur="11s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="250" cy="380" r="4" fill="#111111">
+    <animate attributeName="cx" values="250;266;250" keyTimes="0;0.5;1" dur="14s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="580" cy="380" r="4" fill="#FF4D00">
+    <animate attributeName="cx" values="580;564;580" keyTimes="0;0.5;1" dur="13s" repeatCount="indefinite"/>
+  </circle>
+</svg>

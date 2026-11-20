@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated diagram: one emoji face counted as two blocks">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- Ruler along the bottom -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <line x1="90" y1="380" x2="710" y2="380"/>
+    <line x1="90" y1="380" x2="90" y2="360"/>
+    <line x1="215" y1="380" x2="215" y2="366"/>
+    <line x1="340" y1="380" x2="340" y2="360"/>
+    <line x1="465" y1="380" x2="465" y2="366"/>
+    <line x1="590" y1="380" x2="590" y2="360"/>
+    <line x1="710" y1="380" x2="710" y2="366"/>
+  </g>
+  <rect x="90" y="392" width="120" height="10" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="x" values="90;590;90" dur="12s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- One emoji face: circle + two eyes + smile -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -12; 0 0" dur="8s" repeatCount="indefinite"/>
+    <circle cx="250" cy="180" r="95" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="218" cy="158" r="12" fill="#111111"/>
+    <circle cx="282" cy="158" r="12" fill="#111111"/>
+    <path d="M 205 200 Q 250 238 295 200" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="250" cy="180" r="95" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="6 10" opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" values="0 250 180; 360 250 180" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Counting blocks: one whole block splits into two halves -->
+  <g>
+    <rect x="470" y="120" width="110" height="110" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="470" y="120" width="110" height="110" fill="none" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="opacity" values="0.9;0.15;0.9" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <line x1="525" y1="120" x2="525" y2="230" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="0;1;0" dur="6s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 10; 0 0" dur="9s" repeatCount="indefinite"/>
+    <rect x="610" y="150" width="55" height="80" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+    <rect x="665" y="150" width="55" height="80" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  </g>
+
+  <!-- Connector: face to blocks -->
+  <line x1="345" y1="180" x2="470" y2="180" stroke="#111111" stroke-width="3" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" values="0;-36;0" dur="6s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="470" cy="180" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+
+  <!-- Slow orbiting accent dot -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 250 180; 360 250 180" dur="30s" repeatCount="indefinite"/>
+    <circle cx="250" cy="60" r="10" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+  </g>
+</svg>

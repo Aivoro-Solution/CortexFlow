@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a voice-call receptionist handset sends sound waves into a call-routing switchboard">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <path id="routePath" d="M 470 225 L 540 225 L 580 160 L 640 160" fill="none"/>
+    <path id="routePath2" d="M 470 225 L 540 225 L 580 290 L 640 290" fill="none"/>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="20" y="20" width="760" height="410" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- Abstract handset, left -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" values="-3 170 225;3 170 225;-3 170 225" dur="12s" repeatCount="indefinite"/>
+    <!-- receiver body -->
+    <path d="M 120 130 C 100 150 100 300 120 320 C 140 340 190 340 205 320 L 215 290 C 195 300 150 300 135 285 C 125 250 125 200 135 165 C 150 150 195 150 215 160 L 205 130 C 190 110 140 110 120 130 Z"/>
+    <!-- earpiece -->
+    <ellipse cx="132" cy="145" rx="26" ry="18" transform="rotate(-25 132 145)"/>
+    <!-- mouthpiece -->
+    <ellipse cx="132" cy="305" rx="26" ry="18" transform="rotate(25 132 305)" fill="#FF4D00"/>
+    <!-- grip ridges -->
+    <path d="M 165 190 L 195 190 M 165 225 L 195 225 M 165 260 L 195 260" fill="none"/>
+  </g>
+
+  <!-- Coiled cord from handset down to the routing hub -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 215 320 C 260 360 300 300 330 340 C 360 380 400 320 430 350 C 450 368 460 340 470 320"/>
+  </g>
+
+  <!-- Radiating sound-wave rings from the mouthpiece -->
+  <g fill="none" stroke="#111111" stroke-width="3">
+    <circle cx="160" cy="305" r="40" stroke-opacity="0.9">
+      <animate attributeName="r" values="34;110" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values="0.9;0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="160" cy="305" r="40" stroke-opacity="0.9">
+      <animate attributeName="r" values="34;110" dur="8s" begin="2.6s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values="0.9;0" dur="8s" begin="2.6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="160" cy="305" r="40" stroke="#FF4D00" stroke-opacity="0.9">
+      <animate attributeName="r" values="34;110" dur="8s" begin="5.3s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values="0.9;0" dur="8s" begin="5.3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Central routing hub -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="470" cy="225" r="46"/>
+    <circle cx="470" cy="225" r="26" fill="none"/>
+  </g>
+  <circle cx="470" cy="225" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="r" values="10;14;10" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <g>
+    <circle cx="470" cy="225" r="58" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="6 10">
+      <animateTransform attributeName="transform" type="rotate" from="0 470 225" to="360 470 225" dur="45s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Hub spokes -->
+  <g stroke="#111111" stroke-width="2" fill="none">
+    <path d="M 470 179 L 470 199 M 470 251 L 470 271 M 424 225 L 444 225 M 496 225 L 516 225"/>
+  </g>
+
+  <!-- Switchboard routing lines -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <use href="#routePath"/>
+    <use href="#routePath2"/>
+    <path d="M 470 225 L 540 225"/>
+  </g>
+  <!-- Call dots travelling the routes -->
+  <circle r="8" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="9s" repeatCount="indefinite">
+      <mpath href="#routePath"/>
+    </animateMotion>
+  </circle>
+  <circle r="8" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="9s" begin="4.5s" repeatCount="indefinite">
+      <mpath href="#routePath2"/>
+    </animateMotion>
+  </circle>
+
+  <!-- Switchboard panel, right -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="640" y="110" width="110" height="230" rx="6"/>
+    <line x1="640" y1="170" x2="750" y2="170"/>
+    <line x1="640" y1="280" x2="750" y2="280"/>
+  </g>
+  <!-- Jack sockets -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <circle cx="675" cy="140" r="14"/>
+    <circle cx="715" cy="140" r="14"/>
+    <circle cx="675" cy="225" r="14"/>
+    <circle cx="715" cy="225" r="14"/>
+    <circle cx="675" cy="310" r="14"/>
+    <circle cx="715" cy="310" r="14"/>
+  </g>
+  <!-- Live jacks -->
+  <circle cx="675" cy="140" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="opacity" values="1;0.3;1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="715" cy="310" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Patch cord between sockets -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M 675 154 C 660 190 730 190 715 211"/>
+    <path d="M 675 239 C 690 270 700 280 715 296" stroke="#FF4D00"/>
+  </g>
+  <!-- Signal lamp -->
+  <circle cx="695" cy="60" r="12" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <line x1="695" y1="72" x2="695" y2="110" stroke="#111111" stroke-width="3"/>
+
+  <!-- Waveform strip along the bottom -->
+  <g stroke="#111111" stroke-width="2" fill="none">
+    <path d="M 90 400 L 130 400 L 140 380 L 155 415 L 170 390 L 185 405 L 200 400 L 240 400 L 250 385 L 265 412 L 280 395 L 295 402 L 310 400 L 350 400">
+      <animate attributeName="stroke-dashoffset" values="0;-40" dur="10s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="420" cy="400" r="8" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="cy" values="400;388;400;412;400" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <g stroke="#111111" stroke-width="2" fill="none">
+    <path d="M 440 400 L 480 400 L 490 385 L 505 412 L 520 395 L 535 402 L 550 400 L 590 400 L 600 388 L 615 410 L 630 398 L 645 402 L 660 400 L 700 400"/>
+  </g>
+</svg>

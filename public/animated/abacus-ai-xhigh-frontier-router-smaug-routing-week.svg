@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract schematic of a routing junction splitting one incoming line into two diverging paths">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0 H0 V25" fill="none" stroke="#111111" stroke-width="1" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- frame corner ticks -->
+  <g fill="none" stroke="#111111" stroke-width="3">
+    <path d="M28 52 V28 H52"/>
+    <path d="M748 28 H772 V52"/>
+    <path d="M772 398 V422 H748"/>
+    <path d="M52 422 H28 V398"/>
+  </g>
+
+  <!-- incoming single line -->
+  <g fill="none" stroke="#111111" stroke-width="4">
+    <line x1="60" y1="225" x2="330" y2="225"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="2" opacity="0.5">
+    <line x1="60" y1="245" x2="330" y2="245" stroke-dasharray="4 10"/>
+  </g>
+
+  <!-- packet travelling in along the single line -->
+  <circle cx="60" cy="225" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M60 225 H330"/>
+  </circle>
+
+  <!-- upper diverging route -->
+  <path d="M350 225 C460 225 500 115 620 110 L720 110" fill="none" stroke="#111111" stroke-width="4"/>
+  <path d="M350 225 C460 225 500 115 620 110 L720 110" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="2 14">
+    <animate attributeName="stroke-dashoffset" values="0;-64;0" dur="8s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- lower diverging route -->
+  <path d="M350 225 C460 225 500 335 620 340 L720 340" fill="none" stroke="#111111" stroke-width="4"/>
+  <path d="M350 225 C460 225 500 335 620 340 L720 340" fill="none" stroke="#FF4D00" stroke-width="2" stroke-dasharray="2 14">
+    <animate attributeName="stroke-dashoffset" values="0;-64;0" dur="10s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- slow rotating dashed ring around the junction -->
+  <g fill="none" stroke="#111111" stroke-width="2" opacity="0.55">
+    <g>
+      <circle cx="350" cy="225" r="38" stroke-dasharray="6 8"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 350 225" to="360 350 225" dur="45s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- junction hub -->
+  <circle cx="350" cy="225" r="17" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <circle cx="350" cy="225" r="6" fill="#FF4D00">
+    <animate attributeName="r" values="6;9;6" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- switch lever pivoting slowly between the two routes -->
+  <g>
+    <line x1="350" y1="225" x2="414" y2="189" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="414" cy="189" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" values="-28 350 225;28 350 225;-28 350 225" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- route dot travelling the upper path -->
+  <circle cx="350" cy="225" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M350 225 C460 225 500 115 620 110 L720 110"/>
+  </circle>
+
+  <!-- route dot travelling the lower path -->
+  <circle cx="350" cy="225" r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="10s" repeatCount="indefinite" path="M350 225 C460 225 500 335 620 340 L720 340"/>
+  </circle>
+
+  <!-- upper route terminal -->
+  <circle cx="720" cy="110" r="15" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <circle cx="720" cy="110" r="6" fill="#FF4D00">
+    <animate attributeName="r" values="4;9;4" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- lower route terminal -->
+  <circle cx="720" cy="340" r="15" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <circle cx="720" cy="340" r="6" fill="#FF4D00">
+    <animate attributeName="r" values="4;9;4" dur="7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- faint echo arcs drifting outward from the terminals -->
+  <g fill="none" stroke="#111111" stroke-width="2" opacity="0.35">
+    <circle cx="720" cy="110" r="26">
+      <animate attributeName="r" values="22;34;22" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.35;0.08;0.35" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="720" cy="340" r="26">
+      <animate attributeName="r" values="22;34;22" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.35;0.08;0.35" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

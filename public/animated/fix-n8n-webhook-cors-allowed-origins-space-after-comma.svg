@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: two browser windows linked by a cable, one gate open, one blocked">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- orange accent blob, slow drift -->
+  <g>
+    <path d="M 60 40 L 150 40 L 130 90 L 80 90 Z" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 14 6; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- left browser window: origin A, gate open -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="110" y="110" width="220" height="170" />
+    <line x1="110" y1="150" x2="330" y2="150" />
+    <circle cx="132" cy="130" r="6" fill="#111111" stroke="none"/>
+    <circle cx="156" cy="130" r="6" fill="#111111" stroke="none"/>
+    <circle cx="180" cy="130" r="6" fill="#111111" stroke="none"/>
+  </g>
+  <!-- open gate: two panels swung apart -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <g>
+      <rect x="150" y="190" width="46" height="70" />
+      <animateTransform attributeName="transform" type="rotate" values="0 196 225; -14 196 225; 0 196 225" dur="8s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="244" y="190" width="46" height="70" />
+      <animateTransform attributeName="transform" type="rotate" values="0 244 225; 14 244 225; 0 244 225" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <!-- green-free check: orange tick above the open gate -->
+  <path d="M 205 178 l 12 12 l 22 -24" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <animate attributeName="opacity" values="1; 0.35; 1" dur="6s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- cable between windows -->
+  <path d="M 330 225 C 380 190, 420 260, 470 225" fill="none" stroke="#111111" stroke-width="4"/>
+  <!-- packet travelling along the cable -->
+  <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="9s" repeatCount="indefinite" path="M 330 225 C 380 190, 420 260, 470 225"/>
+  </circle>
+
+  <!-- right browser window: origin B, gate blocked -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="470" y="110" width="220" height="170" />
+    <line x1="470" y1="150" x2="690" y2="150" />
+    <circle cx="492" cy="130" r="6" fill="#111111" stroke="none"/>
+    <circle cx="516" cy="130" r="6" fill="#111111" stroke="none"/>
+    <circle cx="540" cy="130" r="6" fill="#111111" stroke="none"/>
+  </g>
+  <!-- closed gate with orange X barrier -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="510" y="190" width="46" height="70" />
+    <rect x="604" y="190" width="46" height="70" />
+  </g>
+  <g stroke="#FF4D00" stroke-width="8" stroke-linecap="round">
+    <line x1="540" y1="190" x2="620" y2="260">
+      <animate attributeName="opacity" values="1; 0.3; 1" dur="6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="620" y1="190" x2="540" y2="260">
+      <animate attributeName="opacity" values="1; 0.3; 1" dur="6s" begin="1s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- origin list strip: two chips, comma gap closing slowly -->
+  <g>
+    <rect x="240" y="320" width="130" height="46" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="270" cy="343" r="10" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="290" y="333" width="20" height="20" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="430" y="320" width="130" height="46" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <circle cx="460" cy="343" r="10" fill="none" stroke="#111111" stroke-width="3"/>
+    <rect x="480" y="333" width="20" height="20" fill="none" stroke="#111111" stroke-width="3"/>
+    <!-- the comma between the chips, drifting toward the left chip = space removed -->
+    <g>
+      <path d="M 392 330 q 10 6 4 16 q -3 8 -10 10" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0; -12 0; 0 0" dur="10s" repeatCount="indefinite"/>
+    </g>
+  </g>
+
+  <!-- slow rotating gear accent -->
+  <g transform="translate(720 380)">
+    <g stroke="#111111" stroke-width="3" fill="none">
+      <circle r="22"/>
+      <line x1="0" y1="-30" x2="0" y2="-14"/>
+      <line x1="0" y1="14" x2="0" y2="30"/>
+      <line x1="-30" y1="0" x2="-14" y2="0"/>
+      <line x1="14" y1="0" x2="30" y2="0"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="36s" repeatCount="indefinite"/>
+    </g>
+    <circle r="6" fill="#FF4D00"/>
+  </g>
+</svg>

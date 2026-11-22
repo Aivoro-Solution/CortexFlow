@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of an always-on agent loop: a signal orbits a product while a gate lever stays raised for human approval">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- outer orbit ring -->
+  <circle cx="400" cy="225" r="150" fill="none" stroke="#111111" stroke-width="3"/>
+  <circle cx="400" cy="225" r="118" fill="none" stroke="#111111" stroke-width="1.5" stroke-dasharray="4 8"/>
+
+  <!-- orbiting signal dot travelling the outer ring -->
+  <g>
+    <circle cx="400" cy="75" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="30s" repeatCount="indefinite"/>
+  </g>
+  <!-- second orbiting dot, opposite phase, slower -->
+  <g>
+    <circle cx="400" cy="75" r="6" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="rotate" from="180 400 225" to="540 400 225" dur="45s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- central product hub -->
+  <rect x="340" y="165" width="120" height="120" rx="6" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+  <rect x="340" y="165" width="120" height="120" rx="6" fill="none" stroke="#111111" stroke-width="1" stroke-opacity="0.15" transform="translate(6 6)"/>
+  <!-- hub dial -->
+  <circle cx="400" cy="225" r="34" fill="none" stroke="#111111" stroke-width="3"/>
+  <line x1="400" y1="225" x2="400" y2="197" stroke="#FF4D00" stroke-width="5" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 225" to="360 400 225" dur="36s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="400" cy="225" r="6" fill="#FF4D00" stroke="#111111" stroke-width="2.5"/>
+
+  <!-- loop spokes: suggest / solve / build / reflect -->
+  <g stroke="#111111" stroke-width="2.5" fill="none">
+    <line x1="400" y1="75" x2="400" y2="105"/>
+    <line x1="550" y1="225" x2="520" y2="225"/>
+    <line x1="400" y1="375" x2="400" y2="345"/>
+    <line x1="250" y1="225" x2="280" y2="225"/>
+  </g>
+  <g fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <circle cx="400" cy="90" r="12"/>
+    <circle cx="535" cy="225" r="12"/>
+    <circle cx="400" cy="360" r="12"/>
+    <circle cx="265" cy="225" r="12"/>
+  </g>
+  <!-- pulsing stage dots, staggered -->
+  <circle cx="400" cy="90" r="5" fill="#FF4D00">
+    <animate attributeName="r" values="4;7;4" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="535" cy="225" r="5" fill="#FF4D00">
+    <animate attributeName="r" values="4;7;4" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="360" r="5" fill="#FF4D00">
+    <animate attributeName="r" values="4;7;4" dur="6s" begin="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="265" cy="225" r="5" fill="#FF4D00">
+    <animate attributeName="r" values="4;7;4" dur="6s" begin="4.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- approval gate: a lever that stays raised, guarding the exit path -->
+  <g>
+    <line x1="620" y1="330" x2="620" y2="400" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+    <line x1="620" y1="330" x2="676" y2="296" stroke="#FF4D00" stroke-width="5" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0 620 330;-4 620 330;0 620 330" dur="8s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="620" cy="330" r="8" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  </g>
+  <!-- exit path from hub toward the gate -->
+  <path d="M 460 285 L 560 285 L 620 330" fill="none" stroke="#111111" stroke-width="2.5" stroke-dasharray="6 6">
+    <animate attributeName="stroke-dashoffset" values="0;-24" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <!-- small parcel travelling the exit path, pausing at the gate -->
+  <rect x="-8" y="-8" width="16" height="16" rx="2" fill="#FFFDF5" stroke="#111111" stroke-width="3">
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 460 285 L 560 285 L 620 330" keyPoints="0;0.55;0.55;1" keyTimes="0;0.4;0.6;1" calcMode="linear"/>
+  </rect>
+
+  <!-- slow drifting signal bar, bottom left -->
+  <g stroke="#111111" stroke-width="2" opacity="0.55">
+    <line x1="60" y1="390" x2="180" y2="390"/>
+    <line x1="60" y1="390" x2="60" y2="370">
+      <animate attributeName="y2" values="370;352;370" dur="7s" repeatCount="indefinite"/>
+    </line>
+    <line x1="110" y1="390" x2="110" y2="362">
+      <animate attributeName="y2" values="362;344;362" dur="7s" begin="1s" repeatCount="indefinite"/>
+    </line>
+    <line x1="160" y1="390" x2="160" y2="374">
+      <animate attributeName="y2" values="374;356;374" dur="7s" begin="2s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <circle cx="60" cy="390" r="4" fill="#FF4D00"/>
+  <circle cx="180" cy="390" r="4" fill="#111111"/>
+</svg>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Animated schematic: a key moves from one project folder to another that already holds the same key, creating a duplicate, then a shield blocks the extra copy">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- cream sheet + fine grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+
+  <!-- orange accent blob, slow drift -->
+  <g>
+    <path d="M 60 40 L 150 40 L 130 90 L 80 90 Z" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 14 6; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- left project folder: project A, one key -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <path d="M 90 130 L 150 130 L 170 155 L 310 155 L 310 300 L 90 300 Z"/>
+    <line x1="90" y1="155" x2="310" y2="155"/>
+  </g>
+  <!-- key inside folder A -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <circle cx="150" cy="230" r="18"/>
+    <line x1="168" y1="230" x2="240" y2="230"/>
+    <line x1="210" y1="230" x2="210" y2="248"/>
+    <line x1="232" y1="230" x2="232" y2="248"/>
+  </g>
+
+  <!-- arrow showing the move, key token travelling along it -->
+  <path d="M 330 225 C 370 190, 410 260, 450 225" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="10 8"/>
+  <g>
+    <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <animateMotion dur="9s" repeatCount="indefinite" path="M 330 225 C 370 190, 410 260, 450 225"/>
+  </g>
+
+  <!-- right project folder: project B, already has the same key -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <path d="M 470 130 L 530 130 L 550 155 L 690 155 L 690 300 L 470 300 Z"/>
+    <line x1="470" y1="155" x2="690" y2="155"/>
+  </g>
+  <!-- original key inside folder B -->
+  <g stroke="#111111" stroke-width="4" fill="none" stroke-linecap="round">
+    <circle cx="530" cy="230" r="18"/>
+    <line x1="548" y1="230" x2="620" y2="230"/>
+    <line x1="590" y1="230" x2="590" y2="248"/>
+    <line x1="612" y1="230" x2="612" y2="248"/>
+  </g>
+  <!-- duplicate ghost key fading in beside it -->
+  <g stroke="#FF4D00" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="6 5">
+    <circle cx="640" cy="262" r="14"/>
+    <line x1="654" y1="262" x2="700" y2="262"/>
+    <line x1="682" y1="262" x2="682" y2="276"/>
+    <animate attributeName="opacity" values="0; 1; 1; 0" dur="9s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- shield check: the fix blocks the duplicate -->
+  <g>
+    <path d="M 400 330 L 400 368 Q 400 392 430 400 Q 460 392 460 368 L 460 330 Z" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <path d="M 414 362 l 12 12 l 22 -24" fill="none" stroke="#FF4D00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="opacity" values="1; 0.35; 1" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="8s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- slow rotating gear accent -->
+  <g transform="translate(720 380)">
+    <g stroke="#111111" stroke-width="3" fill="none">
+      <circle r="22"/>
+      <line x1="0" y1="-30" x2="0" y2="-14"/>
+      <line x1="0" y1="14" x2="0" y2="30"/>
+      <line x1="-30" y1="0" x2="-14" y2="0"/>
+      <line x1="14" y1="0" x2="30" y2="0"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="36s" repeatCount="indefinite"/>
+    </g>
+    <circle r="6" fill="#FF4D00"/>
+  </g>
+</svg>

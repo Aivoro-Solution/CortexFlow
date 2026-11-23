@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic of a web-research waterfall: an agent query drops through provider layers and returns as clean data">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <pattern id="finegrid" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#111111" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#finegrid)"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="6" y="6" width="788" height="438" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- agent console (left) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="60" y="150" width="150" height="150" rx="6"/>
+    <rect x="80" y="175" width="110" height="60" rx="4" fill="#FFFDF5"/>
+    <circle cx="105" cy="205" r="10" fill="#FF4D00" stroke="none">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="80" y1="255" x2="190" y2="255"/>
+    <line x1="80" y1="270" x2="160" y2="270"/>
+    <line x1="80" y1="285" x2="175" y2="285"/>
+  </g>
+  <!-- antenna pulse from console -->
+  <circle cx="135" cy="150" r="6" fill="none" stroke="#FF4D00" stroke-width="2">
+    <animate attributeName="r" values="6;26;6" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="0.9;0.1;0.9" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- query card travelling to the waterfall -->
+  <g>
+    <rect x="0" y="0" width="46" height="30" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    <line x1="8" y1="10" x2="38" y2="10" stroke="#111111" stroke-width="2"/>
+    <line x1="8" y1="18" x2="30" y2="18" stroke="#111111" stroke-width="2"/>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 210 225 L 330 225 L 330 120 L 470 120"/>
+  </g>
+
+  <!-- provider waterfall drum (centre) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <ellipse cx="560" cy="120" rx="110" ry="26"/>
+    <path d="M 450 120 L 450 260 A 110 26 0 0 0 670 260 L 670 120" fill="#FFFDF5"/>
+    <ellipse cx="560" cy="260" rx="110" ry="26" fill="#FFFDF5"/>
+    <!-- provider layers -->
+    <line x1="450" y1="165" x2="670" y2="165"/>
+    <line x1="450" y1="210" x2="670" y2="210"/>
+  </g>
+  <!-- waterfall drops falling through layers -->
+  <g fill="#FF4D00">
+    <circle cx="500" cy="140" r="5">
+      <animate attributeName="cy" values="140;250;140" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.2;1" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="560" cy="150" r="5">
+      <animate attributeName="cy" values="150;250;150" dur="9s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.2;1" dur="9s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="145" r="5">
+      <animate attributeName="cy" values="145;250;145" dur="9s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.2;1" dur="9s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- rotating gauge on the drum -->
+  <g transform="translate(560 190)">
+    <circle r="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <line x1="0" y1="0" x2="0" y2="-20" stroke="#FF4D00" stroke-width="3" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="30s" repeatCount="indefinite"/>
+    </line>
+    <circle r="4" fill="#111111"/>
+  </g>
+
+  <!-- output tray (right bottom) -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M 480 330 L 640 330 L 660 400 L 460 400 Z"/>
+    <line x1="500" y1="355" x2="620" y2="355"/>
+    <line x1="505" y1="375" x2="600" y2="375"/>
+  </g>
+  <!-- clean data card sliding into tray -->
+  <g>
+    <rect x="0" y="0" width="70" height="42" rx="3" fill="#FFFDF5" stroke="#111111" stroke-width="2.5"/>
+    <rect x="8" y="8" width="20" height="8" fill="#FF4D00" stroke="none"/>
+    <line x1="8" y1="26" x2="62" y2="26" stroke="#111111" stroke-width="2"/>
+    <line x1="8" y1="34" x2="48" y2="34" stroke="#111111" stroke-width="2"/>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M 560 290 L 560 330 L 560 340 L 560 330 L 560 290"/>
+  </g>
+
+  <!-- return arrow: tray back to console -->
+  <path d="M 460 415 L 220 415 L 220 330" fill="none" stroke="#111111" stroke-width="2.5" stroke-dasharray="8 6">
+    <animate attributeName="stroke-dashoffset" values="0;-56" dur="7s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 220 330 L 212 342 L 228 342 Z" fill="#111111"/>
+
+  <!-- slow orbiting node -->
+  <g>
+    <circle cx="0" cy="0" r="7" fill="#FF4D00" stroke="#111111" stroke-width="2"/>
+    <animateMotion dur="36s" repeatCount="indefinite" path="M 400 60 A 340 60 0 1 1 399 60"/>
+  </g>
+</svg>

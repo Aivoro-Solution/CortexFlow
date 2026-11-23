@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animation: a static webhook path passes through a CORS checkpoint gate while a dynamic path slips around it">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <path id="staticPath" d="M 120 225 L 330 225 L 330 225 L 470 225 L 680 225" fill="none"/>
+    <path id="dynamicPath" d="M 120 225 C 220 225, 240 330, 330 330 C 420 330, 470 330, 560 330 C 630 330, 660 280, 680 225" fill="none"/>
+  </defs>
+
+  <!-- paper + grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- origin block (left) -->
+  <g>
+    <rect x="60" y="165" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="72" y="177" width="96" height="14" fill="#111111"/>
+    <rect x="72" y="203" width="96" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="72" y="219" width="64" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="72" y="235" width="80" height="6" fill="#111111" opacity="0.55"/>
+    <circle cx="120" cy="262" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- server block (right) -->
+  <g>
+    <rect x="620" y="165" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="632" y="177" width="96" height="14" fill="#111111"/>
+    <rect x="632" y="203" width="96" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="632" y="219" width="64" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="632" y="235" width="80" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="668" y="248" width="24" height="24" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="opacity" values="1;0.35;1" dur="8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- checkpoint gate (center) -->
+  <g>
+    <rect x="370" y="120" width="60" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="382" y="132" width="36" height="10" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="opacity" values="1;0.4;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="382" y="154" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="168" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="182" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="300" width="36" height="18" fill="#111111"/>
+    <circle cx="400" cy="245" r="34" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="6 8">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 245" to="360 400 245" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- static path: straight line through the gate -->
+  <path d="M 180 225 L 370 225" fill="none" stroke="#111111" stroke-width="3"/>
+  <path d="M 430 225 L 620 225" fill="none" stroke="#111111" stroke-width="3"/>
+  <circle r="9" fill="#111111" stroke="#FFFDF5" stroke-width="2">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M 180 225 L 620 225"/>
+  </circle>
+
+  <!-- dynamic path: dashed orange curve slipping under the gate -->
+  <path d="M 180 225 C 260 225, 280 330, 360 330 C 440 330, 480 330, 540 330 C 600 330, 610 280, 620 225" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="10 8"/>
+  <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="10s" repeatCount="indefinite" path="M 180 225 C 260 225, 280 330, 360 330 C 440 330, 480 330, 540 330 C 600 330, 610 280, 620 225"/>
+  </circle>
+
+  <!-- gate shadow / base line -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="3"/>
+  <line x1="60" y1="372" x2="740" y2="372" stroke="#111111" stroke-width="1" opacity="0.35"/>
+</svg>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- two project boxes -->
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="90" y="110" width="220" height="180"/>
+    <rect x="490" y="110" width="220" height="180"/>
+  </g>
+  <rect x="90" y="110" width="220" height="36" fill="#111111"/>
+  <rect x="490" y="110" width="220" height="36" fill="#111111"/>
+  <!-- folder in box A that slides to box B -->
+  <g>
+    <g stroke="#111111" stroke-width="3" fill="#FF4D00">
+      <path d="M 150 210 h 40 l 12 14 h 68 v 70 h -120 z"/>
+    </g>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 340 0; 340 0; 0 0" keyTimes="0; 0.35; 0.65; 1"
+      dur="12s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1; 1; 0; 0" keyTimes="0; 0.35; 0.65; 1"
+      dur="12s" repeatCount="indefinite"/>
+  </g>
+  <!-- ghost of the folder left behind in box A, fading -->
+  <g stroke="#111111" stroke-width="3" fill="none" stroke-dasharray="6 6" opacity="0.45">
+    <path d="M 150 210 h 40 l 12 14 h 68 v 70 h -120 z"/>
+    <animate attributeName="opacity" values="0.45; 0.45; 0.1; 0.45" keyTimes="0; 0.35; 0.65; 1"
+      dur="12s" repeatCount="indefinite"/>
+  </g>
+  <!-- sync arrow between boxes, slow pulse -->
+  <g stroke="#111111" stroke-width="4" fill="none">
+    <path d="M 330 200 H 470" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="0" to="-72" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 458 188 L 478 200 L 458 212" fill="none"/>
+  </g>
+  <!-- orange signal dot travelling along the arrow -->
+  <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="3" cx="330" cy="200">
+    <animate attributeName="cx" values="330; 470; 470; 330" keyTimes="0; 0.35; 0.65; 1"
+      dur="12s" repeatCount="indefinite"/>
+  </circle>
+  <!-- rotating gear-ish ring around box B, very slow -->
+  <g transform="translate(600 340)">
+    <g stroke="#111111" stroke-width="3" fill="none">
+      <circle r="34"/>
+      <path d="M 0 -44 V -30 M 0 30 V 44 M -44 0 H -30 M 30 0 H 44 M -31 -31 L -21 -21 M 21 21 L 31 31 M 31 -31 L 21 -21 M -21 21 L -31 31"/>
+    </g>
+    <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="45s" repeatCount="indefinite" additive="sum"/>
+  </g>
+  <!-- small orange marker in box A -->
+  <circle cx="140" cy="260" r="8" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animate attributeName="r" values="8; 12; 8" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="4"/>
+</svg>

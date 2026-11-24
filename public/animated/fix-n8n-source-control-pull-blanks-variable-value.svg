@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animation: a variable value travels from Git through a sync gate and arrives blanked on the instance">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- paper + grid -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="8" y="8" width="784" height="434" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- git block (left) -->
+  <g>
+    <rect x="60" y="165" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="72" y="177" width="96" height="14" fill="#111111"/>
+    <rect x="72" y="203" width="96" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="72" y="219" width="64" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="72" y="235" width="80" height="6" fill="#111111" opacity="0.55"/>
+    <circle cx="120" cy="262" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="10;13;10" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- instance block (right) -->
+  <g>
+    <rect x="620" y="165" width="120" height="120" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="632" y="177" width="96" height="14" fill="#111111"/>
+    <rect x="632" y="203" width="96" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="632" y="219" width="64" height="6" fill="#111111" opacity="0.55"/>
+    <rect x="632" y="235" width="80" height="6" fill="#111111" opacity="0.55"/>
+    <!-- value slot: solid before, hollow after the sync -->
+    <rect x="668" y="248" width="24" height="24" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="5 4">
+      <animate attributeName="opacity" values="0.35;1;0.35" dur="8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- sync gate (center) -->
+  <g>
+    <rect x="370" y="120" width="60" height="210" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="382" y="132" width="36" height="10" fill="#FF4D00" stroke="#111111" stroke-width="2">
+      <animate attributeName="opacity" values="1;0.4;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="382" y="154" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="168" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="182" width="36" height="6" fill="#111111" opacity="0.6"/>
+    <rect x="382" y="300" width="36" height="18" fill="#111111"/>
+    <circle cx="400" cy="245" r="34" fill="none" stroke="#FF4D00" stroke-width="3" stroke-dasharray="6 8">
+      <animateTransform attributeName="transform" type="rotate" from="0 400 245" to="360 400 245" dur="60s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- sync line through the gate -->
+  <path d="M 180 225 L 370 225" fill="none" stroke="#111111" stroke-width="3"/>
+  <path d="M 430 225 L 620 225" fill="none" stroke="#111111" stroke-width="3"/>
+  <!-- value dot: solid orange leaving Git, fading to hollow past the gate -->
+  <circle r="9" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animateMotion dur="10s" repeatCount="indefinite" path="M 180 225 L 620 225"/>
+    <animate attributeName="opacity" values="1;1;0.25;0.25" keyTimes="0;0.45;0.6;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- base line -->
+  <line x1="60" y1="360" x2="740" y2="360" stroke="#111111" stroke-width="3"/>
+  <line x1="60" y1="372" x2="740" y2="372" stroke="#111111" stroke-width="1" opacity="0.35"/>
+</svg>

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animation of three storage tiers feeding a central core">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- three tiers -->
+  <g fill="none" stroke="#111" stroke-width="3">
+    <rect x="90" y="90" width="180" height="50"/>
+    <rect x="90" y="180" width="180" height="50"/>
+    <rect x="90" y="270" width="180" height="50"/>
+  </g>
+  <g fill="#111">
+    <rect x="110" y="108" width="26" height="14"/>
+    <rect x="150" y="108" width="26" height="14"/>
+    <rect x="190" y="108" width="26" height="14"/>
+    <rect x="110" y="198" width="26" height="14" opacity="0.55"/>
+    <rect x="150" y="198" width="26" height="14" opacity="0.55"/>
+    <rect x="190" y="198" width="26" height="14" opacity="0.55"/>
+    <rect x="110" y="288" width="26" height="14" opacity="0.3"/>
+    <rect x="150" y="288" width="26" height="14" opacity="0.3"/>
+    <rect x="190" y="288" width="26" height="14" opacity="0.3"/>
+  </g>
+  <!-- feed lines -->
+  <g fill="none" stroke="#111" stroke-width="2.5">
+    <path d="M270 115 H430"/>
+    <path d="M270 205 H430"/>
+    <path d="M270 295 H430"/>
+  </g>
+  <!-- moving tokens -->
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="8s" repeatCount="indefinite" path="M270 115 H430"/>
+  </circle>
+  <circle r="7" fill="#111">
+    <animateMotion dur="11s" repeatCount="indefinite" path="M270 205 H430"/>
+  </circle>
+  <circle r="7" fill="#111" opacity="0.5">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M270 295 H430"/>
+  </circle>
+  <!-- central core -->
+  <g>
+    <rect x="430" y="140" width="150" height="150" fill="none" stroke="#111" stroke-width="3"/>
+    <circle cx="505" cy="215" r="34" fill="none" stroke="#111" stroke-width="3">
+      <animate attributeName="r" values="30;38;30" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="505" cy="215" r="10" fill="#FF4D00">
+      <animate attributeName="opacity" values="1;0.45;1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <g stroke="#111" stroke-width="2.5">
+      <line x1="505" y1="155" x2="505" y2="175"/>
+      <line x1="505" y1="255" x2="505" y2="275"/>
+      <line x1="445" y1="215" x2="465" y2="215"/>
+      <line x1="545" y1="215" x2="565" y2="215"/>
+    </g>
+  </g>
+  <!-- output -->
+  <g fill="none" stroke="#111" stroke-width="2.5">
+    <path d="M580 215 H690"/>
+  </g>
+  <circle r="7" fill="#FF4D00">
+    <animateMotion dur="6s" repeatCount="indefinite" path="M580 215 H690"/>
+  </circle>
+  <rect x="690" y="190" width="50" height="50" fill="none" stroke="#111" stroke-width="3"/>
+  <!-- slow rotating ring -->
+  <g>
+    <circle cx="505" cy="215" r="58" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="6 8" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0 505 215" to="360 505 215" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

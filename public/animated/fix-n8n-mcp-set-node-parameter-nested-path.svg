@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Animated schematic: a nested-path edit duplicating a parameters key">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- ghost duplicate panel drifting behind the real one -->
+  <g opacity="0.35">
+    <rect x="250" y="120" width="300" height="170" fill="none" stroke="#111111" stroke-width="3">
+      <animate attributeName="x" values="250;262;250" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="120;132;120" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="270" y="140" width="260" height="26" fill="none" stroke="#111111" stroke-width="2">
+      <animate attributeName="x" values="270;282;270" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="140;152;140" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- real parameters panel -->
+  <g>
+    <rect x="230" y="100" width="300" height="170" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <rect x="250" y="120" width="260" height="26" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+    <rect x="250" y="160" width="180" height="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <rect x="250" y="192" width="220" height="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+    <rect x="250" y="224" width="150" height="18" fill="none" stroke="#111111" stroke-width="2.5"/>
+  </g>
+  <!-- edit arrow travelling from the MCP tool (left) to the panel -->
+  <g>
+    <circle cx="120" cy="185" r="34" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <circle cx="120" cy="185" r="12" fill="#FF4D00" stroke="#111111" stroke-width="3">
+      <animate attributeName="r" values="12;16;12" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M 158 185 L 218 185" stroke="#111111" stroke-width="4" fill="none">
+      <animate attributeName="stroke-dasharray" values="1 14;14 1;1 14" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 208 175 L 226 185 L 208 195" fill="none" stroke="#111111" stroke-width="4"/>
+  </g>
+  <!-- warning pulse on the duplicate key -->
+  <g>
+    <rect x="560" y="150" width="120" height="60" fill="#FF4D00" stroke="#111111" stroke-width="4">
+      <animate attributeName="opacity" values="1;0.45;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <path d="M 560 180 L 690 180" stroke="#111111" stroke-width="3"/>
+    <path d="M 560 195 L 690 195" stroke="#111111" stroke-width="3"/>
+  </g>
+  <!-- slow rotating gear motif, bottom right -->
+  <g transform="translate(660 330)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+      <circle r="42" fill="none" stroke="#111111" stroke-width="4"/>
+      <circle r="16" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <path d="M 0 -42 L 0 -58 M 0 42 L 0 58 M -42 0 L -58 0 M 42 0 L 58 0 M -30 -30 L -41 -41 M 30 -30 L 41 -41 M -30 30 L -41 41 M 30 30 L 41 41" stroke="#111111" stroke-width="4"/>
+    </g>
+  </g>
+  <!-- slow drifting dashed path, bottom left -->
+  <path d="M 60 380 L 420 380" stroke="#FF4D00" stroke-width="3" stroke-dasharray="12 10">
+    <animate attributeName="stroke-dashoffset" values="0;-220;0" dur="12s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="60" cy="380" r="8" fill="#111111"/>
+  <circle cx="420" cy="380" r="8" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+</svg>

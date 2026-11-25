@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <!-- stacked key cards -->
+  <g>
+    <rect x="180" y="250" width="300" height="90" fill="#FFFFFF" stroke="#111111" stroke-width="5"/>
+    <rect x="180" y="250" width="300" height="90" fill="none" stroke="#111111" stroke-width="5" transform="translate(10 10)" opacity="0.25"/>
+    <rect x="210" y="150" width="300" height="90" fill="#FFFFFF" stroke="#111111" stroke-width="5">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="255" cy="195" r="14" fill="none" stroke="#111111" stroke-width="5">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="290" y="185" width="170" height="18" fill="#111111">
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="225" cy="295" r="14" fill="none" stroke="#111111" stroke-width="5"/>
+    <rect x="260" y="285" width="170" height="18" fill="#111111"/>
+  </g>
+  <!-- ghost inherited card, dashed, fading -->
+  <g>
+    <rect x="240" y="60" width="300" height="90" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="12 8">
+      <animate attributeName="opacity" values="0.9; 0.25; 0.9" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <circle cx="285" cy="105" r="14" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="6 5">
+      <animate attributeName="opacity" values="0.9; 0.25; 0.9" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="320" y="95" width="170" height="18" fill="#111111">
+      <animate attributeName="opacity" values="0.7; 0.15; 0.7" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- orange check stamp -->
+  <g transform="translate(590 215)">
+    <circle cx="0" cy="0" r="62" fill="#FF4D00" stroke="#111111" stroke-width="5">
+      <animateTransform attributeName="transform" type="scale" values="1; 1.08; 1" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M-30 2 L-8 26 L34 -24" fill="none" stroke="#FFFDF5" stroke-width="12" stroke-linecap="square">
+      <animateTransform attributeName="transform" type="scale" values="1; 1.08; 1" dur="7s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <!-- slow rotating dashed ring -->
+  <g transform="translate(590 215)">
+    <circle cx="0" cy="0" r="92" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="10 12" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- baseline -->
+  <rect x="120" y="385" width="560" height="6" fill="#111111"/>
+</svg>

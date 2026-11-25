@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract animated schematic: a scanning radar sweep over a gated vault door">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="sweepFade" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FF4D00" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#FF4D00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- paper -->
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+
+  <!-- left: vault gate (the guarded system) -->
+  <g>
+    <circle cx="250" cy="225" r="120" fill="none" stroke="#111111" stroke-width="4"/>
+    <circle cx="250" cy="225" r="96" fill="none" stroke="#111111" stroke-width="2"/>
+    <circle cx="250" cy="225" r="52" fill="none" stroke="#111111" stroke-width="2"/>
+    <circle cx="250" cy="225" r="10" fill="#111111"/>
+    <!-- spokes -->
+    <g stroke="#111111" stroke-width="3">
+      <line x1="250" y1="105" x2="250" y2="173"/>
+      <line x1="250" y1="277" x2="250" y2="345"/>
+      <line x1="130" y1="225" x2="198" y2="225"/>
+      <line x1="302" y1="225" x2="370" y2="225"/>
+    </g>
+    <!-- slow rotating radar sweep inside the vault -->
+    <g>
+      <path d="M 250 225 L 250 129 A 96 96 0 0 1 333 177 Z" fill="url(#sweepFade)"/>
+      <line x1="250" y1="225" x2="250" y2="129" stroke="#FF4D00" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 250 225" to="360 250 225" dur="36s" repeatCount="indefinite"/>
+    </g>
+    <!-- approval gate bar across the vault mouth -->
+    <g>
+      <rect x="150" y="216" width="200" height="18" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+      <rect x="150" y="216" width="200" height="18" fill="#FF4D00" opacity="0.9">
+        <animate attributeName="width" values="200;24;200" dur="12s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="150" y="216" width="200" height="18" fill="none" stroke="#111111" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- right: scanning arcs (the automated prober) -->
+  <g fill="none" stroke="#111111" stroke-width="2">
+    <path d="M 520 90 A 150 150 0 0 1 520 360" stroke-opacity="0.9">
+      <animate attributeName="stroke-opacity" values="0.9;0.15;0.9" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 560 120 A 110 110 0 0 1 560 330" stroke-opacity="0.7">
+      <animate attributeName="stroke-opacity" values="0.7;0.15;0.7" dur="7s" begin="1.2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 600 150 A 70 70 0 0 1 600 300" stroke="#FF4D00" stroke-width="3">
+      <animate attributeName="stroke-opacity" values="1;0.2;1" dur="7s" begin="2.4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- probe dots travelling from the arcs toward the vault, slowly -->
+  <g fill="#111111">
+    <circle cx="640" cy="150" r="6">
+      <animate attributeName="cx" values="640;420;640" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="150;205;150" dur="14s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="640" cy="300" r="6" fill="#FF4D00">
+      <animate attributeName="cx" values="640;420;640" dur="14s" begin="4s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="300;245;300" dur="14s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="680" cy="225" r="5">
+      <animate attributeName="cx" values="680;420;680" dur="18s" begin="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- alert beacon, slow blink -->
+  <circle cx="700" cy="80" r="10" fill="none" stroke="#FF4D00" stroke-width="3">
+    <animate attributeName="r" values="10;16;10" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="700" cy="80" r="4" fill="#FF4D00">
+    <animate attributeName="opacity" values="1;0.2;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ground line -->
+  <line x1="60" y1="400" x2="740" y2="400" stroke="#111111" stroke-width="2" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" values="0;-72" dur="9s" repeatCount="indefinite"/>
+  </line>
+</svg>

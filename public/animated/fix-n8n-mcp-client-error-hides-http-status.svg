@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- client node -->
+  <rect x="80" y="175" width="130" height="100" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+  <circle cx="145" cy="225" r="22" fill="none" stroke="#111111" stroke-width="5"/>
+  <!-- server -->
+  <rect x="590" y="150" width="130" height="150" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+  <line x1="590" y1="200" x2="720" y2="200" stroke="#111111" stroke-width="4"/>
+  <line x1="590" y1="250" x2="720" y2="250" stroke="#111111" stroke-width="4"/>
+  <circle cx="620" cy="175" r="7" fill="#FF4D00">
+    <animate attributeName="opacity" values="1;0.25;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <!-- request line -->
+  <line x1="210" y1="225" x2="590" y2="225" stroke="#111111" stroke-width="4" stroke-dasharray="10 8">
+    <animate attributeName="stroke-dashoffset" values="0;-180" dur="9s" repeatCount="indefinite"/>
+  </line>
+  <!-- response packet travelling back -->
+  <rect x="-14" y="-14" width="28" height="28" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animateMotion path="M590 225 L210 225" dur="8s" repeatCount="indefinite"/>
+  </rect>
+  <!-- blank error card -->
+  <rect x="300" y="300" width="200" height="70" fill="#FFFDF5" stroke="#111111" stroke-width="5">
+    <animate attributeName="opacity" values="1;1;0.35;1" dur="8s" repeatCount="indefinite"/>
+  </rect>
+  <line x1="320" y1="325" x2="440" y2="325" stroke="#111111" stroke-width="4"/>
+  <line x1="320" y1="345" x2="380" y2="345" stroke="#111111" stroke-width="4"/>
+  <!-- magnifier over status dial -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 400 130; 360 400 130" dur="40s" repeatCount="indefinite"/>
+    <circle cx="400" cy="130" r="46" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="6 10"/>
+  </g>
+  <circle cx="400" cy="130" r="10" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+</svg>

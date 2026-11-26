@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract clockwork automation with a safety gate">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <g fill="none" stroke="#111" stroke-width="6">
+    <rect x="90" y="80" width="300" height="290" fill="#FFFDF5"/>
+    <rect x="430" y="130" width="280" height="190" fill="#FFFDF5"/>
+  </g>
+  <g>
+    <circle cx="240" cy="225" r="95" fill="none" stroke="#111" stroke-width="6"/>
+    <circle cx="240" cy="225" r="10" fill="#111"/>
+    <line x1="240" y1="225" x2="240" y2="155" stroke="#111" stroke-width="8" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 240 225" to="360 240 225" dur="60s" repeatCount="indefinite"/>
+    </line>
+    <line x1="240" y1="225" x2="300" y2="225" stroke="#FF4D00" stroke-width="8" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" from="0 240 225" to="360 240 225" dur="30s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <g stroke="#111" stroke-width="5" fill="none">
+    <path d="M390 225 H430" stroke-dasharray="10 8">
+      <animate attributeName="stroke-dashoffset" from="36" to="0" dur="6s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <g>
+    <rect x="480" y="185" width="180" height="26" fill="#FF4D00" stroke="#111" stroke-width="5">
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -28;0 0" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="500" y="240" width="140" height="16" fill="#111">
+      <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="500" y="270" width="100" height="16" fill="#111">
+      <animate attributeName="opacity" values="0.35;1;0.35" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <g fill="none" stroke="#111" stroke-width="5">
+    <circle cx="640" cy="110" r="26">
+      <animate attributeName="r" values="22;30;22" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

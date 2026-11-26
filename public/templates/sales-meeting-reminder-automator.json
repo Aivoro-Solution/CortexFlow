@@ -1,0 +1,866 @@
+{
+  "name": "Sales Meeting Reminder Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## ⏰ SALES MEETING REMINDER AUTOMATOR\n**What it does:** Polls Pipedrive every 15 minutes for meetings due in 55–65 minutes → dedupes against a Google Sheets log so nobody gets reminded twice → AI writes a short personalized SMS + email naming the meeting time and one real context detail → sends both (each branch continues on error) → logs the result and sends you a Telegram summary.\n\n**You'll need:**\n- Pipedrive account + API token (pipedrive.com → Settings → Personal preferences → API)\n- Google Sheets OAuth2 credential + a spreadsheet with a `ReminderLog` tab\n- OpenAI API key (platform.openai.com)\n- Gmail OAuth2 credential\n- SMS provider with an HTTP API (CloudTalk, Twilio, or similar) + a sender number\n- Telegram bot token + your chat ID (@BotFather → /newbot)\n\n**Status flow in Sheets:** `NEW` → `PROCESSING` → `REMINDER_SENT` / `FAILED`\n**Key pitfalls handled:** schedule polling instead of a Wait node · timezone alignment via `instance_timezone` in CONFIG — Reminder Settings · send-once guard by `activity_id` · internal attendees excluded by domain · SMS/email branches continue on error · phone numbers normalized to E.164.",
+        "height": 260,
+        "width": 5540,
+        "color": 5
+      },
+      "id": "f986d6f3-a828-46f6-8793-1aeb32711ce2",
+      "name": "STICKY — Title",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 1 — Poll the CRM for meetings due in ~1 hour\n`Every 15 Minutes Trigger` → `CONFIG — Reminder Settings` → `Fetch Meetings — Pipedrive Activities` (GET activities, type=meeting, done=0) → `Normalize Meetings — Window + Timezone` keeps only meetings due in the 55–65 minute window, converts times to `instance_timezone`, drops internal attendees, and normalizes phone numbers to E.164.",
+        "height": 420,
+        "width": 1420,
+        "color": 4
+      },
+      "id": "c779a4a6-eda5-4fe3-bd60-5abc6fa1e36a",
+      "name": "STICKY — STEP 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 2 — Send-once guard + log to Google Sheets\n`Read Reminder Log` → `Dedupe — Send-Once Guard` skips any `activity_id` already marked `REMINDER_SENT` → `Log Reminder — Status NEW` appends/updates the row → `Update Sheet — Status PROCESSING`.",
+        "height": 420,
+        "width": 1200,
+        "color": 4
+      },
+      "id": "a908d612-63fa-4cc3-925a-a781ef11899f",
+      "name": "STICKY — STEP 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 3 — AI writes the reminder\n`AI Agent — Write Reminder` (gpt-4o-mini via `OpenAI Chat Model — Reminder`) with `Structured Output Parser — Reminder Copy` outputs sms_text, email_subject, email_body, and personalization_notes. The prompt forbids invented facts — it may only use the CRM fields passed in.",
+        "height": 420,
+        "width": 960,
+        "color": 4
+      },
+      "id": "619e7244-fc56-491f-9d81-d29f55a9faf8",
+      "name": "STICKY — STEP 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 4 — Send SMS + email (independent branches)\n`Send SMS — Provider API` and `Gmail — Send Reminder Email` run in parallel, both set to continue on error so a failed text never swallows the email. `Mark SMS Result` / `Mark Email Result` tag each outcome, `Merge — Combine Channel Results` joins them, and `Evaluate Send Results` sets the final status.",
+        "height": 580,
+        "width": 1300,
+        "color": 4
+      },
+      "id": "954d6680-c283-411d-8761-10be6c51ed7b",
+      "name": "STICKY — STEP 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STEP 5 — Final status + Telegram summary\n`Update Sheet — Final Status` writes `REMINDER_SENT` (at least one channel succeeded) or `FAILED`, plus per-channel results and `sent_at`. `Build Run Summary` → `Telegram — Send Run Summary` reports how many reminders went out this run.",
+        "height": 420,
+        "width": 1040,
+        "color": 4
+      },
+      "id": "7d6d681f-a6ee-47e5-9991-bae64dd76e58",
+      "name": "STICKY — STEP 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4720,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "864a0369-7efe-4377-a175-5dc47ac64f6f",
+      "name": "Every 15 Minutes Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3ba375f0-e999-4488-8e69-bb658838408b",
+              "name": "crm_base_url",
+              "type": "string",
+              "value": "https://api.pipedrive.com/v1"
+            },
+            {
+              "id": "0ba42246-90e1-42be-b140-43116084ca73",
+              "name": "reminder_window_min_minutes",
+              "type": "string",
+              "value": "55"
+            },
+            {
+              "id": "fcccc7b8-c45b-4a1e-b279-02e4294fa082",
+              "name": "reminder_window_max_minutes",
+              "type": "string",
+              "value": "65"
+            },
+            {
+              "id": "037f6fae-541d-4d1e-85c6-f543afb62097",
+              "name": "instance_timezone",
+              "type": "string",
+              "value": "America/New_York"
+            },
+            {
+              "id": "6160c040-312b-43ae-bb36-19164f0cc67c",
+              "name": "internal_email_domain",
+              "type": "string",
+              "value": "PASTE_YOUR_INTERNAL_EMAIL_DOMAIN"
+            },
+            {
+              "id": "fe889df0-26d2-4366-b0ac-2a4ea78be80d",
+              "name": "sms_provider_url",
+              "type": "string",
+              "value": "PASTE_YOUR_SMS_PROVIDER_URL"
+            },
+            {
+              "id": "88c06e25-2631-41c2-8259-0b1114d42e9b",
+              "name": "sms_sender_number",
+              "type": "string",
+              "value": "PASTE_YOUR_SMS_SENDER_NUMBER"
+            },
+            {
+              "id": "e24c986c-f7cc-4471-8943-35c7c8d8a8d4",
+              "name": "from_email",
+              "type": "string",
+              "value": "PASTE_YOUR_FROM_EMAIL"
+            },
+            {
+              "id": "3a1fbc58-df60-403b-891b-7cacaa800e36",
+              "name": "spreadsheet_id",
+              "type": "string",
+              "value": "PASTE_YOUR_SPREADSHEET_ID"
+            },
+            {
+              "id": "71e4c2d7-0a73-4a20-b2c6-23121d33cf89",
+              "name": "telegram_chat_id",
+              "type": "string",
+              "value": "PASTE_YOUR_TELEGRAM_CHAT_ID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f0b33d5c-b38d-45bd-8075-0c9e0502e459",
+      "name": "CONFIG — Reminder Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.crm_base_url }}/activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "meeting"
+            },
+            {
+              "name": "done",
+              "value": "0"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Pipedrive API Token"
+        }
+      },
+      "id": "443c623a-f10f-483e-869e-6525af7934b6",
+      "name": "Fetch Meetings — Pipedrive Activities",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep only meetings due within the reminder window; normalize fields\nconst cfg = $('CONFIG — Reminder Settings').first().json;\nconst minMin = parseInt(cfg.reminder_window_min_minutes || '55', 10);\nconst maxMin = parseInt(cfg.reminder_window_max_minutes || '65', 10);\nconst tz = cfg.instance_timezone || 'UTC';\nconst internalDomain = (cfg.internal_email_domain || '').toLowerCase().replace(/^@/, '');\nconst now = Date.now();\n\nfunction toE164(raw) {\n  if (!raw) return '';\n  let d = String(raw).replace(/[^\\d+]/g, '');\n  if (d.startsWith('+')) return '+' + d.slice(1).replace(/\\D/g, '');\n  d = d.replace(/\\D/g, '');\n  if (d.length === 10) return '+1' + d; // bare 10-digit number -> assume US; adjust for your country\n  return d ? '+' + d : '';\n}\nfunction fmtInTz(ms) {\n  try {\n    return new Intl.DateTimeFormat('en-US', { timeZone: tz, dateStyle: 'medium', timeStyle: 'short' }).format(new Date(ms));\n  } catch (e) { return new Date(ms).toISOString(); }\n}\n\nconst raw = $input.first().json.data || [];\nconst activities = Array.isArray(raw) ? raw : [];\nconst out = [];\nfor (const a of activities) {\n  // Pipedrive returns due_date (YYYY-MM-DD) + due_time (HH:MM:SS) in UTC\n  const dueStr = [a.due_date, a.due_time].filter(Boolean).join('T');\n  const dueMs = Date.parse(dueStr.endsWith('Z') ? dueStr : dueStr + 'Z');\n  if (!dueMs) continue;\n  const minsUntil = (dueMs - now) / 60000;\n  if (minsUntil < minMin || minsUntil > maxMin) continue;\n\n  // Participants: drop internal attendees, keep the first external prospect\n  const participants = Array.isArray(a.participants) ? a.participants : [];\n  const external = participants.filter(p => {\n    const email = (p.email || '').toLowerCase();\n    return email && (!internalDomain || !email.endsWith('@' + internalDomain));\n  });\n  const person = a.person_id && typeof a.person_id === 'object' ? a.person_id : {};\n  const prospect = external[0] || {};\n  const email = prospect.email || (Array.isArray(person.email) ? (person.email[0] || {}).value : person.email) || '';\n  if (internalDomain && email.toLowerCase().endsWith('@' + internalDomain)) continue;\n  const phoneRaw = prospect.phone || (Array.isArray(person.phone) ? (person.phone[0] || {}).value : person.phone) || '';\n  const org = a.org_id && typeof a.org_id === 'object' ? a.org_id.name : '';\n\n  out.push({ json: {\n    activity_id: String(a.id),\n    prospect_name: prospect.name || person.name || '',\n    prospect_email: email,\n    prospect_phone: toE164(phoneRaw),\n    meeting_title: a.subject || 'Meeting',\n    due_at: fmtInTz(dueMs),\n    due_at_iso: new Date(dueMs).toISOString(),\n    person_org: org || '',\n    context_topic: (a.note || a.subject || '').slice(0, 200),\n    status: 'NEW',\n  }});\n}\nreturn out;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "c7174d72-a4e5-4a1f-aa3c-53c2b4762d13",
+      "name": "Normalize Meetings — Window + Timezone",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "ReminderLog"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "6b0c5434-342d-4795-93a5-7cc8f122d76a",
+      "name": "Read Reminder Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Skip meetings already reminded (send-once guard by activity_id)\nconst sent = new Set(\n  $('Read Reminder Log').all()\n    .filter(i => (i.json.status || i.json.Status || '') === 'REMINDER_SENT')\n    .map(i => String(i.json.activity_id || '').trim())\n    .filter(Boolean)\n);\nconst fresh = $('Normalize Meetings — Window + Timezone').all()\n  .map(i => i.json)\n  .filter(m => m.activity_id && !sent.has(String(m.activity_id).trim()));\nreturn fresh.map(m => ({ json: m }));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e46716fe-e295-4d98-9650-ec0974157597",
+      "name": "Dedupe — Send-Once Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "ReminderLog"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "activity_id"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "activity_id": "={{ $json.activity_id }}",
+            "prospect_name": "={{ $json.prospect_name }}",
+            "prospect_email": "={{ $json.prospect_email }}",
+            "prospect_phone": "={{ $json.prospect_phone }}",
+            "meeting_title": "={{ $json.meeting_title }}",
+            "due_at": "={{ $json.due_at }}",
+            "status": "NEW",
+            "sms_result": "",
+            "email_result": "",
+            "sent_at": ""
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "627e6bc3-c22c-488c-a4c6-df97f74ddb7f",
+      "name": "Log Reminder — Status NEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "ReminderLog"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "activity_id"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "activity_id": "={{ $json.activity_id }}",
+            "status": "PROCESSING"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "2d93ded2-5a0a-4695-b3c0-32624bb6560e",
+      "name": "Update Sheet — Status PROCESSING",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You write short, specific sales-meeting reminders. Use ONLY the facts given in the user message — never invent a company, role, topic, link, or detail that is not provided. The SMS must be under 320 characters, name the meeting time, and mention exactly one concrete context detail (the company, person, or topic) when one is provided. The email is 3-5 short sentences with the same rules. Sign off with the sender name given in the user message. Output ONLY via the structured output parser."
+        },
+        "text": "=Write a meeting reminder for this prospect.\n\nProspect name: {{ $json.prospect_name }}\nCompany: {{ $json.person_org }}\nMeeting title: {{ $json.meeting_title }}\nMeeting time: {{ $json.due_at }} ({{ $('CONFIG — Reminder Settings').first().json.instance_timezone }})\nContext from CRM: {{ $json.context_topic }}\nSender name: {{ $('CONFIG — Reminder Settings').first().json.from_email }}"
+      },
+      "id": "64a76d21-a146-4528-a655-fb8ef8231b0b",
+      "name": "AI Agent — Write Reminder",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "b235207f-c31d-4f0b-b4ae-b17ae30c652f",
+      "name": "OpenAI Chat Model — Reminder",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"sms_text\": \"short reminder text, under 320 characters, naming the meeting time and one context detail\",\n  \"email_subject\": \"short specific subject line naming the meeting\",\n  \"email_body\": \"3-5 short sentences, same facts as the SMS, no invented details\",\n  \"personalization_notes\": \"which provided fact(s) you used for personalization, or 'none available'\"\n}"
+      },
+      "id": "54e26c19-8b6a-45e1-b835-d20f06629393",
+      "name": "Structured Output Parser — Reminder Copy",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('CONFIG — Reminder Settings').first().json.sms_provider_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ to: $json.prospect_phone, from: $('CONFIG — Reminder Settings').first().json.sms_sender_number, text: $json.output.sms_text }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "SMS Provider API Key"
+        }
+      },
+      "id": "4d936f06-2842-4e79-a3e1-ff6ce16be28b",
+      "name": "Send SMS — Provider API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        140
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "emailType": "text",
+        "sendTo": "={{ $json.prospect_email }}",
+        "subject": "={{ $json.output.email_subject }}",
+        "message": "={{ $json.output.email_body }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "id": "1329d8dc-958b-4529-8be0-4bc75b1bb3c8",
+      "name": "Gmail — Send Reminder Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2160,
+        440
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tag the SMS outcome while preserving the meeting fields\nconst src = $('AI Agent — Write Reminder').all();\nreturn $input.all().map((item, i) => {\n  const base = (src[i] || src[0] || { json: {} }).json;\n  const failed = Boolean(item.json.error) || item.json.statusCode >= 400;\n  return { json: { ...base, sms_result: failed ? 'FAILED' : 'SENT' } };\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "e2e73f3c-6ff9-4910-9df2-80196ad88052",
+      "name": "Mark SMS Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tag the email outcome while preserving the meeting fields\nconst src = $('AI Agent — Write Reminder').all();\nreturn $input.all().map((item, i) => {\n  const base = (src[i] || src[0] || { json: {} }).json;\n  const failed = Boolean(item.json.error);\n  return { json: { ...base, email_result: failed ? 'FAILED' : 'SENT' } };\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "bb958861-0b50-4d6d-a689-0964ac6bc732",
+      "name": "Mark Email Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "8f2e3f9a-0a2b-42fc-8d74-266772747892",
+      "name": "Merge — Combine Channel Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One row per meeting: REMINDER_SENT if at least one channel succeeded\nconst byId = {};\nfor (const item of $input.all()) {\n  const j = item.json;\n  const id = String(j.activity_id || '');\n  if (!id) continue;\n  byId[id] = { ...(byId[id] || {}), ...j };\n}\nreturn Object.values(byId).map(m => {\n  const ok = m.sms_result === 'SENT' || m.email_result === 'SENT';\n  return { json: {\n    activity_id: m.activity_id,\n    prospect_name: m.prospect_name || '',\n    prospect_email: m.prospect_email || '',\n    prospect_phone: m.prospect_phone || '',\n    meeting_title: m.meeting_title || '',\n    due_at: m.due_at || '',\n    status: ok ? 'REMINDER_SENT' : 'FAILED',\n    sms_result: m.sms_result || 'FAILED',\n    email_result: m.email_result || 'FAILED',\n    sent_at: new Date().toISOString(),\n  }};\n});",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "ea63166e-ba34-48e6-a36d-fad0e4e3f271",
+      "name": "Evaluate Send Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "resource": "sheetWithinDocument",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "ReminderLog"
+        },
+        "options": {},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "activity_id"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "value": {
+            "activity_id": "={{ $json.activity_id }}",
+            "prospect_name": "={{ $json.prospect_name }}",
+            "prospect_email": "={{ $json.prospect_email }}",
+            "prospect_phone": "={{ $json.prospect_phone }}",
+            "meeting_title": "={{ $json.meeting_title }}",
+            "due_at": "={{ $json.due_at }}",
+            "status": "={{ $json.status }}",
+            "sms_result": "={{ $json.sms_result }}",
+            "email_result": "={{ $json.email_result }}",
+            "sent_at": "={{ $json.sent_at }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets API"
+        }
+      },
+      "id": "66100614-d5b7-4633-b702-b381d0f32190",
+      "name": "Update Sheet — Final Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Summarize this run for the Telegram digest\nconst items = $('Evaluate Send Results').all().map(i => i.json);\nconst sent = items.filter(m => m.status === 'REMINDER_SENT');\nconst failed = items.filter(m => m.status === 'FAILED');\nlet lines = [`⏰ *Meeting Reminders — ${new Date().toISOString().slice(0, 10)}*`, ``];\nif (!items.length) {\n  lines.push(`No meetings were due in the reminder window this run.`);\n} else {\n  lines.push(`✅ ${sent.length} reminder(s) sent · ❌ ${failed.length} failed`, ``);\n  for (const m of sent.slice(0, 10)) lines.push(`• ${m.prospect_name || m.prospect_email} — ${m.meeting_title} (${m.due_at}) [SMS: ${m.sms_result}, Email: ${m.email_result}]`);\n  for (const m of failed.slice(0, 10)) lines.push(`• FAILED: ${m.prospect_name || m.prospect_email} — ${m.meeting_title} (${m.due_at})`);\n}\nreturn [{ json: { digest: lines.join('\\n'), sent: sent.length, failed: failed.length } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "f379ff1d-8062-4fff-898e-21d074ae35f0",
+      "name": "Build Run Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('CONFIG — Reminder Settings').first().json.telegram_chat_id }}",
+        "text": "={{ $json.digest }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram Bot API"
+        }
+      },
+      "id": "4decebf0-f67c-449e-8e0f-7ba09d434dc8",
+      "name": "Telegram — Send Run Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3600,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG — Reminder Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG — Reminder Settings": {
+      "main": [
+        [
+          {
+            "node": "Fetch Meetings — Pipedrive Activities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Meetings — Pipedrive Activities": {
+      "main": [
+        [
+          {
+            "node": "Normalize Meetings — Window + Timezone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Meetings — Window + Timezone": {
+      "main": [
+        [
+          {
+            "node": "Read Reminder Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Reminder Log": {
+      "main": [
+        [
+          {
+            "node": "Dedupe — Send-Once Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedupe — Send-Once Guard": {
+      "main": [
+        [
+          {
+            "node": "Log Reminder — Status NEW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Reminder — Status NEW": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Status PROCESSING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Status PROCESSING": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Write Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Write Reminder": {
+      "main": [
+        [
+          {
+            "node": "Send SMS — Provider API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail — Send Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SMS — Provider API": {
+      "main": [
+        [
+          {
+            "node": "Mark SMS Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail — Send Reminder Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Email Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark SMS Result": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Channel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Email Result": {
+      "main": [
+        [
+          {
+            "node": "Merge — Combine Channel Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge — Combine Channel Results": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Send Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Send Results": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet — Final Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet — Final Status": {
+      "main": [
+        [
+          {
+            "node": "Build Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Run Summary": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Send Run Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model — Reminder": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Write Reminder",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser — Reminder Copy": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent — Write Reminder",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  }
+}

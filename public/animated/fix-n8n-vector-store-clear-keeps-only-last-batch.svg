@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <!-- three batches on the left -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <rect x="70" y="110" width="130" height="44">
+      <animate attributeName="opacity" values="1;1;0.15;0.15;1" keyTimes="0;0.3;0.4;0.9;1" dur="18s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="70" y="205" width="130" height="44">
+      <animate attributeName="opacity" values="1;1;0.15;0.15;1" keyTimes="0;0.55;0.65;0.9;1" dur="18s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="70" y="300" width="130" height="44" fill="#FF4D00"/>
+  </g>
+  <!-- batch tick marks -->
+  <g stroke="#111111" stroke-width="2">
+    <path d="M90 132h90M90 227h90M90 322h90"/>
+  </g>
+  <!-- flow arrows -->
+  <g stroke="#111111" stroke-width="3" fill="none">
+    <path d="M210 132 L430 200"/>
+    <path d="M210 227 L430 227"/>
+    <path d="M210 322 L430 254"/>
+  </g>
+  <g fill="#111111">
+    <path d="M430 200 l-14 -4 6 12 z"/>
+    <path d="M430 227 l-14 -6 0 12 z"/>
+    <path d="M430 254 l-14 8 -2 -13 z"/>
+  </g>
+  <!-- database cylinder -->
+  <g stroke="#111111" stroke-width="3" fill="#FFFDF5">
+    <path d="M470 160 v130 a60 18 0 0 0 120 0 v-130"/>
+    <ellipse cx="530" cy="160" rx="60" ry="18"/>
+    <path d="M470 225 a60 18 0 0 0 120 0" fill="none"/>
+  </g>
+  <!-- surviving batch inside the store -->
+  <rect x="495" y="252" width="70" height="20" fill="#FF4D00" stroke="#111111" stroke-width="2">
+    <animate attributeName="opacity" values="0.25;1;1;0.25" keyTimes="0;0.2;0.85;1" dur="12s" repeatCount="indefinite"/>
+  </rect>
+  <!-- slow sweep accent -->
+  <g>
+    <rect x="640" y="120" width="26" height="210" fill="#FF4D00" opacity="0.85">
+      <animateTransform attributeName="transform" type="translate" values="0 0; -180 0; 0 0" dur="36s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- frame -->
+  <rect x="14" y="14" width="772" height="422" fill="none" stroke="#111111" stroke-width="3"/>
+</svg>

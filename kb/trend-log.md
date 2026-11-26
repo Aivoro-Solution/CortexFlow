@@ -1,3 +1,28 @@
+## 2026-11-26 — MORNING run (~08:50 IST / 03:20 UTC)
+
+### Checked
+- **Trending Now, US** (https://trends.google.com/trending?geo=US, past 24h, read via live browser 03:20–03:22 UTC): #1 "thanksgiving 2026" 2M+; "aaron rodgers" 2M+; "rams vs packers" 1M+; sports/Thanksgiving dominate (walmart thanksgiving hours, nfl schedule, timberwolves vs thunder, heat vs 76ers, cavaliers vs knicks, bulls vs hornets, spurs vs trail blazers, duke vs uconn, lebron james, suns vs rockets, kings vs warriors, psg vs roma). **No AI/automation niche entry in Trending Now (top 25).**
+- **Explore, US, past 7 days** (multi-seed "AI agent, n8n, AI automation, MCP server"): data read via live browser (03:20–03:22 UTC). **No CAPTCHA / unusual-traffic check; no sign-in; no panel failed; Rising available and selected on all four panels.** Interest-over-time averages (index 0–100): AI agent 23, n8n 3, AI automation 7, MCP server 5.
+
+### Rising / breakout queries found
+- **"AI agent"** (10 shown): "linger ai agent" — Breakout; "best travel backpack" — +2,600%; "best pizza recipe" — +2,600%; "best coffee maker" — +2,300%; "gemini 4 neon" — +350%; "best budget phone" — +300%; "cheapest flights to tokyo" — +250%; "best pizza near me" — +200%; "abacus ai agent" — +200%; "best hiking boots" — +170%.
+- **"n8n"** (6 shown): "shopify website" — Breakout; "shopify store" — Breakout; **"opencode" — +300%**; "what is n8n and how does it work" — +250%; "fiverr" — +200%; "librechat" — +160%.
+- **"AI automation"** (3 shown): "cheapest flights to tokyo" — Breakout; "top tourist attractions in paris" — Breakout; "best time to visit maldives" — Breakout.
+- **"MCP server"** (8 shown): "python programming tutorial" — Breakout; "best time to visit maldives" — Breakout; "how to make sushi" — Breakout; "how to bake a cake" — Breakout; "node.js backend" — +3,500%; "firecrawl mcp server" — +700%; "walmart near me" — +450%; "google analytics mcp server" — +300%.
+
+### PICKED
+- **"opencode" (+300%, #3 rising related query for "n8n", Google Trends Explore US past 7 days)** → article `opencode-240-automations-n8n-safety-pattern.md` — "OpenCode 2.4 Turned Automations On by Default — Steal the Pattern for n8n (Safely)". Verified via OpenCode's official changelog (read directly Nov 26, 03:22 UTC) + BuildJury review updated Nov 23, 2026 (read directly): **v2.4.0 released Nov 23, 2026** — built-in desktop browser importing sign-ins/history from Chrome/Edge/Firefox/Safari into one persistent profile (agent can read and drive the same pages); **Automations** — run a prompt, Code Mode script or fixed shell command once, on an interval, on a cron schedule or when a connected MCP server pushes an event, managed with `/automation`; shell actions ask for approval once at creation and record exit code + output; opt out with `"automations": false`; MCP Events shipped (push delivery, argument checks, heartbeats, reconnects; oversized events skipped); video generation via `generate_video`; **v2.4.1 Nov 23, 2026** (macOS 12 session fix; plugins can create/list/delete automations); **v2.4.2 Nov 26, 2026** (sessions keep browser access when an automation wakes them); OpenCode is MIT-licensed, 75+ providers via Models.dev. Builder angle: 5-part safe-automation pattern for n8n (numbered trigger → draft first → approval gate → capped execution → append-only log) + the sign-in-import warning.
+
+### Skipped (notable)
+- "linger ai agent" (AI agent Breakout) — published Nov 25 evening; same story, no new angle.
+- "gemini 4 neon" +350% — published Nov 23 evening; same story, no new angle.
+- "abacus ai agent" +200% — published Nov 21 morning; same story, no new angle.
+- "librechat" +160% (n8n) — published Nov 24 evening; same story, no new angle.
+- "firecrawl mcp server" +700% (MCP server) — published Nov 23 morning; same story, no new angle.
+- "google analytics mcp server" +300% (MCP server) — verified this run: v1.0.0 Nov 3, 2026 + v1.1.0 Nov 6, 2026, no fresh Nov 25–26 event; runner-up, watch item.
+- "what is n8n and how does it work" +250% — definitional, no dated event.
+- "shopify website" / "shopify store" / "fiverr" / "node.js backend" / "best travel backpack" / "best pizza recipe" / "best coffee maker" / "best budget phone" / "cheapest flights to tokyo" / "best pizza near me" / "best hiking boots" / "top tourist attractions in paris" / "best time to visit maldives" / "python programming tutorial" / "how to make sushi" / "how to bake a cake" / "walmart near me" — noise, off-niche.
+
 ## 2026-11-25 — EVENING run (~16:50 IST / 11:21 UTC)
 
 ### Checked

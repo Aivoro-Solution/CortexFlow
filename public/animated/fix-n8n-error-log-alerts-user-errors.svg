@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="4"/>
+  <!-- conveyor line -->
+  <line x1="90" y1="330" x2="710" y2="330" stroke="#111111" stroke-width="5"/>
+  <line x1="90" y1="346" x2="710" y2="346" stroke="#111111" stroke-width="2" opacity="0.5"/>
+  <!-- log slips moving slowly along the belt -->
+  <g>
+    <rect x="0" y="0" width="86" height="54" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <line x1="12" y1="16" x2="74" y2="16" stroke="#111111" stroke-width="3"/>
+    <line x1="12" y1="30" x2="58" y2="30" stroke="#111111" stroke-width="3"/>
+    <line x1="12" y1="44" x2="66" y2="44" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="100 262; 600 262; 100 262" dur="36s" repeatCount="indefinite"/>
+  </g>
+  <g>
+    <rect x="0" y="0" width="86" height="54" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <line x1="12" y1="16" x2="66" y2="16" stroke="#111111" stroke-width="3"/>
+    <line x1="12" y1="30" x2="74" y2="30" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="300 262; 120 262; 300 262" dur="42s" repeatCount="indefinite"/>
+  </g>
+  <!-- stamp arm: slowly rotating press -->
+  <g transform="translate(400 150)">
+    <circle cx="0" cy="0" r="16" fill="#FFFDF5" stroke="#111111" stroke-width="4"/>
+    <g>
+      <rect x="-10" y="0" width="20" height="86" fill="#111111"/>
+      <rect x="-34" y="82" width="68" height="22" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+      <animateTransform attributeName="transform" type="rotate" values="-18; 18; -18" dur="40s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <!-- alarm bell, gentle pulse -->
+  <g transform="translate(620 120)">
+    <g>
+      <path d="M0 -34 C 26 -34 34 -12 34 8 L 40 26 L -40 26 L -34 8 C -34 -12 -26 -34 0 -34 Z" fill="#FF4D00" stroke="#111111" stroke-width="4"/>
+      <circle cx="0" cy="38" r="8" fill="#111111"/>
+      <animateTransform attributeName="transform" type="scale" values="1; 1.08; 1" dur="8s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <!-- sorted tray with one separated slip -->
+  <rect x="600" y="360" width="110" height="34" fill="none" stroke="#111111" stroke-width="4"/>
+  <g>
+    <rect x="622" y="332" width="66" height="26" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="12s" repeatCount="indefinite"/>
+  </g>
+  <!-- funnel on the left -->
+  <path d="M110 90 L250 90 L198 170 L198 220 L162 220 L162 170 Z" fill="none" stroke="#111111" stroke-width="5"/>
+  <circle cx="180" cy="238" r="6" fill="#FF4D00">
+    <animate attributeName="cy" values="238; 256; 238" dur="9s" repeatCount="indefinite"/>
+  </circle>
+</svg>

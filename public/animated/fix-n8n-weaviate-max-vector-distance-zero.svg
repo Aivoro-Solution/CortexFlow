@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-width="0.5" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#111111" stroke-width="4"/>
+  <!-- concentric distance rings -->
+  <circle cx="400" cy="225" r="170" fill="none" stroke="#111111" stroke-width="3" opacity="0.35"/>
+  <circle cx="400" cy="225" r="115" fill="none" stroke="#111111" stroke-width="3" opacity="0.55"/>
+  <circle cx="400" cy="225" r="62" fill="none" stroke="#111111" stroke-width="4"/>
+  <circle cx="400" cy="225" r="14" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animate attributeName="r" values="14; 18; 14" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- distant vector dots outside the tight ring -->
+  <circle cx="150" cy="120" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <circle cx="640" cy="105" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <circle cx="680" cy="320" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <circle cx="130" cy="330" r="9" fill="#FFFDF5" stroke="#111111" stroke-width="3"/>
+  <circle cx="560" cy="170" r="7" fill="#111111"/>
+  <circle cx="250" cy="280" r="7" fill="#111111"/>
+  <!-- slow rotating sweep -->
+  <g transform="translate(400 225)">
+    <g>
+      <line x1="0" y1="0" x2="0" y2="-170" stroke="#FF4D00" stroke-width="4"/>
+      <circle cx="0" cy="-170" r="7" fill="#FF4D00" stroke="#111111" stroke-width="3"/>
+      <animateTransform attributeName="transform" type="rotate" values="0; 360" dur="48s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  <!-- gate bars at the tight ring -->
+  <g>
+    <rect x="330" y="148" width="12" height="34" fill="#111111"/>
+    <rect x="458" y="148" width="12" height="34" fill="#111111"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="10s" repeatCount="indefinite"/>
+  </g>
+  <!-- drifting dot approaching the ring -->
+  <circle cx="0" cy="0" r="8" fill="#FF4D00" stroke="#111111" stroke-width="3">
+    <animateMotion dur="18s" repeatCount="indefinite" path="M120 225 L310 225 L120 225"/>
+  </circle>
+</svg>

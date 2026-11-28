@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Abstract animated signal tower with three dials and one orange lamp">
+  <rect width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="310" y="110" width="180" height="240"/>
+    <rect x="280" y="350" width="240" height="28"/>
+    <path d="M400 110 L400 60" fill="none"/>
+  </g>
+  <circle cx="400" cy="52" r="14" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animate attributeName="opacity" values="1;0.35;1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <g fill="none" stroke="#111111" stroke-width="4">
+    <circle cx="400" cy="170" r="30"/>
+    <circle cx="400" cy="250" r="30"/>
+    <circle cx="400" cy="320" r="22"/>
+  </g>
+  <g stroke="#111111" stroke-width="4" stroke-linecap="round">
+    <line x1="400" y1="170" x2="400" y2="148">
+      <animateTransform attributeName="transform" type="rotate" from="-40 400 170" to="40 400 170" dur="12s" repeatCount="indefinite" additive="sum"/>
+    </line>
+    <line x1="400" y1="250" x2="400" y2="228">
+      <animateTransform attributeName="transform" type="rotate" from="30 400 250" to="-30 400 250" dur="9s" repeatCount="indefinite" additive="sum"/>
+    </line>
+  </g>
+  <circle cx="400" cy="320" r="8" fill="#FF4D00">
+    <animate attributeName="r" values="8;11;8" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <g stroke="#111111" stroke-width="3" fill="none" opacity="0.7">
+    <path d="M120 380 H280"/>
+    <path d="M520 380 H680"/>
+    <circle cx="120" cy="380" r="6" fill="#111111"/>
+    <circle cx="680" cy="380" r="6" fill="#111111"/>
+  </g>
+  <circle cx="120" cy="380" r="10" fill="none" stroke="#FF4D00" stroke-width="3">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M0 0 H160"/>
+    <animate attributeName="opacity" values="1;1;0" dur="14s" repeatCount="indefinite"/>
+  </circle>
+</svg>

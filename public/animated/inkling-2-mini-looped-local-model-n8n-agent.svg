@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Abstract loop motif">
+  <rect x="0" y="0" width="800" height="450" fill="#FFFDF5"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="800" height="450" fill="url(#grid)"/>
+  <rect x="90" y="110" width="620" height="230" fill="#FFFDF5" stroke="#111111" stroke-width="5"/>
+  <rect x="102" y="122" width="620" height="230" fill="none" stroke="#111111" stroke-width="5" opacity="0.15"/>
+  <g stroke="#111111" stroke-width="4" fill="#FFFDF5">
+    <rect x="150" y="190" width="80" height="70"/>
+    <rect x="260" y="190" width="80" height="70"/>
+    <rect x="370" y="190" width="80" height="70"/>
+    <rect x="480" y="190" width="80" height="70"/>
+  </g>
+  <path d="M 300 190 C 300 140, 410 140, 410 190" fill="none" stroke="#FF4D00" stroke-width="6">
+    <animate attributeName="stroke-dashoffset" from="40" to="0" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 300 190 C 300 140, 410 140, 410 190" fill="none" stroke="#FF4D00" stroke-width="6" stroke-dasharray="10 10" opacity="0.35"/>
+  <circle cx="190" cy="225" r="14" fill="#FF4D00" stroke="#111111" stroke-width="4">
+    <animateMotion dur="18s" repeatCount="indefinite" path="M 0 0 L 110 0 L 110 -35 L 220 -35 L 220 0 L 330 0"/>
+  </circle>
+  <g stroke="#111111" stroke-width="3">
+    <line x1="150" y1="300" x2="560" y2="300"/>
+  </g>
+  <rect x="590" y="190" width="70" height="70" fill="#111111"/>
+  <circle cx="625" cy="225" r="10" fill="#FFFDF5">
+    <animate attributeName="r" values="8;12;8" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <g transform="translate(400 225)">
+    <circle r="52" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="6 8" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="40s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
